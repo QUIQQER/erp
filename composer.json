@@ -1,0 +1,31 @@
+{
+  "name": "quiqqer\/erp",
+  "type": "quiqqer-module",
+  "description": "",
+  "version": "dev-master",
+  "license": "",
+  "authors": [
+    {
+      "name": "Henning Leutz",
+      "email": "leutz@pcsg.de",
+      "homepage": "http:\/\/www.pcsg.de",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "support@pcsg.de",
+    "url": "http:\/\/www.pcsg.de"
+  },
+  "require": {
+    "php": ">=5.3",
+    "quiqqer\/quiqqer": "1.*|dev-master|dev-dev",
+    "quiqqer\/utils": ">=1.6|dev-master|dev-dev",
+    "quiqqer\/watcher": ">=0.12|dev-master|dev-dev",
+    "quiqqer\/translator": "1.*|dev-master|dev-dev"
+  },
+  "autoload": {
+    "psr-4": {
+      "QUI\\ERP\\": "src\/QUI\/ERP"
+    }
+  }
+}
