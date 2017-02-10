@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locales>
+
+    <groups name="quiqqer/erp" datatype="php,js">
+        <locale name="package.title">
+            <de><![CDATA[QUIQQER - Shop - ERP]]></de>
+            <en><![CDATA[QUIQQER - Shop - ERP]]></en>
+        </locale>
+
+
+        <locale name="customer.group.name">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Customer]]></en>
+        </locale>
+    </groups>
+
+</locales>
