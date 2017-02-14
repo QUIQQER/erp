@@ -6,7 +6,6 @@
 namespace QUI\ERP;
 
 use QUI;
-use QUI\Package\Package;
 
 /**
  * Class EventHandler
@@ -38,7 +37,7 @@ class Debug
     }
 
     /**
-     * Debug constructor.
+     * Debug constructor
      */
     public function __construct()
     {
@@ -50,8 +49,9 @@ class Debug
      * only if debugging is true
      *
      * @param object|string|integer|array $value - debug data
+     * @param string|bool $source - debug source
      */
-    public function log($value)
+    public function log($value, $source = false)
     {
         if ($this->Config->getValue('general', 'debug')) {
             QUI\System\Log::writeRecursive($value);
