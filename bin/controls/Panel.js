@@ -57,10 +57,17 @@ define('package/quiqqer/erp/bin/controls/Panel', [
             this.Loader.show();
 
             QUIAjax.get('package_quiqqer_erp_ajax_panel_list', function (result) {
-                console.log(result);
+                for (var i = 0, len = result.length; i < len; i++) {
+                    this.$Map.appendChild(
+                        new QUISitemapItem(result[i])
+                    );
+                }
 
-
-            }.bind(this));
+                this.$Map.inject(this.getContent());
+                this.Loader.hide();
+            }.bind(this), {
+                'package': 'quiqqer/erp'
+            });
 
             //
             // this.$Map.appendChild(
