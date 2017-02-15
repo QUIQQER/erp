@@ -5,6 +5,7 @@
  * @require qui/controls/desktop/Panel
  * @require qui/controls/sitemap/Map
  * @require qui/controls/sitemap/Item
+ * @require Ajax
  */
 define('package/quiqqer/erp/bin/controls/Panel', [
 
@@ -12,9 +13,10 @@ define('package/quiqqer/erp/bin/controls/Panel', [
     'qui/controls/desktop/Panel',
     'qui/controls/sitemap/Map',
     'qui/controls/sitemap/Item',
-    'Ajax'
+    'Ajax',
+    'Locale'
 
-], function (QUI, QUIPanel, QUISiteMap, QUISitemapItem, QUIAjax) {
+], function (QUI, QUIPanel, QUISiteMap, QUISitemapItem, QUIAjax, QUILocale) {
     "use strict";
 
     return new Class({
@@ -57,9 +59,26 @@ define('package/quiqqer/erp/bin/controls/Panel', [
             this.Loader.show();
 
             QUIAjax.get('package_quiqqer_erp_ajax_panel_list', function (result) {
-                for (var i = 0, len = result.length; i < len; i++) {
+                var i, len, data, params;
+
+                for (i = 0, len = result.length; i < len; i++) {
+                    params = {};
+                    data = result[i];
+
+                    if ("icon" in data) {
+                        params.icon = data.icon;
+                    }
+
+                    if ("text" in data) {
+                        if (typeOf(data.text) === 'array') {
+                            data.text = QUILocale.get(data.text[0], data.text[1]);
+                        }
+
+                        params.text = data.text;
+                    }
+
                     this.$Map.appendChild(
-                        new QUISitemapItem(result[i])
+                        new QUISitemapItem(params)
                     );
                 }
 
