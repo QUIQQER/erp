@@ -51,7 +51,7 @@ class Coordinator extends QUI\Utils\Singleton
 
             $Provider = new $entry();
 
-            if ($Provider instanceof AbstractFactory) {
+            if ($Provider instanceof AbstractErpProvider) {
                 $provider[] = $Provider;
             }
         }
@@ -73,7 +73,7 @@ class Coordinator extends QUI\Utils\Singleton
             $items    = array();
             $provider = $this->getErpApiProvider();
 
-            /* @var $Provider AbstractFactory */
+            /* @var $Provider AbstractErpProvider */
             foreach ($provider as $Provider) {
                 $items = array_merge($Provider->getMenuItems(), $items);
             }

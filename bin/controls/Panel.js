@@ -13,10 +13,11 @@ define('package/quiqqer/erp/bin/controls/Panel', [
     'qui/controls/desktop/Panel',
     'qui/controls/sitemap/Map',
     'qui/controls/sitemap/Item',
+    'utils/Panels',
     'Ajax',
     'Locale'
 
-], function (QUI, QUIPanel, QUISiteMap, QUISitemapItem, QUIAjax, QUILocale) {
+], function (QUI, QUIPanel, QUISiteMap, QUISitemapItem, PanelUtils, QUIAjax, QUILocale) {
     "use strict";
 
     return new Class({
@@ -61,8 +62,30 @@ define('package/quiqqer/erp/bin/controls/Panel', [
             QUIAjax.get('package_quiqqer_erp_ajax_panel_list', function (result) {
                 var i, len, data, params;
 
+                var onClick = function (Item) {
+                    if (!Item.getAttribute('panel')) {
+                        return;
+                    }
+
+                    require([Item.getAttribute('panel')], function (PanelCls) {
+                        var Panel = new PanelCls();
+
+                        if (instanceOf(Panel, QUIPanel)) {
+                            PanelUtils.openPanelInTasks(Panel);
+                        }
+
+                    }, function (err) {
+                        console.error(err);
+                    });
+                };
+
                 for (i = 0, len = result.length; i < len; i++) {
-                    params = {};
+                    params = {
+                        events: {
+                            onClick: onClick
+                        }
+                    };
+
                     data = result[i];
 
                     if ("icon" in data) {
@@ -76,6 +99,11 @@ define('package/quiqqer/erp/bin/controls/Panel', [
 
                         params.text = data.text;
                     }
+
+                    if ("panel" in data) {
+                        params.panel = data.panel;
+                    }
+
 
                     this.$Map.appendChild(
                         new QUISitemapItem(params)

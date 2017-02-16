@@ -5,11 +5,25 @@ document.addEvent('domready', function () {
         'qui/QUI',
         'package/quiqqer/erp/bin/controls/Panel'
     ], function (QUI, Panel) {
-        QUI.addEvent('quiqqerLoaded', function () {
+        var loadExecute = 0;
+
+        var load = function () {
+            loadExecute++;
+
+            if (loadExecute == 10) {
+                return;
+            }
+
             var ColumnElm = document.getElement('.qui-column'),
                 Column = QUI.Controls.getById(ColumnElm.get('data-quiid'));
 
-            var panels = Column.getChildren();
+            var panels = Column.getChildren(),
+                length = Object.getLength(panels);
+
+            if (length === 0) {
+                load();
+                return;
+            }
 
             for (var i in panels) {
                 if (!panels.hasOwnProperty(i)) {
@@ -22,6 +36,8 @@ document.addEvent('domready', function () {
             }
 
             Column.appendChild(new Panel());
-        });
+        };
+
+        QUI.addEvent('quiqqerLoaded', load);
     });
 });
