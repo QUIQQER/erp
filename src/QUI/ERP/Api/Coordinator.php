@@ -81,4 +81,24 @@ class Coordinator extends QUI\Utils\Singleton
 
         return $items;
     }
+
+    /**
+     * Return all number range objects
+     *
+     * @return array
+     */
+    public function getNumberRanges()
+    {
+        $ranges   = array();
+        $provider = $this->getErpApiProvider();
+
+        /* @var $Provider AbstractErpProvider */
+        foreach ($provider as $Provider) {
+            $ranges = array_merge($Provider->getNumberRanges(), $ranges);
+        }
+
+        // @todo filter, only NumberRangeInterface are allowed
+
+        return $ranges;
+    }
 }

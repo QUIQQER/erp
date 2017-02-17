@@ -8,7 +8,7 @@ namespace QUI\ERP\Api;
 use QUI;
 
 /**
- * Class Coordinator
+ * Class AbstractErpProvider
  *
  * @package QUI\ERP\Api
  */
@@ -20,6 +20,14 @@ abstract class AbstractErpProvider
      * @return array
      */
     public static function getMenuItems()
+    {
+        return array();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getNumberRanges()
     {
         return array();
     }

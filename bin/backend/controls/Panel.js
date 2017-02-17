@@ -1,5 +1,5 @@
 /**
- * @module package/quiqqer/erp/bin/controls/Panel
+ * @module package/quiqqer/erp/bin/backend/controls/Panel
  *
  * @require qui/QUI
  * @require qui/controls/desktop/Panel
@@ -7,7 +7,7 @@
  * @require qui/controls/sitemap/Item
  * @require Ajax
  */
-define('package/quiqqer/erp/bin/controls/Panel', [
+define('package/quiqqer/erp/bin/backend/controls/Panel', [
 
     'qui/QUI',
     'qui/controls/desktop/Panel',
@@ -22,7 +22,7 @@ define('package/quiqqer/erp/bin/controls/Panel', [
 
     return new Class({
         Extends: QUIPanel,
-        Type: 'package/quiqqer/erp/bin/controls/Panel',
+        Type: 'package/quiqqer/erp/bin/backend/controls/Panel',
 
         Bind: [
             '$onCreate'

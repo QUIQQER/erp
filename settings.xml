@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiqqer>
+    <settings>
+
+        <window name="ERP">
+
+            <title>
+                <locale group="quiqqer/erp" var="window.erp.title"/>
+            </title>
+            <params>
+                <icon>fa fa-sun-o</icon>
+            </params>
+
+            <categories>
+                <category name="general" index="1">
+                    <text>
+                        <locale group="quiqqer/erp" var="menu.erp.general.title"/>
+                    </text>
+                    <icon>fa fa-info</icon>
+
+                    <settings title="numberRanges" name="numberRanges">
+                        <title>
+                            <locale group="quiqqer/erp" var="menu.erp.general.title"/>
+                        </title>
+
+                        <input type="hidden"
+                               label="false"
+                               data-qui="package/quiqqer/erp/bin/backend/controls/settings/NumberRange">
+                        </input>
+                    </settings>
+
+                </category>
+            </categories>
+
+        </window>
+
+    </settings>
+</quiqqer>

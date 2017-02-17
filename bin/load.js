@@ -3,7 +3,7 @@ document.addEvent('domready', function () {
 
     require([
         'qui/QUI',
-        'package/quiqqer/erp/bin/controls/Panel'
+        'package/quiqqer/erp/bin/backend/controls/Panel'
     ], function (QUI, Panel) {
         var loadExecute = 0;
 
@@ -30,7 +30,7 @@ document.addEvent('domready', function () {
                     continue;
                 }
 
-                if (panels[i].getType() === 'package/quiqqer/erp/bin/controls/Panel') {
+                if (panels[i].getType() === 'package/quiqqer/erp/bin/backend/controls/Panel') {
                     return;
                 }
             }

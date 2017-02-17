@@ -7,6 +7,15 @@
             <en><![CDATA[QUIQQER - Shop - ERP]]></en>
         </locale>
 
+        <locale name="window.erp.title">
+            <de><![CDATA[Shop]]></de>
+            <en><![CDATA[Shop]]></en>
+        </locale>
+        <locale name="menu.erp.general.title">
+            <de><![CDATA[Allgemein]]></de>
+            <en><![CDATA[General]]></en>
+        </locale>
+
 
         <locale name="customer.group.name">
             <de><![CDATA[Kunden]]></de>
