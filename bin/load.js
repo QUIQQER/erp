@@ -14,14 +14,20 @@ document.addEvent('domready', function () {
                 return;
             }
 
-            var ColumnElm = document.getElement('.qui-column'),
-                Column = QUI.Controls.getById(ColumnElm.get('data-quiid'));
+            var ColumnElm = document.getElement('.qui-column');
+
+            if (!ColumnElm) {
+                load.delay(100);
+                return;
+            }
+
+            var Column = QUI.Controls.getById(ColumnElm.get('data-quiid'));
 
             var panels = Column.getChildren(),
                 length = Object.getLength(panels);
 
             if (length === 0) {
-                load();
+                load.delay(100);
                 return;
             }
 
