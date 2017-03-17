@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * This file contains QUI\ERP\Api\Coordinator
+ */
 namespace QUI\ERP\Api;
 
 use QUI;
@@ -12,7 +15,7 @@ use QUI;
 class Coordinator extends QUI\Utils\Singleton
 {
     /**
-     * Return the ERP Api Provider from other pacages
+     * Return the ERP Api Provider from other packages
      *
      * @return array
      */
@@ -44,6 +47,10 @@ class Coordinator extends QUI\Utils\Singleton
         }
 
         // filter provider
+        $collect = new \RecursiveIteratorIterator(
+            new \RecursiveArrayIterator($collect)
+        );
+
         foreach ($collect as $entry) {
             if (!class_exists($entry)) {
                 continue;
