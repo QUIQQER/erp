@@ -6,6 +6,7 @@
  * @require qui/controls/sitemap/Map
  * @require qui/controls/sitemap/Item
  * @require Ajax
+ * @require Locale
  */
 define('package/quiqqer/erp/bin/backend/controls/Panel', [
 
@@ -21,8 +22,9 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
     "use strict";
 
     return new Class({
+
         Extends: QUIPanel,
-        Type: 'package/quiqqer/erp/bin/backend/controls/Panel',
+        Type   : 'package/quiqqer/erp/bin/backend/controls/Panel',
 
         Bind: [
             '$onCreate'
@@ -33,7 +35,7 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
 
             this.setAttributes({
                 title: 'Shop',
-                icon: 'fa fa-shopping-cart'
+                icon : 'fa fa-shopping-cart'
             });
 
             this.$Map = null;
@@ -79,6 +81,8 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
                     });
                 };
 
+                var items = [];
+
                 for (i = 0, len = result.length; i < len; i++) {
                     params = {
                         events: {
@@ -104,11 +108,29 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
                         params.panel = data.panel;
                     }
 
-
-                    this.$Map.appendChild(
-                        new QUISitemapItem(params)
-                    );
+                    items.push(params);
                 }
+
+                // sort
+                items.sort(function (a, b) {
+                    if (a.text > b.text) {
+                        return 1;
+                    }
+
+                    if (a.text < b.text) {
+                        return -1;
+                    }
+
+                    return 0;
+                });
+
+
+                // insert
+                items.each(function (item) {
+                    this.$Map.appendChild(
+                        new QUISitemapItem(item)
+                    );
+                }.bind(this));
 
                 this.$Map.inject(this.getContent());
                 this.Loader.hide();
