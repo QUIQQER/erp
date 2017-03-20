@@ -6,6 +6,7 @@
 namespace QUI\ERP;
 
 use QUI;
+use QUI\System\Log;
 
 /**
  * Class EventHandler
@@ -25,6 +26,11 @@ class Debug
     protected $Config;
 
     /**
+     * @var int
+     */
+    protected $debug;
+
+    /**
      * @return Debug
      */
     public static function getInstance()
@@ -42,6 +48,7 @@ class Debug
     public function __construct()
     {
         $this->Config = QUI::getPackage('quiqqer/erp')->getConfig();
+        $this->debug  = (int)$this->Config->getValue('general', 'debug');
     }
 
     /**
@@ -53,8 +60,27 @@ class Debug
      */
     public function log($value, $source = false)
     {
-        if ($this->Config->getValue('general', 'debug')) {
-            QUI\System\Log::writeRecursive($value);
+        if (!$this->debug) {
+            return;
         }
+
+        if ($value instanceof \Exception) {
+            Log::writeException(
+                $value,
+                Log::LEVEL_DEBUG,
+                array(
+                    'source' => $source
+                )
+            );
+            return;
+        }
+
+        Log::writeRecursive(
+            $value,
+            Log::LEVEL_DEBUG,
+            array(
+                'source' => $source
+            )
+        );
     }
 }
