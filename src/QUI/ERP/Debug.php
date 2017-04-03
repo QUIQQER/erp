@@ -3,6 +3,7 @@
 /**
  * This file contains QUI\ERP\EventHandler
  */
+
 namespace QUI\ERP;
 
 use QUI;
@@ -49,6 +50,22 @@ class Debug
     {
         $this->Config = QUI::getPackage('quiqqer/erp')->getConfig();
         $this->debug  = (int)$this->Config->getValue('general', 'debug');
+    }
+
+    /**
+     * Enable the debugging
+     */
+    public function enable()
+    {
+        $this->debug = 1;
+    }
+
+    /**
+     * Disable the debugging
+     */
+    public function disable()
+    {
+        $this->debug = 0;
     }
 
     /**
