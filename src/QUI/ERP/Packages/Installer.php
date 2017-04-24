@@ -3,6 +3,7 @@
 /**
  * This file contains QUI\ERP\Packages\Installer
  */
+
 namespace QUI\ERP\Packages;
 
 use QUI;
@@ -45,7 +46,10 @@ class Installer extends QUI\Utils\Singleton
 
         'quiqqer/order' => array(
             'server' => array(
-                'git@dev.quiqqer.com:quiqqer/order.git'
+                'git@dev.quiqqer.com:quiqqer/order.git',
+                'git@dev.quiqqer.com:quiqqer/products.git',
+                'git@dev.quiqqer.com:quiqqer/areas.git',
+                'git@dev.quiqqer.com:quiqqer/discount.git'
             )
         ),
 

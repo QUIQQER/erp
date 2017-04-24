@@ -21,6 +21,12 @@
             <de><![CDATA[Kunden]]></de>
             <en><![CDATA[Customer]]></en>
         </locale>
+
+
+        <locale name="price.starting.from">
+            <de><![CDATA[ab [price]]]></de>
+            <en><![CDATA[starting from [price]]]></en>
+        </locale>
     </groups>
 
 </locales>
