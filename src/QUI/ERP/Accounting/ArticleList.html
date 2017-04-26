@@ -1,0 +1,115 @@
+<!-- articles -->
+<h1 class="articles-header">
+    {locale group="quiqqer/erp" var="article.list.articles.title"}
+</h1>
+
+{assign var=pos value=1}
+<table class="articles-article">
+    <tr class="articles-article-header">
+        <th class="articles-article-header-pos">
+            {locale group="quiqqer/erp" var="article.list.articles.header.pos"}
+        </th>
+        <th class="articles-article-header-information">
+            {locale group="quiqqer/erp" var="article.list.articles.header.description"}
+        </th>
+        <th class="articles-article-header-quantity">
+            {locale group="quiqqer/erp" var="article.list.articles.header.quantity"}
+        </th>
+        <th class="articles-article-header-unitprice">
+            {locale group="quiqqer/erp" var="article.list.articles.header.unitprice"}
+        </th>
+        <th class="articles-article-header-price">
+            {locale group="quiqqer/erp" var="article.list.articles.header.price"}
+        </th>
+    </tr>
+
+    {foreach $articles as $article}
+    <tr>
+        <td class="articles-article-pos" align="top">
+            {$pos}
+        </td>
+        <td class="articles-article-information" align="top">
+            <div class="articles-article-information-title">
+                {$article['title']}
+            </div>
+            <div class="articles-article-information-description">
+                {$article['description']}
+            </div>
+        </td>
+        <td class="articles-article-quantity" align="top">
+            {$article['quantity']}
+        </td>
+        <td class="articles-article-unitprice" align="top">
+            {$article['calculated_price']}
+        </td>
+        <td class="articles-article-price" align="top">
+            {$article['calculated_sum']}
+        </td>
+    </tr>
+    {assign var=pos value=$pos+1}
+    {/foreach}
+</table>
+
+<!-- sum display -->
+<table class="articles-sum">
+    <tr class="articles-sum-row-subsum">
+        <td class="articles-sum-row-firstCell">
+            <span class="articles-sum-row-subsum-text">
+                {locale group="quiqqer/erp" var="article.list.articles.subtotal"}
+            </span>
+        </td>
+        <td style="width: 140px" class="articles-sum-row-sndCell">
+            <span class="articles-sum-row-subsum-value">
+                {$calculations.subSum}
+            </span>
+        </td>
+    </tr>
+
+    {*if count($data.attributes)}
+    <tr>
+        <td colspan="2"><br/></td>
+    </tr>
+    {/if*}
+
+    {*foreach $data.attributes as $attribute}
+    <tr>
+        <td class="articles-sum-row-firstCell">
+            {$attribute.title}
+        </td>
+        <td class="articles-sum-row-sndCell">
+            {$attribute.valueText}<br/>
+            {$attribute.value}
+        </td>
+    </tr>
+    {/foreach*}
+
+    {foreach $vatArray as $vat}
+    <tr>
+        <td>
+            {$vat.text}
+        </td>
+        <td>
+            {$vat.sum}
+        </td>
+    </tr>
+    {/foreach}
+
+    {*if count($data.attributes)}
+    <tr>
+        <td colspan="2"><br/></td>
+    </tr>
+    {/if*}
+
+    <tr class="articles-sum-row-sum">
+        <td class="articles-sum-row-firstCell">
+            <span class="articles-sum-row-sum-text">
+                {locale group="quiqqer/erp" var="article.list.articles.sumtotal"}
+            </span>
+        </td>
+        <td class="articles-sum-row-sndCell">
+            <span class="articles-sum-row-sum-value">
+                {$calculations.sum}
+            </span>
+        </td>
+    </tr>
+</table>

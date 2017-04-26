@@ -193,6 +193,8 @@ class Article implements ArticleInterface
     }
 
     /**
+     * Return the VAT for the article
+     *
      * @return int
      */
     public function getVat()
@@ -289,6 +291,12 @@ class Article implements ArticleInterface
      */
     public function toArray()
     {
+        $vat = false;
+
+        if (isset($this->attributes['vat'])) {
+            $vat = (int)$this->attributes['vat'];
+        }
+
         return array(
             'title'       => $this->getTitle(),
             'articleNo'   => $this->getArticleNo(),
@@ -296,6 +304,7 @@ class Article implements ArticleInterface
             'unitPrice'   => $this->getUnitPrice(),
             'quantity'    => $this->getQuantity(),
             'sum'         => $this->getSum(),
+            'vat'         => $vat,
 
             'calculated_basisPrice' => $this->basisPrice,
             'calculated_price'      => $this->price,

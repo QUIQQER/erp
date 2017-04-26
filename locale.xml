@@ -27,6 +27,65 @@
             <de><![CDATA[ab [price]]]></de>
             <en><![CDATA[starting from [price]]]></en>
         </locale>
+
+
+        <locale name="article.list.articles.title">
+            <de><![CDATA[Produkte]]></de>
+            <en><![CDATA[Products]]></en>
+        </locale>
+        <locale name="article.list.articles.header.pos">
+            <de><![CDATA[POS]]></de>
+            <en><![CDATA[POS]]></en>
+        </locale>
+        <locale name="article.list.articles.header.description">
+            <de><![CDATA[Beschreibung]]></de>
+            <en><![CDATA[Description]]></en>
+        </locale>
+        <locale name="article.list.articles.header.quantity">
+            <de><![CDATA[Menge]]></de>
+            <en><![CDATA[Quantity]]></en>
+        </locale>
+        <locale name="article.list.articles.header.unitprice">
+            <de><![CDATA[Einzelpreis]]></de>
+            <en><![CDATA[Unitprice]]></en>
+        </locale>
+        <locale name="article.list.articles.header.price">
+            <de><![CDATA[Preis]]></de>
+            <en><![CDATA[Price]]></en>
+        </locale>
+        <locale name="article.list.articles.subtotal">
+            <de><![CDATA[Zwischensumme:]]></de>
+            <en><![CDATA[Subtotal:]]></en>
+        </locale>
+        <locale name="article.list.articles.sumtotal">
+            <de><![CDATA[Summe:]]></de>
+            <en><![CDATA[Sum total:]]></en>
+        </locale>
+
+    </groups>
+
+    <groups name="quiqqer/erp" datatype="php">
+        <locale name="user.settings.title">
+            <de><![CDATA[Rechnungsdaten]]></de>
+            <en><![CDATA[Billing Details]]></en>
+        </locale>
+        <locale name="user.settings.euVatId">
+            <de><![CDATA[Umsatzsteuer-ID]]></de>
+            <en><![CDATA[Tax EU-ID]]></en>
+        </locale>
+        <locale name="user.settings.taxNumber">
+            <de><![CDATA[Steuernummer]]></de>
+            <en><![CDATA[Tax number]]></en>
+        </locale>
+        <locale name="user.settings.address">
+            <de><![CDATA[Rechnungsadresse]]></de>
+            <en><![CDATA[Billing address]]></en>
+        </locale>
+
+        <locale name="user.profile.title">
+            <de><![CDATA[Produkt Einstellungen]]></de>
+            <en><![CDATA[Product settings]]></en>
+        </locale>
     </groups>
 
 </locales>

@@ -3,6 +3,7 @@
 /**
  * This file contains QUI\ERP\EventHandler
  */
+
 namespace QUI\ERP;
 
 use QUI;
@@ -52,5 +53,55 @@ class EventHandler
 
         $Config->setValue('general', 'groupId', $Customer->getId());
         $Config->save();
+    }
+
+    /**
+     * event: on user save
+     * @todo prüfung auch für steuernummer
+     *
+     * @param QUI\Interfaces\Users\User $User
+     * @throws QUI\ERP\Tax\Exception
+     */
+    public static function onUserSave(QUI\Interfaces\Users\User $User)
+    {
+        if (!QUI::getUsers()->isUser($User)) {
+            return;
+        }
+
+        // eu vat id validation
+        try {
+            $Package  = QUI::getPackage('quiqqer/tax');
+            $validate = $Package->getConfig()->getValue('shop', 'validateVatId');
+            $vatId    = $User->getAttribute('quiqqer.erp.euVatId');
+
+            if ($validate && $vatId && !empty($vatId)) {
+                try {
+                    $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
+                } catch (QUI\ERP\Tax\Exception $Exception) {
+                    if ($Exception->getCode() !== 503) {
+                        throw $Exception;
+                    }
+
+                    $vatId = QUI\ERP\Tax\Utils::cleanupVatId($vatId);
+                }
+            } elseif ($vatId) {
+                $vatId = QUI\ERP\Tax\Utils::cleanupVatId($vatId);
+            }
+
+            $User->setAttribute('quiqqer.erp.euVatId', $vatId);
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addNotice($Exception->getMessage());
+        }
+
+        // netto brutto user status
+        $User->setAttribute('quiqqer.erp.isNettoUser', false); // reset status
+
+        QUI\System\Log::write($User->getName());
+        QUI\System\Log::write(QUI\ERP\Utils\User::getBruttoNettoUserStatus($User));
+
+        $User->setAttribute(
+            'quiqqer.erp.isNettoUser',
+            QUI\ERP\Utils\User::getBruttoNettoUserStatus($User)
+        );
     }
 }

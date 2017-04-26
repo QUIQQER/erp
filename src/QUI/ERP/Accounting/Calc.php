@@ -60,13 +60,6 @@ class Calc
     protected $Currency = null;
 
     /**
-     * Flag for ignore vat calculation (force ignore VAT)
-     *
-     * @var bool
-     */
-    protected $ignoreVatCalculation = false;
-
-    /**
      * Calc constructor.
      *
      * @param UserInterface|bool $User - calculation user
@@ -98,21 +91,7 @@ class Calc
             $User = QUI::getUserBySession();
         }
 
-        $Calc = new self($User);
-
-        if (QUI::getUsers()->isSystemUser($User) && QUI::isBackend()) {
-            $Calc->ignoreVatCalculation();
-        }
-
-        return $Calc;
-    }
-
-    /**
-     * Static instance create
-     */
-    public function ignoreVatCalculation()
-    {
-        $this->ignoreVatCalculation = true;
+        return new self($User);
     }
 
     /**
@@ -150,35 +129,105 @@ class Calc
         return $this->Currency;
     }
 
-//    /**
-//     * @param $Product
-//     * @return array
-//     */
-//    public function getProductPrice($Product)
-//    {
-//        if (class_exists('QUI\ERP\Products\Product\Product')
-//            && $Product instanceof QUI\ERP\Products\Product\Product
-//        ) {
-//            $Calc  = QUI\ERP\Products\Utils\Calc::getInstance($this->getUser());
-//            $Price = $Calc->getProductPrice($Product->createUniqueProduct());
-//
-//            return $Price->toArray();
-//        }
-//
-//        if (class_exists('QUI\ERP\Products\Product\UniqueProduct')
-//            && $Product instanceof QUI\ERP\Products\Product\UniqueProduct
-//        ) {
-//            $Calc  = QUI\ERP\Products\Utils\Calc::getInstance($this->getUser());
-//            $Price = $Calc->getProductPrice($Product);
-//
-//            return $Price->toArray();
-//        }
-//
-//        if ($Product instanceof InvoiceProduct) {
-//            return self::calcArticlePrice($Product)->toArray();
-//        }
-//
-//    }
+    /**
+     * Calculate a complete article list
+     *
+     * @param ArticleList $List
+     * @param callable|boolean $callback - optional, callback function for the data array
+     * @return ArticleList
+     */
+    public function calcArticleList(ArticleList $List, $callback = false)
+    {
+        // calc data
+        if (!is_callable($callback)) {
+            return $List->calc();
+        }
+
+
+        $articles    = $List->getArticles();
+        $isNetto     = QUI\ERP\Utils\User::isNettoUser($this->getUser());
+        $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($this->getUser());
+        $Area        = QUI\ERP\Utils\User::getUserArea($this->getUser());
+
+        $subSum   = 0;
+        $nettoSum = 0;
+        $vatArray = array();
+
+        /* @var $Article Article */
+        foreach ($articles as $Article) {
+            // add netto price
+            try {
+                QUI::getEvents()->fireEvent(
+                    'onQuiqqerErpCalcArticleListArticle',
+                    array($this, $Article)
+                );
+            } catch (QUI\Exception $Exception) {
+                QUI\System\Log::write($Exception->getMessage(), QUI\System\Log::LEVEL_ERROR);
+            }
+
+            $this->calcArticlePrice($Article);
+
+            $articleAttributes = $Article->toArray();
+
+            $subSum   = $subSum + $articleAttributes['calculated_sum'];
+            $nettoSum = $nettoSum + $articleAttributes['calculated_nettoSum'];
+
+            $articleVatArray = $articleAttributes['calculated_vatArray'];
+            $vat             = $articleAttributes['vat'];
+
+            if (!isset($vatArray[$vat])) {
+                $vatArray[$vat]        = $articleVatArray;
+                $vatArray[$vat]['sum'] = 0;
+            }
+
+            $vatArray[$vat]['sum'] = $vatArray[$vat]['sum'] + $articleVatArray['sum'];
+        }
+
+        QUI\ERP\Debug::getInstance()->log('Berechnetet Artikelliste MwSt', 'quiqqer/erp');
+        QUI\ERP\Debug::getInstance()->log($vatArray, 'quiqqer/erp');
+
+        try {
+            QUI::getEvents()->fireEvent(
+                'onQuiqqerErpCalcArticleList',
+                array($this, $List, $nettoSum)
+            );
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::write($Exception->getMessage(), QUI\System\Log::LEVEL_ERROR);
+        }
+
+        // @todo Preisfaktoren hier
+        $nettoSubSum = $nettoSum;
+
+
+        // vat text
+        $vatLists  = array();
+        $vatText   = array();
+        $bruttoSum = $nettoSum;
+
+        foreach ($vatArray as $vatEntry) {
+            $vatLists[$vatEntry['vat']] = true; // liste für MWST texte
+
+            $bruttoSum = $bruttoSum + $vatEntry['sum'];
+        }
+
+        foreach ($vatLists as $vat => $bool) {
+            $vatText[$vat] = self::getVatText($vat, $this->getUser());
+        }
+
+        $callback(array(
+            'sum'          => $isNetto ? $nettoSum : $bruttoSum,
+            'subSum'       => $subSum,
+            'nettoSum'     => $nettoSum,
+            'nettoSubSum'  => $nettoSubSum,
+            'vatArray'     => $vatArray,
+            'vatText'      => $vatText,
+            'isEuVat'      => $isEuVatUser,
+            'isNetto'      => $isNetto,
+            'currencyData' => $this->getCurrency()->toArray()
+        ));
+
+        return $List;
+    }
 
     /**
      * Calculate the price of an article

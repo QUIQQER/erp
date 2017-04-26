@@ -6,9 +6,11 @@
 
 namespace QUI\ERP\Accounting;
 
+use QUI;
+
 /**
  * Class ArticleListUnique
- * Nicht änderbare Artikel Liste
+ * - Nicht änderbare Artikel Liste
  *
  * @package QUI\ERP\Accounting
  */
@@ -20,17 +22,40 @@ class ArticleListUnique
     protected $articles = array();
 
     /**
+     * @var array
+     */
+    protected $calculations = array();
+
+    /**
      * ArticleList constructor.
      *
      * @param array $attributes
+     * @throws QUI\ERP\Exception
      */
     public function __construct($attributes = array())
     {
+        $needles = array('articles', 'calculations');
+
+        foreach ($needles as $needle) {
+            if (!isset($attributes[$needle])) {
+                throw new QUI\ERP\Exception(
+                    'Missing needle for ArticleListUnique',
+                    400,
+                    array(
+                        'class'   => 'ArticleListUnique',
+                        'missing' => $needle
+                    )
+                );
+            }
+        }
+
         $articles = $attributes['articles'];
 
         foreach ($articles as $article) {
             $this->articles[] = new Article($article);
         }
+
+        $this->calculations = $attributes['calculations'];
     }
 
     /**
@@ -59,6 +84,38 @@ class ArticleListUnique
     }
 
     /**
+     * Return the calculation array
+     *
+     * @return array
+     */
+    public function getCalculations()
+    {
+        return $this->calculations;
+    }
+
+    /**
+     * Return the list articles
+     *
+     * @return array
+     */
+    public function getArticles()
+    {
+        return $this->articles;
+    }
+
+
+    /**
+     * Generates a storable json representation of the list
+     * Alias for serialize()
+     *
+     * @return string
+     */
+    public function toJSON()
+    {
+        return $this->serialize();
+    }
+
+    /**
      * Return the list as an array
      *
      * @return array
@@ -71,18 +128,78 @@ class ArticleListUnique
         }, $this->articles);
 
         return array(
-            'articles' => $articles
+            'articles'     => $articles,
+            'calculations' => $this->calculations
         );
     }
 
     /**
-     * Generates a storable json representation of the list
-     * Alias for serialize()
+     * Return the Article List as HTML, without CSS
      *
      * @return string
      */
-    public function toJSON()
+    public function toHTML()
     {
-        return $this->serialize();
+        $Engine   = QUI::getTemplateManager()->getEngine();
+        $vatArray = array();
+
+        $Currency = QUI\ERP\Currency\Handler::getCurrency(
+            $this->calculations['currencyData']['code']
+        );
+
+        if ($this->calculations['vatArray']) {
+            $vatArray = $this->calculations['vatArray'];
+        }
+
+        // price display
+        foreach ($vatArray as $key => $vat) {
+            $vatArray[$key]['sum'] = $Currency->format($vatArray[$key]['sum']);
+        }
+
+        $this->calculations['sum']         = $Currency->format($this->calculations['sum']);
+        $this->calculations['subSum']      = $Currency->format($this->calculations['subSum']);
+        $this->calculations['nettoSum']    = $Currency->format($this->calculations['nettoSum']);
+        $this->calculations['nettoSubSum'] = $Currency->format($this->calculations['nettoSubSum']);
+
+
+        $articles = array_map(function ($Article) use ($Currency) {
+            /* @var $Article Article */
+            $article = $Article->toArray();
+
+            $article['unitPrice']                  = $Currency->format($article['unitPrice']);
+            $article['sum']                        = $Currency->format($article['sum']);
+            $article['calculated_basisPrice']      = $Currency->format($article['calculated_basisPrice']);
+            $article['calculated_price']           = $Currency->format($article['calculated_price']);
+            $article['calculated_sum']             = $Currency->format($article['calculated_sum']);
+            $article['calculated_nettoSum']        = $Currency->format($article['calculated_nettoSum']);
+            $article['calculated_vatArray']['sum'] = $Currency->format($article['calculated_vatArray']['sum']);
+
+            return $article;
+        }, $this->articles);
+
+
+        // output
+        $Engine->assign(array(
+            'this'         => $this,
+            'articles'     => $articles,
+            'calculations' => $this->calculations,
+            'vatArray'     => $vatArray
+        ));
+
+        return $Engine->fetch(dirname(__FILE__) . '/ArticleList.html');
+    }
+
+    /**
+     * Return the Article List as HTML, with CSS
+     *
+     * @return string
+     */
+    public function toHTMLWithCSS()
+    {
+        $style = '<style>';
+        $style .= file_get_contents(dirname(__FILE__) . '/ArticleList.css');
+        $style .= '</style>';
+
+        return $style . $this->toHTML();
     }
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<user>
+    <attributes>
+        <attribute>quiqqer.erp.euVatId</attribute>
+        <attribute>quiqqer.erp.taxNumber</attribute>
+        <attribute>quiqqer.erp.address</attribute>
+        <attribute>quiqqer.erp.isNettoUser</attribute>
+    </attributes>
+
+    <window>
+        <tab name="ERP">
+            <text>Shop</text>
+            <image>fa fa-shopping-bag</image>
+            <template>OPT_DIR/quiqqer/erp/template/user/erpSettings.html</template>
+        </tab>
+    </window>
+</user>

@@ -2,4 +2,5 @@
 <events>
     <event on="onAdminLoadFooter" fire="\QUI\ERP\EventHandler::onAdminLoadFooter"/>
     <event on="onPackageSetup" fire="\QUI\ERP\EventHandler::onPackageSetup"/>
+    <event on="onUserSaveBegin" fire="\QUI\ERP\EventHandler::onUserSave"/>
 </events>
