@@ -101,6 +101,7 @@ class User extends QUI\QDOM implements UserInterface
 
         if (isset($attributes['data']) && is_array($attributes['data'])) {
             $this->data = $attributes['data'];
+            $this->setAttributes($this->data);
         }
 
         if (isset($attributes['address']) && is_array($attributes['address'])) {

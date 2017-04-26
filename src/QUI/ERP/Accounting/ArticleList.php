@@ -134,7 +134,7 @@ class ArticleList extends ArticleListUnique
     }
 
     /**
-     * @param null $Calc
+     * @param null|Calc $Calc
      * @return $this
      */
     public function calc($Calc = null)
