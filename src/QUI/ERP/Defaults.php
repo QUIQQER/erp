@@ -43,4 +43,22 @@ class Defaults
     {
         return QUI\ERP\Currency\Handler::getDefaultCurrency();
     }
+
+    /**
+     * Return the global brutto netto status
+     *
+     * @return int
+     */
+    public static function getBruttoNettoStatus()
+    {
+        $Package = QUI::getPackage('quiqqer/tax');
+        $Config  = $Package->getConfig();
+        $isNetto = $Config->getValue('shop', 'isNetto');
+
+        if ($isNetto) {
+            return QUI\ERP\Utils\User::IS_NETTO_USER;
+        }
+
+        return QUI\ERP\Utils\User::IS_BRUTTO_USER;
+    }
 }
