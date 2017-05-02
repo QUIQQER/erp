@@ -96,9 +96,6 @@ class EventHandler
         // netto brutto user status
         $User->setAttribute('quiqqer.erp.isNettoUser', false); // reset status
 
-        QUI\System\Log::write($User->getName());
-        QUI\System\Log::write(QUI\ERP\Utils\User::getBruttoNettoUserStatus($User));
-
         $User->setAttribute(
             'quiqqer.erp.isNettoUser',
             QUI\ERP\Utils\User::getBruttoNettoUserStatus($User)

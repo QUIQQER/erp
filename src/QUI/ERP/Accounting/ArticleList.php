@@ -106,9 +106,7 @@ class ArticleList extends ArticleListUnique
      */
     public function setUser(QUI\Interfaces\Users\User $User)
     {
-        if (QUI::getUsers()->isUser($User)) {
-            $this->User = $User;
-        }
+        $this->User = $User;
     }
 
     /**
@@ -188,6 +186,10 @@ class ArticleList extends ArticleListUnique
     public function addArticle(Article $Article)
     {
         $this->articles[] = $Article;
+
+        if ($this->User) {
+            $Article->setUser($this->User);
+        }
     }
 
     /**

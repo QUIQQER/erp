@@ -76,10 +76,10 @@ class Calc
     /**
      * Static instance create
      *
-     * @param UserInterface|bool $User - optional
+     * @param UserInterface|null $User - optional
      * @return Calc
      */
-    public static function getInstance($User = false)
+    public static function getInstance($User = null)
     {
         if (!$User && QUI::isBackend()) {
             $User = QUI::getUsers()->getSystemUser();
@@ -215,7 +215,7 @@ class Calc
         }
 
         $callback(array(
-            'sum'          => $isNetto ? $nettoSum : $bruttoSum,
+            'sum'          => $bruttoSum,
             'subSum'       => $subSum,
             'nettoSum'     => $nettoSum,
             'nettoSubSum'  => $nettoSubSum,
@@ -251,6 +251,27 @@ class Calc
         $nettoPrice      = $Article->getUnitPrice();
         $vat             = $Article->getVat();
         $basisNettoPrice = $nettoPrice;
+        $nettoSubSum     = $this->round($nettoPrice * $Article->getQuantity());
+
+        // discounts
+        $Discount = $Article->getDiscount();
+
+        if ($Discount) {
+            switch ($Discount->getCalculation()) {
+                // einfache Zahl, Währung --- kein Prozent
+                case Calc::CALCULATION_COMPLEMENT:
+                    $nettoPrice = $nettoPrice + ($Discount->getValue() / $Article->getQuantity());
+//                    $Discount->setNettoSum($this, $Discount->getValue());
+                    break;
+
+                // Prozent Angabe
+                case Calc::CALCULATION_PERCENTAGE:
+                    $percentage = $Discount->getValue() / 100 * $nettoPrice;
+                    $nettoPrice = $nettoPrice + $percentage;
+//                    $Discount->setNettoSum($this, $percentage);
+                    break;
+            }
+        }
 
         $vatSum      = $nettoPrice * ($vat / 100);
         $bruttoPrice = $this->round($nettoPrice + $vatSum);
@@ -270,35 +291,31 @@ class Calc
             'text' => $this->getVatText($vat, $this->getUser())
         );
 
-
         QUI\ERP\Debug::getInstance()->log(
             'Kalkulierter Artikel Preis ' . $Article->getId(),
             'quiqqer/erp'
         );
 
-        QUI\ERP\Debug::getInstance()->log(array(
-            'basisPrice'   => $basisPrice,
-            'price'        => $price,
-            'sum'          => $sum,
-            'nettoSum'     => $nettoSum,
-            'vatArray'     => $vatArray,
-            'isEuVat'      => $isEuVatUser,
-            'isNetto'      => $isNetto,
-            'currencyData' => $this->getCurrency()->toArray()
-        ), 'quiqqer/erp');
+        $data = array(
+            'basisPrice' => $basisPrice,
+            'price'      => $price,
+            'sum'        => $sum,
 
+            'nettoBasisPrice' => $basisNettoPrice,
+            'nettoPrice'      => $nettoPrice,
+            'nettoSubSum'     => $nettoSubSum,
+            'nettoSum'        => $nettoSum,
 
-        $callback(array(
-            'basisPrice'   => $basisPrice,
-            'price'        => $price,
-            'sum'          => $sum,
-            'nettoSum'     => $nettoSum,
+            'currencyData' => $this->getCurrency()->toArray(),
             'vatArray'     => $vatArray,
             'vatText'      => $vatArray['text'],
             'isEuVat'      => $isEuVatUser,
-            'isNetto'      => $isNetto,
-            'currencyData' => $this->getCurrency()->toArray()
-        ));
+            'isNetto'      => $isNetto
+        );
+
+        QUI\ERP\Debug::getInstance()->log($data, 'quiqqer/erp');
+
+        $callback($data);
 
         return $Article->getPrice();
     }

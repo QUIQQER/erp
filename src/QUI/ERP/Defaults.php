@@ -33,4 +33,14 @@ class Defaults
         /* @var $Area QUI\ERP\Areas\Area */
         return $Area;
     }
+
+    /**
+     * Return the default currency
+     *
+     * @return Currency\Currency
+     */
+    public static function getCurrency()
+    {
+        return QUI\ERP\Currency\Handler::getDefaultCurrency();
+    }
 }

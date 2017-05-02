@@ -46,12 +46,12 @@ class Price
     /**
      * @var string
      */
-    protected $decimalSeparator = ',';
+    protected static $decimalSeparator = ',';
 
     /**
      * @var string
      */
-    protected $thousandsSeparator = '.';
+    protected static $thousandsSeparator = '.';
 
     /**
      * Price constructor.
@@ -208,45 +208,50 @@ class Price
      * @param number|string $value
      * @return float|double|int|null
      */
-    protected function validatePrice($value)
+    public static function validatePrice($value)
     {
         if (is_float($value)) {
             return round($value, 4);
         }
 
-        $value = (string)$value;
+        $value      = (string)$value;
+        $isNegative = substr($value, 0, 1) === '-';
+
+        // value cleanup
         $value = preg_replace('#[^\d,.]#i', '', $value);
 
         if (trim($value) === '') {
             return null;
         }
 
-        $decimal   = mb_strpos($value, $this->decimalSeparator);
-        $thousands = mb_strpos($value, $this->thousandsSeparator);
+        $negativeTurn = 1;
+
+        if ($isNegative) {
+            $negativeTurn = -1;
+        }
+
+        $decimal   = mb_strpos($value, self::$decimalSeparator);
+        $thousands = mb_strpos($value, self::$thousandsSeparator);
 
         if ($thousands === false && $decimal === false) {
-            return round(floatval($value), 4);
+            return round(floatval($value), 4) * $negativeTurn;
         }
 
         if ($thousands !== false && $decimal === false) {
-            if (mb_substr($value, -4, 1) === $this->thousandsSeparator) {
-                $value = str_replace($this->thousandsSeparator, '', $value);
+            if (mb_substr($value, -4, 1) === self::$thousandsSeparator) {
+                $value = str_replace(self::$thousandsSeparator, '', $value);
             }
         }
 
         if ($thousands === false && $decimal !== false) {
-            $value = str_replace(
-                $this->decimalSeparator,
-                '.',
-                $value
-            );
+            $value = str_replace(self::$decimalSeparator, '.', $value);
         }
 
         if ($thousands !== false && $decimal !== false) {
-            $value = str_replace($this->thousandsSeparator, '', $value);
-            $value = str_replace($this->decimalSeparator, '.', $value);
+            $value = str_replace(self::$thousandsSeparator, '', $value);
+            $value = str_replace(self::$decimalSeparator, '.', $value);
         }
 
-        return round(floatval($value), 4);
+        return round(floatval($value), 4) * $negativeTurn;
     }
 }
