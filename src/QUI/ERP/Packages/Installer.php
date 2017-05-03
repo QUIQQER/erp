@@ -40,7 +40,8 @@ class Installer extends QUI\Utils\Singleton
 
         'quiqqer/invoice' => array(
             'server' => array(
-                'git@dev.quiqqer.com:quiqqer/invoice.git'
+                'git@dev.quiqqer.com:quiqqer/invoice.git',
+                'git@dev.quiqqer.com:quiqqer/payments.git'
             )
         ),
 
@@ -49,7 +50,8 @@ class Installer extends QUI\Utils\Singleton
                 'git@dev.quiqqer.com:quiqqer/order.git',
                 'git@dev.quiqqer.com:quiqqer/products.git',
                 'git@dev.quiqqer.com:quiqqer/areas.git',
-                'git@dev.quiqqer.com:quiqqer/discount.git'
+                'git@dev.quiqqer.com:quiqqer/discount.git',
+                'git@dev.quiqqer.com:quiqqer/payments.git'
             )
         ),
 
