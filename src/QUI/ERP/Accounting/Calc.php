@@ -7,6 +7,7 @@
 namespace QUI\ERP\Accounting;
 
 use QUI;
+use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
 
 /**
@@ -405,6 +406,112 @@ class Calc
             'quiqqer/tax',
             'message.vat.text.brutto',
             array('vat' => $vat)
+        );
+    }
+
+    /**
+     * Calculates the individual amounts paid of an invoice
+     *
+     * @param Invoice\Invoice $Invoice
+     * @return array
+     */
+    public static function calculateInvoicePayments(QUI\ERP\Accounting\Invoice\Invoice $Invoice)
+    {
+        $paidData = $Invoice->getAttribute('paid_data');
+
+        if (!is_array($paidData)) {
+            $paidData = json_decode($paidData, true);
+        }
+
+        if (!is_array($paidData)) {
+            $paidData = array();
+        }
+
+        $payments = array();
+        $paidDate = 0;
+        $sum      = 0;
+        $total    = $Invoice->getAttribute('sum');
+
+        $isValidTimeStamp = function ($timestamp) {
+            return ((string)(int)$timestamp === $timestamp)
+                   && ($timestamp <= PHP_INT_MAX)
+                   && ($timestamp >= ~PHP_INT_MAX);
+        };
+
+        foreach ($paidData as $data) {
+            if (!isset($data['date']) ||
+                !isset($data['amount'])
+            ) {
+                continue;
+            }
+
+            // calculate the paid amount
+            $amount = Price::validatePrice($data['amount']);
+
+            // set the newest date
+            $date = $data['date'];
+
+            if ($isValidTimeStamp($date) === false) {
+                $date = strtotime($date);
+
+                if ($isValidTimeStamp($date) === false) {
+                    $date = time();
+                }
+            } else {
+                $date = (int)$date;
+            }
+
+            if ($date > $paidDate) {
+                $paidDate = $date;
+            }
+
+
+            // Falls das gezahlte mehr ist
+            if ($total < ($sum + $amount)) {
+                $amount = $total - $sum;
+
+                // @todo Information in Rechnung hinterlegen
+                // @todo Automatische Gutschrift erstellen
+            }
+
+            $sum = $sum + $amount;
+
+            $payments[] = array(
+                'amount'  => $amount,
+                'date'    => $date,
+                'payment' => $data['payment']
+            );
+        }
+
+        $Invoice->setAttribute('paid_data', json_encode($paidData));
+        $Invoice->setAttribute('paid_date', $paidDate);
+        $Invoice->setAttribute('paid', $sum);
+        $Invoice->setAttribute('toPay', $Invoice->getAttribute('sum') - $sum);
+
+        if ((int)$Invoice->getAttribute('toPay') === 0) {
+            $Invoice->setAttribute(
+                'paid_status',
+                QUI\ERP\Accounting\Invoice\Invoice::PAYMENT_STATUS_PAID
+            );
+        } elseif ($Invoice->getAttribute('paid') === 0) {
+            $Invoice->setAttribute(
+                'paid_status',
+                QUI\ERP\Accounting\Invoice\Invoice::PAYMENT_STATUS_OPEN
+            );
+        } elseif ($Invoice->getAttribute('toPay')
+                  && $Invoice->getAttribute('sum') != $Invoice->getAttribute('paid')
+        ) {
+            $Invoice->setAttribute(
+                'paid_status',
+                QUI\ERP\Accounting\Invoice\Invoice::PAYMENT_STATUS_PART
+            );
+        }
+
+        return array(
+            'paidData' => $paidData,
+            'paidDate' => $Invoice->getAttribute('paid_date'),
+            'paid'     => $Invoice->getAttribute('paid'),
+            'toPay'    => $Invoice->getAttribute('toPay')
         );
     }
 }
