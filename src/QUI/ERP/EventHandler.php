@@ -26,7 +26,6 @@ class EventHandler
 
     /**
      * event: on package setup
-     * - create customer group
      *
      * @param Package $Package
      */
@@ -35,24 +34,6 @@ class EventHandler
         if ($Package->getName() != 'quiqqer/erp') {
             return;
         }
-
-        // create customer group
-        $Config  = $Package->getConfig();
-        $groupId = $Config->getValue('general', 'groupId');
-
-        if (!empty($groupId)) {
-            return;
-        }
-
-        $Root = QUI::getGroups()->firstChild();
-
-        $Customer = $Root->createChild(
-            QUI::getLocale()->get('quiqqer/erp', 'customer.group.name'),
-            QUI::getUsers()->getSystemUser()
-        );
-
-        $Config->setValue('general', 'groupId', $Customer->getId());
-        $Config->save();
     }
 
     /**
