@@ -22,7 +22,8 @@
     "quiqqer\/utils": ">=1.6|dev-master|dev-dev",
     "quiqqer\/watcher": ">=0.12|dev-master|dev-dev",
     "quiqqer\/translator": "1.*|dev-master|dev-dev",
-    "quiqqer\/employee": "1.*|dev-master|dev-dev"
+    "quiqqer\/employee": "1.*|dev-master|dev-dev",
+    "quiqqer\/customer": "1.*|dev-master|dev-dev"
   },
   "autoload": {
     "psr-4": {
