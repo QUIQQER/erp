@@ -126,8 +126,10 @@ class Article implements ArticleInterface
             $this->attributes['quantity'] = $attributes['quantity'];
         }
 
-        if (isset($attributes['vat'])) {
+        if (isset($attributes['vat']) && $attributes['vat'] !== '') {
             $this->attributes['vat'] = $attributes['vat'];
+        } else {
+            $this->attributes['vat'] = '';
         }
 
         if (isset($attributes['discount'])) {
@@ -241,7 +243,7 @@ class Article implements ArticleInterface
      */
     public function getVat()
     {
-        if (isset($this->attributes['vat'])) {
+        if (isset($this->attributes['vat']) && $this->attributes['vat'] !== '') {
             return (int)$this->attributes['vat'];
         }
 
@@ -397,10 +399,10 @@ class Article implements ArticleInterface
      */
     public function toArray()
     {
-        $vat      = false;
+        $vat      = '';
         $discount = '';
 
-        if (isset($this->attributes['vat'])) {
+        if (isset($this->attributes['vat']) && $this->attributes['vat'] !== '') {
             $vat = (int)$this->attributes['vat'];
         }
 

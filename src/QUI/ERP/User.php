@@ -90,7 +90,7 @@ class User extends QUI\QDOM implements UserInterface
             }
         }
 
-        $this->id        = (int)$attributes['id'];
+        $this->id        = $attributes['id'];
         $this->isCompany = (bool)$attributes['isCompany'];
 
         $this->lang      = $attributes['lang'];
