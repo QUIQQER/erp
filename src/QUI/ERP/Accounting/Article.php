@@ -19,7 +19,10 @@ class Article implements ArticleInterface
     /**
      * @var array
      */
-    protected $attributes = array();
+    protected $attributes = array(
+        'control' => '',
+        'class'   => ''
+    );
 
     /**
      * @var bool
@@ -102,28 +105,20 @@ class Article implements ArticleInterface
      */
     public function __construct($attributes = array())
     {
-        if (isset($attributes['id'])) {
-            $this->attributes['id'] = $attributes['id'];
-        }
+        $defaults = array(
+            'id',
+            'articleNo',
+            'title',
+            'description',
+            'unitPrice',
+            'control',
+            'quantity'
+        );
 
-        if (isset($attributes['articleNo'])) {
-            $this->attributes['articleNo'] = $attributes['articleNo'];
-        }
-
-        if (isset($attributes['title'])) {
-            $this->attributes['title'] = $attributes['title'];
-        }
-
-        if (isset($attributes['description'])) {
-            $this->attributes['description'] = $attributes['description'];
-        }
-
-        if (isset($attributes['unitPrice'])) {
-            $this->attributes['unitPrice'] = $attributes['unitPrice'];
-        }
-
-        if (isset($attributes['quantity'])) {
-            $this->attributes['quantity'] = $attributes['quantity'];
+        foreach ($defaults as $key) {
+            if (isset($attributes[$key])) {
+                $this->attributes[$key] = $attributes[$key];
+            }
         }
 
         if (isset($attributes['vat']) && $attributes['vat'] !== '') {
@@ -152,6 +147,16 @@ class Article implements ArticleInterface
             $this->isEuVat  = $calc['isEuVat'];
             $this->isNetto  = $calc['isNetto'];
         }
+    }
+
+    /**
+     * Return the article view
+     *
+     * @return ArticleView
+     */
+    public function getView()
+    {
+        return new ArticleView($this);
     }
 
     /**
@@ -280,7 +285,7 @@ class Article implements ArticleInterface
     /**
      * Returns the article quantity
      *
-     * @return int
+     * @return int|bool
      */
     public function getQuantity()
     {
@@ -399,7 +404,7 @@ class Article implements ArticleInterface
      */
     public function toArray()
     {
-        $vat      = '';
+        $vat      = $this->getVat();
         $discount = '';
 
         if (isset($this->attributes['vat']) && $this->attributes['vat'] !== '') {
@@ -420,6 +425,8 @@ class Article implements ArticleInterface
             'sum'                        => $this->getSum(),
             'vat'                        => $vat,
             'discount'                   => $discount,
+            'control'                    => $this->attributes['control'],
+            'class'                      => self::class,
 
             // calculated data
             'calculated_basisPrice'      => $this->basisPrice,

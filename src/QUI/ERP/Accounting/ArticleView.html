@@ -1,0 +1,31 @@
+<tr>
+    <td class="articles-article-pos">
+        {$position}
+    </td>
+    <td class="articles-article-information">
+        <div class="articles-article-information-title">
+            {$this->getAttribute('title')}
+        </div>
+        <div class="articles-article-information-description">
+            {$this->getAttribute('description')}
+        </div>
+    </td>
+
+    {if $this->getAttribute('quantity') !== false}
+    <td class="articles-article-quantity">
+        {$this->getAttribute('quantity')}
+    </td>
+    {/if}
+
+    {if $this->getAttribute('quantity') !== false}
+    <td class="articles-article-unitprice">
+        {$calculated_price}
+    </td>
+    {/if}
+
+    {if $this->getAttribute('quantity') !== false}
+    <td class="articles-article-price">
+        {$calculated_sum}
+    </td>
+    {/if}
+</tr>

@@ -136,9 +136,10 @@ class ArticleListUnique
     /**
      * Return the Article List as HTML, without CSS
      *
+     * @param string|bool $template - custom template
      * @return string
      */
-    public function toHTML()
+    public function toHTML($template = false)
     {
         $Engine   = QUI::getTemplateManager()->getEngine();
         $vatArray = array();
@@ -161,22 +162,18 @@ class ArticleListUnique
         $this->calculations['nettoSum']    = $Currency->format($this->calculations['nettoSum']);
         $this->calculations['nettoSubSum'] = $Currency->format($this->calculations['nettoSubSum']);
 
+        $pos = 1;
 
-        $articles = array_map(function ($Article) use ($Currency) {
+        $articles = array_map(function ($Article) use ($Currency, &$pos) {
             /* @var $Article Article */
-            $article = $Article->toArray();
+            $View = $Article->getView();
+            $View->setCurrency($Currency);
+            $View->setPosition($pos);
 
-            $article['unitPrice']                  = $Currency->format($article['unitPrice']);
-            $article['sum']                        = $Currency->format($article['sum']);
-            $article['calculated_basisPrice']      = $Currency->format($article['calculated_basisPrice']);
-            $article['calculated_price']           = $Currency->format($article['calculated_price']);
-            $article['calculated_sum']             = $Currency->format($article['calculated_sum']);
-            $article['calculated_nettoSum']        = $Currency->format($article['calculated_nettoSum']);
-            $article['calculated_vatArray']['sum'] = $Currency->format($article['calculated_vatArray']['sum']);
+            $pos++;
 
-            return $article;
+            return $View;
         }, $this->articles);
-
 
         // output
         $Engine->assign(array(
@@ -185,6 +182,10 @@ class ArticleListUnique
             'calculations' => $this->calculations,
             'vatArray'     => $vatArray
         ));
+
+        if ($template && file_exists($template)) {
+            return $Engine->fetch($template);
+        }
 
         return $Engine->fetch(dirname(__FILE__) . '/ArticleList.html');
     }

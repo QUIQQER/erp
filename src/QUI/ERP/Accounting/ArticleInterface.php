@@ -25,6 +25,11 @@ interface ArticleInterface
     public function __construct($attributes = array());
 
     /**
+     * @return ArticleView
+     */
+    public function getView();
+
+    /**
      * @return string
      */
     public function getTitle();

@@ -23,30 +23,8 @@
         </th>
     </tr>
 
-    {foreach $articles as $article}
-    <tr>
-        <td class="articles-article-pos" align="top">
-            {$pos}
-        </td>
-        <td class="articles-article-information" align="top">
-            <div class="articles-article-information-title">
-                {$article['title']}
-            </div>
-            <div class="articles-article-information-description">
-                {$article['description']}
-            </div>
-        </td>
-        <td class="articles-article-quantity" align="top">
-            {$article['quantity']}
-        </td>
-        <td class="articles-article-unitprice" align="top">
-            {$article['calculated_price']}
-        </td>
-        <td class="articles-article-price" align="top">
-            {$article['calculated_sum']}
-        </td>
-    </tr>
-    {assign var=pos value=$pos+1}
+    {foreach $articles as $Article}
+    {$Article->toHTML()}
     {/foreach}
 </table>
 
