@@ -3,12 +3,16 @@
 /**
  * This file contains QUI\ERP\Api\Coordinator
  */
+
 namespace QUI\ERP\Api;
 
 use QUI;
 
 /**
  * Class Coordinator
+ * - API point to get provider
+ * - API point to get panel menu items
+ * - API point to get number ranges
  *
  * @package QUI\ERP\Api
  */
