@@ -262,14 +262,12 @@ class Calc
                 // einfache Zahl, Währung --- kein Prozent
                 case Calc::CALCULATION_COMPLEMENT:
                     $nettoPrice = $nettoPrice + ($Discount->getValue() / $Article->getQuantity());
-//                    $Discount->setNettoSum($this, $Discount->getValue());
                     break;
 
                 // Prozent Angabe
                 case Calc::CALCULATION_PERCENTAGE:
                     $percentage = $Discount->getValue() / 100 * $nettoPrice;
                     $nettoPrice = $nettoPrice + $percentage;
-//                    $Discount->setNettoSum($this, $percentage);
                     break;
             }
         }
@@ -512,6 +510,75 @@ class Calc
             'paidDate' => $Invoice->getAttribute('paid_date'),
             'paid'     => $Invoice->getAttribute('paid'),
             'toPay'    => $Invoice->getAttribute('toPay')
+        );
+    }
+
+    /**
+     * Calculate the total of the invoice list
+     *
+     * @param array $invoiceList - list of invoice array
+     * @return array
+     */
+    public static function calculateTotal(array $invoiceList)
+    {
+        if (!count($invoiceList)) {
+            return array();
+        }
+
+        try {
+            $currency = json_decode($invoiceList[0]['currency_data'], true);
+            $Currency = QUI\ERP\Currency\Handler::getCurrency($currency['code']);
+        } catch (QUI\Exception $Exception) {
+            $Currency = QUI\ERP\Defaults::getCurrency();
+        }
+
+        $nettoTotal = 0;
+        $vatTotal   = 0;
+
+        $bruttoToPay = 0;
+        $bruttoPaid  = 0;
+        $bruttoTotal = 0;
+
+        foreach ($invoiceList as $invoice) {
+            $nettoTotal = $nettoTotal + $invoice['calculated_nettosum'];
+            $vatTotal   = $vatTotal + $invoice['calculated_vatsum'];
+
+            $bruttoTotal = $bruttoTotal + $invoice['calculated_sum'];
+            $bruttoPaid  = $bruttoPaid + $invoice['calculated_paid'];
+            $bruttoToPay = $bruttoToPay + $invoice['calculated_toPay'];
+        }
+
+        // vat calculation
+        $vatPercent = QUI\Utils\Math::percent($vatTotal, $bruttoTotal);
+        $vatToPay   = $bruttoToPay * $vatPercent / 100;
+        $vatPaid    = $bruttoPaid * $vatPercent / 100;
+
+        // netto calculation
+        $nettoPercent = QUI\Utils\Math::percent($nettoTotal, $bruttoTotal);
+        $nettoToPay   = $bruttoToPay * $nettoPercent / 100;
+        $nettoPaid    = $bruttoPaid * $nettoPercent / 100;
+
+        return array(
+            'netto_toPay'         => $nettoToPay,
+            'netto_paid'          => $nettoPaid,
+            'netto_total'         => $nettoTotal,
+            'display_netto_toPay' => $Currency->format($nettoToPay),
+            'display_netto_paid'  => $Currency->format($nettoPaid),
+            'display_netto_total' => $Currency->format($nettoTotal),
+
+            'vat_toPay'         => $vatToPay,
+            'vat_paid'          => $vatPaid,
+            'vat_total'         => $vatTotal,
+            'display_vat_toPay' => $Currency->format($vatToPay),
+            'display_vat_paid'  => $Currency->format($vatPaid),
+            'display_vat_total' => $Currency->format($vatTotal),
+
+            'brutto_toPay'         => $bruttoToPay,
+            'brutto_paid'          => $bruttoPaid,
+            'brutto_total'         => $bruttoTotal,
+            'display_brutto_toPay' => $Currency->format($bruttoToPay),
+            'display_brutto_paid'  => $Currency->format($bruttoPaid),
+            'display_brutto_total' => $Currency->format($bruttoTotal)
         );
     }
 }
