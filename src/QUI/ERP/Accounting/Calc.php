@@ -581,4 +581,23 @@ class Calc
             'display_brutto_total' => $Currency->format($bruttoTotal)
         );
     }
+
+    /**
+     * Return the total of all vats
+     *
+     * @param string|array $vatArray
+     * @return float|int
+     */
+    public static function calculateTotalVatOfInvoice($vatArray)
+    {
+        if (is_string($vatArray)) {
+            $vatArray = json_decode($vatArray, true);
+        }
+
+        return array_sum(
+            array_map(function ($vat) {
+                return $vat['sum'];
+            }, $vatArray)
+        );
+    }
 }
