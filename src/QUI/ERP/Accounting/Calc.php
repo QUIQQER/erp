@@ -9,6 +9,8 @@ namespace QUI\ERP\Accounting;
 use QUI;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
+use QUI\ERP\Accounting\Invoice\Invoice;
+use QUI\ERP\Accounting\Invoice\Handler;
 
 /**
  * Class Calc
@@ -148,7 +150,7 @@ class Calc
         $articles    = $List->getArticles();
         $isNetto     = QUI\ERP\Utils\User::isNettoUser($this->getUser());
         $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($this->getUser());
-        $Area        = QUI\ERP\Utils\User::getUserArea($this->getUser());
+//        $Area        = QUI\ERP\Utils\User::getUserArea($this->getUser());
 
         $subSum   = 0;
         $nettoSum = 0;
@@ -197,6 +199,7 @@ class Calc
         }
 
         // @todo Preisfaktoren hier
+        // nur wenn wir welche benötigen, für ERP Artikel ist dies im Moment nicht wirklich nötig
         $nettoSubSum = $nettoSum;
 
 
@@ -410,10 +413,10 @@ class Calc
     /**
      * Calculates the individual amounts paid of an invoice
      *
-     * @param Invoice\Invoice $Invoice
+     * @param Invoice $Invoice
      * @return array
      */
-    public static function calculateInvoicePayments(QUI\ERP\Accounting\Invoice\Invoice $Invoice)
+    public static function calculateInvoicePayments(Invoice $Invoice)
     {
         $paidData = $Invoice->getAttribute('paid_data');
 
@@ -486,23 +489,19 @@ class Calc
         $Invoice->setAttribute('paid', $sum);
         $Invoice->setAttribute('toPay', $Invoice->getAttribute('sum') - $sum);
 
-        if ((int)$Invoice->getAttribute('toPay') === 0) {
-            $Invoice->setAttribute(
-                'paid_status',
-                QUI\ERP\Accounting\Invoice\Invoice::PAYMENT_STATUS_PAID
-            );
-        } elseif ($Invoice->getAttribute('paid') === 0) {
-            $Invoice->setAttribute(
-                'paid_status',
-                QUI\ERP\Accounting\Invoice\Invoice::PAYMENT_STATUS_OPEN
-            );
+
+        if ($Invoice->getAttribute('paid_status') === Handler::TYPE_INVOICE_REVERSAL
+            || $Invoice->getAttribute('paid_status') === Handler::TYPE_INVOICE_CANCEL
+        ) {
+            // Leave everything as it is
+        } elseif ((float)$Invoice->getAttribute('toPay') == 0) {
+            $Invoice->setAttribute('paid_status', Invoice::PAYMENT_STATUS_PAID);
+        } elseif ($Invoice->getAttribute('paid') == 0) {
+            $Invoice->setAttribute('paid_status', Invoice::PAYMENT_STATUS_OPEN);
         } elseif ($Invoice->getAttribute('toPay')
                   && $Invoice->getAttribute('sum') != $Invoice->getAttribute('paid')
         ) {
-            $Invoice->setAttribute(
-                'paid_status',
-                QUI\ERP\Accounting\Invoice\Invoice::PAYMENT_STATUS_PART
-            );
+            $Invoice->setAttribute('paid_status', Invoice::PAYMENT_STATUS_PART);
         }
 
         return array(
