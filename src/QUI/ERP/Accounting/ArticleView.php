@@ -79,7 +79,9 @@ class ArticleView extends QUI\QDOM
     {
         $Engine   = QUI::getTemplateManager()->getEngine();
         $Currency = $this->getCurrency();
-        $article  = $this->Article->toArray();
+
+        $article = $this->Article->toArray();
+        $calc    = $article['calculated'];
 
         $this->setAttributes($article);
 
@@ -88,10 +90,10 @@ class ArticleView extends QUI\QDOM
             'position'              => $this->position,
             'unitPrice'             => $Currency->format($article['unitPrice']),
             'sum'                   => $Currency->format($article['sum']),
-            'calculated_basisPrice' => $Currency->format($article['calculated_basisPrice']),
-            'calculated_price'      => $Currency->format($article['calculated_price']),
-            'calculated_sum'        => $Currency->format($article['calculated_sum']),
-            'calculated_nettoSum'   => $Currency->format($article['calculated_nettoSum'])
+            'calculated_basisPrice' => $Currency->format($calc['basisPrice']),
+            'calculated_price'      => $Currency->format($calc['price']),
+            'calculated_sum'        => $Currency->format($calc['sum']),
+            'calculated_nettoSum'   => $Currency->format($calc['nettoSum'])
         ));
 
         return $Engine->fetch(dirname(__FILE__) . '/ArticleView.html');

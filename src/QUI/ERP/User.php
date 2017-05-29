@@ -214,6 +214,41 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
+     * @return array
+     */
+    public function getAttributes()
+    {
+        $attributes = parent::getAttributes();
+
+        $attributes['country']   = $this->getCountry();
+        $attributes['lang']      = $this->getLang();
+        $attributes['isCompany'] = $this->isCompany();
+
+        return $attributes;
+    }
+
+    /**
+     * @param string $attribute
+     * @return string
+     */
+    public function getAttribute($attribute)
+    {
+        switch ($attribute) {
+            case 'firstname':
+                return $this->firstName;
+
+            case 'lastname':
+                return $this->lastName;
+
+            case 'country':
+                return $this->getCountry();
+
+        }
+
+        return parent::getAttribute($attribute);
+    }
+
+    /**
      * @return mixed
      */
     public function getType()
@@ -233,11 +268,11 @@ class User extends QUI\QDOM implements UserInterface
      * Return the current address data
      *
      * @param int $id - only for the interface, has no effect
-     * @return array
+     * @return Address
      */
     public function getAddress($id = 0)
     {
-        return $this->address;
+        return new Address($this->address, $this);
     }
 
     /**
@@ -352,7 +387,7 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
-     * @return array
+     * @return Address
      */
     public function getStandardAddress()
     {

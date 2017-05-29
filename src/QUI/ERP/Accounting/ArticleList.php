@@ -106,7 +106,15 @@ class ArticleList extends ArticleListUnique
      */
     public function setUser(QUI\Interfaces\Users\User $User)
     {
-        $this->User = $User;
+        $this->calculated = false;
+        $this->User       = $User;
+
+        foreach ($this->articles as $Article) {
+            /* @var $Article Article */
+            $Article->setUser($User);
+        }
+
+        $this->calc();
     }
 
     /**
@@ -137,6 +145,10 @@ class ArticleList extends ArticleListUnique
      */
     public function calc($Calc = null)
     {
+        if ($this->calculated) {
+            return $this;
+        }
+
         $self = $this;
 
         if (!$Calc) {

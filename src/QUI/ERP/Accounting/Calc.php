@@ -171,11 +171,12 @@ class Calc
             $this->calcArticlePrice($Article);
 
             $articleAttributes = $Article->toArray();
+            $calculated        = $articleAttributes['calculated'];
 
-            $subSum   = $subSum + $articleAttributes['calculated_sum'];
-            $nettoSum = $nettoSum + $articleAttributes['calculated_nettoSum'];
+            $subSum   = $subSum + $calculated['sum'];
+            $nettoSum = $nettoSum + $calculated['nettoSum'];
 
-            $articleVatArray = $articleAttributes['calculated_vatArray'];
+            $articleVatArray = $calculated['vatArray'];
             $vat             = $articleAttributes['vat'];
 
             if (!isset($vatArray[$vat])) {
@@ -521,7 +522,31 @@ class Calc
     public static function calculateTotal(array $invoiceList)
     {
         if (!count($invoiceList)) {
-            return array();
+            $Currency = QUI\ERP\Defaults::getCurrency();
+            $display  = $Currency->format(0);
+
+            return array(
+                'netto_toPay'         => 0,
+                'netto_paid'          => 0,
+                'netto_total'         => 0,
+                'display_netto_toPay' => $display,
+                'display_netto_paid'  => $display,
+                'display_netto_total' => $display,
+
+                'vat_toPay'         => 0,
+                'vat_paid'          => 0,
+                'vat_total'         => 0,
+                'display_vat_toPay' => $display,
+                'display_vat_paid'  => $display,
+                'display_vat_total' => $display,
+
+                'brutto_toPay'         => 0,
+                'brutto_paid'          => 0,
+                'brutto_total'         => 0,
+                'display_brutto_toPay' => $display,
+                'display_brutto_paid'  => $display,
+                'display_brutto_total' => $display
+            );
         }
 
         try {
@@ -547,15 +572,16 @@ class Calc
             $bruttoToPay = $bruttoToPay + $invoice['calculated_toPay'];
         }
 
-        // vat calculation
-        $vatPercent = QUI\Utils\Math::percent($vatTotal, $bruttoTotal);
-        $vatToPay   = $bruttoToPay * $vatPercent / 100;
-        $vatPaid    = $bruttoPaid * $vatPercent / 100;
+        $openPercent = QUI\Utils\Math::percent($bruttoToPay, $bruttoTotal);
+        $paidPercent = QUI\Utils\Math::percent($bruttoPaid, $bruttoTotal);
 
         // netto calculation
-        $nettoPercent = QUI\Utils\Math::percent($nettoTotal, $bruttoTotal);
-        $nettoToPay   = $bruttoToPay * $nettoPercent / 100;
-        $nettoPaid    = $bruttoPaid * $nettoPercent / 100;
+        $nettoToPay = $nettoTotal * $openPercent / 100;
+        $nettoPaid  = $nettoTotal * $paidPercent / 100;
+
+        // vat calculation
+        $vatToPay = $bruttoToPay - $nettoToPay;
+        $vatPaid  = $bruttoPaid - $nettoPaid;
 
         return array(
             'netto_toPay'         => $nettoToPay,

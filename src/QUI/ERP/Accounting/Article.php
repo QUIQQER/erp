@@ -146,6 +146,8 @@ class Article implements ArticleInterface
             $this->vatArray = $calc['vatArray'];
             $this->isEuVat  = $calc['isEuVat'];
             $this->isNetto  = $calc['isNetto'];
+
+            $this->calculated = true;
         }
     }
 
@@ -279,7 +281,8 @@ class Article implements ArticleInterface
      */
     public function setUser(QUI\Interfaces\Users\User $User)
     {
-        $this->User = $User;
+        $this->calculated = false;
+        $this->User       = $User;
     }
 
     /**
@@ -377,6 +380,10 @@ class Article implements ArticleInterface
             $Calc = Calc::getInstance();
         }
 
+        if ($this->getUser()) {
+            $Calc->setUser($this->getUser());
+        }
+
         $Calc->calcArticlePrice($this, function ($data) use ($self) {
             $self->price      = $data['price'];
             $self->basisPrice = $data['basisPrice'];
@@ -417,28 +424,42 @@ class Article implements ArticleInterface
 
         return array(
             // article data
-            'title'                      => $this->getTitle(),
-            'articleNo'                  => $this->getArticleNo(),
-            'description'                => $this->getDescription(),
-            'unitPrice'                  => $this->getUnitPrice(),
-            'quantity'                   => $this->getQuantity(),
-            'sum'                        => $this->getSum(),
-            'vat'                        => $vat,
-            'discount'                   => $discount,
-            'control'                    => $this->attributes['control'],
-            'class'                      => self::class,
+            'title'       => $this->getTitle(),
+            'articleNo'   => $this->getArticleNo(),
+            'description' => $this->getDescription(),
+            'unitPrice'   => $this->getUnitPrice(),
+            'quantity'    => $this->getQuantity(),
+            'sum'         => $this->getSum(),
+            'vat'         => $vat,
+            'discount'    => $discount,
+            'control'     => $this->attributes['control'],
+            'class'       => self::class,
 
-            // calculated data
-            'calculated_basisPrice'      => $this->basisPrice,
-            'calculated_price'           => $this->price,
-            'calculated_sum'             => $this->sum,
-            'calculated_nettoBasisPrice' => $this->nettoBasisPrice,
-            'calculated_nettoPrice'      => $this->nettoPrice,
-            'calculated_nettoSubSum'     => $this->nettoSubSum,
-            'calculated_nettoSum'        => $this->nettoSum,
-            'calculated_isEuVat'         => $this->isEuVat,
-            'calculated_isNetto'         => $this->isNetto,
-            'calculated_vatArray'        => $this->vatArray
+            // calculated data (old api)
+//            'calculated_basisPrice'      => $this->basisPrice,
+//            'calculated_price'           => $this->price,
+//            'calculated_sum'             => $this->sum,
+//            'calculated_nettoBasisPrice' => $this->nettoBasisPrice,
+//            'calculated_nettoPrice'      => $this->nettoPrice,
+//            'calculated_nettoSubSum'     => $this->nettoSubSum,
+//            'calculated_nettoSum'        => $this->nettoSum,
+//            'calculated_isEuVat'         => $this->isEuVat,
+//            'calculated_isNetto'         => $this->isNetto,
+//            'calculated_vatArray'        => $this->vatArray,
+
+            // calculated data (new api)
+            'calculated'  => array(
+                'price'           => $this->price,
+                'basisPrice'      => $this->basisPrice,
+                'sum'             => $this->sum,
+                'nettoPrice'      => $this->nettoPrice,
+                'nettoBasisPrice' => $this->nettoBasisPrice,
+                'nettoSubSum'     => $this->nettoSubSum,
+                'nettoSum'        => $this->nettoSum,
+                'vatArray'        => $this->vatArray,
+                'isEuVat'         => $this->isEuVat,
+                'isNetto'         => $this->isNetto
+            )
         );
     }
 }
