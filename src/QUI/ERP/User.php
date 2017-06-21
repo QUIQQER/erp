@@ -112,10 +112,10 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Convert a User to an ERP user
      *
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      * @return self
      */
-    public static function convertUserToErpUser(QUI\Users\User $User)
+    public static function convertUserToErpUser(QUI\Interfaces\Users\User $User)
     {
         $Country = $User->getCountry();
         $country = '';
@@ -242,7 +242,6 @@ class User extends QUI\QDOM implements UserInterface
 
             case 'country':
                 return $this->getCountry();
-
         }
 
         return parent::getAttribute($attribute);
