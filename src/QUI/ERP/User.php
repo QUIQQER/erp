@@ -72,15 +72,7 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function __construct(array $attributes)
     {
-        $needle = array(
-            'id',
-            'country',
-            'username',
-            'firstname',
-            'lastname',
-            'lang',
-            'isCompany'
-        );
+        $needle = $this->getNeedles();
 
         foreach ($needle as $attribute) {
             if (!isset($attributes[$attribute])) {
@@ -107,6 +99,50 @@ class User extends QUI\QDOM implements UserInterface
         if (isset($attributes['address']) && is_array($attributes['address'])) {
             $this->address = $attributes['address'];
         }
+
+
+        $needle = array_flip($needle);
+
+        foreach ($attributes as $attribute => $value) {
+            if (!isset($needle[$attribute])) {
+                $this->setAttribute($attribute, $value);
+            }
+        }
+    }
+
+    /**
+     * Return the list of the needled attributes
+     * @return array
+     */
+    public static function getNeedles()
+    {
+        return array(
+            'id',
+            'country',
+            'username',
+            'firstname',
+            'lastname',
+            'lang',
+            'isCompany'
+        );
+    }
+
+    /**
+     * @param array $attributes - array('attribute' => 'value')
+     * @return array
+     */
+    public static function getMissingAttributes(array $attributes)
+    {
+        $missing = array();
+        $needles = self::getNeedles();
+
+        foreach ($needles as $needle) {
+            if (!isset($attributes[$needle])) {
+                $missing[] = $needle;
+            }
+        }
+
+        return $missing;
     }
 
     /**
@@ -283,11 +319,16 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
-     * @return mixed
+     * @return QUI\Countries\Country
      * @throws QUI\Exception
      */
     public function getCountry()
     {
+        if (empty($this->country)) {
+            // @todo we need a default country
+            return QUI\Countries\Manager::get('de');
+        }
+
         return QUI\Countries\Manager::get($this->country);
     }
 
