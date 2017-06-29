@@ -2,7 +2,7 @@
 <user>
     <attributes>
         <attribute>quiqqer.erp.euVatId</attribute>
-        <attribute>quiqqer.erp.taxNumber</attribute>
+        <attribute>quiqqer.erp.taxId</attribute>
         <attribute>quiqqer.erp.address</attribute>
         <attribute>quiqqer.erp.isNettoUser</attribute>
     </attributes>

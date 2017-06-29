@@ -53,7 +53,7 @@ class User
         }
 
         if ($User->getAttribute('quiqqer.erp.euVatId')
-            || $User->getAttribute('quiqqer.erp.taxNumber')
+            || $User->getAttribute('quiqqer.erp.taxId')
         ) {
             return self::IS_NETTO_USER;
         }

@@ -66,7 +66,7 @@
             <de><![CDATA[Umsatzsteuer-ID]]></de>
             <en><![CDATA[Tax EU-ID]]></en>
         </locale>
-        <locale name="user.settings.taxNumber">
+        <locale name="user.settings.taxId">
             <de><![CDATA[Steuernummer]]></de>
             <en><![CDATA[Tax number]]></en>
         </locale>
