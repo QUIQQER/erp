@@ -81,4 +81,11 @@
         </locale>
     </groups>
 
+    <groups name="quiqqer/erp" datatype="js">
+        <locale name="comments.message.no.comments">
+            <de><![CDATA[Keine Daten vorhanden]]></de>
+            <en><![CDATA[No data available]]></en>
+        </locale>
+    </groups>
+
 </locales>

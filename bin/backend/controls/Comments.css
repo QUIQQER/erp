@@ -1,0 +1,22 @@
+.quiqqer-erp-comments {
+    float: left;
+    width: 100%;
+}
+
+.quiqqer-erp-comments-comment {
+    background: #f7f7f7;
+    float: left;
+    margin-bottom: 5px;
+    padding: 10px;
+    width: 100%;
+}
+
+.quiqqer-erp-comments-comment-date {
+    float: left;
+}
+
+.quiqqer-erp-comments-comment-message {
+    clear: both;
+    float: left;
+    width: 100%;
+}
