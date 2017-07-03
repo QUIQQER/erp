@@ -103,7 +103,6 @@ class ArticleListUnique
         return $this->articles;
     }
 
-
     /**
      * Generates a storable json representation of the list
      * Alias for serialize()

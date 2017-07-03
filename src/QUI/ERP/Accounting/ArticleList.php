@@ -32,6 +32,11 @@ class ArticleList extends ArticleListUnique
     protected $User = null;
 
     /**
+     * @var QUI\ERP\Currency\Currency
+     */
+    protected $Currency = null;
+
+    /**
      * @var int|float|double
      */
     protected $subSum;
@@ -125,6 +130,64 @@ class ArticleList extends ArticleListUnique
     public function getUser()
     {
         return $this->User;
+    }
+
+    /**
+     * Return the currency
+     *
+     * @return QUI\ERP\Currency\Currency
+     */
+    public function getCurrency()
+    {
+        return $this->Currency;
+    }
+
+    /**
+     * Set the currency for the list
+     *
+     * @param QUI\ERP\Currency\Currency $Currency
+     */
+    public function setCurrency(QUI\ERP\Currency\Currency $Currency)
+    {
+        $this->Currency = $Currency;
+    }
+
+    /**
+     * Return the list as an array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        $data = parent::toArray();
+
+        if (empty($data['calculations'])) {
+            return $data;
+        }
+
+        $Currency = $this->getCurrency();
+
+        // format
+        $articles     = $data['articles'];
+        $calculations = $data['calculations'];
+
+        $calculations['vatSum'] = QUI\ERP\Accounting\Calc::calculateTotalVatOfInvoice(
+            $calculations['vatArray']
+        );
+
+        $calculations['display_subSum'] = $Currency->format($calculations['subSum']);
+        $calculations['display_sum']    = $Currency->format($calculations['sum']);
+        $calculations['display_vatSum'] = $Currency->format($calculations['vatSum']);
+
+        foreach ($articles as $key => $article) {
+            $articles[$key]['display_sum']       = $Currency->format($article['sum']);
+            $articles[$key]['display_unitPrice'] = $Currency->format($article['unitPrice']);
+        }
+
+        $data['articles']     = $articles;
+        $data['calculations'] = $calculations;
+
+        return $data;
     }
 
     /**
