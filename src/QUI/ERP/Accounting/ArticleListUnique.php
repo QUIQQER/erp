@@ -56,6 +56,7 @@ class ArticleListUnique
         }
 
         $this->calculations = $attributes['calculations'];
+        $this->showHeader   = isset($attributes['showHeader']) ? $attributes['showHeader'] : true;
     }
 
     /**
@@ -104,6 +105,16 @@ class ArticleListUnique
     }
 
     /**
+     * Return the number of articles
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->articles);
+    }
+
+    /**
      * Generates a storable json representation of the list
      * Alias for serialize()
      *
@@ -130,6 +141,22 @@ class ArticleListUnique
             'articles'     => $articles,
             'calculations' => $this->calculations
         );
+    }
+
+    /**
+     * Display of the header = true
+     */
+    public function displayHeader()
+    {
+        $this->showHeader = true;
+    }
+
+    /**
+     * Display of the header = false
+     */
+    public function hideHeader()
+    {
+        $this->showHeader = false;
     }
 
     /**
@@ -176,6 +203,7 @@ class ArticleListUnique
 
         // output
         $Engine->assign(array(
+            'showHeader'   => $this->showHeader,
             'this'         => $this,
             'articles'     => $articles,
             'calculations' => $this->calculations,
@@ -201,5 +229,15 @@ class ArticleListUnique
         $style .= '</style>';
 
         return $style . $this->toHTML();
+    }
+
+    /**
+     * Alias for toHTMLWithCSS
+     *
+     * @return string
+     */
+    public function render()
+    {
+        return $this->toHTMLWithCSS();
     }
 }

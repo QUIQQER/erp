@@ -1,7 +1,9 @@
+{if $showHeader}
 <!-- articles -->
 <h1 class="articles-header">
     {locale group="quiqqer/erp" var="article.list.articles.title"}
 </h1>
+{/if}
 
 {assign var=pos value=1}
 <table class="articles-article">
@@ -24,7 +26,7 @@
     </tr>
 
     {foreach $articles as $Article}
-    {$Article->toHTML()}
+        {$Article->toHTML()}
     {/foreach}
 </table>
 

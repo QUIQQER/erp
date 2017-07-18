@@ -54,7 +54,6 @@
             <de><![CDATA[Summe:]]></de>
             <en><![CDATA[Sum total:]]></en>
         </locale>
-
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">

@@ -424,6 +424,7 @@ class Article implements ArticleInterface
 
         return array(
             // article data
+            'id'          => $this->getId(),
             'title'       => $this->getTitle(),
             'articleNo'   => $this->getArticleNo(),
             'description' => $this->getDescription(),
