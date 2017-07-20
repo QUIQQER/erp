@@ -58,8 +58,13 @@ class User
             return self::IS_NETTO_USER;
         }
 
-        $Package = QUI::getPackage('quiqqer/tax');
-        $Config  = $Package->getConfig();
+        try {
+            $Package = QUI::getPackage('quiqqer/tax');
+        } catch (QUI\Exception $Exception) {
+            return self::IS_BRUTTO_USER;
+        }
+
+        $Config = $Package->getConfig();
 
         try {
             $Address = self::getUserERPAddress($User);
