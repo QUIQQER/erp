@@ -13,6 +13,7 @@ use QUI\Interfaces\Users\User as UserInterface;
  * Class User
  * ERP User, an user object compatible to the QUIQQER User Interface
  *
+ * @todo implement UUID
  * @package QUI\ERP
  */
 class User extends QUI\QDOM implements UserInterface
@@ -21,6 +22,11 @@ class User extends QUI\QDOM implements UserInterface
      * @var int
      */
     protected $id;
+
+    /**
+     * @var mixed
+     */
+    protected $uuid;
 
     /**
      * @var string
@@ -77,7 +83,7 @@ class User extends QUI\QDOM implements UserInterface
         foreach ($needle as $attribute) {
             if (!isset($attributes[$attribute])) {
                 throw new QUI\ERP\Exception(
-                    'Missing attribute:' . $attribute
+                    'Missing attribute:'.$attribute
                 );
             }
         }
@@ -90,6 +96,10 @@ class User extends QUI\QDOM implements UserInterface
         $this->firstName = $attributes['firstname'];
         $this->lastName  = $attributes['lastname'];
         $this->country   = $attributes['country'];
+
+        if (isset($attributes['uuid'])) {
+            $this->uuid = $attributes['uuid'];
+        }
 
         if (isset($attributes['data']) && is_array($attributes['data'])) {
             $this->data = $attributes['data'];
@@ -217,9 +227,17 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * @return mixed
      */
+    public function getUniqueId()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getName()
     {
-        return $this->firstName . ' ' . $this->lastName;
+        return $this->firstName.' '.$this->lastName;
     }
 
     /**
