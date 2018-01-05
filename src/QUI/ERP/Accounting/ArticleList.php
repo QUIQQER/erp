@@ -139,7 +139,22 @@ class ArticleList extends ArticleListUnique
      */
     public function getCurrency()
     {
-        return $this->Currency;
+        if (!is_null($this->Currency)) {
+            return $this->Currency;
+        }
+
+        if (is_array($this->currencyData) && !empty($this->currencyData['currency_code'])) {
+            try {
+                $this->Currency = QUI\ERP\Currency\Handler::getCurrency(
+                    $this->currencyData['currency_code']
+                );
+
+                return $this->Currency;
+            } catch (QUI\Exception $Exception) {
+            }
+        }
+
+        return QUI\ERP\Defaults::getCurrency();
     }
 
     /**
