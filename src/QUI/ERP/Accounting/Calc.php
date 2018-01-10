@@ -295,7 +295,7 @@ class Calc
         );
 
         QUI\ERP\Debug::getInstance()->log(
-            'Kalkulierter Artikel Preis ' . $Article->getId(),
+            'Kalkulierter Artikel Preis '.$Article->getId(),
             'quiqqer/erp'
         );
 
@@ -416,10 +416,42 @@ class Calc
      *
      * @param Invoice $Invoice
      * @return array
+     * @deprecated use calculatePayments
      */
     public static function calculateInvoicePayments(Invoice $Invoice)
     {
-        $paidData = $Invoice->getAttribute('paid_data');
+        return self::calculatePayments($Invoice);
+    }
+
+    /**
+     * Calculates the individual amounts paid of an invoice / order
+     *
+     * @param Invoice|QUI\ERP\Order\AbstractOrder $ToCalculate
+     * @return array
+     *
+     * @throws QUI\ERP\Exception
+     */
+    public static function calculatePayments($ToCalculate)
+    {
+        function isAllowed($ToCalculate)
+        {
+            if ($ToCalculate instanceof Invoice) {
+                return true;
+            }
+
+            if ($ToCalculate instanceof QUI\ERP\Order\AbstractOrder) {
+                return true;
+            }
+
+            return false;
+        }
+
+        if (isAllowed($ToCalculate) === false) {
+            throw new QUI\ERP\Exception('Object is not allowed to calculate');
+        }
+
+
+        $paidData = $ToCalculate->getAttribute('paid_data');
 
         if (!is_array($paidData)) {
             $paidData = json_decode($paidData, true);
@@ -432,7 +464,7 @@ class Calc
         $payments = array();
         $paidDate = 0;
         $sum      = 0;
-        $total    = $Invoice->getAttribute('sum');
+        $total    = $ToCalculate->getAttribute('sum');
 
         $isValidTimeStamp = function ($timestamp) {
             return ((string)(int)$timestamp === $timestamp)
@@ -485,31 +517,32 @@ class Calc
             );
         }
 
-        $Invoice->setAttribute('paid_data', json_encode($paidData));
-        $Invoice->setAttribute('paid_date', $paidDate);
-        $Invoice->setAttribute('paid', $sum);
-        $Invoice->setAttribute('toPay', $Invoice->getAttribute('sum') - $sum);
+        $ToCalculate->setAttribute('paid_data', json_encode($paidData));
+        $ToCalculate->setAttribute('paid_date', $paidDate);
+        $ToCalculate->setAttribute('paid', $sum);
+        $ToCalculate->setAttribute('toPay', $ToCalculate->getAttribute('sum') - $sum);
 
+        echo $ToCalculate->getAttribute('toPay');
 
-        if ($Invoice->getAttribute('paid_status') === Handler::TYPE_INVOICE_REVERSAL
-            || $Invoice->getAttribute('paid_status') === Handler::TYPE_INVOICE_CANCEL
+        if ($ToCalculate->getAttribute('paid_status') === Handler::TYPE_INVOICE_REVERSAL
+            || $ToCalculate->getAttribute('paid_status') === Handler::TYPE_INVOICE_CANCEL
         ) {
             // Leave everything as it is
-        } elseif ((float)$Invoice->getAttribute('toPay') == 0) {
-            $Invoice->setAttribute('paid_status', Invoice::PAYMENT_STATUS_PAID);
-        } elseif ($Invoice->getAttribute('paid') == 0) {
-            $Invoice->setAttribute('paid_status', Invoice::PAYMENT_STATUS_OPEN);
-        } elseif ($Invoice->getAttribute('toPay')
-                  && $Invoice->getAttribute('sum') != $Invoice->getAttribute('paid')
+        } elseif ((float)$ToCalculate->getAttribute('toPay') == 0) {
+            $ToCalculate->setAttribute('paid_status', Invoice::PAYMENT_STATUS_PAID);
+        } elseif ($ToCalculate->getAttribute('paid') == 0) {
+            $ToCalculate->setAttribute('paid_status', Invoice::PAYMENT_STATUS_OPEN);
+        } elseif ($ToCalculate->getAttribute('toPay')
+                  && $ToCalculate->getAttribute('sum') != $ToCalculate->getAttribute('paid')
         ) {
-            $Invoice->setAttribute('paid_status', Invoice::PAYMENT_STATUS_PART);
+            $ToCalculate->setAttribute('paid_status', Invoice::PAYMENT_STATUS_PART);
         }
 
         return array(
             'paidData' => $paidData,
-            'paidDate' => $Invoice->getAttribute('paid_date'),
-            'paid'     => $Invoice->getAttribute('paid'),
-            'toPay'    => $Invoice->getAttribute('toPay')
+            'paidDate' => $ToCalculate->getAttribute('paid_date'),
+            'paid'     => $ToCalculate->getAttribute('paid'),
+            'toPay'    => $ToCalculate->getAttribute('toPay')
         );
     }
 
