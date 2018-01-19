@@ -16,6 +16,7 @@ use QUI\ERP\Accounting\Invoice\InvoiceTemporary;
 /**
  * Class CashInputs
  *
+ * @deprecated wird abgelöst von Transactions
  * @package QUI\ERP\Payments
  */
 class CashInputs extends QUI\Utils\Singleton

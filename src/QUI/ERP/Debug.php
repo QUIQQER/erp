@@ -87,8 +87,11 @@ class Debug
                 Log::LEVEL_DEBUG,
                 array(
                     'source' => $source
-                )
+                ),
+                'erp-debug',
+                true
             );
+
             return;
         }
 
@@ -97,7 +100,9 @@ class Debug
             Log::LEVEL_DEBUG,
             array(
                 'source' => $source
-            )
+            ),
+            'erp-debug',
+            true
         );
     }
 }

@@ -131,6 +131,7 @@ class User
      *
      * @param UserInterface $User
      * @return bool|QUI\ERP\Areas\Area
+     * @throws QUI\Exception
      */
     public static function getUserArea(UserInterface $User)
     {
@@ -185,5 +186,55 @@ class User
     public static function getShopArea()
     {
         return QUI\ERP\Defaults::getArea();
+    }
+
+    /**
+     * Filter unwanted user attributes
+     * Therefore we can use the attributes in the ERP stack
+     *
+     * @param $attributes
+     * @return array
+     */
+    public static function filterCustomerAttributes($attributes = array())
+    {
+        if (!is_array($attributes)) {
+            return [];
+        }
+
+        $needle = [
+            'uuid',
+            'id',
+            'email',
+            'lang',
+            'usergroup',
+            'username',
+            'active',
+            'regdate',
+            'lastvisit',
+            'lastedit',
+
+            'firstname',
+            'lastname',
+            'usertitle',
+            'company',
+            'birthday',
+            'avatar',
+
+            'quiqqer.erp.euVatId',
+            'quiqqer.erp.taxId',
+            'quiqqer.erp.address',
+            'quiqqer.erp.isNettoUser'
+        ];
+
+        $needle = array_flip($needle);
+        $result = [];
+
+        foreach ($attributes as $key => $value) {
+            if (isset($needle[$key])) {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
     }
 }

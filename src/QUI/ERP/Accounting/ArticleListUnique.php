@@ -27,6 +27,11 @@ class ArticleListUnique
     protected $calculations = array();
 
     /**
+     * @var bool|mixed
+     */
+    protected $showHeader;
+
+    /**
      * ArticleList constructor.
      *
      * @param array $attributes
@@ -214,7 +219,7 @@ class ArticleListUnique
             return $Engine->fetch($template);
         }
 
-        return $Engine->fetch(dirname(__FILE__) . '/ArticleList.html');
+        return $Engine->fetch(dirname(__FILE__).'/ArticleList.html');
     }
 
     /**
@@ -225,10 +230,10 @@ class ArticleListUnique
     public function toHTMLWithCSS()
     {
         $style = '<style>';
-        $style .= file_get_contents(dirname(__FILE__) . '/ArticleList.css');
+        $style .= file_get_contents(dirname(__FILE__).'/ArticleList.css');
         $style .= '</style>';
 
-        return $style . $this->toHTML();
+        return $style.$this->toHTML();
     }
 
     /**

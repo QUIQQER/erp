@@ -416,6 +416,7 @@ class Calc
      *
      * @param Invoice $Invoice
      * @return array
+     * @throws QUI\ERP\Exception
      * @deprecated use calculatePayments
      */
     public static function calculateInvoicePayments(Invoice $Invoice)
@@ -433,38 +434,29 @@ class Calc
      */
     public static function calculatePayments($ToCalculate)
     {
-        function isAllowed($ToCalculate)
-        {
-            if ($ToCalculate instanceof Invoice) {
-                return true;
-            }
+        if (self::isAllowedForCalculation($ToCalculate) === false) {
+            QUI\ERP\Debug::getInstance()->log(
+                'Calc->calculatePayments(); Object is not allowed to calculate '.get_class($ToCalculate)
+            );
 
-            if ($ToCalculate instanceof QUI\ERP\Order\AbstractOrder) {
-                return true;
-            }
-
-            return false;
-        }
-
-        if (isAllowed($ToCalculate) === false) {
             throw new QUI\ERP\Exception('Object is not allowed to calculate');
         }
 
+        QUI\ERP\Debug::getInstance()->log(
+            'Calc->calculatePayments(); Transaction'
+        );
 
-        $paidData = $ToCalculate->getAttribute('paid_data');
+        $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
+        $transactions = $Transactions->getTransactionsByHash($ToCalculate->getHash());
 
-        if (!is_array($paidData)) {
-            $paidData = json_decode($paidData, true);
-        }
-
-        if (!is_array($paidData)) {
-            $paidData = array();
-        }
-
-        $payments = array();
+        $paidData = array();
         $paidDate = 0;
         $sum      = 0;
         $total    = $ToCalculate->getAttribute('sum');
+
+        QUI\ERP\Debug::getInstance()->log(
+            'Calc->calculatePayments(); total: '.$total
+        );
 
         $isValidTimeStamp = function ($timestamp) {
             return ((string)(int)$timestamp === $timestamp)
@@ -472,18 +464,14 @@ class Calc
                    && ($timestamp >= ~PHP_INT_MAX);
         };
 
-        foreach ($paidData as $data) {
-            if (!isset($data['date']) ||
-                !isset($data['amount'])
-            ) {
-                continue;
-            }
+        foreach ($transactions as $Transaction) {
+            /* @var $Transaction QUI\ERP\Accounting\Payments\Transactions\Transaction */
 
             // calculate the paid amount
-            $amount = Price::validatePrice($data['amount']);
+            $amount = Price::validatePrice($Transaction->getAmount());
 
             // set the newest date
-            $date = $data['date'];
+            $date = $Transaction->getDate();
 
             if ($isValidTimeStamp($date) === false) {
                 $date = strtotime($date);
@@ -510,19 +498,21 @@ class Calc
 
             $sum = $sum + $amount;
 
-            $payments[] = array(
-                'amount'  => $amount,
-                'date'    => $date,
-                'payment' => $data['payment']
+            $paidData[] = array(
+                'amount' => $amount,
+                'date'   => $date,
+                'txid'   => $Transaction->getTxId()
             );
         }
+
+        $paid  = Price::validatePrice($sum);
+        $toPay = Price::validatePrice($ToCalculate->getAttribute('sum'));
 
         $ToCalculate->setAttribute('paid_data', json_encode($paidData));
         $ToCalculate->setAttribute('paid_date', $paidDate);
         $ToCalculate->setAttribute('paid', $sum);
-        $ToCalculate->setAttribute('toPay', $ToCalculate->getAttribute('sum') - $sum);
+        $ToCalculate->setAttribute('toPay', $toPay - $paid);
 
-        echo $ToCalculate->getAttribute('toPay');
 
         if ($ToCalculate->getAttribute('paid_status') === Handler::TYPE_INVOICE_REVERSAL
             || $ToCalculate->getAttribute('paid_status') === Handler::TYPE_INVOICE_CANCEL
@@ -538,12 +528,35 @@ class Calc
             $ToCalculate->setAttribute('paid_status', Invoice::PAYMENT_STATUS_PART);
         }
 
+        QUI\ERP\Debug::getInstance()->log(array(
+            'paidData'   => $paidData,
+            'paidDate'   => $ToCalculate->getAttribute('paid_date'),
+            'paid'       => $ToCalculate->getAttribute('paid'),
+            'toPay'      => $ToCalculate->getAttribute('toPay'),
+            'paidStatus' => $ToCalculate->getAttribute('paid_status'),
+            'sum'        => $sum
+        ));
+
         return array(
-            'paidData' => $paidData,
-            'paidDate' => $ToCalculate->getAttribute('paid_date'),
-            'paid'     => $ToCalculate->getAttribute('paid'),
-            'toPay'    => $ToCalculate->getAttribute('toPay')
+            'paidData'   => $paidData,
+            'paidDate'   => $ToCalculate->getAttribute('paid_date'),
+            'paidStatus' => $ToCalculate->getAttribute('paid_status'),
+            'paid'       => $ToCalculate->getAttribute('paid'),
+            'toPay'      => $ToCalculate->getAttribute('toPay')
         );
+    }
+
+    public static function isAllowedForCalculation($ToCalculate)
+    {
+        if ($ToCalculate instanceof Invoice) {
+            return true;
+        }
+
+        if ($ToCalculate instanceof QUI\ERP\Order\AbstractOrder) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

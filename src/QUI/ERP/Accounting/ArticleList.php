@@ -88,7 +88,9 @@ class ArticleList extends ArticleListUnique
 
     /**
      * ArticleList constructor.
+     *
      * @param array $attributes
+     * @throws QUI\ERP\Exception
      */
     public function __construct(array $attributes = array())
     {
