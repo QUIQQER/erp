@@ -69,6 +69,8 @@ class ArticleListUnique
      *
      * @param string $data
      * @return ArticleListUnique
+     *
+     * @throws QUI\Exception
      */
     public static function unserialize($data)
     {
@@ -169,6 +171,8 @@ class ArticleListUnique
      *
      * @param string|bool $template - custom template
      * @return string
+     *
+     * @throws QUI\Exception
      */
     public function toHTML($template = false)
     {
@@ -226,6 +230,8 @@ class ArticleListUnique
      * Return the Article List as HTML, with CSS
      *
      * @return string
+     *
+     * @throws QUI\Exception
      */
     public function toHTMLWithCSS()
     {
@@ -240,6 +246,8 @@ class ArticleListUnique
      * Alias for toHTMLWithCSS
      *
      * @return string
+     *
+     * @throws QUI\Exception
      */
     public function render()
     {
