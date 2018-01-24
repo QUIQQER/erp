@@ -278,6 +278,7 @@ class ArticleList extends ArticleListUnique
     public function addArticle(Article $Article)
     {
         $this->articles[] = $Article;
+        $this->calculated = false;
 
         if ($this->User) {
             $Article->setUser($this->User);

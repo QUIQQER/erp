@@ -187,7 +187,7 @@ class Calc
             $vatArray[$vat]['sum'] = $vatArray[$vat]['sum'] + $articleVatArray['sum'];
         }
 
-        QUI\ERP\Debug::getInstance()->log('Berechnetet Artikelliste MwSt', 'quiqqer/erp');
+        QUI\ERP\Debug::getInstance()->log('Berechnete Artikelliste MwSt', 'quiqqer/erp');
         QUI\ERP\Debug::getInstance()->log($vatArray, 'quiqqer/erp');
 
         try {

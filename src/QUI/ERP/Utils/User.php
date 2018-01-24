@@ -52,9 +52,10 @@ class User
                 return $nettoStatus;
         }
 
-        if ($User->getAttribute('quiqqer.erp.euVatId')
-            || $User->getAttribute('quiqqer.erp.taxId')
-        ) {
+        $euVatId = $User->getAttribute('quiqqer.erp.euVatId');
+        $taxId   = $User->getAttribute('quiqqer.erp.taxId');
+
+        if (!empty($euVatId) || !empty($taxId)) {
             return self::IS_NETTO_USER;
         }
 

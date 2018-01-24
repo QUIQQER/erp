@@ -21,7 +21,7 @@ class EventHandler
      */
     public static function onAdminLoadFooter()
     {
-        echo '<script src="' . URL_OPT_DIR . 'quiqqer/erp/bin/load.js"></script>';
+        echo '<script src="'.URL_OPT_DIR.'quiqqer/erp/bin/load.js"></script>';
     }
 
     /**
