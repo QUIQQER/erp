@@ -2,6 +2,19 @@
 <quiqqer>
     <settings>
 
+        <config>
+            <section name="sites">
+                <conf name="terms_and_conditions">
+                    <type><![CDATA[string]]></type>
+                </conf>
+                <conf name="revocation">
+                    <type><![CDATA[string]]></type>
+                </conf>
+            </section>
+
+            <section name="paymentsChangeable"/>
+        </config>
+
         <window name="ERP">
 
             <title>
@@ -29,6 +42,25 @@
                         </input>
                     </settings>
 
+                    <settings>
+                        <title>
+                            <locale group="quiqqer/erp" var="menu.erp.sites.title"/>
+                        </title>
+
+                        <input conf="sites.terms_and_conditions"
+                               data-qui="controls/projects/project/site/MultiLangSelect">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.sites.terms.and.conditions"/>
+                            </text>
+                        </input>
+
+                        <input conf="sites.revocation"
+                               data-qui="controls/projects/project/site/MultiLangSelect">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.sites.revocation"/>
+                            </text>
+                        </input>
+                    </settings>
                 </category>
             </categories>
 

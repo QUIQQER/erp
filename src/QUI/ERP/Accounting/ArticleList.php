@@ -211,6 +211,8 @@ class ArticleList extends ArticleListUnique
      * Parse this ArticleList to an ArticleListUnique
      *
      * @return ArticleListUnique
+     *
+     * @throws QUI\ERP\Exception
      */
     public function toUniqueList()
     {

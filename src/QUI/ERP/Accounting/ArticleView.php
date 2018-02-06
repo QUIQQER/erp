@@ -74,6 +74,8 @@ class ArticleView extends QUI\QDOM
      * Create the html
      *
      * @return string
+     *
+     * @throws QUI\Exception
      */
     public function toHTML()
     {
@@ -96,6 +98,6 @@ class ArticleView extends QUI\QDOM
             'calculated_nettoSum'   => $Currency->format($calc['nettoSum'])
         ));
 
-        return $Engine->fetch(dirname(__FILE__) . '/ArticleView.html');
+        return $Engine->fetch(dirname(__FILE__).'/ArticleView.html');
     }
 }

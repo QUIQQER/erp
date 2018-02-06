@@ -15,6 +15,10 @@
             <de><![CDATA[Allgemein]]></de>
             <en><![CDATA[General]]></en>
         </locale>
+        <locale name="menu.erp.sites.title">
+            <de><![CDATA[Verwendete Seiten]]></de>
+            <en><![CDATA[Used sites]]></en>
+        </locale>
 
         <locale name="price.starting.from">
             <de><![CDATA[ab [price]]]></de>
@@ -77,6 +81,20 @@
         <locale name="user.profile.title">
             <de><![CDATA[Produkt Einstellungen]]></de>
             <en><![CDATA[Product settings]]></en>
+        </locale>
+
+        <locale name="profile.erp.title">
+            <de><![CDATA[Shop]]></de>
+            <en><![CDATA[Shop]]></en>
+        </locale>
+
+        <locale name="menu.erp.sites.terms.and.conditions">
+            <de><![CDATA[Allgemeine Geschäftsbedingungen]]></de>
+            <en><![CDATA[Terms and Conditions]]></en>
+        </locale>
+        <locale name="menu.erp.sites.revocation">
+            <de><![CDATA[Widerrufsbelehrung]]></de>
+            <en><![CDATA[Revocation policy]]></en>
         </locale>
     </groups>
 

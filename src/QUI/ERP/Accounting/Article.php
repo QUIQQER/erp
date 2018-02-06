@@ -247,6 +247,8 @@ class Article implements ArticleInterface
      * Return the VAT for the article
      *
      * @return int
+     *
+     * @throws QUI\Exception
      */
     public function getVat()
     {
@@ -408,6 +410,8 @@ class Article implements ArticleInterface
      * Return the article as an array
      *
      * @return array
+     *
+     * @throws QUI\Exception
      */
     public function toArray()
     {
