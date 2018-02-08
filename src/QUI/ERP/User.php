@@ -160,6 +160,8 @@ class User extends QUI\QDOM implements UserInterface
      *
      * @param QUI\Interfaces\Users\User $User
      * @return self
+     *
+     * @throws QUI\ERP\Exception
      */
     public static function convertUserToErpUser(QUI\Interfaces\Users\User $User)
     {
@@ -274,7 +276,12 @@ class User extends QUI\QDOM implements UserInterface
     {
         $attributes = parent::getAttributes();
 
-        $attributes['country']   = $this->getCountry();
+        try {
+            $attributes['country'] = $this->getCountry();
+        } catch (QUI\Exception $Exception) {
+            $attributes['country'] = '';
+        }
+
         $attributes['lang']      = $this->getLang();
         $attributes['isCompany'] = $this->isCompany();
 
