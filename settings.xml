@@ -3,6 +3,12 @@
     <settings>
 
         <config>
+            <section name="general">
+                <conf name="businessType">
+                    <type>string</type>
+                    <defaultValue>B2C</defaultValue>
+                </conf>
+            </section>
             <section name="sites">
                 <conf name="terms_and_conditions">
                     <type><![CDATA[string]]></type>
@@ -35,6 +41,28 @@
                         <title>
                             <locale group="quiqqer/erp" var="menu.erp.general.title"/>
                         </title>
+
+                        <select conf="general.businessType">
+                            <text>
+                                <locale group="quiqqer/erp" var="shop.settings.businessType"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/erp" var="shop.settings.businessType.description"/>
+                            </description>
+
+                            <option value="B2C">
+                                <locale group="quiqqer/erp" var="shop.settings.businessType.b2cOnly"/>
+                            </option>
+                            <option value="B2B">
+                                <locale group="quiqqer/erp" var="shop.settings.businessType.b2bOnly"/>
+                            </option>
+                            <option value="B2C-B2B">
+                                <locale group="quiqqer/erp" var="shop.settings.businessType.b2cAndB2b"/>
+                            </option>
+                            <option value="B2B-B2C">
+                                <locale group="quiqqer/erp" var="shop.settings.businessType.b2bAndB2c"/>
+                            </option>
+                        </select>
 
                         <input type="hidden"
                                label="false"

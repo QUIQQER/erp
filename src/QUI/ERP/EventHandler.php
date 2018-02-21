@@ -41,7 +41,6 @@ class EventHandler
      * @todo prüfung auch für steuernummer
      *
      * @param QUI\Interfaces\Users\User $User
-     * @throws QUI\ERP\Tax\Exception
      */
     public static function onUserSave(QUI\Interfaces\Users\User $User)
     {

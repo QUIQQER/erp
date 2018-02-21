@@ -35,6 +35,16 @@ class Defaults
     }
 
     /**
+     * @return QUI\Countries\Country
+     *
+     * @todo ERP standard land als einstellung
+     */
+    public static function getCountry()
+    {
+        return QUI\Countries\Manager::get('de');
+    }
+
+    /**
      * Return the default currency
      *
      * @return Currency\Currency
@@ -51,8 +61,13 @@ class Defaults
      */
     public static function getBruttoNettoStatus()
     {
-        $Package = QUI::getPackage('quiqqer/tax');
-        $Config  = $Package->getConfig();
+        try {
+            $Package = QUI::getPackage('quiqqer/tax');
+            $Config  = $Package->getConfig();
+        } catch (QUI\Exception $Exception) {
+            return QUI\ERP\Utils\User::IS_BRUTTO_USER;
+        }
+
         $isNetto = $Config->getValue('shop', 'isNetto');
 
         if ($isNetto) {

@@ -25,7 +25,6 @@
             <en><![CDATA[starting from [price]]]></en>
         </locale>
 
-
         <locale name="article.list.articles.title">
             <de><![CDATA[Produkte]]></de>
             <en><![CDATA[Products]]></en>
@@ -95,6 +94,37 @@
         <locale name="menu.erp.sites.revocation">
             <de><![CDATA[Widerrufsbelehrung]]></de>
             <en><![CDATA[Revocation policy]]></en>
+        </locale>
+
+        <locale name="shop.settings.businessType">
+            <de><![CDATA[Vertriebsart]]></de>
+            <en><![CDATA[Business type]]></en>
+        </locale>
+        <locale name="shop.settings.businessType.description">
+            <de><![CDATA[
+            Über diese Einstellung wird entschieden,
+            wie sich die Darstellung im Shop Frontend für die unterschiedlichen Kundentypen verhält.
+            ]]></de>
+            <en><![CDATA[
+            This setting is decided upon,
+            How the display in the shop frontend behaves for the different customer types.
+            ]]></en>
+        </locale>
+        <locale name="shop.settings.businessType.b2bOnly">
+            <de><![CDATA[Nur B2B]]></de>
+            <en><![CDATA[Only B2B]]></en>
+        </locale>
+        <locale name="shop.settings.businessType.b2cOnly">
+            <de><![CDATA[Nur B2C]]></de>
+            <en><![CDATA[Only B2C]]></en>
+        </locale>
+        <locale name="shop.settings.businessType.b2bAndB2c">
+            <de><![CDATA[B2B und B2C]]></de>
+            <en><![CDATA[B2B and B2C]]></en>
+        </locale>
+        <locale name="shop.settings.businessType.b2cAndB2b">
+            <de><![CDATA[B2C und B2B]]></de>
+            <en><![CDATA[B2C and B2B]]></en>
         </locale>
     </groups>
 

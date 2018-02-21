@@ -100,4 +100,12 @@ class Comments
             'time'    => time()
         );
     }
+
+    /**
+     * Clear all comments
+     */
+    public function clear()
+    {
+        $this->comments = [];
+    }
 }

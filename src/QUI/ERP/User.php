@@ -345,16 +345,19 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * @return QUI\Countries\Country
-     * @throws QUI\Exception
      */
     public function getCountry()
     {
         if (empty($this->country)) {
-            // @todo we need a default country
-            return QUI\Countries\Manager::get('de');
+            return QUI\ERP\Defaults::getCountry();
         }
 
-        return QUI\Countries\Manager::get($this->country);
+        try {
+            return QUI\Countries\Manager::get($this->country);
+        } catch (QUI\Exception $Exception) {
+        }
+
+        return QUI\ERP\Defaults::getCountry();
     }
 
     /**
@@ -480,6 +483,8 @@ class User extends QUI\QDOM implements UserInterface
      * This user has no avatar, it returned the default placeholder image
      *
      * @return QUI\Projects\Media\Image|false
+     *
+     * @throws QUI\Exception
      */
     public function getAvatar()
     {

@@ -65,8 +65,16 @@ class User
             return self::IS_BRUTTO_USER;
         }
 
-        $Config = $Package->getConfig();
+        try {
+            $Config = $Package->getConfig();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
 
+            return self::IS_NETTO_USER;
+        }
+
+        // @todo quiqqer.erp.isNettoUser beachten, die eigenschaft ist besser, gab es damals noch nicht
+        // verifizierung als unternehm einbauen
         try {
             $Address = self::getUserERPAddress($User);
 
