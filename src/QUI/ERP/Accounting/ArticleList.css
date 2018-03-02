@@ -50,6 +50,11 @@
     vertical-align: top;
 }
 
+.articles-article-information-description ul,
+.articles-article-information-description ol {
+    margin-left: 20px;
+}
+
 .articles-article-unitprice {
     text-align: right;
     vertical-align: top;

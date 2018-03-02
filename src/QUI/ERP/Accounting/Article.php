@@ -440,19 +440,7 @@ class Article implements ArticleInterface
             'control'     => $this->attributes['control'],
             'class'       => self::class,
 
-            // calculated data (old api)
-//            'calculated_basisPrice'      => $this->basisPrice,
-//            'calculated_price'           => $this->price,
-//            'calculated_sum'             => $this->sum,
-//            'calculated_nettoBasisPrice' => $this->nettoBasisPrice,
-//            'calculated_nettoPrice'      => $this->nettoPrice,
-//            'calculated_nettoSubSum'     => $this->nettoSubSum,
-//            'calculated_nettoSum'        => $this->nettoSum,
-//            'calculated_isEuVat'         => $this->isEuVat,
-//            'calculated_isNetto'         => $this->isNetto,
-//            'calculated_vatArray'        => $this->vatArray,
-
-            // calculated data (new api)
+            // calculated data
             'calculated'  => array(
                 'price'           => $this->price,
                 'basisPrice'      => $this->basisPrice,
