@@ -76,4 +76,26 @@ class Defaults
 
         return QUI\ERP\Utils\User::IS_BRUTTO_USER;
     }
+
+    /**
+     * Return the system calculation precision
+     *
+     * @return array|int|string
+     */
+    public static function getPrecision()
+    {
+        try {
+            $Package   = QUI::getPackage('quiqqer/erp');
+            $Config    = $Package->getConfig();
+            $precision = $Config->get('general', 'precision');
+
+            if ($precision) {
+                return $precision;
+            }
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+        }
+
+        return 8;
+    }
 }

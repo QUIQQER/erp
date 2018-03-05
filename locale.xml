@@ -19,6 +19,10 @@
             <de><![CDATA[Verwendete Seiten]]></de>
             <en><![CDATA[Used sites]]></en>
         </locale>
+        <locale name="menu.erp.general.numberRanges.title">
+            <de><![CDATA[Nummernkreise]]></de>
+            <en><![CDATA[Number ranges]]></en>
+        </locale>
 
         <locale name="price.starting.from">
             <de><![CDATA[ab [price]]]></de>
@@ -96,6 +100,18 @@
             <en><![CDATA[Revocation policy]]></en>
         </locale>
 
+        <locale name="shop.settings.general.precision">
+            <de><![CDATA[Verwendete Nachkommastellen]]></de>
+            <en><![CDATA[Used decimal digits]]></en>
+        </locale>
+        <locale name="shop.settings.general.precision.description">
+            <de><![CDATA[
+            Diese Einstellung legt fest mit wieviele Nachkommenstellen das System rechnen soll.
+            ]]></de>
+            <en><![CDATA[
+            This setting determines how many decimal places the system should use for calculation.
+            ]]></en>
+        </locale>
         <locale name="shop.settings.businessType">
             <de><![CDATA[Vertriebsart]]></de>
             <en><![CDATA[Business type]]></en>

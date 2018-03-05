@@ -27,11 +27,6 @@ class Calculations
     protected $Currency;
 
     /**
-     * @var integer
-     */
-    protected $defaultPrecision = 8;
-
-    /**
      * Calculations constructor.
      *
      * @param array $attributes - calculation array
@@ -67,18 +62,6 @@ class Calculations
         } catch (QUI\Exception $Exception) {
             $this->Currency = QUI\ERP\Defaults::getCurrency();
         }
-
-        try {
-            $Package   = QUI::getPackage('quiqqer/erp');
-            $Config    = $Package->getConfig();
-            $precision = $Config->get('general', 'precision');
-
-            if ($precision) {
-                $this->defaultPrecision = $precision;
-            }
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::writeDebugException($Exception);
-        }
     }
 
     /**
@@ -91,7 +74,7 @@ class Calculations
         return new CalculationValue(
             $this->attributes['sum'],
             $this->Currency,
-            $this->defaultPrecision
+            QUI\ERP\Defaults::getPrecision()
         );
     }
 
@@ -105,7 +88,7 @@ class Calculations
         return new CalculationValue(
             $this->attributes['subSum'],
             $this->Currency,
-            $this->defaultPrecision
+            QUI\ERP\Defaults::getPrecision()
         );
     }
 
@@ -126,7 +109,7 @@ class Calculations
         return new CalculationValue(
             $sum,
             $this->Currency,
-            $this->defaultPrecision
+            QUI\ERP\Defaults::getPrecision()
         );
     }
 }
