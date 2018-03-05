@@ -1,0 +1,10 @@
+<label class="quiqqer-order-customerData-edit-vatId quiqqer-erp-userProfile-vat">
+    <span class="quiqqer-frontendUsers-userdata-label">
+        {locale group="quiqqer/order" var="vatId"}
+    </span>
+    <input type="text"
+           name="vatId"
+           class="quiqqer-frontendUsers-userdata-field"
+           value="{$User->getAttribute('quiqqer.erp.euVatId')|escape:'html'}"
+    />
+</label>

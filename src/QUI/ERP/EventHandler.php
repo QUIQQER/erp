@@ -213,4 +213,66 @@ class EventHandler
             QUI\System\Log::writeException($Exception);
         }
     }
+
+    /**
+     * @param Collector $Collector
+     * @param $User
+     */
+    public static function onFrontendUserAddressCreateBegin(Collector $Collector, $User)
+    {
+        if (!QUI::getUsers()->isUser($User)) {
+            return;
+        }
+
+        try {
+            $Engine = QUI::getTemplateManager()->getEngine();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+
+            return;
+        }
+
+        $Engine->assign([
+            'User' => $User
+        ]);
+
+        try {
+            $Collector->append(
+                $Engine->fetch(dirname(__FILE__).'/FrontendUsers/createAddressBegin.html')
+            );
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+    }
+
+    /**
+     * @param Collector $Collector
+     * @param $User
+     */
+    public static function onFrontendUserAddressCreateEnd(Collector $Collector, $User)
+    {
+        if (!QUI::getUsers()->isUser($User)) {
+            return;
+        }
+
+        try {
+            $Engine = QUI::getTemplateManager()->getEngine();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+
+            return;
+        }
+
+        $Engine->assign([
+            'User' => $User
+        ]);
+
+        try {
+            $Collector->append(
+                $Engine->fetch(dirname(__FILE__).'/FrontendUsers/createAddressEnd.html')
+            );
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+    }
 }

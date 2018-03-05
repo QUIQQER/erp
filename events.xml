@@ -9,8 +9,14 @@
     <event on="onQuiqqer::frontend-users::profile::customer-data-begin"
            fire="\QUI\ERP\EventHandler::onFrontendUserCustomerBegin"
     />
-
     <event on="onQuiqqer::frontend-users::profile::user-data-middle"
            fire="\QUI\ERP\EventHandler::onFrontendUserDataMiddle"
+    />
+
+    <event on="onQuiqqer::frontend-users::user-address-create-begin"
+           fire="\QUI\ERP\EventHandler::onFrontendUserAddressCreateBegin"
+    />
+    <event on="onQuiqqer::frontend-users::user-address-create-end"
+           fire="\QUI\ERP\EventHandler::onFrontendUserAddressCreateEnd"
     />
 </events>
