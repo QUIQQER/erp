@@ -52,7 +52,7 @@ class Calculations
             'currencyData'
         ];
 
-        foreach ($attributes as $key) {
+        foreach ($needles as $key) {
             if (!isset($attributes[$key])) {
                 throw new Exception('Missing Calculations attribute');
             }
@@ -84,58 +84,49 @@ class Calculations
     /**
      * Return the sum
      *
-     * @param bool|integer $precision - optional, Returns the rounded value of val to specified precision (number of digits after the decimal point).
-     * @return float
+     * @return CalculationValue
      */
-    public function getSum($precision = false)
+    public function getSum()
     {
-        $p = $this->defaultPrecision;
-
-        if ($precision !== false) {
-            $p = $precision;
-        }
-
-        return round($this->attributes['sum'], $p);
+        return new CalculationValue(
+            $this->attributes['sum'],
+            $this->Currency,
+            $this->defaultPrecision
+        );
     }
 
     /**
      * Return the sub sum
      *
-     * @param bool|integer $precision - optional, Returns the rounded value of val to specified precision (number of digits after the decimal point).
-     * @return float
+     * @return CalculationValue
      */
-    public function getSubSum($precision = false)
+    public function getSubSum()
     {
-        $p = $this->defaultPrecision;
-
-        if ($precision !== false) {
-            $p = $precision;
-        }
-
-        return round($this->attributes['subSum'], $p);
+        return new CalculationValue(
+            $this->attributes['subSum'],
+            $this->Currency,
+            $this->defaultPrecision
+        );
     }
 
     /**
      * Return the vat sum
      *
-     * @param bool|integer $precision - optional, Returns the rounded value of val to specified precision (number of digits after the decimal point).
-     * @return int
+     * @return CalculationValue
      */
-    public function getVatSum($precision = false)
+    public function getVatSum()
     {
         $sum = 0;
         $vat = $this->attributes['vatArray'];
-
-        $p = $this->defaultPrecision;
-
-        if ($precision !== false) {
-            $p = $precision;
-        }
 
         foreach ($vat as $pc => $data) {
             $sum = $sum + $data['sum'];
         }
 
-        return round($sum, $p);
+        return new CalculationValue(
+            $sum,
+            $this->Currency,
+            $this->defaultPrecision
+        );
     }
 }
