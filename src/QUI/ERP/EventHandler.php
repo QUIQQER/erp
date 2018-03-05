@@ -71,7 +71,7 @@ class EventHandler
 
             $User->setAttribute('quiqqer.erp.euVatId', $vatId);
         } catch (QUI\Exception $Exception) {
-            QUI\System\Log::addNotice($Exception->getMessage());
+            QUI\System\Log::writeDebugException($Exception);
         }
 
         // netto brutto user status
@@ -84,12 +84,114 @@ class EventHandler
     }
 
     /**
+     * event: on user save
+     * saves the vat number
+     *
+     *
+     * @param QUI\Users\User $User
+     * @throws QUI\Exception
+     */
+    public static function onUserSaveBegin(QUI\Users\User $User)
+    {
+        if (!QUI::getUsers()->isUser($User)) {
+            return;
+        }
+
+        $Request = QUI::getRequest()->request;
+        $data    = $Request->all();
+
+        if (empty($data)) {
+            return;
+        }
+
+        if (isset($data['company'])) {
+            try {
+                $Address = $User->getStandardAddress();
+                $Address->setAttribute('company', $data['company']);
+                $Address->save();
+            } catch (QUI\Exception $Exception) {
+                QUI\System\Log::writeDebugException($Exception);
+            }
+        }
+
+        if (isset($data['vatId'])) {
+            $vatId = $data['vatId'];
+
+            if (class_exists('QUI\ERP\Tax\Utils')
+                && QUI\ERP\Tax\Utils::shouldVatIdValidationBeExecuted()
+                && !empty($vatId)) {
+                $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
+            }
+
+            // save VAT ID
+            $User->setAttribute('quiqqer.erp.euVatId', $vatId);
+        }
+    }
+
+    /**
+     * @param Collector $Collector
+     * @param QUI\Users\User $User
+     * @param $Address
+     */
+    public static function onFrontendUserCustomerBegin(Collector $Collector, $User, $Address)
+    {
+        if (!QUI::getUsers()->isUser($User)) {
+            return;
+        }
+
+        try {
+            $Engine = QUI::getTemplateManager()->getEngine();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+
+            return;
+        }
+
+        // business type
+        $businessType = 'b2c';
+
+        try {
+            $Address = $User->getStandardAddress();
+            $company = $Address->getAttribute('company');
+
+            if (!empty($company)) {
+                $businessType = 'b2b';
+            }
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+        }
+
+        if ($User->getAttribute('quiqqer.erp.euVatId')) {
+            $businessType = 'b2b';
+        }
+
+        // template data
+        $Engine->assign([
+            'User'         => $User,
+            'Address'      => $Address,
+            'businessType' => $businessType
+        ]);
+
+        try {
+            $Collector->append(
+                $Engine->fetch(dirname(__FILE__).'/FrontendUsers/customerData.html')
+            );
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+    }
+
+    /**
      * @param \Quiqqer\Engine\Collector $Collector
      * @param $User
      * @param $Address
      */
     public static function onFrontendUserDataMiddle(Collector $Collector, $User, $Address)
     {
+        if (!QUI::getUsers()->isUser($User)) {
+            return;
+        }
+
         try {
             $Engine = QUI::getTemplateManager()->getEngine();
         } catch (QUI\Exception $Exception) {
@@ -110,37 +212,5 @@ class EventHandler
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
-    }
-
-    /**
-     * event: on user save
-     * saves the vat number
-     *
-     *
-     * @param QUI\Users\User $User
-     * @throws QUI\Exception
-     */
-    public static function onUserSaveBegin(QUI\Users\User $User)
-    {
-        $Request = QUI::getRequest()->request;
-        $data    = $Request->all();
-
-        if (empty($data)) {
-            return;
-        }
-
-        if (!isset($data['vatId'])) {
-            return;
-        }
-
-        $vatId = $data['vatId'];
-
-        if (class_exists('QUI\ERP\Tax\Utils')
-            && QUI\ERP\Tax\Utils::shouldVatIdValidationBeExecuted()) {
-            $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
-        }
-
-        // save VAT ID
-        $User->setAttribute('quiqqer.erp.taxId', $vatId);
     }
 }

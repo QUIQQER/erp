@@ -126,6 +126,23 @@
             <de><![CDATA[B2C und B2B]]></de>
             <en><![CDATA[B2C and B2B]]></en>
         </locale>
+
+        <locale name="control.profile.CustomerData.businessType">
+            <de><![CDATA[Konto-Typ]]></de>
+            <en><![CDATA[Account type]]></en>
+        </locale>
+        <locale name="control.profile.CustomerData.businessType.b2b">
+            <de><![CDATA[Geschäftlich]]></de>
+            <en><![CDATA[Business]]></en>
+        </locale>
+        <locale name="control.profile.CustomerData.businessType.b2c">
+            <de><![CDATA[Privat]]></de>
+            <en><![CDATA[Private]]></en>
+        </locale>
+        <locale name="control.profile.CustomerData.company">
+            <de><![CDATA[Firma]]></de>
+            <en><![CDATA[Company]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">

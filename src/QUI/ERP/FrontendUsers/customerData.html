@@ -1,0 +1,25 @@
+<label class="quiqqer-order-customerData-edit-businessType">
+    <span class="quiqqer-frontendUsers-userdata-label">
+        {locale group="quiqqer/erp" var="control.profile.CustomerData.businessType"}
+    </span>
+    <select name="businessType" data-qui="package/quiqqer/erp/bin/frontend/controls/frontendUsers/BusinessType">
+        <option value="b2c">
+            {locale group="quiqqer/erp" var="control.profile.CustomerData.businessType.b2c"}
+        </option>
+        <option value="b2b"{if $businessType === 'b2b'} selected="selected"{/if}>
+            {locale group="quiqqer/erp" var="control.profile.CustomerData.businessType.b2b"}
+        </option>
+    </select>
+</label>
+
+<label class="quiqqer-order-customerData-edit-company">
+    <span class="quiqqer-frontendUsers-userdata-label">
+        {locale group="quiqqer/erp" var="control.profile.CustomerData.company"}
+    </span>
+    <input type="text"
+           name="company"
+           class="quiqqer-frontendUsers-userdata-field"
+           autocomplete="organization"
+           value="{$Address->getAttribute('company')|escape:'html'}"
+    />
+</label>
