@@ -45,22 +45,12 @@ class CalculationValue
         }
 
         $this->number = $number;
-        
+
         // precision
         if (is_numeric($precision)) {
             $this->precision = $precision;
         } else {
-            try {
-                $Package   = QUI::getPackage('quiqqer/erp');
-                $Config    = $Package->getConfig();
-                $precision = $Config->get('general', 'precision');
-
-                if ($precision) {
-                    $this->precision = $precision;
-                }
-            } catch (QUI\Exception $Exception) {
-                QUI\System\Log::writeDebugException($Exception);
-            }
+            $this->precision = QUI\ERP\Defaults::getPrecision();
         }
 
         // currency

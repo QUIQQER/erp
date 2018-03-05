@@ -138,6 +138,8 @@ class Calc
      * @param ArticleList $List
      * @param callable|boolean $callback - optional, callback function for the data array
      * @return ArticleList
+     *
+     * @throws QUI\Exception
      */
     public function calcArticleList(ArticleList $List, $callback = false)
     {
@@ -154,7 +156,7 @@ class Calc
 
         $subSum   = 0;
         $nettoSum = 0;
-        $vatArray = array();
+        $vatArray = [];
 
         /* @var $Article Article */
         foreach ($articles as $Article) {
@@ -162,7 +164,7 @@ class Calc
             try {
                 QUI::getEvents()->fireEvent(
                     'onQuiqqerErpCalcArticleListArticle',
-                    array($this, $Article)
+                    [$this, $Article]
                 );
             } catch (QUI\Exception $Exception) {
                 QUI\System\Log::write($Exception->getMessage(), QUI\System\Log::LEVEL_ERROR);
@@ -193,7 +195,7 @@ class Calc
         try {
             QUI::getEvents()->fireEvent(
                 'onQuiqqerErpCalcArticleList',
-                array($this, $List, $nettoSum)
+                [$this, $List, $nettoSum]
             );
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::write($Exception->getMessage(), QUI\System\Log::LEVEL_ERROR);
@@ -205,8 +207,8 @@ class Calc
 
 
         // vat text
-        $vatLists  = array();
-        $vatText   = array();
+        $vatLists  = [];
+        $vatText   = [];
         $bruttoSum = $nettoSum;
 
         foreach ($vatArray as $vatEntry) {
@@ -219,7 +221,7 @@ class Calc
             $vatText[$vat] = self::getVatText($vat, $this->getUser());
         }
 
-        $callback(array(
+        $callback([
             'sum'          => $bruttoSum,
             'subSum'       => $subSum,
             'nettoSum'     => $nettoSum,
@@ -229,7 +231,7 @@ class Calc
             'isEuVat'      => $isEuVatUser,
             'isNetto'      => $isNetto,
             'currencyData' => $this->getCurrency()->toArray()
-        ));
+        ]);
 
         return $List;
     }
@@ -240,6 +242,8 @@ class Calc
      * @param Article $Article
      * @param bool|callable $callback
      * @return mixed
+     *
+     * @throws QUI\Exception
      */
     public function calcArticlePrice(Article $Article, $callback = false)
     {
@@ -288,18 +292,18 @@ class Calc
         $sum        = $isNetto ? $nettoSum : $bruttoSum;
         $basisPrice = $isNetto ? $basisNettoPrice : $basisNettoPrice + ($basisNettoPrice * $vat / 100);
 
-        $vatArray = array(
+        $vatArray = [
             'vat'  => $vat,
             'sum'  => $this->round($nettoSum * ($vat / 100)),
             'text' => $this->getVatText($vat, $this->getUser())
-        );
+        ];
 
         QUI\ERP\Debug::getInstance()->log(
             'Kalkulierter Artikel Preis '.$Article->getId(),
             'quiqqer/erp'
         );
 
-        $data = array(
+        $data = [
             'basisPrice' => $basisPrice,
             'price'      => $price,
             'sum'        => $sum,
@@ -314,7 +318,7 @@ class Calc
             'vatText'      => $vatArray['text'],
             'isEuVat'      => $isEuVatUser,
             'isNetto'      => $isNetto
-        );
+        ];
 
         QUI\ERP\Debug::getInstance()->log($data, 'quiqqer/erp');
 
@@ -333,7 +337,7 @@ class Calc
     {
         $decimalSeparator  = $this->getUser()->getLocale()->getDecimalSeparator();
         $groupingSeparator = $this->getUser()->getLocale()->getGroupingSeparator();
-        $precision         = 8; // nachkommstelle beim runden -> @todo in die conf?
+        $precision         = QUI\ERP\Defaults::getPrecision();
 
         if (strpos($value, $decimalSeparator) && $decimalSeparator != ' . ') {
             $value = str_replace($groupingSeparator, '', $value);
@@ -345,11 +349,12 @@ class Calc
         return $value;
     }
 
-
     /**
      * Return the tax message for an user
      *
      * @return string
+     *
+     * @throws QUI\Exception
      */
     public function getVatTextByUser()
     {
@@ -375,7 +380,7 @@ class Calc
                 return $Locale->get(
                     'quiqqer/tax',
                     'message.vat.text.netto.EUVAT',
-                    array('vat' => $vat)
+                    ['vat' => $vat]
                 );
             }
 
@@ -387,7 +392,7 @@ class Calc
             return $Locale->get(
                 'quiqqer/tax',
                 'message.vat.text.netto',
-                array('vat' => $vat)
+                ['vat' => $vat]
             );
         }
 
@@ -395,7 +400,7 @@ class Calc
             return $Locale->get(
                 'quiqqer/tax',
                 'message.vat.text.brutto.EUVAT',
-                array('vat' => $vat)
+                ['vat' => $vat]
             );
         }
 
@@ -407,7 +412,7 @@ class Calc
         return $Locale->get(
             'quiqqer/tax',
             'message.vat.text.brutto',
-            array('vat' => $vat)
+            ['vat' => $vat]
         );
     }
 
@@ -449,7 +454,7 @@ class Calc
         $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
         $transactions = $Transactions->getTransactionsByHash($ToCalculate->getHash());
 
-        $paidData = array();
+        $paidData = [];
         $paidDate = 0;
         $sum      = 0;
         $total    = $ToCalculate->getAttribute('sum');
@@ -498,11 +503,11 @@ class Calc
 
             $sum = $sum + $amount;
 
-            $paidData[] = array(
+            $paidData[] = [
                 'amount' => $amount,
                 'date'   => $date,
                 'txid'   => $Transaction->getTxId()
-            );
+            ];
         }
 
         $paid  = Price::validatePrice($sum);
@@ -528,22 +533,22 @@ class Calc
             $ToCalculate->setAttribute('paid_status', Invoice::PAYMENT_STATUS_PART);
         }
 
-        QUI\ERP\Debug::getInstance()->log(array(
+        QUI\ERP\Debug::getInstance()->log([
             'paidData'   => $paidData,
             'paidDate'   => $ToCalculate->getAttribute('paid_date'),
             'paid'       => $ToCalculate->getAttribute('paid'),
             'toPay'      => $ToCalculate->getAttribute('toPay'),
             'paidStatus' => $ToCalculate->getAttribute('paid_status'),
             'sum'        => $sum
-        ));
+        ]);
 
-        return array(
+        return [
             'paidData'   => $paidData,
             'paidDate'   => $ToCalculate->getAttribute('paid_date'),
             'paidStatus' => $ToCalculate->getAttribute('paid_status'),
             'paid'       => $ToCalculate->getAttribute('paid'),
             'toPay'      => $ToCalculate->getAttribute('toPay')
-        );
+        ];
     }
 
     public static function isAllowedForCalculation($ToCalculate)
@@ -571,7 +576,7 @@ class Calc
             $Currency = QUI\ERP\Defaults::getCurrency();
             $display  = $Currency->format(0);
 
-            return array(
+            return [
                 'netto_toPay'         => 0,
                 'netto_paid'          => 0,
                 'netto_total'         => 0,
@@ -592,7 +597,7 @@ class Calc
                 'display_brutto_toPay' => $display,
                 'display_brutto_paid'  => $display,
                 'display_brutto_total' => $display
-            );
+            ];
         }
 
         try {
@@ -629,7 +634,7 @@ class Calc
         $vatToPay = $bruttoToPay - $nettoToPay;
         $vatPaid  = $bruttoPaid - $nettoPaid;
 
-        return array(
+        return [
             'netto_toPay'         => $nettoToPay,
             'netto_paid'          => $nettoPaid,
             'netto_total'         => $nettoTotal,
@@ -650,7 +655,7 @@ class Calc
             'display_brutto_toPay' => $Currency->format($bruttoToPay),
             'display_brutto_paid'  => $Currency->format($bruttoPaid),
             'display_brutto_total' => $Currency->format($bruttoTotal)
-        );
+        ];
     }
 
     /**

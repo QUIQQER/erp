@@ -8,6 +8,10 @@
                     <type>string</type>
                     <defaultValue>B2C</defaultValue>
                 </conf>
+                <conf name="precision">
+                    <type>integer</type>
+                    <defaultValue>8</defaultValue>
+                </conf>
             </section>
             <section name="sites">
                 <conf name="terms_and_conditions">
@@ -37,7 +41,7 @@
                     </text>
                     <icon>fa fa-info</icon>
 
-                    <settings title="numberRanges" name="numberRanges">
+                    <settings>
                         <title>
                             <locale group="quiqqer/erp" var="menu.erp.general.title"/>
                         </title>
@@ -64,6 +68,20 @@
                             </option>
                         </select>
 
+                        <input type="number" conf="general.precision">
+                            <text>
+                                <locale group="quiqqer/erp" var="shop.settings.general.precision"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/erp" var="shop.settings.general.precision.description"/>
+                            </description>
+                        </input>
+                    </settings>
+
+                    <settings title="numberRanges" name="numberRanges">
+                        <title>
+                            <locale group="quiqqer/erp" var="menu.erp.general.numberRanges.title"/>
+                        </title>
                         <input type="hidden"
                                label="false"
                                data-qui="package/quiqqer/erp/bin/backend/controls/settings/NumberRange">
