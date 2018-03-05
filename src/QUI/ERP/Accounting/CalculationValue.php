@@ -110,6 +110,6 @@ class CalculationValue
      */
     public function get()
     {
-        return $this->number;
+        return round($this->number, $this->precision);
     }
 }
