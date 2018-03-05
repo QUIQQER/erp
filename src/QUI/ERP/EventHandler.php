@@ -8,6 +8,7 @@ namespace QUI\ERP;
 
 use QUI;
 use QUI\Package\Package;
+use Quiqqer\Engine\Collector;
 
 /**
  * Class EventHandler
@@ -80,5 +81,66 @@ class EventHandler
             'quiqqer.erp.isNettoUser',
             QUI\ERP\Utils\User::getBruttoNettoUserStatus($User)
         );
+    }
+
+    /**
+     * @param \Quiqqer\Engine\Collector $Collector
+     * @param $User
+     * @param $Address
+     */
+    public static function onFrontendUserDataMiddle(Collector $Collector, $User, $Address)
+    {
+        try {
+            $Engine = QUI::getTemplateManager()->getEngine();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+
+            return;
+        }
+
+        $Engine->assign([
+            'User'    => $User,
+            'Address' => $Address
+        ]);
+
+        try {
+            $Collector->append(
+                $Engine->fetch(dirname(__FILE__).'/FrontendUsers/profileData.html')
+            );
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+    }
+
+    /**
+     * event: on user save
+     * saves the vat number
+     *
+     *
+     * @param QUI\Users\User $User
+     * @throws QUI\Exception
+     */
+    public static function onUserSaveBegin(QUI\Users\User $User)
+    {
+        $Request = QUI::getRequest()->request;
+        $data    = $Request->all();
+
+        if (empty($data)) {
+            return;
+        }
+
+        if (!isset($data['vatId'])) {
+            return;
+        }
+
+        $vatId = $data['vatId'];
+
+        if (class_exists('QUI\ERP\Tax\Utils')
+            && QUI\ERP\Tax\Utils::shouldVatIdValidationBeExecuted()) {
+            $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
+        }
+
+        // save VAT ID
+        $User->setAttribute('quiqqer.erp.taxId', $vatId);
     }
 }
