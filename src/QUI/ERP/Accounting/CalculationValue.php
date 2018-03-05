@@ -45,13 +45,23 @@ class CalculationValue
         }
 
         $this->number = $number;
-
-
+        
         // precision
         if (is_numeric($precision)) {
             $this->precision = $precision;
-        }
+        } else {
+            try {
+                $Package   = QUI::getPackage('quiqqer/erp');
+                $Config    = $Package->getConfig();
+                $precision = $Config->get('general', 'precision');
 
+                if ($precision) {
+                    $this->precision = $precision;
+                }
+            } catch (QUI\Exception $Exception) {
+                QUI\System\Log::writeDebugException($Exception);
+            }
+        }
 
         // currency
         if ($Currency instanceof QUI\ERP\Currency\Currency) {
@@ -85,11 +95,12 @@ class CalculationValue
     /**
      * Return the formatted number
      *
+     * @param null|QUI\Locale $Locale - optional, Locale object for the formatting
      * @return string
      */
-    public function formatted()
+    public function formatted($Locale = null)
     {
-        return $this->Currency->format($this->number);
+        return $this->Currency->format($this->number, $Locale);
     }
 
     /**
