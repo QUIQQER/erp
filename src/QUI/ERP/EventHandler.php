@@ -128,10 +128,12 @@ class EventHandler
         }
     }
 
+    //region user profile extension
+
     /**
      * @param Collector $Collector
      * @param QUI\Users\User $User
-     * @param $Address
+     * @param QUI\Users\Address $Address
      */
     public static function onFrontendUserCustomerBegin(Collector $Collector, $User, $Address)
     {
@@ -149,16 +151,10 @@ class EventHandler
 
         // business type
         $businessType = 'b2c';
+        $company      = $Address->getAttribute('company');
 
-        try {
-            $Address = $User->getStandardAddress();
-            $company = $Address->getAttribute('company');
-
-            if (!empty($company)) {
-                $businessType = 'b2b';
-            }
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::writeDebugException($Exception);
+        if (!empty($company)) {
+            $businessType = 'b2b';
         }
 
         if ($User->getAttribute('quiqqer.erp.euVatId')) {
@@ -183,8 +179,8 @@ class EventHandler
 
     /**
      * @param \Quiqqer\Engine\Collector $Collector
-     * @param $User
-     * @param $Address
+     * @param QUI\Users\User $User
+     * @param QUI\Users\Address $Address
      */
     public static function onFrontendUserDataMiddle(Collector $Collector, $User, $Address)
     {
@@ -216,7 +212,7 @@ class EventHandler
 
     /**
      * @param Collector $Collector
-     * @param $User
+     * @param QUI\Users\User $User
      */
     public static function onFrontendUserAddressCreateBegin(Collector $Collector, $User)
     {
@@ -247,7 +243,7 @@ class EventHandler
 
     /**
      * @param Collector $Collector
-     * @param $User
+     * @param QUI\Users\User $User
      */
     public static function onFrontendUserAddressCreateEnd(Collector $Collector, $User)
     {
@@ -275,4 +271,86 @@ class EventHandler
             QUI\System\Log::writeException($Exception);
         }
     }
+
+    /**
+     * @param Collector $Collector
+     * @param QUI\Users\User $User
+     * @param QUI\Users\Address $Address
+     */
+    public static function onFrontendUserAddressEditBegin(Collector $Collector, $User, $Address)
+    {
+        if (!QUI::getUsers()->isUser($User)) {
+            return;
+        }
+
+        try {
+            $Engine = QUI::getTemplateManager()->getEngine();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+
+            return;
+        }
+
+        // business type
+        $businessType = 'b2c';
+        $company      = $Address->getAttribute('company');
+
+        if (!empty($company)) {
+            $businessType = 'b2b';
+        }
+
+        if ($User->getAttribute('quiqqer.erp.euVatId')) {
+            $businessType = 'b2b';
+        }
+
+        // template data
+        $Engine->assign([
+            'User'         => $User,
+            'Address'      => $Address,
+            'businessType' => $businessType
+        ]);
+
+        try {
+            $Collector->append(
+                $Engine->fetch(dirname(__FILE__).'/FrontendUsers/editAddressBegin.html')
+            );
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+    }
+
+    /**
+     * @param Collector $Collector
+     * @param $User
+     * @param $Address
+     */
+    public static function onFrontendUserAddressEditEnd(Collector $Collector, $User, $Address)
+    {
+        if (!QUI::getUsers()->isUser($User)) {
+            return;
+        }
+
+        try {
+            $Engine = QUI::getTemplateManager()->getEngine();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+
+            return;
+        }
+
+        $Engine->assign([
+            'User'    => $User,
+            'Address' => $Address
+        ]);
+
+        try {
+            $Collector->append(
+                $Engine->fetch(dirname(__FILE__).'/FrontendUsers/editAddressEnd.html')
+            );
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+    }
+
+    //endregion
 }

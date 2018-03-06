@@ -6,7 +6,7 @@
         <option value="b2c">
             {locale group="quiqqer/erp" var="control.profile.CustomerData.businessType.b2c"}
         </option>
-        <option value="b2b">
+        <option value="b2b"{if $businessType === 'b2b'} selected="selected"{/if}>
             {locale group="quiqqer/erp" var="control.profile.CustomerData.businessType.b2b"}
         </option>
     </select>
@@ -20,5 +20,6 @@
            name="company"
            class="quiqqer-frontendUsers-userdata-field"
            autocomplete="organization"
+           value="{$Address->getAttribute('company')|escape:'html'}"
     />
 </label>

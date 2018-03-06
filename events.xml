@@ -19,4 +19,11 @@
     <event on="onQuiqqer::frontend-users::user-address-create-end"
            fire="\QUI\ERP\EventHandler::onFrontendUserAddressCreateEnd"
     />
+
+    <event on="onQuiqqer::frontend-users::user-address-edit-begin"
+           fire="\QUI\ERP\EventHandler::onFrontendUserAddressEditBegin"
+    />
+    <event on="onQuiqqer::frontend-users::user-address-edit-end"
+           fire="\QUI\ERP\EventHandler::onFrontendUserAddressEditEnd"
+    />
 </events>
