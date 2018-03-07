@@ -104,7 +104,7 @@ class ArticleListUnique
     /**
      * Return the list articles
      *
-     * @return array
+     * @return Article[]
      */
     public function getArticles()
     {
