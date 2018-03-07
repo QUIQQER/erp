@@ -19,10 +19,10 @@ class Article implements ArticleInterface
     /**
      * @var array
      */
-    protected $attributes = array(
+    protected $attributes = [
         'control' => '',
         'class'   => ''
-    );
+    ];
 
     /**
      * @var bool
@@ -103,9 +103,9 @@ class Article implements ArticleInterface
      *
      * @param array $attributes - (id, articleNo, title, description, unitPrice, quantity, discount)
      */
-    public function __construct($attributes = array())
+    public function __construct($attributes = [])
     {
-        $defaults = array(
+        $defaults = [
             'id',
             'articleNo',
             'title',
@@ -113,7 +113,7 @@ class Article implements ArticleInterface
             'unitPrice',
             'control',
             'quantity'
-        );
+        ];
 
         foreach ($defaults as $key) {
             if (isset($attributes[$key])) {
@@ -220,27 +220,29 @@ class Article implements ArticleInterface
     /**
      * Returns the article unit price
      *
-     * @return int|float
+     * @return QUI\ERP\Money\Price
      */
     public function getUnitPrice()
     {
+        $unitPrice = 0;
+
         if (isset($this->attributes['unitPrice'])) {
-            return $this->attributes['unitPrice'];
+            $unitPrice = $this->attributes['unitPrice'];
         }
 
-        return 0;
+        return new Price($unitPrice, QUI\ERP\Defaults::getCurrency());
     }
 
     /**
      * Returns the article total sum
      *
-     * @return int|float
+     * @return QUI\ERP\Money\Price
      */
     public function getSum()
     {
         $this->calc();
 
-        return $this->sum;
+        return new Price($this->sum, QUI\ERP\Defaults::getCurrency());
     }
 
     /**
@@ -426,22 +428,22 @@ class Article implements ArticleInterface
             $discount = $this->Discount->toJSON();
         }
 
-        return array(
+        return [
             // article data
             'id'          => $this->getId(),
             'title'       => $this->getTitle(),
             'articleNo'   => $this->getArticleNo(),
             'description' => $this->getDescription(),
-            'unitPrice'   => $this->getUnitPrice(),
+            'unitPrice'   => $this->getUnitPrice()->value(),
             'quantity'    => $this->getQuantity(),
-            'sum'         => $this->getSum(),
+            'sum'         => $this->getSum()->value(),
             'vat'         => $vat,
             'discount'    => $discount,
             'control'     => $this->attributes['control'],
             'class'       => self::class,
 
             // calculated data
-            'calculated'  => array(
+            'calculated'  => [
                 'price'           => $this->price,
                 'basisPrice'      => $this->basisPrice,
                 'sum'             => $this->sum,
@@ -452,7 +454,7 @@ class Article implements ArticleInterface
                 'vatArray'        => $this->vatArray,
                 'isEuVat'         => $this->isEuVat,
                 'isNetto'         => $this->isNetto
-            )
-        );
+            ]
+        ];
     }
 }

@@ -66,7 +66,7 @@ class Price
         $this->Currency = $Currency;
 
         $this->User      = $User;
-        $this->discounts = array();
+        $this->discounts = [];
 
         if (!QUI::getUsers()->isUser($User)) {
             $this->User = QUI::getUserBySession();
@@ -79,12 +79,12 @@ class Price
      */
     public function toArray()
     {
-        return array(
+        return [
             'price'         => $this->getNetto(),
             'currency'      => $this->getCurrency()->getCode(),
             'display'       => $this->getDisplayPrice(),
             'startingprice' => $this->isStartingPrice()
-        );
+        ];
     }
 
     /**
@@ -112,6 +112,16 @@ class Price
     }
 
     /**
+     * Alias for getPrice
+     *
+     * @return float
+     */
+    public function value()
+    {
+        return $this->getPrice();
+    }
+
+    /**
      * Return the price for the view / displaying
      *
      * @return string
@@ -124,7 +134,7 @@ class Price
             return $this->User->getLocale()->get(
                 'quiqqer/erp',
                 'price.starting.from',
-                array('price' => $price)
+                ['price' => $price]
             );
         }
 
@@ -156,14 +166,14 @@ class Price
             }
 
             if ($Disc->canCombinedWith($Discount) === false) {
-                throw new QUI\Exception(array(
+                throw new QUI\Exception([
                     'quiqqer/products',
                     'exception.discount.not.combinable',
-                    array(
+                    [
                         'id1' => $Disc->getId(),
                         'id2' => $Discount->getId()
-                    )
-                ));
+                    ]
+                ]);
             }
         }
 
