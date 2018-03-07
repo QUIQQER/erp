@@ -19,7 +19,7 @@ class Price
      * Netto Price
      * @var float
      */
-    protected $netto;
+    protected $price;
 
     /**
      * Price currency
@@ -56,13 +56,13 @@ class Price
     /**
      * Price constructor.
      *
-     * @param float|int|double|string $nettoPrice
+     * @param float|int|double|string $price
      * @param QUI\ERP\Currency\Currency $Currency
      * @param QUI\Users\User|boolean $User - optional, if no user, session user are used
      */
-    public function __construct($nettoPrice, QUI\ERP\Currency\Currency $Currency, $User = false)
+    public function __construct($price, QUI\ERP\Currency\Currency $Currency, $User = false)
     {
-        $this->netto    = $nettoPrice;
+        $this->price    = $price;
         $this->Currency = $Currency;
 
         $this->User      = $User;
@@ -80,7 +80,7 @@ class Price
     public function toArray()
     {
         return [
-            'price'         => $this->getNetto(),
+            'price'         => $this->value(),
             'currency'      => $this->getCurrency()->getCode(),
             'display'       => $this->getDisplayPrice(),
             'startingprice' => $this->isStartingPrice()
@@ -88,27 +88,13 @@ class Price
     }
 
     /**
-     * Return the netto price
+     * Return the real price
      *
      * @return float
-     */
-    public function getNetto()
-    {
-        return $this->validatePrice($this->netto);
-    }
-
-    /**
-     * Return the real price, brutto or netto
-     *
-     * @return float
-     * @todo must be implemented
      */
     public function getPrice()
     {
-        $netto = $this->getNetto();
-        $price = $this->validatePrice($netto);
-
-        return $price;
+        return $this->validatePrice($this->price);
     }
 
     /**
