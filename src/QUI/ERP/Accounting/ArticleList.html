@@ -45,22 +45,22 @@
         </td>
     </tr>
 
+    {foreach $priceFactors as $priceFactor}
+    <tr>
+        <td class="articles-sum-row-firstCell">
+            {$priceFactor.title} ({$priceFactor.valueText})
+        </td>
+        <td class="articles-sum-row-sndCell">
+            {$priceFactor.sum}
+        </td>
+    </tr>
+    {/foreach}
+
     {if count($priceFactors)}
     <tr>
         <td colspan="2"><br/></td>
     </tr>
     {/if}
-
-    {foreach $priceFactors as $priceFactor}
-    <tr>
-        <td class="articles-sum-row-firstCell">
-            {$priceFactor.title}
-        </td>
-        <td class="articles-sum-row-sndCell">
-            {$priceFactor.valueText}
-        </td>
-    </tr>
-    {/foreach}
 
     {foreach $vatArray as $vat}
     <tr>
@@ -72,12 +72,6 @@
         </td>
     </tr>
     {/foreach}
-
-    {*if count($data.attributes)}
-    <tr>
-        <td colspan="2"><br/></td>
-    </tr>
-    {/if*}
 
     <tr class="articles-sum-row-sum">
         <td class="articles-sum-row-firstCell">

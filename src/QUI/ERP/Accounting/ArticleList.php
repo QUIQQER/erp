@@ -218,7 +218,7 @@ class ArticleList extends ArticleListUnique
 
             $result['attributes'][] = [
                 'title'     => $Factor->getTitle(),
-                'value'     => $Factor->getNettoSumFormatted(),
+                'value'     => $Factor->getSumFormatted(),
                 'valueText' => $Factor->getValueText(),
             ];
         }
