@@ -19,12 +19,12 @@ class ArticleListUnique
     /**
      * @var array
      */
-    protected $articles = array();
+    protected $articles = [];
 
     /**
      * @var array
      */
-    protected $calculations = array();
+    protected $calculations = [];
 
     /**
      * @var bool|mixed
@@ -32,24 +32,31 @@ class ArticleListUnique
     protected $showHeader;
 
     /**
+     * PriceFactor List
+     *
+     * @var QUI\ERP\Products\Utils\PriceFactors
+     */
+    protected $PriceFactors = false;
+
+    /**
      * ArticleList constructor.
      *
      * @param array $attributes
      * @throws QUI\ERP\Exception
      */
-    public function __construct($attributes = array())
+    public function __construct($attributes = [])
     {
-        $needles = array('articles', 'calculations');
+        $needles = ['articles', 'calculations'];
 
         foreach ($needles as $needle) {
             if (!isset($attributes[$needle])) {
                 throw new QUI\ERP\Exception(
                     'Missing needle for ArticleListUnique',
                     400,
-                    array(
+                    [
                         'class'   => 'ArticleListUnique',
                         'missing' => $needle
-                    )
+                    ]
                 );
             }
         }
@@ -62,6 +69,14 @@ class ArticleListUnique
 
         $this->calculations = $attributes['calculations'];
         $this->showHeader   = isset($attributes['showHeader']) ? $attributes['showHeader'] : true;
+
+
+        // price factors
+        $this->PriceFactors = new QUI\ERP\Products\Utils\PriceFactors();
+
+        if (isset($attributes['priceFactors'])) {
+            $this->PriceFactors->importList($attributes['priceFactors']);
+        }
     }
 
     /**
@@ -144,10 +159,13 @@ class ArticleListUnique
             return $Article->toArray();
         }, $this->articles);
 
-        return array(
+        $this->PriceFactors->sort();
+
+        return [
             'articles'     => $articles,
-            'calculations' => $this->calculations
-        );
+            'calculations' => $this->calculations,
+            'priceFactors' => $this->PriceFactors->toArray()
+        ];
     }
 
     /**
@@ -177,7 +195,7 @@ class ArticleListUnique
     public function toHTML($template = false)
     {
         $Engine   = QUI::getTemplateManager()->getEngine();
-        $vatArray = array();
+        $vatArray = [];
 
         $Currency = QUI\ERP\Currency\Handler::getCurrency(
             $this->calculations['currencyData']['code']
@@ -210,14 +228,21 @@ class ArticleListUnique
             return $View;
         }, $this->articles);
 
+        // price factors
+        $priceFactors = $this->PriceFactors->sort();
+        $priceFactors = array_map(function ($Factor) {
+            return $Factor->toArray();
+        }, $priceFactors);
+
         // output
-        $Engine->assign(array(
+        $Engine->assign([
+            'priceFactors' => $priceFactors,
             'showHeader'   => $this->showHeader,
             'this'         => $this,
             'articles'     => $articles,
             'calculations' => $this->calculations,
             'vatArray'     => $vatArray
-        ));
+        ]);
 
         if ($template && file_exists($template)) {
             return $Engine->fetch($template);
@@ -253,4 +278,18 @@ class ArticleListUnique
     {
         return $this->toHTMLWithCSS();
     }
+
+    //region Price Factors
+
+    /**
+     * Return the price factors list (list of price indicators)
+     *
+     * @return QUI\ERP\Products\Utils\PriceFactors
+     */
+    public function getPriceFactors()
+    {
+        return $this->PriceFactors;
+    }
+
+    //endregion
 }

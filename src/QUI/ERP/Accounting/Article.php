@@ -237,6 +237,8 @@ class Article implements ArticleInterface
      * Returns the article total sum
      *
      * @return QUI\ERP\Money\Price
+     *
+     * @throws QUI\Exception
      */
     public function getSum()
     {
@@ -307,6 +309,8 @@ class Article implements ArticleInterface
      * Return the price from the article
      *
      * @return Price
+     *
+     * @throws QUI\Exception
      */
     public function getPrice()
     {
@@ -367,6 +371,8 @@ class Article implements ArticleInterface
     /**
      * @param null|Calc|QUI\ERP\User $Instance
      * @return self
+     *
+     * @throws QUI\Exception
      */
     public function calc($Instance = null)
     {

@@ -26,7 +26,7 @@
     </tr>
 
     {foreach $articles as $Article}
-        {$Article->toHTML()}
+    {$Article->toHTML()}
     {/foreach}
 </table>
 
@@ -45,23 +45,22 @@
         </td>
     </tr>
 
-    {*if count($data.attributes)}
+    {if count($priceFactors)}
     <tr>
         <td colspan="2"><br/></td>
     </tr>
-    {/if*}
+    {/if}
 
-    {*foreach $data.attributes as $attribute}
+    {foreach $priceFactors as $priceFactor}
     <tr>
         <td class="articles-sum-row-firstCell">
-            {$attribute.title}
+            {$priceFactor.title}
         </td>
         <td class="articles-sum-row-sndCell">
-            {$attribute.valueText}<br/>
-            {$attribute.value}
+            {$priceFactor.valueText}
         </td>
     </tr>
-    {/foreach*}
+    {/foreach}
 
     {foreach $vatArray as $vat}
     <tr>

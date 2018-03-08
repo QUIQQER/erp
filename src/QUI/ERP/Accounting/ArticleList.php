@@ -55,7 +55,7 @@ class ArticleList extends ArticleListUnique
      * key 19% value[sum] = sum value[text] = text value[display_sum] formatiert
      * @var array
      */
-    protected $vatArray = array();
+    protected $vatArray = [];
 
     /**
      * key 19% value[sum] = sum value[text] = text value[display_sum] formatiert
@@ -79,12 +79,12 @@ class ArticleList extends ArticleListUnique
      * Currency information
      * @var array
      */
-    protected $currencyData = array(
+    protected $currencyData = [
         'currency_sign' => '',
         'currency_code' => '',
         'user_currency' => '',
         'currency_rate' => ''
-    );
+    ];
 
     /**
      * ArticleList constructor.
@@ -92,14 +92,18 @@ class ArticleList extends ArticleListUnique
      * @param array $attributes
      * @throws QUI\ERP\Exception
      */
-    public function __construct(array $attributes = array())
+    public function __construct(array $attributes = [])
     {
         if (!isset($attributes['calculations'])) {
-            $attributes['calculations'] = array();
+            $attributes['calculations'] = [];
         }
 
         if (!isset($attributes['articles'])) {
-            $attributes['articles'] = array();
+            $attributes['articles'] = [];
+        }
+
+        if (!isset($attributes['priceFactors'])) {
+            $attributes['priceFactors'] = [];
         }
 
         parent::__construct($attributes);
@@ -110,6 +114,8 @@ class ArticleList extends ArticleListUnique
      * User for calculation
      *
      * @param QUI\Interfaces\Users\User $User
+     *
+     * @throws QUI\Exception
      */
     public function setUser(QUI\Interfaces\Users\User $User)
     {
@@ -204,6 +210,19 @@ class ArticleList extends ArticleListUnique
         $data['articles']     = $articles;
         $data['calculations'] = $calculations;
 
+        /* @var $Factor QUI\ERP\Products\Utils\PriceFactor */
+        foreach ($this->PriceFactors->sort() as $Factor) {
+            if (!$Factor->isVisible()) {
+                continue;
+            }
+
+            $result['attributes'][] = [
+                'title'     => $Factor->getTitle(),
+                'value'     => $Factor->getNettoSumFormatted(),
+                'valueText' => $Factor->getValueText(),
+            ];
+        }
+
         return $data;
     }
 
@@ -213,6 +232,7 @@ class ArticleList extends ArticleListUnique
      * @return ArticleListUnique
      *
      * @throws QUI\ERP\Exception
+     * @throws QUI\Exception
      */
     public function toUniqueList()
     {
@@ -224,6 +244,8 @@ class ArticleList extends ArticleListUnique
     /**
      * @param null|Calc $Calc
      * @return $this
+     *
+     * @throws QUI\Exception
      */
     public function calc($Calc = null)
     {
@@ -252,7 +274,7 @@ class ArticleList extends ArticleListUnique
             $self->isNetto      = $data['isNetto'];
             $self->currencyData = $data['currencyData'];
 
-            $this->calculations = array(
+            $this->calculations = [
                 'sum'          => $self->sum,
                 'subSum'       => $self->subSum,
                 'nettoSum'     => $self->nettoSum,
@@ -262,7 +284,7 @@ class ArticleList extends ArticleListUnique
                 'isEuVat'      => $self->isEuVat,
                 'isNetto'      => $self->isNetto,
                 'currencyData' => $self->currencyData
-            );
+            ];
 
             $self->calculated = true;
         });
@@ -315,7 +337,7 @@ class ArticleList extends ArticleListUnique
      */
     public function clear()
     {
-        $this->articles = array();
+        $this->articles = [];
     }
 
     /**
@@ -326,6 +348,20 @@ class ArticleList extends ArticleListUnique
     public function count()
     {
         return count($this->articles);
+    }
+
+    //endregion
+
+    //region Price Factors
+
+    /**
+     * Import a price factor list
+     *
+     * @param QUI\ERP\Products\Utils\PriceFactors $PriceFactors
+     */
+    public function importPriceFactors($PriceFactors)
+    {
+        $this->PriceFactors = $PriceFactors;
     }
 
     //endregion
