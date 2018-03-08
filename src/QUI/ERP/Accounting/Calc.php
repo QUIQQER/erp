@@ -245,7 +245,6 @@ class Calc
                     continue;
             }
 
-
             // add pricefactor VAT
             if (!($PriceFactor instanceof QUI\ERP\Products\Interfaces\PriceFactorWithVatInterface)) {
                 continue;

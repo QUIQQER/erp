@@ -231,6 +231,7 @@ class ArticleListUnique
         // price factors
         $priceFactors = $this->PriceFactors->sort();
         $priceFactors = array_map(function ($Factor) {
+            /* @var $Factor QUI\ERP\Products\Utils\PriceFactor */
             return $Factor->toArray();
         }, $priceFactors);
 
