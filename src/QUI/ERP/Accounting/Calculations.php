@@ -24,7 +24,7 @@ class Calculations
     /**
      * @var Article[]
      */
-    protected $articles;
+    protected $articles = [];
 
     /**
      * @var QUI\ERP\Currency\Currency
@@ -69,10 +69,10 @@ class Calculations
             $this->Currency = QUI\ERP\Defaults::getCurrency();
         }
 
-        if (is_array($attributes)) {
-            foreach ($attributes as $Articles) {
-                if ($Articles instanceof Article) {
-                    $this->articles[] = $Articles;
+        if (is_array($articles)) {
+            foreach ($articles as $Article) {
+                if ($Article instanceof Article) {
+                    $this->articles[] = $Article;
                 }
             }
         }
