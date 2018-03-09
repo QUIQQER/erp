@@ -80,6 +80,18 @@
             <de><![CDATA[Rechnungsadresse]]></de>
             <en><![CDATA[Billing address]]></en>
         </locale>
+        <locale name="user.settings.userNettoStatus">
+            <de><![CDATA[Preis-Berechnungsgrundlage]]></de>
+            <en><![CDATA[Price calculation basis]]></en>
+        </locale>
+        <locale name="user.settings.userNettoStatus.netto">
+            <de><![CDATA[netto]]></de>
+            <en><![CDATA[netto]]></en>
+        </locale>
+        <locale name="user.settings.userNettoStatus.brutto">
+            <de><![CDATA[brutto]]></de>
+            <en><![CDATA[brutto]]></en>
+        </locale>
 
         <locale name="user.profile.title">
             <de><![CDATA[Produkt Einstellungen]]></de>

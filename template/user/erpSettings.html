@@ -8,6 +8,22 @@
         <td>
             <label class="field-container">
                 <span class="field-container-item" style="width: 150px">
+                    {locale group="quiqqer/erp" var="user.settings.userNettoStatus"}
+                </span>
+                <span class="field-container-field">
+                    {if QUI\ERP\Utils\User::getBruttoNettoUserStatus($User) === 1}
+                    {locale group="quiqqer/erp" var="user.settings.userNettoStatus.netto"}
+                    {else}
+                    {locale group="quiqqer/erp" var="user.settings.userNettoStatus.brutto"}
+                    {/if}
+                </span>
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="field-container">
+                <span class="field-container-item" style="width: 150px">
                     {locale group="quiqqer/erp" var="user.settings.euVatId"}
                 </span>
                 <input type="text" name="quiqqer.erp.euVatId" class="field-container-field"/>
