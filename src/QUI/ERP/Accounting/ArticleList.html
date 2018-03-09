@@ -48,7 +48,7 @@
     {foreach $priceFactors as $priceFactor}
     <tr>
         <td class="articles-sum-row-firstCell">
-            {$priceFactor.title} ({$priceFactor.valueText})
+            {$priceFactor.title} {if !empty($priceFactor.valueText)}({$priceFactor.valueText}){/if}
         </td>
         <td class="articles-sum-row-sndCell">
             {$priceFactor.sum}
