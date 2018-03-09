@@ -93,6 +93,36 @@ class Calculations
     }
 
     /**
+     * Return the netto sum
+     *
+     * @return CalculationValue
+     */
+    public function getNettoSum()
+    {
+        return new CalculationValue(
+            $this->attributes['nettoSum'],
+            $this->Currency,
+            QUI\ERP\Defaults::getPrecision()
+        );
+    }
+
+    /**
+     * Return the netto subsum sum
+     *
+     * @return CalculationValue
+     */
+    public function getNettoSubSum()
+    {
+        return new CalculationValue(
+            $this->attributes['nettoSubSum'],
+            $this->Currency,
+            QUI\ERP\Defaults::getPrecision()
+        );
+    }
+
+    //region vat
+
+    /**
      * Return the vat sum
      *
      * @return CalculationValue
@@ -112,4 +142,16 @@ class Calculations
             QUI\ERP\Defaults::getPrecision()
         );
     }
+
+    /**
+     * Return the complete vat array (vat list)
+     *
+     * @return mixed
+     */
+    public function getVatArray()
+    {
+        return $this->attributes['vatArray'];
+    }
+
+    //endregion
 }
