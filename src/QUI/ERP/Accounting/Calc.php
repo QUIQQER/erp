@@ -307,6 +307,7 @@ class Calc
                 foreach ($priceFactors as $Factor) {
                     if ($Factor instanceof QUI\ERP\Products\Interfaces\PriceFactorWithVatInterface) {
                         $Factor->setSum(round($Factor->getSum() - $diff, 2));
+                        $bruttoSum = round($bruttoSum, 2);
                         break;
                     }
                 }
