@@ -22,6 +22,11 @@ class Calculations
     protected $attributes = [];
 
     /**
+     * @var Article[]
+     */
+    protected $articles;
+
+    /**
      * @var QUI\ERP\Currency\Currency
      */
     protected $Currency;
@@ -30,10 +35,11 @@ class Calculations
      * Calculations constructor.
      *
      * @param array $attributes - calculation array
+     * @param array $articles - list of articles
      *
      * @throws \QUI\ERP\Exception
      */
-    public function __construct($attributes)
+    public function __construct($attributes, $articles = [])
     {
         $needles = [
             'sum',
@@ -61,6 +67,14 @@ class Calculations
             );
         } catch (QUI\Exception $Exception) {
             $this->Currency = QUI\ERP\Defaults::getCurrency();
+        }
+
+        if (is_array($attributes)) {
+            foreach ($attributes as $Articles) {
+                if ($Articles instanceof Article) {
+                    $this->articles[] = $Articles;
+                }
+            }
         }
     }
 
@@ -107,7 +121,7 @@ class Calculations
     }
 
     /**
-     * Return the netto subsum sum
+     * Return the netto sub sum
      *
      * @return CalculationValue
      */
@@ -151,6 +165,18 @@ class Calculations
     public function getVatArray()
     {
         return $this->attributes['vatArray'];
+    }
+
+    //endregion
+
+    //region articles
+
+    /**
+     * @return Article[]
+     */
+    public function getArticles()
+    {
+        return $this->articles;
     }
 
     //endregion
