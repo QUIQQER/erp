@@ -34,7 +34,7 @@ class ArticleListUnique
     /**
      * PriceFactor List
      *
-     * @var QUI\ERP\Products\Utils\PriceFactors
+     * @var QUI\ERP\Accounting\PriceFactors\FactorList
      */
     protected $PriceFactors = false;
 
@@ -72,10 +72,21 @@ class ArticleListUnique
 
 
         // price factors
-        $this->PriceFactors = new QUI\ERP\Products\Utils\PriceFactors();
+        $this->PriceFactors = new QUI\ERP\Accounting\PriceFactors\FactorList();
 
         if (isset($attributes['priceFactors'])) {
-            $this->PriceFactors->importList($attributes['priceFactors']);
+            try {
+                $this->PriceFactors = new QUI\ERP\Accounting\PriceFactors\FactorList(
+                    $attributes['priceFactors']
+                );
+            } catch (QUI\ERP\Exception $Exception) {
+                QUI\System\Log::writeRecursive(
+                    $attributes['priceFactors'],
+                    QUI\System\Log::LEVEL_DEBUG
+                );
+
+                QUI\System\Log::writeDebugException($Exception);
+            }
         }
     }
 
@@ -159,7 +170,7 @@ class ArticleListUnique
             return $Article->toArray();
         }, $this->articles);
 
-        $this->PriceFactors->sort();
+        $this->PriceFactors->toArray();
 
         return [
             'articles'     => $articles,
@@ -228,16 +239,9 @@ class ArticleListUnique
             return $View;
         }, $this->articles);
 
-        // price factors
-        $priceFactors = $this->PriceFactors->sort();
-        $priceFactors = array_map(function ($Factor) {
-            /* @var $Factor QUI\ERP\Products\Utils\PriceFactor */
-            return $Factor->toArray();
-        }, $priceFactors);
-
         // output
         $Engine->assign([
-            'priceFactors' => $priceFactors,
+            'priceFactors' => $this->PriceFactors->toArray(),
             'showHeader'   => $this->showHeader,
             'this'         => $this,
             'articles'     => $articles,
@@ -285,7 +289,7 @@ class ArticleListUnique
     /**
      * Return the price factors list (list of price indicators)
      *
-     * @return QUI\ERP\Products\Utils\PriceFactors
+     * @return QUI\ERP\Accounting\PriceFactors\FactorList
      */
     public function getPriceFactors()
     {

@@ -210,8 +210,8 @@ class ArticleList extends ArticleListUnique
         $data['articles']     = $articles;
         $data['calculations'] = $calculations;
 
-        /* @var $Factor QUI\ERP\Products\Utils\PriceFactor */
-        foreach ($this->PriceFactors->sort() as $Factor) {
+        /* @var $Factor PriceFactors\Factor */
+        foreach ($this->PriceFactors as $Factor) {
             if (!$Factor->isVisible()) {
                 continue;
             }
@@ -219,7 +219,7 @@ class ArticleList extends ArticleListUnique
             $result['attributes'][] = [
                 'title'     => $Factor->getTitle(),
                 'value'     => $Factor->getSumFormatted(),
-                'valueText' => $Factor->getValueText(),
+                'valueText' => ''
             ];
         }
 
@@ -357,9 +357,9 @@ class ArticleList extends ArticleListUnique
     /**
      * Import a price factor list
      *
-     * @param QUI\ERP\Products\Utils\PriceFactors $PriceFactors
+     * @param QUI\ERP\Accounting\PriceFactors\FactorList $PriceFactors
      */
-    public function importPriceFactors($PriceFactors)
+    public function importPriceFactors(QUI\ERP\Accounting\PriceFactors\FactorList $PriceFactors)
     {
         $this->PriceFactors = $PriceFactors;
     }

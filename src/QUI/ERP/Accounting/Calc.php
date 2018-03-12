@@ -204,75 +204,75 @@ class Calc
         /**
          * Calc price factors
          */
-        $priceFactors   = $List->getPriceFactors()->sort();
+        $priceFactors   = $List->getPriceFactors();
         $priceFactorSum = 0;
 
         // nur wenn wir welche benötigen, für ERP Artikel ist dies im Moment nicht wirklich nötig
         $nettoSubSum = $nettoSum;
 
-        /* @var $PriceFactor QUI\ERP\Products\Utils\PriceFactor */
-        foreach ($priceFactors as $PriceFactor) {
-            switch ($PriceFactor->getCalculation()) {
-                // einfache Zahl, Währung --- kein Prozent
-                case self::CALCULATION_COMPLEMENT:
-                    $nettoSum       = $nettoSum + $PriceFactor->getValue();
-                    $priceFactorSum = $priceFactorSum + $PriceFactor->getValue();
-
-                    $PriceFactor->setNettoSum($PriceFactor->getValue());
-                    break;
-
-                // Prozent Angabe
-                case self::CALCULATION_PERCENTAGE:
-                    switch ($PriceFactor->getCalculationBasis()) {
-                        default:
-                        case self::CALCULATION_BASIS_NETTO:
-                            $percentage = $PriceFactor->getValue() / 100 * $nettoSubSum;
-                            break;
-
-                        case self::CALCULATION_BASIS_BRUTTO:
-                        case self::CALCULATION_BASIS_CURRENTPRICE:
-                            $percentage = $PriceFactor->getValue() / 100 * $nettoSum;
-                            break;
-                    }
-
-                    $PriceFactor->setNettoSum($percentage);
-
-                    $nettoSum       = $this->round($nettoSum + $percentage);
-                    $priceFactorSum = $priceFactorSum + $percentage;
-                    break;
-
-                default:
-                    continue;
-            }
-
-            // add pricefactor VAT
-            if (!($PriceFactor instanceof QUI\ERP\Products\Interfaces\PriceFactorWithVatInterface)) {
-                continue;
-            }
-
-            /* @var $PriceFactor QUI\ERP\Products\Interfaces\PriceFactorWithVatInterface */
-            $VatType = $PriceFactor->getVatType();
-            $Vat     = QUI\ERP\Tax\Utils::getTaxEntry($VatType, $Area);
-            $vatSum  = $PriceFactor->getNettoSum() * ($Vat->getValue() / 100);
-            $vat     = $Vat->getValue();
-
-            if ($isNetto) {
-                $PriceFactor->setSum($PriceFactor->getNettoSum());
-            } else {
-                $PriceFactor->setSum($vatSum + $PriceFactor->getNettoSum());
-            }
-
-            if (!isset($vatArray[$vat])) {
-                $vatArray[$vat] = [
-                    'vat'  => $vat,
-                    'text' => self::getVatText($Vat->getValue(), $this->getUser())
-                ];
-
-                $vatArray[$vat]['sum'] = 0;
-            }
-
-            $vatArray[$vat]['sum'] = $vatArray[$vat]['sum'] + $vatSum;
-        }
+        /* @var $PriceFactor QUI\ERP\Accounting\PriceFactors\Factor */
+//        foreach ($priceFactors as $PriceFactor) {
+//            switch ($PriceFactor->getCalculation()) {
+//                // einfache Zahl, Währung --- kein Prozent
+//                case self::CALCULATION_COMPLEMENT:
+//                    $nettoSum       = $nettoSum + $PriceFactor->getValue();
+//                    $priceFactorSum = $priceFactorSum + $PriceFactor->getValue();
+//
+//                    $PriceFactor->setNettoSum($PriceFactor->getValue());
+//                    break;
+//
+//                // Prozent Angabe
+//                case self::CALCULATION_PERCENTAGE:
+//                    switch ($PriceFactor->getCalculationBasis()) {
+//                        default:
+//                        case self::CALCULATION_BASIS_NETTO:
+//                            $percentage = $PriceFactor->getValue() / 100 * $nettoSubSum;
+//                            break;
+//
+//                        case self::CALCULATION_BASIS_BRUTTO:
+//                        case self::CALCULATION_BASIS_CURRENTPRICE:
+//                            $percentage = $PriceFactor->getValue() / 100 * $nettoSum;
+//                            break;
+//                    }
+//
+//                    $PriceFactor->setNettoSum($percentage);
+//
+//                    $nettoSum       = $this->round($nettoSum + $percentage);
+//                    $priceFactorSum = $priceFactorSum + $percentage;
+//                    break;
+//
+//                default:
+//                    continue;
+//            }
+//
+//            // add pricefactor VAT
+//            if (!($PriceFactor instanceof QUI\ERP\Products\Interfaces\PriceFactorWithVatInterface)) {
+//                continue;
+//            }
+//
+//            /* @var $PriceFactor QUI\ERP\Products\Interfaces\PriceFactorWithVatInterface */
+//            $VatType = $PriceFactor->getVatType();
+//            $Vat     = QUI\ERP\Tax\Utils::getTaxEntry($VatType, $Area);
+//            $vatSum  = $PriceFactor->getNettoSum() * ($Vat->getValue() / 100);
+//            $vat     = $Vat->getValue();
+//
+//            if ($isNetto) {
+//                $PriceFactor->setSum($PriceFactor->getNettoSum());
+//            } else {
+//                $PriceFactor->setSum($vatSum + $PriceFactor->getNettoSum());
+//            }
+//
+//            if (!isset($vatArray[$vat])) {
+//                $vatArray[$vat] = [
+//                    'vat'  => $vat,
+//                    'text' => self::getVatText($Vat->getValue(), $this->getUser())
+//                ];
+//
+//                $vatArray[$vat]['sum'] = 0;
+//            }
+//
+//            $vatArray[$vat]['sum'] = $vatArray[$vat]['sum'] + $vatSum;
+//        }
 
         // vat text
         $vatLists  = [];
