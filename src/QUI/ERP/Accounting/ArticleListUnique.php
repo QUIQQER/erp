@@ -7,6 +7,7 @@
 namespace QUI\ERP\Accounting;
 
 use QUI;
+use QUI\ERP\Accounting\PriceFactors\FactorList as ErpFactorList;
 
 /**
  * Class ArticleListUnique
@@ -72,13 +73,11 @@ class ArticleListUnique
 
 
         // price factors
-        $this->PriceFactors = new QUI\ERP\Accounting\PriceFactors\FactorList();
+        $this->PriceFactors = new ErpFactorList();
 
         if (isset($attributes['priceFactors'])) {
             try {
-                $this->PriceFactors = new QUI\ERP\Accounting\PriceFactors\FactorList(
-                    $attributes['priceFactors']
-                );
+                $this->PriceFactors = new ErpFactorList($attributes['priceFactors']);
             } catch (QUI\ERP\Exception $Exception) {
                 QUI\System\Log::writeRecursive(
                     $attributes['priceFactors'],

@@ -8,6 +8,7 @@ namespace QUI\ERP\Accounting\PriceFactors;
 
 use QUI\ERP\Exception;
 use QUI\System\Log;
+use QUI\Utils\Math;
 
 /**
  * Class FactorList
@@ -136,7 +137,30 @@ class Factor
      */
     public function getNettoSum()
     {
-        return $this->sum;
+        return $this->nettoSum;
+    }
+
+    /**
+     * Return the sum from the vat
+     *
+     * @return float|int|mixed
+     */
+    public function getVatSum()
+    {
+        return $this->sum - $this->nettoSum;
+    }
+
+    /**
+     * Return the vat %
+     *
+     * @return int
+     */
+    public function getVat()
+    {
+        $vat      = abs($this->sum - $this->nettoSum);
+        $nettoSum = abs($this->nettoSum);
+
+        return Math::percent($vat, $nettoSum);
     }
 
     /**
@@ -167,7 +191,7 @@ class Factor
         return [
             'title'             => $this->getTitle(),
             'description'       => $this->getDescription(),
-            'sum'               => $this->getSumFormatted(),
+            'sum'               => $this->getSum(),
             'sumFormatted'      => $this->getSumFormatted(),
             'nettoSum'          => $this->getNettoSum(),
             'nettoSumFormatted' => $this->getNettoSumFormatted(),
