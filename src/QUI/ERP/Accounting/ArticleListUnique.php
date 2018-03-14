@@ -15,7 +15,7 @@ use QUI\ERP\Accounting\PriceFactors\FactorList as ErpFactorList;
  *
  * @package QUI\ERP\Accounting
  */
-class ArticleListUnique
+class ArticleListUnique implements \IteratorAggregate
 {
     /**
      * @var array
@@ -293,6 +293,20 @@ class ArticleListUnique
     public function getPriceFactors()
     {
         return $this->PriceFactors;
+    }
+
+    //endregion
+
+    //region iterator
+
+    /**
+     * Iterator helper
+     *
+     * @return \ArrayIterator|\Traversable
+     */
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->articles);
     }
 
     //endregion

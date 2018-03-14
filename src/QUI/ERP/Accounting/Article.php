@@ -204,6 +204,51 @@ class Article implements ArticleInterface
     }
 
     /**
+     * Return the article image
+     *
+     * @return null|QUI\Projects\Media\Image
+     */
+    public function getImage()
+    {
+        if (isset($this->attributes['image'])) {
+            try {
+                return QUI\Projects\Media\Utils::getImageByUrl(
+                    $this->attributes['image']
+                );
+            } catch (QUI\Exception $Exception) {
+                QUI\System\Log::writeDebugException($Exception);
+            }
+        }
+
+        $Product = null;
+
+        try {
+            $Product = QUI\ERP\Products\Handler\Products::getProductByProductNo(
+                $this->getArticleNo()
+            );
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+        }
+
+        if (!empty($Product)) {
+            try {
+                return $Product->getImage();
+            } catch (QUI\Exception $Exception) {
+            }
+        }
+
+        try {
+            $Project = QUI::getRewrite()->getProject();
+
+            return $Project->getMedia()->getPlaceholderImage();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+        }
+
+        return null;
+    }
+
+    /**
      * Returns the article description
      *
      * @return string
