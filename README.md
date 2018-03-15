@@ -1,10 +1,10 @@
-Produktverwaltung
+QUIQQER ERP System
 ========
 
-Erstellen Sie Ihren Shop mit den QUIQQER Produkten. Verwalten Sie Rechnungen mit den QUIQQER Rechnungen.
-Das QUIQQER ERP Modul ermöglicht es Ihnen Ihr eigenes angepasstes ERP / eCommerce System aufzusetzen-
+Create your shop with QUIQQER products. Manage invoices with QUIQQER invoices.
+The QUIQQER ERP module enables you to set up your own customized ERP / eCommerce system.
 
-Paketname:
+Package name:
 
     quiqqer/erp
 
@@ -12,7 +12,7 @@ Paketname:
 ERP Stack
 ----
 
-Wir empfehlen weitere Pakete zu installieren:
+We recommend to install additional packages:
 
 - quiqqer/areas
 - quiqqer/currency
@@ -20,12 +20,13 @@ Wir empfehlen weitere Pakete zu installieren:
 - quiqqer/products
 - quiqqer/tax
 
+
 Installation
 ------------
 
-Der Paketname ist: quiqqer/erp
+The Package name is: quiqqer/erp
 
-Benötigte Server:
+Required Servers:
 
 - git@dev.quiqqer.com:quiqqer/erp.git
 - git@dev.quiqqer.com:quiqqer/products.git
@@ -34,7 +35,8 @@ Benötigte Server:
 - git@dev.quiqqer.com:quiqqer/discount.git
 - git@dev.quiqqer.com:quiqqer/tax.git
 
-Mitwirken
+
+Contribution
 ----------
 
 - Issue Tracker: https://dev.quiqqer.com/quiqqer/erp/issues
@@ -44,10 +46,11 @@ Mitwirken
 Support
 -------
 
-Falls Sie ein Fehler gefunden haben, oder Verbesserungen wünschen,
-dann können Sie gerne an support@pcsg.de eine E-Mail schreiben.
+If you have found an error or want improvements, please send an e-mail to support@pcsg.de.
 
 
-Lizenz
+LICENCE
 -------
 
+- GPL-3.0+
+- PCSG QEL-1.0
