@@ -167,6 +167,26 @@ class Calculations
         return $this->attributes['vatArray'];
     }
 
+    /**
+     * Return the complete vat array / but as CalculationValue
+     *
+     * @return CalculationVatValue[]
+     */
+    public function getVat()
+    {
+        $result = [];
+
+        foreach ($this->attributes['vatArray'] as $key => $value) {
+            $result[] = new CalculationVatValue(
+                $value['sum'],
+                $value['text'],
+                $key
+            );
+        }
+
+        return $result;
+    }
+
     //endregion
 
     //region articles

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file contains QUI\ERP\Accounting\Calculations
+ * This file contains QUI\ERP\Accounting\CalculationValue
  */
 
 namespace QUI\ERP\Accounting;
