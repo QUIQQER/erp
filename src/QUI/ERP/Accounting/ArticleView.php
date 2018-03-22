@@ -10,6 +10,7 @@ use QUI;
 
 /**
  * Class ArticleView
+ *
  * @package QUI\ERP\Accounting
  */
 class ArticleView extends QUI\QDOM
@@ -87,7 +88,7 @@ class ArticleView extends QUI\QDOM
 
         $this->setAttributes($article);
 
-        $Engine->assign(array(
+        $Engine->assign([
             'this'                  => $this,
             'position'              => $this->position,
             'unitPrice'             => $Currency->format($article['unitPrice']),
@@ -96,7 +97,7 @@ class ArticleView extends QUI\QDOM
             'calculated_price'      => $Currency->format($calc['price']),
             'calculated_sum'        => $Currency->format($calc['sum']),
             'calculated_nettoSum'   => $Currency->format($calc['nettoSum'])
-        ));
+        ]);
 
         return $Engine->fetch(dirname(__FILE__).'/ArticleView.html');
     }
