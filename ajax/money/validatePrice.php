@@ -15,6 +15,6 @@ QUI::$Ajax->registerFunction(
     function ($value) {
         return \QUI\ERP\Money\Price::validatePrice($value);
     },
-    array('value'),
+    ['value'],
     'Permission::checkAdminUser'
 );

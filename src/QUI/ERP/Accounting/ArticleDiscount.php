@@ -73,7 +73,7 @@ class ArticleDiscount
      */
     public static function unserialize($string)
     {
-        $data = array();
+        $data = [];
 
         if (is_numeric($string)) {
             // number, float, int -> 5.99
@@ -181,11 +181,11 @@ class ArticleDiscount
      */
     public function toArray()
     {
-        return array(
+        return [
             'value'    => $this->value,
             'type'     => $this->type,
             'currency' => $this->getCurrency()->toArray()
-        );
+        ];
     }
 
     /**

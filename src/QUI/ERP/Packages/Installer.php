@@ -22,84 +22,84 @@ class Installer extends QUI\Utils\Singleton
      *
      * @var array
      */
-    protected $packages = array(
-        'quiqqer/areas' => array(
-            'server' => array(
+    protected $packages = [
+        'quiqqer/areas' => [
+            'server' => [
                 'git@dev.quiqqer.com:quiqqer/areas.git'
-            )
-        ),
+            ]
+        ],
 
-        'quiqqer/discount' => array(
-            'server' => array(
+        'quiqqer/discount' => [
+            'server' => [
                 'git@dev.quiqqer.com:quiqqer/areas.git',
                 'git@dev.quiqqer.com:quiqqer/discount.git',
                 'git@dev.quiqqer.com:quiqqer/tax.git',
                 'git@dev.quiqqer.com:quiqqer/products.git'
-            )
-        ),
+            ]
+        ],
 
-        'quiqqer/invoice' => array(
-            'server' => array(
+        'quiqqer/invoice' => [
+            'server' => [
                 'git@dev.quiqqer.com:quiqqer/invoice.git',
                 'git@dev.quiqqer.com:quiqqer/payments.git',
                 'git@dev.quiqqer.com:quiqqer/employee.git',
                 'git@dev.quiqqer.com:quiqqer/customer.git'
-            )
-        ),
+            ]
+        ],
 
-        'quiqqer/order' => array(
-            'server' => array(
+        'quiqqer/order' => [
+            'server' => [
                 'git@dev.quiqqer.com:quiqqer/order.git',
                 'git@dev.quiqqer.com:quiqqer/products.git',
                 'git@dev.quiqqer.com:quiqqer/areas.git',
                 'git@dev.quiqqer.com:quiqqer/discount.git',
                 'git@dev.quiqqer.com:quiqqer/payments.git'
-            )
-        ),
+            ]
+        ],
 
-        'quiqqer/products' => array(
-            'server' => array(
+        'quiqqer/products' => [
+            'server' => [
                 'git@dev.quiqqer.com:quiqqer/products.git',
                 'git@dev.quiqqer.com:quiqqer/areas.git',
                 'git@dev.quiqqer.com:quiqqer/discount.git'
-            )
-        ),
+            ]
+        ],
 
-        'quiqqer/productstags' => array(
-            'server' => array(
+        'quiqqer/productstags' => [
+            'server' => [
                 'git@dev.quiqqer.com:quiqqer/productstags.git',
                 'git@dev.quiqqer.com:quiqqer/products.git',
                 'git@dev.quiqqer.com:quiqqer/areas.git',
                 'git@dev.quiqqer.com:quiqqer/discount.git'
-            )
-        ),
+            ]
+        ],
 
-        'quiqqer/productsimportexport' => array(
-            'server' => array(
+        'quiqqer/productsimportexport' => [
+            'server' => [
                 'git@dev.quiqqer.com:quiqqer/productsimportexport.git',
                 'git@dev.quiqqer.com:quiqqer/products.git',
                 'git@dev.quiqqer.com:quiqqer/areas.git',
                 'git@dev.quiqqer.com:quiqqer/discount.git'
-            )
-        ),
+            ]
+        ],
 
-        'quiqqer/tax' => array(
-            'server' => array(
+        'quiqqer/tax' => [
+            'server' => [
                 'git@dev.quiqqer.com:quiqqer/tax.git',
                 'git@dev.quiqqer.com:quiqqer/areas.git'
-            )
-        ),
+            ]
+        ],
 
-        'quiqqer/watchlist' => array(
-            'server' => array(
+        'quiqqer/watchlist' => [
+            'server' => [
                 'git@dev.quiqqer.com:quiqqer/watchlist.git',
                 'git@dev.quiqqer.com:quiqqer/products.git',
                 'git@dev.quiqqer.com:quiqqer/areas.git',
                 'git@dev.quiqqer.com:quiqqer/discount.git',
                 'git@dev.quiqqer.com:quiqqer/htmltopdf.git'
-            )
-        ),
-    );
+            ]
+        ],
+    ];
 
     /**
      * Installs an erp package
@@ -110,10 +110,10 @@ class Installer extends QUI\Utils\Singleton
     public function install($packageName)
     {
         if (!in_array($packageName, $this->getPackageList())) {
-            throw new Exception(array(
+            throw new Exception([
                 'quiqqer/erp',
                 'exception.package.is.not.erp.package'
-            ));
+            ]);
         }
 
         $this->setPackageRequirements($packageName);
@@ -142,17 +142,17 @@ class Installer extends QUI\Utils\Singleton
     protected function getPackageRequirements($packageName)
     {
         if (!in_array($packageName, $this->getPackageList())) {
-            throw new Exception(array(
+            throw new Exception([
                 'quiqqer/erp',
                 'exception.erp.package.not.an.erp.package'
-            ));
+            ]);
         }
 
         if (!isset($this->packages[$packageName])) {
-            throw new Exception(array(
+            throw new Exception([
                 'quiqqer/erp',
                 'exception.erp.package.not.found'
-            ));
+            ]);
         }
 
         return $this->packages[$packageName];
@@ -168,10 +168,10 @@ class Installer extends QUI\Utils\Singleton
     public function setPackageRequirements($packageName)
     {
         if (!in_array($packageName, $this->getPackageList())) {
-            throw new Exception(array(
+            throw new Exception([
                 'quiqqer/erp',
                 'exception.package.is.not.erp.package'
-            ));
+            ]);
         }
 
         $requirements = $this->getPackageRequirements($packageName);

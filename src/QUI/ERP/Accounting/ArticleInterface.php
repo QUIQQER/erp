@@ -22,7 +22,7 @@ interface ArticleInterface
      * @param array $attributes - article attributes
      * @throws \QUI\Exception
      */
-    public function __construct($attributes = array());
+    public function __construct($attributes = []);
 
     /**
      * @return ArticleView
