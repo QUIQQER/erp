@@ -18,7 +18,7 @@ use QUI\ERP\Accounting\PriceFactors\FactorList as ErpFactorList;
 class ArticleListUnique implements \IteratorAggregate
 {
     /**
-     * @var array
+     * @var Article[]
      */
     protected $articles = [];
 
