@@ -3,6 +3,7 @@
 /**
  * This file contains QUI\ERP\Api\AbstractErpProvider
  */
+
 namespace QUI\ERP\Api;
 
 use QUI;
@@ -21,7 +22,7 @@ abstract class AbstractErpProvider
      */
     public static function getMenuItems()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -29,6 +30,6 @@ abstract class AbstractErpProvider
      */
     public static function getNumberRanges()
     {
-        return array();
+        return [];
     }
 }

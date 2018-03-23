@@ -26,13 +26,13 @@ class Coordinator extends QUI\Utils\Singleton
     public function getErpApiProvider()
     {
         $cache    = 'erp/provider/collection';
-        $provider = array();
+        $provider = [];
 
         try {
             $collect = QUI\Cache\Manager::get($cache);
         } catch (QUI\Cache\Exception $Exception) {
             $packages = QUI::getPackageManager()->getInstalled();
-            $collect  = array();
+            $collect  = [];
 
             foreach ($packages as $package) {
                 try {
@@ -81,7 +81,7 @@ class Coordinator extends QUI\Utils\Singleton
         try {
             $items = QUI\Cache\Manager::get($cache);
         } catch (QUI\Cache\Exception $Exception) {
-            $items    = array();
+            $items    = [];
             $provider = $this->getErpApiProvider();
 
             /* @var $Provider AbstractErpProvider */
@@ -100,7 +100,7 @@ class Coordinator extends QUI\Utils\Singleton
      */
     public function getNumberRanges()
     {
-        $ranges   = array();
+        $ranges   = [];
         $provider = $this->getErpApiProvider();
 
         /* @var $Provider AbstractErpProvider */

@@ -240,7 +240,7 @@ class CashInput
             $user = $this->User->getAttributes();
         }
 
-        return array(
+        return [
             'orderId'            => $orderId,
             'orderInProcessId'   => $orderInProcessId,
             'invoiceId'          => $invoiceId,
@@ -249,6 +249,6 @@ class CashInput
             'date'               => $this->date,
             'currencyData'       => $this->Currency->toArray(),
             'user'               => $user,
-        );
+        ];
     }
 }

@@ -22,6 +22,6 @@ QUI::$Ajax->registerFunction(
             }
         }
     },
-    array('className', 'newIndex'),
+    ['className', 'newIndex'],
     'Permission::checkAdminUser'
 );

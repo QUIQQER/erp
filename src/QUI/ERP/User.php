@@ -61,14 +61,14 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * Address data
      *
      * @var array
      */
-    protected $address = array();
+    protected $address = [];
 
     /**
      * User constructor.
@@ -126,7 +126,7 @@ class User extends QUI\QDOM implements UserInterface
      */
     public static function getNeedles()
     {
-        return array(
+        return [
             'id',
             'country',
             'username',
@@ -134,7 +134,7 @@ class User extends QUI\QDOM implements UserInterface
             'lastname',
             'lang',
             'isCompany'
-        );
+        ];
     }
 
     /**
@@ -143,7 +143,7 @@ class User extends QUI\QDOM implements UserInterface
      */
     public static function getMissingAttributes(array $attributes)
     {
-        $missing = array();
+        $missing = [];
         $needles = self::getNeedles();
 
         foreach ($needles as $needle) {
@@ -172,7 +172,7 @@ class User extends QUI\QDOM implements UserInterface
             $country = $Country->getCode();
         }
 
-        return new self(array(
+        return new self([
             'id'        => $User->getId(),
             'country'   => $country,
             'username'  => $User->getUsername(),
@@ -181,7 +181,7 @@ class User extends QUI\QDOM implements UserInterface
             'lang'      => $User->getLang(),
             'isCompany' => $User->isCompany(),
             'data'      => $User->getAttributes()
-        ));
+        ]);
     }
 
     /**
@@ -476,7 +476,7 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function getGroups($array = true)
     {
-        return array();
+        return [];
     }
 
     /**

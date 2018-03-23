@@ -13,7 +13,7 @@ use QUI;
  *
  * @package QUI\ERP\Accounting
  */
-class ArticleList extends ArticleListUnique
+class ArticleList extends ArticleListUnique implements \IteratorAggregate
 {
     /**
      * is the article list calculated?
