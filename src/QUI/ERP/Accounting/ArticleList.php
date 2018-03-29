@@ -114,8 +114,6 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      * User for calculation
      *
      * @param QUI\Interfaces\Users\User $User
-     *
-     * @throws QUI\Exception
      */
     public function setUser(QUI\Interfaces\Users\User $User)
     {
@@ -244,8 +242,6 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     /**
      * @param null|Calc $Calc
      * @return $this
-     *
-     * @throws QUI\Exception
      */
     public function calc($Calc = null)
     {

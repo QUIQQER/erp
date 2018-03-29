@@ -296,8 +296,6 @@ class Article implements ArticleInterface
      * Returns the article total sum
      *
      * @return QUI\ERP\Money\Price
-     *
-     * @throws QUI\Exception
      */
     public function getSum()
     {
@@ -310,8 +308,6 @@ class Article implements ArticleInterface
      * Return the VAT for the article
      *
      * @return int
-     *
-     * @throws QUI\Exception
      */
     public function getVat()
     {
@@ -319,16 +315,23 @@ class Article implements ArticleInterface
             return (int)$this->attributes['vat'];
         }
 
-        if ($this->getUser()) {
-            return QUI\ERP\Tax\Utils::getTaxByUser($this->getUser())->getValue();
+        try {
+            if ($this->getUser()) {
+                return QUI\ERP\Tax\Utils::getTaxByUser($this->getUser())->getValue();
+            }
+
+            // return default vat
+            $Area     = QUI\ERP\Defaults::getArea();
+            $TaxType  = QUI\ERP\Tax\Utils::getTaxTypeByArea($Area);
+            $TaxEntry = QUI\ERP\Tax\Utils::getTaxEntry($TaxType, $Area);
+
+            return $TaxEntry->getValue();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addCritical($Exception->getMessage());
+            QUI\System\Log::writeException($Exception);
+
+            return 0;
         }
-
-        // return default vat
-        $Area     = QUI\ERP\Defaults::getArea();
-        $TaxType  = QUI\ERP\Tax\Utils::getTaxTypeByArea($Area);
-        $TaxEntry = QUI\ERP\Tax\Utils::getTaxEntry($TaxType, $Area);
-
-        return $TaxEntry->getValue();
     }
 
     /**
@@ -368,8 +371,6 @@ class Article implements ArticleInterface
      * Return the price from the article
      *
      * @return Price
-     *
-     * @throws QUI\Exception
      */
     public function getPrice()
     {
@@ -430,8 +431,6 @@ class Article implements ArticleInterface
     /**
      * @param null|Calc|QUI\ERP\User $Instance
      * @return self
-     *
-     * @throws QUI\Exception
      */
     public function calc($Instance = null)
     {
@@ -477,8 +476,6 @@ class Article implements ArticleInterface
      * Return the article as an array
      *
      * @return array
-     *
-     * @throws QUI\Exception
      */
     public function toArray()
     {
