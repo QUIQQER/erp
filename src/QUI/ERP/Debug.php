@@ -85,9 +85,9 @@ class Debug
             Log::writeException(
                 $value,
                 Log::LEVEL_DEBUG,
-                array(
+                [
                     'source' => $source
-                ),
+                ],
                 'erp-debug',
                 true
             );
@@ -98,9 +98,9 @@ class Debug
         Log::writeRecursive(
             $value,
             Log::LEVEL_DEBUG,
-            array(
+            [
                 'source' => $source
-            ),
+            ],
             'erp-debug',
             true
         );

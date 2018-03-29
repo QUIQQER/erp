@@ -3,6 +3,7 @@
 /**
  * This file contains QUI\ERP\Api\NumberRangeInterface
  */
+
 namespace QUI\ERP\Api;
 
 use QUI;

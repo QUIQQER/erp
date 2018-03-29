@@ -21,7 +21,7 @@ class Address extends QUI\Users\Address
      * @param array $data
      * @param User|null $User
      */
-    public function __construct($data = array(), $User = null)
+    public function __construct($data = [], $User = null)
     {
         $this->User = $User;
         $this->setAttributes($data);

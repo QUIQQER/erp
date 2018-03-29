@@ -13,7 +13,7 @@ use QUI;
  *
  * @package QUI\ERP\Accounting
  */
-class ArticleList extends ArticleListUnique
+class ArticleList extends ArticleListUnique implements \IteratorAggregate
 {
     /**
      * is the article list calculated?
@@ -114,8 +114,6 @@ class ArticleList extends ArticleListUnique
      * User for calculation
      *
      * @param QUI\Interfaces\Users\User $User
-     *
-     * @throws QUI\Exception
      */
     public function setUser(QUI\Interfaces\Users\User $User)
     {
@@ -244,8 +242,6 @@ class ArticleList extends ArticleListUnique
     /**
      * @param null|Calc $Calc
      * @return $this
-     *
-     * @throws QUI\Exception
      */
     public function calc($Calc = null)
     {

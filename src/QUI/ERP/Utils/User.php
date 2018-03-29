@@ -164,10 +164,10 @@ class User
     public static function getUserERPAddress(UserInterface $User)
     {
         if (!QUI::getUsers()->isUser($User)) {
-            throw new QUI\Exception(array(
+            throw new QUI\Exception([
                 'quiqqer/erp',
                 'exception.no.user'
-            ));
+            ]);
         }
 
         /* @var $User QUI\Users\User */
@@ -204,7 +204,7 @@ class User
      * @param $attributes
      * @return array
      */
-    public static function filterCustomerAttributes($attributes = array())
+    public static function filterCustomerAttributes($attributes = [])
     {
         if (!is_array($attributes)) {
             return [];

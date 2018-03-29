@@ -3,6 +3,7 @@
 /**
  * This file contains QUI\ERP\Packages\Exception
  */
+
 namespace QUI\ERP\Packages;
 
 use QUI;

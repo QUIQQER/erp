@@ -15,11 +15,11 @@ QUI::$Ajax->registerFunction(
     function () {
         return array_map(function ($Range) {
             /* @var $Range QUI\ERP\Api\NumberRangeInterface */
-            return array(
+            return [
                 'title' => $Range->getTitle(),
                 'range' => $Range->getRange(),
                 'class' => get_class($Range)
-            );
+            ];
         }, Coordinator::getInstance()->getNumberRanges());
     },
     false,

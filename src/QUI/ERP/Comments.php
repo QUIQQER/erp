@@ -22,14 +22,14 @@ class Comments
     /**
      * @var array
      */
-    protected $comments = array();
+    protected $comments = [];
 
     /**
      * Comments constructor.
      *
      * @param array $comments
      */
-    public function __construct($comments = array())
+    public function __construct($comments = [])
     {
         foreach ($comments as $comment) {
             if (isset($comment['message']) && isset($comment['time'])) {
@@ -95,10 +95,10 @@ class Comments
      */
     public function addComment($message)
     {
-        $this->comments[] = array(
+        $this->comments[] = [
             'message' => $message,
             'time'    => time()
-        );
+        ];
     }
 
     /**

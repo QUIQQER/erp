@@ -25,6 +25,16 @@ class Article implements ArticleInterface
     ];
 
     /**
+     * Custom fields are data which field out the customer
+     * This data is not used for presentation or calculation
+     *
+     * in a custom field are only allowed string and numeric values
+     *
+     * @var array
+     */
+    protected $customFields = [];
+
+    /**
      * @var bool
      */
     protected $calculated = false;
@@ -148,6 +158,10 @@ class Article implements ArticleInterface
             $this->isNetto  = $calc['isNetto'];
 
             $this->calculated = true;
+        }
+
+        if (isset($attributes['customFields']) && is_array($attributes['customFields'])) {
+            $this->customFields = $attributes['customFields'];
         }
     }
 
@@ -282,8 +296,6 @@ class Article implements ArticleInterface
      * Returns the article total sum
      *
      * @return QUI\ERP\Money\Price
-     *
-     * @throws QUI\Exception
      */
     public function getSum()
     {
@@ -296,8 +308,6 @@ class Article implements ArticleInterface
      * Return the VAT for the article
      *
      * @return int
-     *
-     * @throws QUI\Exception
      */
     public function getVat()
     {
@@ -305,16 +315,23 @@ class Article implements ArticleInterface
             return (int)$this->attributes['vat'];
         }
 
-        if ($this->getUser()) {
-            return QUI\ERP\Tax\Utils::getTaxByUser($this->getUser())->getValue();
+        try {
+            if ($this->getUser()) {
+                return QUI\ERP\Tax\Utils::getTaxByUser($this->getUser())->getValue();
+            }
+
+            // return default vat
+            $Area     = QUI\ERP\Defaults::getArea();
+            $TaxType  = QUI\ERP\Tax\Utils::getTaxTypeByArea($Area);
+            $TaxEntry = QUI\ERP\Tax\Utils::getTaxEntry($TaxType, $Area);
+
+            return $TaxEntry->getValue();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addCritical($Exception->getMessage());
+            QUI\System\Log::writeException($Exception);
+
+            return 0;
         }
-
-        // return default vat
-        $Area     = QUI\ERP\Defaults::getArea();
-        $TaxType  = QUI\ERP\Tax\Utils::getTaxTypeByArea($Area);
-        $TaxEntry = QUI\ERP\Tax\Utils::getTaxEntry($TaxType, $Area);
-
-        return $TaxEntry->getValue();
     }
 
     /**
@@ -354,8 +371,6 @@ class Article implements ArticleInterface
      * Return the price from the article
      *
      * @return Price
-     *
-     * @throws QUI\Exception
      */
     public function getPrice()
     {
@@ -416,8 +431,6 @@ class Article implements ArticleInterface
     /**
      * @param null|Calc|QUI\ERP\User $Instance
      * @return self
-     *
-     * @throws QUI\Exception
      */
     public function calc($Instance = null)
     {
@@ -463,8 +476,6 @@ class Article implements ArticleInterface
      * Return the article as an array
      *
      * @return array
-     *
-     * @throws QUI\Exception
      */
     public function toArray()
     {
@@ -479,22 +490,35 @@ class Article implements ArticleInterface
             $discount = $this->Discount->toJSON();
         }
 
+        $customFields = array_filter($this->customFields, function ($v) {
+            if (is_string($v)) {
+                return true;
+            }
+
+            if (is_numeric($v)) {
+                return true;
+            }
+
+            return false;
+        });
+
         return [
             // article data
-            'id'          => $this->getId(),
-            'title'       => $this->getTitle(),
-            'articleNo'   => $this->getArticleNo(),
-            'description' => $this->getDescription(),
-            'unitPrice'   => $this->getUnitPrice()->value(),
-            'quantity'    => $this->getQuantity(),
-            'sum'         => $this->getSum()->value(),
-            'vat'         => $vat,
-            'discount'    => $discount,
-            'control'     => $this->attributes['control'],
-            'class'       => self::class,
+            'id'           => $this->getId(),
+            'title'        => $this->getTitle(),
+            'articleNo'    => $this->getArticleNo(),
+            'description'  => $this->getDescription(),
+            'unitPrice'    => $this->getUnitPrice()->value(),
+            'quantity'     => $this->getQuantity(),
+            'sum'          => $this->getSum()->value(),
+            'vat'          => $vat,
+            'discount'     => $discount,
+            'control'      => $this->attributes['control'],
+            'class'        => self::class,
+            'customFields' => $customFields,
 
             // calculated data
-            'calculated'  => [
+            'calculated'   => [
                 'price'           => $this->price,
                 'basisPrice'      => $this->basisPrice,
                 'sum'             => $this->sum,
@@ -508,4 +532,32 @@ class Article implements ArticleInterface
             ]
         ];
     }
+
+    //region custom fields
+
+    /**
+     * Return a article custom field
+     *
+     * @param string $key
+     * @return mixed|null
+     */
+    public function getCustomField($key)
+    {
+        if (isset($this->customFields[$key])) {
+            return $this->customFields[$key];
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomFields()
+    {
+        return $this->customFields;
+    }
+
+
+    //endregion
 }

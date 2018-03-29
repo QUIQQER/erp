@@ -51,12 +51,12 @@ class CashInputs extends QUI\Utils\Singleton
      */
     public function getPaymentsFromInvoice(Invoice $Invoice)
     {
-        $result = QUI::getDataBase()->fetch(array(
+        $result = QUI::getDataBase()->fetch([
             'from'  => $this->table(),
-            'where' => array(
+            'where' => [
                 'invoiceId' => $Invoice->getId(),
-            ),
-        ));
+            ],
+        ]);
 
         return $this->parseResult($result);
     }
@@ -67,12 +67,12 @@ class CashInputs extends QUI\Utils\Singleton
      */
     public function getPaymentsFromOrder(Order $Order)
     {
-        $result = QUI::getDataBase()->fetch(array(
+        $result = QUI::getDataBase()->fetch([
             'from'  => $this->table(),
-            'where' => array(
+            'where' => [
                 'orderId' => $Order->getId(),
-            ),
-        ));
+            ],
+        ]);
 
         return $this->parseResult($result);
     }
@@ -83,7 +83,7 @@ class CashInputs extends QUI\Utils\Singleton
      */
     protected function parseResult(array $result)
     {
-        $cashInputs = array();
+        $cashInputs = [];
 
         foreach ($result as $entry) {
             $cashInputs[] = $this->parseDataToCashInput($entry);
