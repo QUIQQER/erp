@@ -138,8 +138,6 @@ class Calc
      * @param ArticleList $List
      * @param callable|boolean $callback - optional, callback function for the data array
      * @return ArticleList
-     *
-     * @throws QUI\Exception
      */
     public function calcArticleList(ArticleList $List, $callback = false)
     {
@@ -291,8 +289,6 @@ class Calc
      * @param Article $Article
      * @param bool|callable $callback
      * @return mixed
-     *
-     * @throws QUI\Exception
      */
     public function calcArticlePrice(Article $Article, $callback = false)
     {
