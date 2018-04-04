@@ -596,6 +596,12 @@ class Calc
         ];
     }
 
+    /**
+     * Is the object allowed for calculation
+     *
+     * @param Invoice|QUI\ERP\Order\AbstractOrder $ToCalculate
+     * @return bool
+     */
     public static function isAllowedForCalculation($ToCalculate)
     {
         if ($ToCalculate instanceof Invoice) {
