@@ -10,16 +10,21 @@ document.addEvent('domready', function () {
         var load = function () {
             loadExecute++;
 
-            if (loadExecute == 10) {
+            if (loadExecute === 10) {
                 return;
             }
-
             var ColumnElm = document.getElement('.qui-column');
 
             if (!ColumnElm) {
                 load.delay(100);
                 return;
             }
+
+            // require([
+            //     'package/quiqqer/customer/bin/backend/controls/CreateCustomerWindow'
+            // ], function (Win) {
+            //     new Win().open();
+            // });
 
             var Column = QUI.Controls.getById(ColumnElm.get('data-quiid'));
 
