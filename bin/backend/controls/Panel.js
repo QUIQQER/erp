@@ -1,12 +1,6 @@
 /**
  * @module package/quiqqer/erp/bin/backend/controls/Panel
- *
- * @require qui/QUI
- * @require qui/controls/desktop/Panel
- * @require qui/controls/sitemap/Map
- * @require qui/controls/sitemap/Item
- * @require Ajax
- * @require Locale
+ * @author www.pcsg.de (Henning Leutz)
  */
 define('package/quiqqer/erp/bin/backend/controls/Panel', [
 
@@ -27,7 +21,8 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
         Type   : 'package/quiqqer/erp/bin/backend/controls/Panel',
 
         Bind: [
-            '$onCreate'
+            '$onCreate',
+            '$itemClick'
         ],
 
         initialize: function (options) {
@@ -62,112 +57,81 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
             this.Loader.show();
 
             QUIAjax.get('package_quiqqer_erp_ajax_panel_list', function (result) {
-                var i, len, data, params;
-
-                var onClick = function (Item) {
-                    if (!Item.getAttribute('panel')) {
-                        return;
-                    }
-
-                    require([Item.getAttribute('panel')], function (PanelCls) {
-                        var Panel = new PanelCls();
-
-                        if (instanceOf(Panel, QUIPanel)) {
-                            PanelUtils.openPanelInTasks(Panel);
-                        }
-
-                    }, function (err) {
-                        console.error(err);
-                    });
-                };
-
-                var items = [];
-
-                for (i = 0, len = result.length; i < len; i++) {
-                    params = {
-                        events: {
-                            onClick: onClick
-                        }
-                    };
-
-                    data = result[i];
-
-                    if ("icon" in data) {
-                        params.icon = data.icon;
-                    }
-
-                    if ("text" in data) {
-                        if (typeOf(data.text) === 'array') {
-                            data.text = QUILocale.get(data.text[0], data.text[1]);
-                        }
-
-                        params.text = data.text;
-                    }
-
-                    if ("panel" in data) {
-                        params.panel = data.panel;
-                    }
-
-                    items.push(params);
-                }
-
-                // sort
-                items.sort(function (a, b) {
-                    if (a.text > b.text) {
-                        return 1;
-                    }
-
-                    if (a.text < b.text) {
-                        return -1;
-                    }
-
-                    return 0;
-                });
-
-
-                // insert
-                items.each(function (item) {
-                    this.$Map.appendChild(
-                        new QUISitemapItem(item)
-                    );
-                }.bind(this));
-
                 this.$Map.inject(this.getContent());
+                this.$appendItems(result.items, this.$Map);
+
                 this.Loader.hide();
             }.bind(this), {
                 'package': 'quiqqer/erp'
             });
+        },
 
-            //
-            // this.$Map.appendChild(
-            //     new QUISitemapItem({
-            //         icon: 'fa fa-money',
-            //         text: 'Rechnungen (Journal)'
-            //     })
-            // );
-            //
-            // this.$Map.appendChild(
-            //     new QUISitemapItem({
-            //         icon: 'fa fa-money',
-            //         text: 'Rechnungen erstellen'
-            //     })
-            // );
-            //
-            // this.$Map.appendChild(
-            //     new QUISitemapItem({
-            //         icon: 'fa fa-shopping-bag',
-            //         text: 'Produkte'
-            //     })
-            // );
-            //
-            // this.$Map.appendChild(
-            //     new QUISitemapItem({
-            //         icon: 'fa fa-sitemap',
-            //         text: 'Kategorien'
-            //     })
-            // );
-            //
-            // this.$Map.inject(this.getContent());
+        /**
+         * render the maps
+         *
+         * @param items
+         * @param Parent
+         */
+        $appendItems: function (items, Parent) {
+            var i, len, item, text, Item;
+
+            for (i = 0, len = items.length; i < len; i++) {
+                item = items[i];
+                text = item.text;
+
+                if (typeOf(text) === 'array') {
+                    item.text = QUILocale.get(text[0], text[1]);
+                }
+
+                Item = new QUISitemapItem(item);
+                Item.addEvent('click', this.$itemClick);
+
+                Parent.appendChild(Item);
+
+                if (typeof item.items !== 'undefined' && item.items.length) {
+                    this.$appendItems(item.items, Item);
+                }
+
+                if (item.opened) {
+                    Item.open();
+                }
+            }
+        },
+
+        /**
+         * event: item click
+         *
+         * @param Item
+         */
+        $itemClick: function (Item) {
+            var needle = Item.getAttribute('require');
+
+            if (needle === false) {
+                return;
+            }
+
+            var icon = Item.getAttribute('icon');
+
+            Item.removeIcon(icon);
+            Item.setAttribute('icon', 'fa fa-spinner fa-spin');
+
+            require([needle], function (cls) {
+                var Instance;
+
+                if (typeOf(cls) === 'class') {
+                    Instance = new cls();
+                }
+
+                if (Instance instanceof QUIPanel) {
+                    PanelUtils.openPanelInTasks(Instance);
+
+                    Item.removeIcon('fa-spinner');
+                    Item.setAttribute('icon', icon);
+                    return;
+                }
+
+                console.log(typeOf(cls));
+            });
         }
     });
 });

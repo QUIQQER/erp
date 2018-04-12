@@ -61,6 +61,11 @@
             <de><![CDATA[Summe:]]></de>
             <en><![CDATA[Sum total:]]></en>
         </locale>
+
+        <locale name="erp.panel.extras.text">
+            <de><![CDATA[Verwaltung]]></de>
+            <en><![CDATA[Administration]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
