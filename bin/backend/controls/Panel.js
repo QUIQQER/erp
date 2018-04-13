@@ -111,7 +111,12 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
         $itemClick: function (Item) {
             var needle = Item.getAttribute('require');
 
-            if (needle === false) {
+            if (needle === false || needle === '') {
+                if (Item.isOpen() === false) {
+                    Item.open();
+                }
+
+                Item.deselect();
                 return;
             }
 
@@ -122,6 +127,8 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
 
             require([needle], function (cls) {
                 var Instance;
+
+                Item.deselect();
 
                 if (typeOf(cls) === 'class') {
                     Instance = new cls();
