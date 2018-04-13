@@ -47,7 +47,11 @@ class Coordinator extends QUI\Utils\Singleton
                 }
             }
 
-            QUI\Cache\Manager::set($cache, $collect);
+            try {
+                QUI\Cache\Manager::set($cache, $collect);
+            } catch (\Exception $Exception) {
+                QUI\System\Log::writeDebugException($Exception);
+            }
         }
 
         // filter provider
@@ -72,25 +76,55 @@ class Coordinator extends QUI\Utils\Singleton
 
     /**
      * Return the menu items for the shop panel
+     *
      * @return array
      */
     public function getMenuItems()
     {
         $cache = 'erp/provider/menuItems';
+        $Map   = new QUI\Controls\Sitemap\Map();
 
         try {
-            $items = QUI\Cache\Manager::get($cache);
+            throw new QUI\Cache\Exception('huhu');
+
+            return QUI\Cache\Manager::get($cache);
         } catch (QUI\Cache\Exception $Exception) {
-            $items    = [];
             $provider = $this->getErpApiProvider();
 
             /* @var $Provider AbstractErpProvider */
             foreach ($provider as $Provider) {
-                $items = array_merge($Provider->getMenuItems(), $items);
+                $Provider->addMenuItems($Map);
             }
         }
 
-        return $items;
+        $result = $Map->toArray();
+
+        usort($result['items'], function ($a, $b) {
+            if (!isset($a['priority'])) {
+                return 1;
+            }
+
+            if (!isset($b['priority'])) {
+                return -1;
+            }
+
+            $pa = $a['priority'];
+            $pb = $b['priority'];
+
+            if ($pa == $pb) {
+                return 0;
+            }
+
+            return $pa < $pb ? -1 : 1;
+        });
+
+        try {
+            QUI\Cache\Manager::set($cache, $result);
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+        }
+
+        return $result;
     }
 
     /**
