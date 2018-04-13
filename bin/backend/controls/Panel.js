@@ -29,7 +29,7 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
             this.parent(options);
 
             this.setAttributes({
-                title: 'Shop',
+                title: QUILocale.get('quiqqer/erp', 'erp.panel.title'),
                 icon : 'fa fa-shopping-cart'
             });
 
@@ -52,6 +52,11 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
                 styles: {
                     margin: 0
                 }
+            });
+
+            this.setAttributes({
+                title: QUILocale.get('quiqqer/erp', 'erp.panel.title'),
+                icon : 'fa fa-shopping-cart'
             });
 
             this.Loader.show();
@@ -127,6 +132,23 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
 
                     Item.removeIcon('fa-spinner');
                     Item.setAttribute('icon', icon);
+                    return;
+                }
+
+                if (typeOf(cls) === 'function') {
+                    var Prom = cls();
+
+                    if (!Prom) {
+                        Item.removeIcon('fa-spinner');
+                        Item.setAttribute('icon', icon);
+                        return;
+                    }
+
+                    Prom.then(function () {
+                        Item.removeIcon('fa-spinner');
+                        Item.setAttribute('icon', icon);
+                    });
+
                     return;
                 }
 

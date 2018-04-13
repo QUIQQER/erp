@@ -46,7 +46,7 @@ document.addEvent('domready', function () {
                 }
             }
 
-            Column.appendChild(new Panel());
+            Column.appendChild(new Panel(), 1);
         };
 
         QUI.addEvent('quiqqerLoaded', load);

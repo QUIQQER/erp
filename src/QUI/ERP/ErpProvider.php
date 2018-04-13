@@ -75,5 +75,20 @@ class ErpProvider extends AbstractErpProvider
                 ])
             );
         }
+
+        // settings
+        $Settings = $Map->getChildrenByName('settings');
+
+        if ($Settings === null) {
+            $Settings = new Item([
+                'icon'     => 'fa fa-gears',
+                'name'     => 'settings',
+                'text'     => ['quiqqer/erp', 'erp.panel.settings.text'],
+                'priority' => 101,
+                'require'  => 'package/quiqqer/erp/bin/backend/utils/ErpMenuSettings'
+            ]);
+
+            $Map->appendChild($Settings);
+        }
     }
 }

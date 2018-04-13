@@ -66,6 +66,14 @@
             <de><![CDATA[Verwaltung]]></de>
             <en><![CDATA[Administration]]></en>
         </locale>
+        <locale name="erp.panel.settings.text">
+            <de><![CDATA[Einstellungen]]></de>
+            <en><![CDATA[Settings]]></en>
+        </locale>
+        <locale name="erp.panel.title">
+            <de><![CDATA[E-Commerce]]></de>
+            <en><![CDATA[E-commerce]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
