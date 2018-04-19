@@ -1,24 +1,24 @@
 /**
  * @module package/quiqqer/erp/bin/backend/controls/settings/NumberRange
- *
- * @require qui/QUI
- * @require qui/controls/Control
- * @require controls/grid/Grid
+ * @author www.pcsg.de (Henning Leutz)
  */
 define('package/quiqqer/erp/bin/backend/controls/settings/NumberRange', [
 
     'qui/QUI',
     'qui/controls/Control',
     'controls/grid/Grid',
-    'Ajax'
+    'Ajax',
+    'Locale'
 
-], function (QUI, QUIControl, Grid, QUIAjax) {
+], function (QUI, QUIControl, Grid, QUIAjax, QUILocale) {
     "use strict";
+
+    var lg = 'quiqqer/erp';
 
     return new Class({
 
         Extends: QUIControl,
-        Type: 'package/quiqqer/erp/bin/backend/controls/settings/NumberRange',
+        Type   : 'package/quiqqer/erp/bin/backend/controls/settings/NumberRange',
 
         Bind: [
             '$onImport',
@@ -66,20 +66,11 @@ define('package/quiqqer/erp/bin/backend/controls/settings/NumberRange', [
 
             this.$Elm = new Element('div', {
                 'class': 'field-container-field',
-                styles: {
-                    border: 0,
+                styles : {
+                    border : 0,
                     padding: 0
                 }
             }).wraps(this.$Input);
-
-            new Element('div', {
-                html: 'Per Doppelklick auf die zu vergebenden Nummer können Sie den Nummernkreis verändern',
-                styles: {
-                    display: 'block',
-                    padding: '10px 0',
-                    width: '100%'
-                }
-            }).inject(this.$Elm);
 
             var Container = new Element('div', {
                 styles: {
@@ -88,37 +79,47 @@ define('package/quiqqer/erp/bin/backend/controls/settings/NumberRange', [
             }).inject(this.$Elm);
 
             this.$Grid = new Grid(Container, {
-                height: 200,
-                filterInput: false,
-                editable: true,
+                height        : 200,
+                filterInput   : false,
+                editable      : true,
                 editondblclick: true,
-                columnModel: [{
-                    header: 'Nummernkreis',
+                columnModel   : [{
+                    header   : QUILocale.get(lg, 'control.number.ranges.grid.ranges'),
                     dataIndex: 'title',
-                    dataType: 'string',
-                    width: 200
+                    dataType : 'string',
+                    width    : 200
                 }, {
-                    header: 'nä. zu vergebende Nummer',
+                    header   : QUILocale.get(lg, 'control.number.ranges.grid.next'),
                     dataIndex: 'range',
-                    dataType: 'number',
-                    width: 200,
-                    editable: true
+                    dataType : 'number',
+                    width    : 200,
+                    editable : true
                 }, {
                     dataIndex: 'class',
-                    dataType: 'string',
-                    hidden: true
+                    dataType : 'string',
+                    hidden   : true
                 }]
             });
 
             this.$Grid.addEvents({
-                onRefresh: this.refresh,
+                onRefresh     : this.refresh,
                 onEditComplete: function (data) {
-                    var row = data.row,
+                    var row     = data.row,
                         rowData = self.$Grid.getDataByRow(row);
 
                     self.setAutoincrement(rowData.class, data.input.value);
                 }
             });
+
+            new Element('div', {
+                'class': 'field-container-item-desc',
+                html   : QUILocale.get(lg, 'control.number.ranges.description'),
+                styles : {
+                    display: 'block',
+                    padding: 10,
+                    width  : '100%'
+                }
+            }).inject(this.$Elm);
 
             this.refresh();
         },
@@ -133,8 +134,8 @@ define('package/quiqqer/erp/bin/backend/controls/settings/NumberRange', [
                 QUIAjax.post('package_quiqqer_erp_ajax_settings_numberRanges_set', resolve, {
                     'package': 'quiqqer/erp',
                     className: className,
-                    newIndex: newIndex,
-                    onError: reject
+                    newIndex : newIndex,
+                    onError  : reject
                 });
             });
         }

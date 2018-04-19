@@ -191,6 +191,18 @@
             <de><![CDATA[Keine Daten vorhanden]]></de>
             <en><![CDATA[No data available]]></en>
         </locale>
+        <locale name="control.number.ranges.description">
+            <de><![CDATA[Per Doppelklick auf die zu vergebenden Nummer können Sie den Nummernkreis verändern]]></de>
+            <en><![CDATA[]]></en>
+        </locale>
+        <locale name="control.number.ranges.grid.ranges">
+            <de><![CDATA[Nummernkreis]]></de>
+            <en><![CDATA[Range of numbers]]></en>
+        </locale>
+        <locale name="control.number.ranges.grid.next">
+            <de><![CDATA[nä. zu vergebende Nummer]]></de>
+            <en><![CDATA[next number to be assigned]]></en>
+        </locale>
     </groups>
 
 </locales>
