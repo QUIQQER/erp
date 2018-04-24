@@ -103,6 +103,9 @@ class User
             // no address found
         }
 
+        // @todo es gibt neue einstellungen b2b, b2c b2bANDb2c ... von diesen einstellungen ausgehen
+        // @todo tax ist nicht optimal dafür
+
         $isNetto = $Config->getValue('shop', 'isNetto');
 
         if ($isNetto) {
