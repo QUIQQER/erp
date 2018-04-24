@@ -1,8 +1,12 @@
 <tr>
-    <td class="articles-article-pos">
+    <td class="articles-article-pos"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.pos'}"
+    >
         {$position}
     </td>
-    <td class="articles-article-information">
+    <td class="articles-article-information"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.description'}"
+    >
         <div class="articles-article-information-title">
             {$this->getAttribute('title')}
         </div>
@@ -12,19 +16,25 @@
     </td>
 
     {if $this->getAttribute('quantity') !== false}
-    <td class="articles-article-quantity">
+    <td class="articles-article-quantity"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.quantity'}"
+    >
         {$this->getAttribute('quantity')}
     </td>
     {/if}
 
     {if $this->getAttribute('quantity') !== false}
-    <td class="articles-article-unitprice">
+    <td class="articles-article-unitprice"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.unitprice'}"
+    >
         {$calculated_price}
     </td>
     {/if}
 
     {if $this->getAttribute('quantity') !== false}
-    <td class="articles-article-price">
+    <td class="articles-article-price"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.price'}"
+    >
         {$calculated_sum}
     </td>
     {/if}
