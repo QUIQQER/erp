@@ -40,6 +40,11 @@ class User
             return self::IS_NETTO_USER;
         }
 
+        if ($User instanceof QUI\ERP\User && $User->hasBruttoNettoStatus()) {
+            return $User->isNetto();
+        }
+
+
         $nettoStatus = $User->getAttribute('quiqqer.erp.isNettoUser');
 
         if (is_numeric($nettoStatus)) {
