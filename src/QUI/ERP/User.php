@@ -59,6 +59,11 @@ class User extends QUI\QDOM implements UserInterface
     protected $isCompany;
 
     /**
+     * @var bool|null
+     */
+    protected $isNetto;
+
+    /**
      * @var array
      */
     protected $data = [];
@@ -90,6 +95,7 @@ class User extends QUI\QDOM implements UserInterface
 
         $this->id        = $attributes['id'];
         $this->isCompany = (bool)$attributes['isCompany'];
+        $this->isNetto   = null;
 
         $this->lang      = $attributes['lang'];
         $this->username  = $attributes['username'];
@@ -180,6 +186,7 @@ class User extends QUI\QDOM implements UserInterface
             'lastname'  => $User->getAttribute('lastname'),
             'lang'      => $User->getLang(),
             'isCompany' => $User->isCompany(),
+            'isNetto'   => $User->getAttribute('quiqqer.erp.isNettoUser'),
             'data'      => $User->getAttributes()
         ]);
     }
@@ -366,6 +373,26 @@ class User extends QUI\QDOM implements UserInterface
     public function isCompany()
     {
         return $this->isCompany;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNetto()
+    {
+        if ($this->isNetto === null) {
+            $this->isNetto = QUI\ERP\Utils\User::getBruttoNettoUserStatus($this);
+        }
+
+        return $this->isNetto;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasBruttoNettoStatus()
+    {
+        return is_bool($this->isNetto);
     }
 
     /**
