@@ -75,12 +75,15 @@ class EventHandler
         }
 
         // netto brutto user status
-        $User->setAttribute('quiqqer.erp.isNettoUser', false); // reset status
-
-        $User->setAttribute(
-            'quiqqer.erp.isNettoUser',
-            QUI\ERP\Utils\User::getBruttoNettoUserStatus($User)
-        );
+        // @todo im admin muss dieser schritt seperat gemacht werden
+        // @todo im admin muss festgelegt werden was der nutzer ist
+        // @todo das muss in das customer modul rein
+//        $User->setAttribute('quiqqer.erp.isNettoUser', false); // reset status
+//
+//        $User->setAttribute(
+//            'quiqqer.erp.isNettoUser',
+//            QUI\ERP\Utils\User::getBruttoNettoUserStatus($User)
+//        );
     }
 
     /**
