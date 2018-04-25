@@ -178,6 +178,10 @@ class Calc
             $articleVatArray = $calculated['vatArray'];
             $vat             = $articleAttributes['vat'];
 
+            if ($articleVatArray['text'] === '') {
+                continue;
+            }
+
             if (!isset($vatArray[$vat])) {
                 $vatArray[$vat]        = $articleVatArray;
                 $vatArray[$vat]['sum'] = 0;
@@ -398,12 +402,14 @@ class Calc
      * Return the tax message for an user
      *
      * @return string
-     *
-     * @throws QUI\Exception
      */
     public function getVatTextByUser()
     {
-        $Tax = QUI\ERP\Tax\Utils::getTaxByUser($this->getUser());
+        try {
+            $Tax = QUI\ERP\Tax\Utils::getTaxByUser($this->getUser());
+        } catch (QUI\Exception $Exception) {
+            return '';
+        }
 
         return $this->getVatText($Tax->getValue(), $this->getUser());
     }
