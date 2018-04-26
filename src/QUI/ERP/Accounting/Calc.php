@@ -504,11 +504,12 @@ class Calc
 
         $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
         $transactions = $Transactions->getTransactionsByHash($ToCalculate->getHash());
+        $calculations = $ToCalculate->getArticles()->getCalculations();
 
         $paidData = [];
         $paidDate = 0;
         $sum      = 0;
-        $total    = $ToCalculate->getAttribute('sum');
+        $total    = $calculations['sum'];
 
         QUI\ERP\Debug::getInstance()->log(
             'Calc->calculatePayments(); total: '.$total
@@ -562,7 +563,7 @@ class Calc
         }
 
         $paid  = Price::validatePrice($sum);
-        $toPay = Price::validatePrice($ToCalculate->getAttribute('sum'));
+        $toPay = Price::validatePrice($calculations['sum']);
 
         $ToCalculate->setAttribute('paid_data', json_encode($paidData));
         $ToCalculate->setAttribute('paid_date', $paidDate);
@@ -579,7 +580,7 @@ class Calc
         } elseif ($ToCalculate->getAttribute('paid') == 0) {
             $ToCalculate->setAttribute('paid_status', Invoice::PAYMENT_STATUS_OPEN);
         } elseif ($ToCalculate->getAttribute('toPay')
-                  && $ToCalculate->getAttribute('sum') != $ToCalculate->getAttribute('paid')
+                  && $calculations['sum'] != $ToCalculate->getAttribute('paid')
         ) {
             $ToCalculate->setAttribute('paid_status', Invoice::PAYMENT_STATUS_PART);
         }
