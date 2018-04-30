@@ -132,10 +132,13 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
             comments = [];
 
             for (i in group) {
-                comments.push(group[i]);
-            }
+                if (group.hasOwnProperty(i)) {
+                    // reverse comments
+                    group[i].data = group[i].data.reverse();
 
-            console.log(comments);
+                    comments.push(group[i]);
+                }
+            }
 
             this.$Elm.set({
                 html: Mustache.render(template, {
