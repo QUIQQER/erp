@@ -72,7 +72,11 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
             var Formatter = this.$getFormatter();
 
             comments.sort(function (a, b) {
-                return a.time < b.time;
+                if (a.time === b.time) {
+                    return 0;
+                }
+
+                return !(a.time - b.time);
             });
 
             comments = comments.map(function (entry) {
@@ -92,12 +96,46 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 }
 
                 return {
+                    date   : date,
                     time   : Formatter.format(date),
                     message: entry.message,
                     type   : type
                 };
             });
 
+            // grouping
+            var i, len, day, date, entry;
+
+            var group        = {};
+            var DayFormatter = this.$getDayFormatter();
+
+            for (i = 0, len = comments.length; i < len; i++) {
+                entry = comments[i];
+                date  = entry.date;
+                day   = DayFormatter.format(date);
+
+                if (typeof group[day] === 'undefined') {
+                    group[day] = {
+                        day : day,
+                        data: []
+                    };
+                }
+
+                group[day].data.push({
+                    time   : entry.time,
+                    message: entry.message,
+                    type   : entry.type
+                });
+            }
+
+            // parse for mustache
+            comments = [];
+
+            for (i in group) {
+                comments.push(group[i]);
+            }
+
+            console.log(comments);
 
             this.$Elm.set({
                 html: Mustache.render(template, {
@@ -116,12 +154,39 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
             var locale = QUILocale.getCurrent();
 
             var options = {
-                year  : 'numeric',
-                month : 'numeric',
-                day   : 'numeric',
-                hour  : 'numeric',
-                minute: 'numeric',
-                second: 'numeric'
+                // year  : 'numeric',
+                // month : '2-digit',
+                // day   : '2-digit',
+                hour  : '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+
+            if (!locale.match('_')) {
+                locale = locale.toLowerCase() + '_' + locale.toUpperCase();
+            }
+
+            locale = locale.replace('_', '-');
+
+            try {
+                return window.Intl.DateTimeFormat(locale, options);
+            } catch (e) {
+                return window.Intl.DateTimeFormat('de-DE', options);
+            }
+        },
+
+        /**
+         * Return the date day formatter
+         *
+         * @return {window.Intl.DateTimeFormat}
+         */
+        $getDayFormatter: function () {
+            var locale = QUILocale.getCurrent();
+
+            var options = {
+                year : 'numeric',
+                month: '2-digit',
+                day  : '2-digit'
             };
 
             if (!locale.match('_')) {
