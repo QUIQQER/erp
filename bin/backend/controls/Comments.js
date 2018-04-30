@@ -76,13 +76,28 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
             });
 
             comments = comments.map(function (entry) {
-                var date = new Date(entry.time * 1000);
+                var date = new Date(entry.time * 1000),
+                    type = 'fa fa-comment';
+
+                if (typeof entry.type !== 'undefined') {
+                    switch (entry.type) {
+                        case 'history':
+                            type = 'fa fa-history';
+                            break;
+
+                        case 'transaction':
+                            type = 'fa fa-money';
+                            break;
+                    }
+                }
 
                 return {
                     time   : Formatter.format(date),
-                    message: entry.message
+                    message: entry.message,
+                    type   : type
                 };
             });
+
 
             this.$Elm.set({
                 html: Mustache.render(template, {

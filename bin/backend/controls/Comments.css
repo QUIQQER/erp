@@ -11,6 +11,20 @@
     width: 100%;
 }
 
+.quiqqer-erp-comments-comment-type {
+    color: #8F9399;
+    float: left;
+    font-size: 20px;
+    text-align: center;
+    width: 50px;
+}
+
+.quiqqer-erp-comments-comment-data {
+    float: left;
+    text-align: center;
+    width: calc(100% - 50px);
+}
+
 .quiqqer-erp-comments-comment-date {
     float: left;
 }
@@ -18,5 +32,6 @@
 .quiqqer-erp-comments-comment-message {
     clear: both;
     float: left;
+    text-align: left;
     width: 100%;
 }
