@@ -135,8 +135,6 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 comments.push(group[i]);
             }
 
-            console.log(comments);
-
             this.$Elm.set({
                 html: Mustache.render(template, {
                     comments      : comments,
