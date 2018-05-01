@@ -1,39 +1,55 @@
-QUIQQER ERP System
+![QUIQQER ERP](bin/images/Readme.png)
+
+QUIQQER ERP
 ========
 
-Create your shop with QUIQQER products. Manage invoices with QUIQQER invoices.
-The QUIQQER ERP module enables you to set up your own customized ERP / eCommerce system.
+The QUIQQER ERP module bundles all QUIQQER modules which you need for a 
+ERP (Enterprise Resource Planning) system. 
+
+It is your central point to successfully realize your project.
+The ERP system transforms QUIQQER into a fully-fledged e-commerce shop or into your invoice management. 
+Start your e-business now.
 
 Package name:
 
     quiqqer/erp
 
 
-ERP Stack
-----
+You can implement the following projects with the ERP module:
+------
 
-We recommend to install additional packages:
+- E-Commerce Shop System
+- Single-use product management
+- Single-use invoice management
+- Single-use employee administration
+- Single-use customer management
+- Single-use offer system
 
-- quiqqer/areas
-- quiqqer/currency
-- quiqqer/discount
-- quiqqer/products
-- quiqqer/tax
+The ERP system consists of the following modules
+------
 
+- QUIQQER Areas
+- QUIQQER Currency
+- QUIQQER Discount
+- QUIQQER Products
+- QUIQQER TAX
+- QUIQQER Invoice
+- QUIQQER Order
+- QUIQQER Employee
+- QUIQQER Customer
+- QUIQQER Payments 
+    - Standard payment methods: Invoice, Cache, Advanced payment
+    - QUIQQER Amazon
+    - QUIQQER Paymill
+    - QUIQQER Paypal
+- QUIQQER Watchlist
+- QUIQQER Payment Transactions
+- QUIQQER Memberships
 
-Installation
-------------
+The following modules are under development:
+------
 
-The Package name is: quiqqer/erp
-
-Required Servers:
-
-- git@dev.quiqqer.com:quiqqer/erp.git
-- git@dev.quiqqer.com:quiqqer/products.git
-- git@dev.quiqqer.com:quiqqer/areas.git
-- git@dev.quiqqer.com:quiqqer/package-currency.git
-- git@dev.quiqqer.com:quiqqer/discount.git
-- git@dev.quiqqer.com:quiqqer/tax.git
+- QUIQQER Warehouse Management
 
 
 Contribution
