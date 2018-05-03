@@ -74,13 +74,6 @@
             <de><![CDATA[E-Commerce]]></de>
             <en><![CDATA[E-commerce]]></en>
         </locale>
-    </groups>
-
-    <groups name="quiqqer/erp" datatype="php">
-        <locale name="user.settings.title">
-            <de><![CDATA[Rechnungsdaten]]></de>
-            <en><![CDATA[Billing Details]]></en>
-        </locale>
         <locale name="user.settings.euVatId">
             <de><![CDATA[Umsatzsteuer-ID]]></de>
             <en><![CDATA[Tax EU-ID]]></en>
@@ -88,6 +81,13 @@
         <locale name="user.settings.taxId">
             <de><![CDATA[Steuernummer]]></de>
             <en><![CDATA[Tax number]]></en>
+        </locale>
+    </groups>
+
+    <groups name="quiqqer/erp" datatype="php">
+        <locale name="user.settings.title">
+            <de><![CDATA[Rechnungsdaten]]></de>
+            <en><![CDATA[Billing Details]]></en>
         </locale>
         <locale name="user.settings.address">
             <de><![CDATA[Rechnungsadresse]]></de>
