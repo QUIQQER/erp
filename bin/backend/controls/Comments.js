@@ -71,14 +71,6 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
 
             var Formatter = this.$getFormatter();
 
-            comments.sort(function (a, b) {
-                if (a.time === b.time) {
-                    return 0;
-                }
-
-                return !(a.time - b.time);
-            });
-
             comments = comments.map(function (entry) {
                 var date = new Date(entry.time * 1000),
                     type = 'fa fa-comment';
@@ -96,10 +88,11 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 }
 
                 return {
-                    date   : date,
-                    time   : Formatter.format(date),
-                    message: entry.message,
-                    type   : type
+                    date     : date,
+                    time     : Formatter.format(date),
+                    message  : entry.message,
+                    type     : type,
+                    timestamp: entry.time
                 };
             });
 
@@ -122,19 +115,24 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 }
 
                 group[day].data.push({
-                    time   : entry.time,
-                    message: entry.message,
-                    type   : entry.type
+                    time     : entry.time,
+                    message  : entry.message,
+                    type     : entry.type,
+                    timestamp: entry.timestamp
                 });
             }
 
             // parse for mustache
             comments = [];
 
+            var sortComments = function (a, b) {
+                return a.timestamp - b.timestamp;
+            };
+
             for (i in group) {
                 if (group.hasOwnProperty(i)) {
                     // reverse comments
-                    group[i].data = group[i].data.reverse();
+                    group[i].data = group[i].data.sort(sortComments).reverse();
 
                     comments.push(group[i]);
                 }
