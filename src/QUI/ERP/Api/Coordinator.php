@@ -85,8 +85,6 @@ class Coordinator extends QUI\Utils\Singleton
         $Map   = new QUI\Controls\Sitemap\Map();
 
         try {
-            throw new QUI\Cache\Exception('huhu');
-
             return QUI\Cache\Manager::get($cache);
         } catch (QUI\Cache\Exception $Exception) {
             $provider = $this->getErpApiProvider();
@@ -97,9 +95,8 @@ class Coordinator extends QUI\Utils\Singleton
             }
         }
 
-        $result = $Map->toArray();
-
-        usort($result['items'], function ($a, $b) {
+        $result  = $Map->toArray();
+        $sorting = function ($a, $b) {
             if (!isset($a['priority'])) {
                 return 1;
             }
@@ -116,7 +113,13 @@ class Coordinator extends QUI\Utils\Singleton
             }
 
             return $pa < $pb ? -1 : 1;
-        });
+        };
+
+        usort($result['items'], $sorting);
+
+        foreach ($result['items'] as $key => $itemData) {
+            usort($result['items'][$key]['items'], $sorting);
+        }
 
         try {
             QUI\Cache\Manager::set($cache, $result);
