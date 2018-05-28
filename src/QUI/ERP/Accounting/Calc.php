@@ -10,6 +10,7 @@ use QUI;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
 use QUI\ERP\Accounting\Invoice\Invoice;
+use QUI\ERP\Accounting\Invoice\InvoiceTemporary;
 use QUI\ERP\Accounting\Invoice\Handler;
 
 /**
@@ -483,7 +484,7 @@ class Calc
     /**
      * Calculates the individual amounts paid of an invoice / order
      *
-     * @param Invoice|QUI\ERP\Order\AbstractOrder $ToCalculate
+     * @param InvoiceTemporary|Invoice|QUI\ERP\Order\AbstractOrder $ToCalculate
      * @return array
      *
      * @throws QUI\ERP\Exception
@@ -505,6 +506,10 @@ class Calc
         $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
         $transactions = $Transactions->getTransactionsByHash($ToCalculate->getHash());
         $calculations = $ToCalculate->getArticles()->getCalculations();
+
+        if (!isset($calculations['sum'])) {
+            $calculations['sum'] = 0;
+        }
 
         $paidData = [];
         $paidDate = 0;
@@ -570,7 +575,6 @@ class Calc
         $ToCalculate->setAttribute('paid', $sum);
         $ToCalculate->setAttribute('toPay', $toPay - $paid);
 
-
         if ($ToCalculate->getAttribute('paid_status') === Handler::TYPE_INVOICE_REVERSAL
             || $ToCalculate->getAttribute('paid_status') === Handler::TYPE_INVOICE_CANCEL
         ) {
@@ -606,12 +610,16 @@ class Calc
     /**
      * Is the object allowed for calculation
      *
-     * @param Invoice|QUI\ERP\Order\AbstractOrder $ToCalculate
+     * @param InvoiceTemporary|Invoice|QUI\ERP\Order\AbstractOrder $ToCalculate
      * @return bool
      */
     public static function isAllowedForCalculation($ToCalculate)
     {
         if ($ToCalculate instanceof Invoice) {
+            return true;
+        }
+
+        if ($ToCalculate instanceof InvoiceTemporary) {
             return true;
         }
 
@@ -726,6 +734,10 @@ class Calc
     {
         if (is_string($vatArray)) {
             $vatArray = json_decode($vatArray, true);
+        }
+
+        if (!is_array($vatArray)) {
+            return 0;
         }
 
         return array_sum(
