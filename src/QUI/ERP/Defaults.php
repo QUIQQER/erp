@@ -85,8 +85,13 @@ class Defaults
     public static function getPrecision()
     {
         try {
-            $Package   = QUI::getPackage('quiqqer/erp');
-            $Config    = $Package->getConfig();
+            $Package = QUI::getPackage('quiqqer/erp');
+            $Config  = $Package->getConfig();
+
+            if (!$Config) {
+                return 8;
+            }
+
             $precision = $Config->get('general', 'precision');
 
             if ($precision) {

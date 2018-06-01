@@ -29,7 +29,7 @@ class Debug
     /**
      * @var int
      */
-    protected $debug;
+    protected $debug = false;
 
     /**
      * @return Debug
@@ -48,8 +48,15 @@ class Debug
      */
     public function __construct()
     {
-        $this->Config = QUI::getPackage('quiqqer/erp')->getConfig();
-        $this->debug  = (int)$this->Config->getValue('general', 'debug');
+        try {
+            $this->Config = QUI::getPackage('quiqqer/erp')->getConfig();
+
+            if ($this->Config) {
+                $this->debug = (int)$this->Config->getValue('general', 'debug');
+            }
+        } catch (QUI\Exception $Exception) {
+            Log::writeException($Exception);
+        }
     }
 
     /**
