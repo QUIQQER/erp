@@ -319,13 +319,13 @@ class Calc
             switch ($Discount->getCalculation()) {
                 // einfache Zahl, Währung --- kein Prozent
                 case Calc::CALCULATION_COMPLEMENT:
-                    $nettoPrice = $nettoPrice + ($Discount->getValue() / $Article->getQuantity());
+                    $nettoPrice = $nettoPrice - ($Discount->getValue() / $Article->getQuantity());
                     break;
 
                 // Prozent Angabe
                 case Calc::CALCULATION_PERCENTAGE:
                     $percentage = $Discount->getValue() / 100 * $nettoPrice;
-                    $nettoPrice = $nettoPrice + $percentage;
+                    $nettoPrice = $nettoPrice - $percentage;
                     break;
             }
         }

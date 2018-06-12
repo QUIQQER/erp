@@ -1,10 +1,12 @@
 /**
  * @module package/quiqqer/erp/bin/backend/utils/Discount
+ * @author www.pcsg.de (Henning Leutz)
  */
 define('package/quiqqer/erp/bin/backend/utils/Discount', function () {
     "use strict";
 
     return {
+
         /**
          * Unserialize a discount
          *
@@ -12,7 +14,6 @@ define('package/quiqqer/erp/bin/backend/utils/Discount', function () {
          * @return {Object|null}
          */
         unserialize: function (discount) {
-
             if (typeOf(discount) === 'number') {
                 return {
                     value: discount,
@@ -44,7 +45,7 @@ define('package/quiqqer/erp/bin/backend/utils/Discount', function () {
                 }
             }
 
-            if (discount.toString().match('%')) {
+            if (discount.toString().indexOf('%') !== -1) {
                 return {
                     value: discount,
                     type : 1
