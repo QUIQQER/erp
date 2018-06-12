@@ -289,8 +289,13 @@ class User extends QUI\QDOM implements UserInterface
             $attributes['country'] = '';
         }
 
+        $attributes['id']        = $this->getId();
         $attributes['lang']      = $this->getLang();
         $attributes['isCompany'] = $this->isCompany();
+        $attributes['firstname'] = $this->getAttribute('firstname');
+        $attributes['lastname']  = $this->getAttribute('lastname');
+        $attributes['username']  = $this->getAttribute('username');
+        $attributes['isCompany'] = $this->getAttribute('isCompany');
 
         return $attributes;
     }
@@ -355,13 +360,18 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function getCountry()
     {
-        if (empty($this->country)) {
-            return QUI\ERP\Defaults::getCountry();
+        if (!empty($this->address) && isset($this->address['country'])) {
+            try {
+                return QUI\Countries\Manager::get($this->address['country']);
+            } catch (QUI\Exception $Exception) {
+            }
         }
 
-        try {
-            return QUI\Countries\Manager::get($this->country);
-        } catch (QUI\Exception $Exception) {
+        if (!empty($this->country)) {
+            try {
+                return QUI\Countries\Manager::get($this->country);
+            } catch (QUI\Exception $Exception) {
+            }
         }
 
         return QUI\ERP\Defaults::getCountry();

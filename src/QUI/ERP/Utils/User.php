@@ -209,7 +209,7 @@ class User
      * Filter unwanted user attributes
      * Therefore we can use the attributes in the ERP stack
      *
-     * @param $attributes
+     * @param array $attributes
      * @return array
      */
     public static function filterCustomerAttributes($attributes = [])

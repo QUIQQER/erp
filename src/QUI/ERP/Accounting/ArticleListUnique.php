@@ -207,6 +207,10 @@ class ArticleListUnique implements \IteratorAggregate
         $Engine   = QUI::getTemplateManager()->getEngine();
         $vatArray = [];
 
+        if (!$this->count()) {
+            return '';
+        }
+
         $Currency = QUI\ERP\Currency\Handler::getCurrency(
             $this->calculations['currencyData']['code']
         );
