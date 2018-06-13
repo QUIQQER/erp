@@ -101,7 +101,12 @@ class User extends QUI\QDOM implements UserInterface
         $this->username  = $attributes['username'];
         $this->firstName = $attributes['firstname'];
         $this->lastName  = $attributes['lastname'];
-        $this->country   = $attributes['country'];
+
+        if ($attributes['country'] instanceof QUI\Countries\Country) {
+            $this->country = $attributes['country']->getCode();
+        } else {
+            $this->country = $attributes['country'];
+        }
 
         if (isset($attributes['uuid'])) {
             $this->uuid = $attributes['uuid'];
