@@ -13,6 +13,15 @@
         <div class="articles-article-information-description">
             {$this->getAttribute('description')}
         </div>
+
+        <ul class="quiqqer-order-basket-articles-article-fields">
+            {foreach $customFields as $field}
+            <li class="quiqqer-order-basket-articles-article-fields-field">
+                <span>{$field.title}:</span>
+                <span>{$field.custom_calc.valueText}</span>
+            </li>
+            {/foreach}
+        </ul>
     </td>
 
     {if $this->getAttribute('quantity') !== false}

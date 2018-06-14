@@ -490,18 +490,6 @@ class Article implements ArticleInterface
             $discount = $this->Discount->toJSON();
         }
 
-        $customFields = array_filter($this->customFields, function ($v) {
-            if (is_string($v)) {
-                return true;
-            }
-
-            if (is_numeric($v)) {
-                return true;
-            }
-
-            return false;
-        });
-
         return [
             // article data
             'id'           => $this->getId(),
@@ -515,7 +503,7 @@ class Article implements ArticleInterface
             'discount'     => $discount,
             'control'      => $this->attributes['control'],
             'class'        => self::class,
-            'customFields' => $customFields,
+            'customFields' => $this->customFields,
 
             // calculated data
             'calculated'   => [
@@ -557,7 +545,6 @@ class Article implements ArticleInterface
     {
         return $this->customFields;
     }
-
 
     //endregion
 }
