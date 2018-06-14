@@ -300,7 +300,8 @@ class User extends QUI\QDOM implements UserInterface
         $attributes['firstname'] = $this->getAttribute('firstname');
         $attributes['lastname']  = $this->getAttribute('lastname');
         $attributes['username']  = $this->getAttribute('username');
-        $attributes['isCompany'] = $this->getAttribute('isCompany');
+
+        //$attributes['isCompany'] = $this->getAttribute('isCompany');
 
         return $attributes;
     }
