@@ -16,7 +16,7 @@ use QUI;
  *
  * This is list is only a presentation layer
  */
-class FactorList implements \IteratorAggregate
+class FactorList implements \IteratorAggregate, \Countable
 {
     /**
      * internal list of price factors
