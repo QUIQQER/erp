@@ -91,6 +91,11 @@
             <de><![CDATA[Umsatzsteuer-ID]]></de>
             <en><![CDATA[VAT ID]]></en>
         </locale>
+
+        <locale name="global_process_id">
+            <de><![CDATA[Vorgangsnummer]]></de>
+            <en><![CDATA[Procedure number]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
