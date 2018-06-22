@@ -5,6 +5,7 @@
 
     <event on="onUserSaveBegin" fire="\QUI\ERP\EventHandler::onUserSave"/>
     <event on="onUserSaveBegin" fire="\QUI\ERP\EventHandler::onUserSaveBegin"/>
+    <event on="onPackageConfigSave" fire="\QUI\ERP\EventHandler::onPackageConfigSave"/>
 
     <event on="onQuiqqer::frontend-users::profile::customer-data-begin"
            fire="\QUI\ERP\EventHandler::onFrontendUserCustomerBegin"
