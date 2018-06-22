@@ -143,6 +143,10 @@
             <de><![CDATA[Verwendete Nachkommastellen]]></de>
             <en><![CDATA[Used decimal digits]]></en>
         </locale>
+        <locale name="menu.erp.general.dateFormats.title">
+            <de><![CDATA[Datums Formate]]></de>
+            <en><![CDATA[Date Formats]]></en>
+        </locale>
         <locale name="shop.settings.general.precision.description">
             <de><![CDATA[
             Diese Einstellung legt fest mit wieviele Nachkommenstellen das System rechnen soll.
@@ -151,6 +155,59 @@
             This setting determines how many decimal places the system should use for calculation.
             ]]></en>
         </locale>
+        <locale name="shop.settings.general.timestampFormat" html="true">
+            <de><![CDATA[
+               Vorgabe für Zeitstempel
+            ]]></de>
+            <en><![CDATA[
+                Default for timestamps
+            ]]></en>
+        </locale>
+        <locale name="shop.settings.general.timestampFormat.description" html="true">
+            <de><![CDATA[
+                Dieses Datumsformat wird für ein komplettes Datumsformat verwendet (z.B: dd.mm.YYYY H:i:s).
+                <br /><br />
+                Einstellungen und oder mögliche Datumsformate finden Sie unter:<br />
+                <a href="http://php.net/manual/de/function.strftime.php#refsect1-function.strftime-parameters">
+                    http://php.net/manual/de/function.strftime.php#refsect1-function.strftime-parameters
+                </a>
+            ]]></de>
+            <en><![CDATA[
+                This date format is used for a complete date format (e.g.: dd.mm.YYYYY H:i:s).
+                <br /><br />
+                Settings and or possible date formats can be found under:<br />
+                <a href="http://php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters">
+                    http://php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters
+                </a>
+            ]]></en>
+        </locale>
+        <locale name="shop.settings.general.dateFormat">
+            <de><![CDATA[
+                Vorgabe für Datum
+            ]]></de>
+            <en><![CDATA[
+                Default for dates
+            ]]></en>
+        </locale>
+        <locale name="shop.settings.general.dateFormat.description">
+            <de><![CDATA[
+                Dieses Datumsformat wird für ein partiell Datumsformat verwendet (z.B: dd.mm.YYYY).
+                <br /><br />
+                Einstellungen und oder mögliche Datumsformate finden Sie unter:<br />
+                <a href="http://php.net/manual/de/function.strftime.php#refsect1-function.strftime-parameters">
+                    http://php.net/manual/de/function.strftime.php#refsect1-function.strftime-parameters
+                </a>
+            ]]></de>
+            <en><![CDATA[
+                This date format is used for a partial date format (e.g.: dd.mm.YYYYY).
+                <br /><br />
+                Settings and or possible date formats can be found under:<br />
+                <a href="http://php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters">
+                    http://php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters
+                </a>
+            ]]></en>
+        </locale>
+
         <locale name="shop.settings.businessType">
             <de><![CDATA[Vertriebsart]]></de>
             <en><![CDATA[Business type]]></en>

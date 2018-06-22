@@ -23,6 +23,8 @@
             </section>
 
             <section name="paymentsChangeable"/>
+            <section name="timestampFormat"/>
+            <section name="dateFormat"/>
         </config>
 
         <window name="ERP">
@@ -76,6 +78,37 @@
                                 <locale group="quiqqer/erp" var="shop.settings.general.precision.description"/>
                             </description>
                         </input>
+                    </settings>
+
+                    <settings title="dateFormats" name="dateFormats">
+                        <title>
+                            <locale group="quiqqer/erp" var="menu.erp.general.dateFormats.title"/>
+                        </title>
+
+                        <input conf="timestampFormat"
+                               data-qui="controls/system/AvailableLanguages"
+                               data-qui-options-placeholder="%c"
+                        >
+                            <text>
+                                <locale group="quiqqer/erp" var="shop.settings.general.timestampFormat"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/erp" var="shop.settings.general.timestampFormat.description"/>
+                            </description>
+                        </input>
+
+                        <input conf="dateFormat"
+                               data-qui="controls/system/AvailableLanguages"
+                               data-qui-options-placeholder="%D"
+                        >
+                            <text>
+                                <locale group="quiqqer/erp" var="shop.settings.general.dateFormat"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/erp" var="shop.settings.general.dateFormat.description"/>
+                            </description>
+                        </input>
+
                     </settings>
 
                     <settings title="numberRanges" name="numberRanges">

@@ -32,8 +32,44 @@ class EventHandler
      */
     public static function onPackageSetup(Package $Package)
     {
-        if ($Package->getName() != 'quiqqer/erp') {
+        if ($Package->getName() !== 'quiqqer/erp') {
             return;
+        }
+    }
+
+    public static function onPackageConfigSave(QUI\Package\Package $Package, array $params)
+    {
+        if ($Package->getName() !== 'quiqqer/erp') {
+            return;
+        }
+
+        $languages = QUI::availableLanguages();
+        $languages = array_flip($languages);
+
+        try {
+            $Config = $Package->getConfig();
+
+            // timestampFormat
+            if (isset($params['timestampFormat'])) {
+                foreach ($params['timestampFormat'] as $language => $format) {
+                    if (isset($languages[$language])) {
+                        $Config->setValue('timestampFormat', $language, $format);
+                    }
+                }
+            }
+
+            // dateFormat
+            if (isset($params['dateFormat'])) {
+                foreach ($params['dateFormat'] as $language => $format) {
+                    if (isset($languages[$language])) {
+                        $Config->setValue('dateFormat', $language, $format);
+                    }
+                }
+            }
+
+            $Config->save();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
         }
     }
 

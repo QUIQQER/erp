@@ -81,8 +81,9 @@ class Coordinator extends QUI\Utils\Singleton
      */
     public function getMenuItems()
     {
-        $cache = 'erp/provider/menuItems';
-        $Map   = new QUI\Controls\Sitemap\Map();
+        $cache  = 'erp/provider/menuItems';
+        $Map    = new QUI\Controls\Sitemap\Map();
+        $Locale = QUI::getLocale();
 
         try {
             return QUI\Cache\Manager::get($cache);
@@ -95,8 +96,17 @@ class Coordinator extends QUI\Utils\Singleton
             }
         }
 
-        $result  = $Map->toArray();
-        $sorting = function ($a, $b) {
+        $result = $Map->toArray();
+
+        $sorting = function ($a, $b) use ($Locale) {
+            if (!isset($a['priority']) && !isset($b['priority'])) {
+                // sort by text
+                $aLocale = $Locale->get($a['text'][0], $a['text'][1]);
+                $bLocale = $Locale->get($b['text'][0], $b['text'][1]);
+
+                return strcmp($aLocale, $bLocale);
+            }
+
             if (!isset($a['priority'])) {
                 return 1;
             }
