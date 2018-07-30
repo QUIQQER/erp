@@ -521,9 +521,13 @@ class Calc
         );
 
         $isValidTimeStamp = function ($timestamp) {
-            return ((string)(int)$timestamp === $timestamp)
-                   && ($timestamp <= PHP_INT_MAX)
-                   && ($timestamp >= ~PHP_INT_MAX);
+            try {
+                new \DateTime('@'.$timestamp);
+            } catch (\Exception $e) {
+                return false;
+            }
+
+            return true;
         };
 
         foreach ($transactions as $Transaction) {
@@ -569,6 +573,15 @@ class Calc
 
         $paid  = Price::validatePrice($sum);
         $toPay = Price::validatePrice($calculations['sum']);
+
+        // workaround fix
+        if ($ToCalculate->getAttribute('paid_date') != $paidDate) {
+            QUI::getDataBase()->update(
+                Handler::getInstance()->invoiceTable(),
+                ['paid_date' => $paidDate],
+                ['id' => $ToCalculate->getCleanId()]
+            );
+        }
 
         $ToCalculate->setAttribute('paid_data', json_encode($paidData));
         $ToCalculate->setAttribute('paid_date', $paidDate);
