@@ -192,7 +192,9 @@ class User extends QUI\QDOM implements UserInterface
             'lang'      => $User->getLang(),
             'isCompany' => $User->isCompany(),
             'isNetto'   => $User->getAttribute('quiqqer.erp.isNettoUser'),
-            'data'      => $User->getAttributes()
+            'data'      => $User->getAttributes(),
+
+            'quiqqer.erp.euVatId' => $User->getAttribute('quiqqer.erp.euVatId'),
         ]);
     }
 
@@ -255,6 +257,26 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
+     * Return the company if the customer has a company
+     * if not, the user will be returned
+     *
+     * @return mixed
+     */
+    public function getInvoiceName()
+    {
+        if ($this->isCompany()) {
+            $Address = $this->getAddress();
+            $company = $Address->getAttribute('company');
+
+            if (!empty($company)) {
+                return $company;
+            }
+        }
+
+        return $this->getName();
+    }
+
+    /**
      * @return string
      */
     public function getUsername()
@@ -301,7 +323,9 @@ class User extends QUI\QDOM implements UserInterface
         $attributes['lastname']  = $this->getAttribute('lastname');
         $attributes['username']  = $this->getAttribute('username');
 
-        //$attributes['isCompany'] = $this->getAttribute('isCompany');
+        if ($this->getAttribute('quiqqer.erp.euVatId')) {
+            $attributes['quiqqer.erp.euVatId'] = $this->getAttribute('quiqqer.erp.euVatId');
+        }
 
         return $attributes;
     }
