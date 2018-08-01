@@ -167,6 +167,50 @@ class EventHandler
         }
     }
 
+    /**
+     * event: on user address save
+     *
+     * @param QUI\Users\Address $Address
+     * @param QUI\Users\User $User
+     */
+    public static function onUserAddressSave(QUI\Users\Address $Address, QUI\Users\User $User)
+    {
+        if (!QUI::getUsers()->isUser($User)) {
+            return;
+        }
+
+        $Request = QUI::getRequest()->request;
+        $data    = $Request->get('data');
+
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+        }
+
+        if (empty($data) || !is_array($data)) {
+            return;
+        }
+
+        if (isset($data['vatId'])) {
+            $vatId = $data['vatId'];
+
+            try {
+                if (class_exists('QUI\ERP\Tax\Utils')
+                    && QUI\ERP\Tax\Utils::shouldVatIdValidationBeExecuted()
+                    && !empty($vatId)) {
+                    $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
+                }
+
+                // save VAT ID
+                $User->setAttribute('quiqqer.erp.euVatId', $vatId);
+                $User->save();
+            } catch (QUI\ERP\Tax\Exception $Exception) {
+                QUI\System\Log::writeDebugException($Exception);
+            } catch (\Exception $Exception) {
+                QUI\System\Log::writeException($Exception);
+            }
+        }
+    }
+
     //region user profile extension
 
     /**
