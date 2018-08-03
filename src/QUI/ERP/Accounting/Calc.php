@@ -223,7 +223,8 @@ class Calc
             if (!isset($vatArray[$vat])) {
                 $vatArray[$vat] = [
                     'vat'  => $vat,
-                    'text' => self::getVatText($vatSum, $this->getUser())
+                    'text' => self::getVatText($vat, $this->getUser())
+                    // vorher war $vatSum, @todo wenn alles gut läuft, kommentar entfernen
                 ];
 
                 $vatArray[$vat]['sum'] = 0;
