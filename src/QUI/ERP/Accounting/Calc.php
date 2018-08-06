@@ -223,7 +223,8 @@ class Calc
             if (!isset($vatArray[$vat])) {
                 $vatArray[$vat] = [
                     'vat'  => $vat,
-                    'text' => self::getVatText($vatSum, $this->getUser())
+                    'text' => self::getVatText($vat, $this->getUser())
+                    // vorher war $vatSum, @todo wenn alles gut läuft, kommentar entfernen
                 ];
 
                 $vatArray[$vat]['sum'] = 0;
@@ -503,6 +504,47 @@ class Calc
             'Calc->calculatePayments(); Transaction'
         );
 
+        // if payment status is paid, take it immediately and do not query any transactions
+        if ($ToCalculate->getAttribute('paid_status') === Invoice::PAYMENT_STATUS_PAID) {
+            $paidData = $ToCalculate->getAttribute('paid_data');
+            $paid     = 0;
+
+            if (!is_array($paidData)) {
+                $paidData = json_decode($paidData, true);
+            }
+
+            if (!is_array($paidData)) {
+                $paidData = [];
+            }
+
+            foreach ($paidData as $entry) {
+                if (isset($entry['amount'])) {
+                    $paid = $paid + floatval($entry['amount']);
+                }
+            }
+
+            $ToCalculate->setAttribute('paid', $paid);
+            $ToCalculate->setAttribute('toPay', 0);
+
+            QUI\ERP\Debug::getInstance()->log([
+                'paidData'   => $ToCalculate->getAttribute('paid_data'),
+                'paidDate'   => $ToCalculate->getAttribute('paid_date'),
+                'paidStatus' => $ToCalculate->getAttribute('paid_status'),
+                'paid'       => $ToCalculate->getAttribute('paid'),
+                'toPay'      => $ToCalculate->getAttribute('toPay')
+            ]);
+
+            return [
+                'paidData'   => $ToCalculate->getAttribute('paid_data'),
+                'paidDate'   => $ToCalculate->getAttribute('paid_date'),
+                'paidStatus' => $ToCalculate->getAttribute('paid_status'),
+                'paid'       => $ToCalculate->getAttribute('paid'),
+                'toPay'      => $ToCalculate->getAttribute('toPay')
+            ];
+        }
+
+
+        // calc with transactions
         $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
         $transactions = $Transactions->getTransactionsByHash($ToCalculate->getHash());
         $calculations = $ToCalculate->getArticles()->getCalculations();
