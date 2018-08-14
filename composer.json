@@ -28,7 +28,8 @@
     "quiqqer\/employee": "1.*|dev-master|dev-dev",
     "quiqqer\/customer": "1.*|dev-master|dev-dev",
     "quiqqer/qui-php": "1.*|dev-master|dev-dev",
-    "quiqqer/smarty3": ">=1.7|dev-master|dev-dev"
+    "quiqqer/smarty3": ">=1.7|dev-master|dev-dev",
+    "quiqqer/frontend-users": "1.*|dev-master|dev-dev"
   },
   "autoload": {
     "psr-4": {
