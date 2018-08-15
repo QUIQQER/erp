@@ -16,6 +16,16 @@ use QUI;
 class Defaults
 {
     /**
+     * @var null|string
+     */
+    protected static $timestampFormat = [];
+
+    /**
+     * @var null|string
+     */
+    protected static $dateFormat = [];
+
+    /**
      * Return the default area for the ERP system
      *
      * @return QUI\ERP\Areas\Area
@@ -85,8 +95,13 @@ class Defaults
     public static function getPrecision()
     {
         try {
-            $Package   = QUI::getPackage('quiqqer/erp');
-            $Config    = $Package->getConfig();
+            $Package = QUI::getPackage('quiqqer/erp');
+            $Config  = $Package->getConfig();
+
+            if (!$Config) {
+                return 8;
+            }
+
             $precision = $Config->get('general', 'precision');
 
             if ($precision) {
@@ -97,5 +112,77 @@ class Defaults
         }
 
         return 8;
+    }
+
+    /**
+     * Return the main timestamp format
+     *
+     * @param false|string $lang - language of the wanted timestamp
+     * @return int|null|string
+     */
+    public static function getTimestampFormat($lang = false)
+    {
+        if ($lang === false) {
+            $lang = QUI::getLocale()->getCurrent();
+        }
+
+        if (!isset(self::$timestampFormat[$lang])) {
+            return self::$timestampFormat[$lang];
+        }
+
+        self::$timestampFormat[$lang] = '%c';
+
+        try {
+            $Package = QUI::getPackage('quiqqer/erp');
+            $Config  = $Package->getConfig();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+
+            return self::$timestampFormat[$lang];
+        }
+
+        $value = $Config->get('timestampFormat', $lang);
+
+        if ($value !== false) {
+            self::$timestampFormat[$lang] = $value;
+        }
+
+        return self::$timestampFormat[$lang];
+    }
+
+    /**
+     * Return the main date format
+     *
+     * @param bool|string $lang
+     * @return mixed
+     */
+    public static function getDateFormat($lang = false)
+    {
+        if ($lang === false) {
+            $lang = QUI::getLocale()->getCurrent();
+        }
+
+        if (!isset(self::$dateFormat[$lang])) {
+            return self::$dateFormat[$lang];
+        }
+
+        self::$dateFormat[$lang] = '%D';
+
+        try {
+            $Package = QUI::getPackage('quiqqer/erp');
+            $Config  = $Package->getConfig();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+
+            return self::$dateFormat[$lang];
+        }
+
+        $value = $Config->get('dateFormat', $lang);
+
+        if ($value !== false) {
+            self::$dateFormat[$lang] = $value;
+        }
+
+        return self::$dateFormat[$lang];
     }
 }

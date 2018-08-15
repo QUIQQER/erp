@@ -59,6 +59,11 @@ class User extends QUI\QDOM implements UserInterface
     protected $isCompany;
 
     /**
+     * @var bool|null
+     */
+    protected $isNetto;
+
+    /**
      * @var array
      */
     protected $data = [];
@@ -90,12 +95,18 @@ class User extends QUI\QDOM implements UserInterface
 
         $this->id        = $attributes['id'];
         $this->isCompany = (bool)$attributes['isCompany'];
+        $this->isNetto   = null;
 
         $this->lang      = $attributes['lang'];
         $this->username  = $attributes['username'];
         $this->firstName = $attributes['firstname'];
         $this->lastName  = $attributes['lastname'];
-        $this->country   = $attributes['country'];
+
+        if ($attributes['country'] instanceof QUI\Countries\Country) {
+            $this->country = $attributes['country']->getCode();
+        } else {
+            $this->country = $attributes['country'];
+        }
 
         if (isset($attributes['uuid'])) {
             $this->uuid = $attributes['uuid'];
@@ -180,7 +191,11 @@ class User extends QUI\QDOM implements UserInterface
             'lastname'  => $User->getAttribute('lastname'),
             'lang'      => $User->getLang(),
             'isCompany' => $User->isCompany(),
-            'data'      => $User->getAttributes()
+            'isNetto'   => $User->getAttribute('quiqqer.erp.isNettoUser'),
+            'data'      => $User->getAttributes(),
+
+            'quiqqer.erp.euVatId' => $User->getAttribute('quiqqer.erp.euVatId'),
+            'quiqqer.erp.taxId'   => $User->getAttribute('quiqqer.erp.taxId')
         ]);
     }
 
@@ -243,6 +258,26 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
+     * Return the company if the customer has a company
+     * if not, the user will be returned
+     *
+     * @return mixed
+     */
+    public function getInvoiceName()
+    {
+        if ($this->isCompany()) {
+            $Address = $this->getAddress();
+            $company = $Address->getAttribute('company');
+
+            if (!empty($company)) {
+                return $company;
+            }
+        }
+
+        return $this->getName();
+    }
+
+    /**
      * @return string
      */
     public function getUsername()
@@ -282,8 +317,20 @@ class User extends QUI\QDOM implements UserInterface
             $attributes['country'] = '';
         }
 
+        $attributes['id']        = $this->getId();
         $attributes['lang']      = $this->getLang();
         $attributes['isCompany'] = $this->isCompany();
+        $attributes['firstname'] = $this->getAttribute('firstname');
+        $attributes['lastname']  = $this->getAttribute('lastname');
+        $attributes['username']  = $this->getAttribute('username');
+
+        if ($this->getAttribute('quiqqer.erp.euVatId')) {
+            $attributes['quiqqer.erp.euVatId'] = $this->getAttribute('quiqqer.erp.euVatId');
+        }
+
+        if ($this->getAttribute('quiqqer.erp.taxId')) {
+            $attributes['quiqqer.erp.taxId'] = $this->getAttribute('quiqqer.erp.taxId');
+        }
 
         return $attributes;
     }
@@ -348,13 +395,18 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function getCountry()
     {
-        if (empty($this->country)) {
-            return QUI\ERP\Defaults::getCountry();
+        if (!empty($this->address) && isset($this->address['country'])) {
+            try {
+                return QUI\Countries\Manager::get($this->address['country']);
+            } catch (QUI\Exception $Exception) {
+            }
         }
 
-        try {
-            return QUI\Countries\Manager::get($this->country);
-        } catch (QUI\Exception $Exception) {
+        if (!empty($this->country)) {
+            try {
+                return QUI\Countries\Manager::get($this->country);
+            } catch (QUI\Exception $Exception) {
+            }
         }
 
         return QUI\ERP\Defaults::getCountry();
@@ -366,6 +418,26 @@ class User extends QUI\QDOM implements UserInterface
     public function isCompany()
     {
         return $this->isCompany;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNetto()
+    {
+        if ($this->isNetto === null) {
+            $this->isNetto = QUI\ERP\Utils\User::getBruttoNettoUserStatus($this);
+        }
+
+        return $this->isNetto;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasBruttoNettoStatus()
+    {
+        return is_bool($this->isNetto);
     }
 
     /**

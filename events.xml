@@ -3,8 +3,10 @@
     <event on="onAdminLoadFooter" fire="\QUI\ERP\EventHandler::onAdminLoadFooter"/>
     <event on="onPackageSetup" fire="\QUI\ERP\EventHandler::onPackageSetup"/>
 
-    <event on="onUserSaveBegin" fire="\QUI\ERP\EventHandler::onUserSave"/>
+    <event on="onUserSave" fire="\QUI\ERP\EventHandler::onUserSave"/>
     <event on="onUserSaveBegin" fire="\QUI\ERP\EventHandler::onUserSaveBegin"/>
+    <event on="onUserAddressSave" fire="\QUI\ERP\EventHandler::onUserAddressSave"/>
+    <event on="onPackageConfigSave" fire="\QUI\ERP\EventHandler::onPackageConfigSave"/>
 
     <event on="onQuiqqer::frontend-users::profile::customer-data-begin"
            fire="\QUI\ERP\EventHandler::onFrontendUserCustomerBegin"

@@ -7,6 +7,7 @@
 
 {assign var=pos value=1}
 <table class="articles-article">
+    <thead>
     <tr class="articles-article-header">
         <th class="articles-article-header-pos">
             {locale group="quiqqer/erp" var="article.list.articles.header.pos"}
@@ -24,10 +25,13 @@
             {locale group="quiqqer/erp" var="article.list.articles.header.price"}
         </th>
     </tr>
+    </thead>
 
+    <tbody>
     {foreach $articles as $Article}
     {$Article->toHTML()}
     {/foreach}
+    </tbody>
 </table>
 
 <!-- sum display -->

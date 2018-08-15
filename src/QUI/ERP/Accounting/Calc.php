@@ -10,6 +10,7 @@ use QUI;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
 use QUI\ERP\Accounting\Invoice\Invoice;
+use QUI\ERP\Accounting\Invoice\InvoiceTemporary;
 use QUI\ERP\Accounting\Invoice\Handler;
 
 /**
@@ -178,6 +179,10 @@ class Calc
             $articleVatArray = $calculated['vatArray'];
             $vat             = $articleAttributes['vat'];
 
+            if ($articleVatArray['text'] === '') {
+                continue;
+            }
+
             if (!isset($vatArray[$vat])) {
                 $vatArray[$vat]        = $articleVatArray;
                 $vatArray[$vat]['sum'] = 0;
@@ -218,7 +223,8 @@ class Calc
             if (!isset($vatArray[$vat])) {
                 $vatArray[$vat] = [
                     'vat'  => $vat,
-                    'text' => self::getVatText($vatSum, $this->getUser())
+                    'text' => self::getVatText($vat, $this->getUser())
+                    // vorher war $vatSum, @todo wenn alles gut läuft, kommentar entfernen
                 ];
 
                 $vatArray[$vat]['sum'] = 0;
@@ -314,13 +320,13 @@ class Calc
             switch ($Discount->getCalculation()) {
                 // einfache Zahl, Währung --- kein Prozent
                 case Calc::CALCULATION_COMPLEMENT:
-                    $nettoPrice = $nettoPrice + ($Discount->getValue() / $Article->getQuantity());
+                    $nettoPrice = $nettoPrice - ($Discount->getValue() / $Article->getQuantity());
                     break;
 
                 // Prozent Angabe
                 case Calc::CALCULATION_PERCENTAGE:
                     $percentage = $Discount->getValue() / 100 * $nettoPrice;
-                    $nettoPrice = $nettoPrice + $percentage;
+                    $nettoPrice = $nettoPrice - $percentage;
                     break;
             }
         }
@@ -398,12 +404,14 @@ class Calc
      * Return the tax message for an user
      *
      * @return string
-     *
-     * @throws QUI\Exception
      */
     public function getVatTextByUser()
     {
-        $Tax = QUI\ERP\Tax\Utils::getTaxByUser($this->getUser());
+        try {
+            $Tax = QUI\ERP\Tax\Utils::getTaxByUser($this->getUser());
+        } catch (QUI\Exception $Exception) {
+            return '';
+        }
 
         return $this->getVatText($Tax->getValue(), $this->getUser());
     }
@@ -477,7 +485,7 @@ class Calc
     /**
      * Calculates the individual amounts paid of an invoice / order
      *
-     * @param Invoice|QUI\ERP\Order\AbstractOrder $ToCalculate
+     * @param InvoiceTemporary|Invoice|QUI\ERP\Order\AbstractOrder $ToCalculate
      * @return array
      *
      * @throws QUI\ERP\Exception
@@ -496,22 +504,72 @@ class Calc
             'Calc->calculatePayments(); Transaction'
         );
 
+        // if payment status is paid, take it immediately and do not query any transactions
+        if ($ToCalculate->getAttribute('paid_status') === Invoice::PAYMENT_STATUS_PAID) {
+            $paidData = $ToCalculate->getAttribute('paid_data');
+            $paid     = 0;
+
+            if (!is_array($paidData)) {
+                $paidData = json_decode($paidData, true);
+            }
+
+            if (!is_array($paidData)) {
+                $paidData = [];
+            }
+
+            foreach ($paidData as $entry) {
+                if (isset($entry['amount'])) {
+                    $paid = $paid + floatval($entry['amount']);
+                }
+            }
+
+            $ToCalculate->setAttribute('paid', $paid);
+            $ToCalculate->setAttribute('toPay', 0);
+
+            QUI\ERP\Debug::getInstance()->log([
+                'paidData'   => $ToCalculate->getAttribute('paid_data'),
+                'paidDate'   => $ToCalculate->getAttribute('paid_date'),
+                'paidStatus' => $ToCalculate->getAttribute('paid_status'),
+                'paid'       => $ToCalculate->getAttribute('paid'),
+                'toPay'      => $ToCalculate->getAttribute('toPay')
+            ]);
+
+            return [
+                'paidData'   => $ToCalculate->getAttribute('paid_data'),
+                'paidDate'   => $ToCalculate->getAttribute('paid_date'),
+                'paidStatus' => $ToCalculate->getAttribute('paid_status'),
+                'paid'       => $ToCalculate->getAttribute('paid'),
+                'toPay'      => $ToCalculate->getAttribute('toPay')
+            ];
+        }
+
+
+        // calc with transactions
         $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
         $transactions = $Transactions->getTransactionsByHash($ToCalculate->getHash());
+        $calculations = $ToCalculate->getArticles()->getCalculations();
+
+        if (!isset($calculations['sum'])) {
+            $calculations['sum'] = 0;
+        }
 
         $paidData = [];
         $paidDate = 0;
         $sum      = 0;
-        $total    = $ToCalculate->getAttribute('sum');
+        $total    = $calculations['sum'];
 
         QUI\ERP\Debug::getInstance()->log(
             'Calc->calculatePayments(); total: '.$total
         );
 
         $isValidTimeStamp = function ($timestamp) {
-            return ((string)(int)$timestamp === $timestamp)
-                   && ($timestamp <= PHP_INT_MAX)
-                   && ($timestamp >= ~PHP_INT_MAX);
+            try {
+                new \DateTime('@'.$timestamp);
+            } catch (\Exception $e) {
+                return false;
+            }
+
+            return true;
         };
 
         foreach ($transactions as $Transaction) {
@@ -556,13 +614,21 @@ class Calc
         }
 
         $paid  = Price::validatePrice($sum);
-        $toPay = Price::validatePrice($ToCalculate->getAttribute('sum'));
+        $toPay = Price::validatePrice($calculations['sum']);
+
+        // workaround fix
+        if ($ToCalculate->getAttribute('paid_date') != $paidDate) {
+            QUI::getDataBase()->update(
+                Handler::getInstance()->invoiceTable(),
+                ['paid_date' => $paidDate],
+                ['id' => $ToCalculate->getCleanId()]
+            );
+        }
 
         $ToCalculate->setAttribute('paid_data', json_encode($paidData));
         $ToCalculate->setAttribute('paid_date', $paidDate);
         $ToCalculate->setAttribute('paid', $sum);
         $ToCalculate->setAttribute('toPay', $toPay - $paid);
-
 
         if ($ToCalculate->getAttribute('paid_status') === Handler::TYPE_INVOICE_REVERSAL
             || $ToCalculate->getAttribute('paid_status') === Handler::TYPE_INVOICE_CANCEL
@@ -573,7 +639,7 @@ class Calc
         } elseif ($ToCalculate->getAttribute('paid') == 0) {
             $ToCalculate->setAttribute('paid_status', Invoice::PAYMENT_STATUS_OPEN);
         } elseif ($ToCalculate->getAttribute('toPay')
-                  && $ToCalculate->getAttribute('sum') != $ToCalculate->getAttribute('paid')
+                  && $calculations['sum'] != $ToCalculate->getAttribute('paid')
         ) {
             $ToCalculate->setAttribute('paid_status', Invoice::PAYMENT_STATUS_PART);
         }
@@ -599,12 +665,16 @@ class Calc
     /**
      * Is the object allowed for calculation
      *
-     * @param Invoice|QUI\ERP\Order\AbstractOrder $ToCalculate
+     * @param InvoiceTemporary|Invoice|QUI\ERP\Order\AbstractOrder $ToCalculate
      * @return bool
      */
     public static function isAllowedForCalculation($ToCalculate)
     {
         if ($ToCalculate instanceof Invoice) {
+            return true;
+        }
+
+        if ($ToCalculate instanceof InvoiceTemporary) {
             return true;
         }
 
@@ -719,6 +789,10 @@ class Calc
     {
         if (is_string($vatArray)) {
             $vatArray = json_decode($vatArray, true);
+        }
+
+        if (!is_array($vatArray)) {
+            return 0;
         }
 
         return array_sum(

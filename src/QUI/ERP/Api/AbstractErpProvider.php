@@ -16,13 +16,12 @@ use QUI;
 abstract class AbstractErpProvider
 {
     /**
-     * Returns an array with menu items
+     * Add menu items to the e-commerce panel
      *
-     * @return array
+     * @param \QUI\Controls\Sitemap\Map $Map
      */
-    public static function getMenuItems()
+    public static function addMenuItems(QUI\Controls\Sitemap\Map $Map)
     {
-        return [];
     }
 
     /**

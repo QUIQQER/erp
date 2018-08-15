@@ -83,10 +83,27 @@ class ArticleView extends QUI\QDOM
         $Engine   = QUI::getTemplateManager()->getEngine();
         $Currency = $this->getCurrency();
 
-        $article = $this->Article->toArray();
-        $calc    = $article['calculated'];
+        $customFields = [];
+        $article      = $this->Article->toArray();
+        $calc         = $article['calculated'];
 
         $this->setAttributes($article);
+
+        foreach ($article['customFields'] as $field) {
+            if (!isset($field['title'])) {
+                continue;
+            }
+
+            if (!isset($field['custom_calc']['valueText'])) {
+                continue;
+            }
+
+            if (!isset($field['custom_calc']['value'])) {
+                continue;
+            }
+
+            $customFields[] = $field;
+        }
 
         $Engine->assign([
             'this'                  => $this,
@@ -96,7 +113,8 @@ class ArticleView extends QUI\QDOM
             'calculated_basisPrice' => $Currency->format($calc['basisPrice']),
             'calculated_price'      => $Currency->format($calc['price']),
             'calculated_sum'        => $Currency->format($calc['sum']),
-            'calculated_nettoSum'   => $Currency->format($calc['nettoSum'])
+            'calculated_nettoSum'   => $Currency->format($calc['nettoSum']),
+            'customFields'          => $customFields
         ]);
 
         return $Engine->fetch(dirname(__FILE__).'/ArticleView.html');

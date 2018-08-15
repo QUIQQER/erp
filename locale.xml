@@ -61,12 +61,18 @@
             <de><![CDATA[Summe:]]></de>
             <en><![CDATA[Sum total:]]></en>
         </locale>
-    </groups>
 
-    <groups name="quiqqer/erp" datatype="php">
-        <locale name="user.settings.title">
-            <de><![CDATA[Rechnungsdaten]]></de>
-            <en><![CDATA[Billing Details]]></en>
+        <locale name="erp.panel.extras.text">
+            <de><![CDATA[Verwaltung]]></de>
+            <en><![CDATA[Administration]]></en>
+        </locale>
+        <locale name="erp.panel.settings.text">
+            <de><![CDATA[Einstellungen]]></de>
+            <en><![CDATA[Settings]]></en>
+        </locale>
+        <locale name="erp.panel.title">
+            <de><![CDATA[E-Commerce]]></de>
+            <en><![CDATA[E-commerce]]></en>
         </locale>
         <locale name="user.settings.euVatId">
             <de><![CDATA[Umsatzsteuer-ID]]></de>
@@ -75,6 +81,27 @@
         <locale name="user.settings.taxId">
             <de><![CDATA[Steuernummer]]></de>
             <en><![CDATA[Tax number]]></en>
+        </locale>
+
+        <locale name="user.profile.userdata.title">
+            <de><![CDATA[Firmendaten]]></de>
+            <en><![CDATA[Company data]]></en>
+        </locale>
+        <locale name="user.profile.userdata.vatId">
+            <de><![CDATA[Umsatzsteuer-ID]]></de>
+            <en><![CDATA[VAT ID]]></en>
+        </locale>
+
+        <locale name="global_process_id">
+            <de><![CDATA[Vorgangsnummer]]></de>
+            <en><![CDATA[Procedure number]]></en>
+        </locale>
+    </groups>
+
+    <groups name="quiqqer/erp" datatype="php">
+        <locale name="user.settings.title">
+            <de><![CDATA[Rechnungsdaten]]></de>
+            <en><![CDATA[Billing Details]]></en>
         </locale>
         <locale name="user.settings.address">
             <de><![CDATA[Rechnungsadresse]]></de>
@@ -116,6 +143,10 @@
             <de><![CDATA[Verwendete Nachkommastellen]]></de>
             <en><![CDATA[Used decimal digits]]></en>
         </locale>
+        <locale name="menu.erp.general.dateFormats.title">
+            <de><![CDATA[Datums Formate]]></de>
+            <en><![CDATA[Date Formats]]></en>
+        </locale>
         <locale name="shop.settings.general.precision.description">
             <de><![CDATA[
             Diese Einstellung legt fest mit wieviele Nachkommenstellen das System rechnen soll.
@@ -124,6 +155,59 @@
             This setting determines how many decimal places the system should use for calculation.
             ]]></en>
         </locale>
+        <locale name="shop.settings.general.timestampFormat" html="true">
+            <de><![CDATA[
+               Vorgabe für Zeitstempel
+            ]]></de>
+            <en><![CDATA[
+                Default for timestamps
+            ]]></en>
+        </locale>
+        <locale name="shop.settings.general.timestampFormat.description" html="true">
+            <de><![CDATA[
+                Dieses Datumsformat wird für ein komplettes Datumsformat verwendet (z.B: dd.mm.YYYY H:i:s).
+                <br /><br />
+                Einstellungen und oder mögliche Datumsformate finden Sie unter:<br />
+                <a href="http://php.net/manual/de/function.strftime.php#refsect1-function.strftime-parameters">
+                    http://php.net/manual/de/function.strftime.php#refsect1-function.strftime-parameters
+                </a>
+            ]]></de>
+            <en><![CDATA[
+                This date format is used for a complete date format (e.g.: dd.mm.YYYYY H:i:s).
+                <br /><br />
+                Settings and or possible date formats can be found under:<br />
+                <a href="http://php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters">
+                    http://php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters
+                </a>
+            ]]></en>
+        </locale>
+        <locale name="shop.settings.general.dateFormat">
+            <de><![CDATA[
+                Vorgabe für Datum
+            ]]></de>
+            <en><![CDATA[
+                Default for dates
+            ]]></en>
+        </locale>
+        <locale name="shop.settings.general.dateFormat.description">
+            <de><![CDATA[
+                Dieses Datumsformat wird für ein partiell Datumsformat verwendet (z.B: dd.mm.YYYY).
+                <br /><br />
+                Einstellungen und oder mögliche Datumsformate finden Sie unter:<br />
+                <a href="http://php.net/manual/de/function.strftime.php#refsect1-function.strftime-parameters">
+                    http://php.net/manual/de/function.strftime.php#refsect1-function.strftime-parameters
+                </a>
+            ]]></de>
+            <en><![CDATA[
+                This date format is used for a partial date format (e.g.: dd.mm.YYYYY).
+                <br /><br />
+                Settings and or possible date formats can be found under:<br />
+                <a href="http://php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters">
+                    http://php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters
+                </a>
+            ]]></en>
+        </locale>
+
         <locale name="shop.settings.businessType">
             <de><![CDATA[Vertriebsart]]></de>
             <en><![CDATA[Business type]]></en>
@@ -177,6 +261,18 @@
         <locale name="comments.message.no.comments">
             <de><![CDATA[Keine Daten vorhanden]]></de>
             <en><![CDATA[No data available]]></en>
+        </locale>
+        <locale name="control.number.ranges.description">
+            <de><![CDATA[Per Doppelklick auf die zu vergebenden Nummer können Sie den Nummernkreis verändern]]></de>
+            <en><![CDATA[]]></en>
+        </locale>
+        <locale name="control.number.ranges.grid.ranges">
+            <de><![CDATA[Nummernkreis]]></de>
+            <en><![CDATA[Range of numbers]]></en>
+        </locale>
+        <locale name="control.number.ranges.grid.next">
+            <de><![CDATA[nä. zu vergebende Nummer]]></de>
+            <en><![CDATA[next number to be assigned]]></en>
         </locale>
     </groups>
 

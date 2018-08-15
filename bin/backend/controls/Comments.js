@@ -71,18 +71,72 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
 
             var Formatter = this.$getFormatter();
 
-            comments.sort(function (a, b) {
-                return a.time < b.time;
-            });
-
             comments = comments.map(function (entry) {
-                var date = new Date(entry.time * 1000);
+                var date = new Date(entry.time * 1000),
+                    type = 'fa fa-comment';
+
+                if (typeof entry.type !== 'undefined') {
+                    switch (entry.type) {
+                        case 'history':
+                            type = 'fa fa-history';
+                            break;
+
+                        case 'transaction':
+                            type = 'fa fa-money';
+                            break;
+                    }
+                }
 
                 return {
-                    time   : Formatter.format(date),
-                    message: entry.message
+                    date     : date,
+                    time     : Formatter.format(date),
+                    message  : entry.message,
+                    type     : type,
+                    timestamp: entry.time
                 };
             });
+
+            // grouping
+            var i, len, day, date, entry;
+
+            var group        = {};
+            var DayFormatter = this.$getDayFormatter();
+
+            for (i = 0, len = comments.length; i < len; i++) {
+                entry = comments[i];
+                date  = entry.date;
+                day   = DayFormatter.format(date);
+
+                if (typeof group[day] === 'undefined') {
+                    group[day] = {
+                        day : day,
+                        data: []
+                    };
+                }
+
+                group[day].data.push({
+                    time     : entry.time,
+                    message  : entry.message,
+                    type     : entry.type,
+                    timestamp: entry.timestamp
+                });
+            }
+
+            // parse for mustache
+            comments = [];
+
+            var sortComments = function (a, b) {
+                return a.timestamp - b.timestamp;
+            };
+
+            for (i in group) {
+                if (group.hasOwnProperty(i)) {
+                    // reverse comments
+                    group[i].data = group[i].data.sort(sortComments).reverse();
+
+                    comments.push(group[i]);
+                }
+            }
 
             this.$Elm.set({
                 html: Mustache.render(template, {
@@ -101,12 +155,39 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
             var locale = QUILocale.getCurrent();
 
             var options = {
-                year  : 'numeric',
-                month : 'numeric',
-                day   : 'numeric',
-                hour  : 'numeric',
-                minute: 'numeric',
-                second: 'numeric'
+                // year  : 'numeric',
+                // month : '2-digit',
+                // day   : '2-digit',
+                hour  : '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+
+            if (!locale.match('_')) {
+                locale = locale.toLowerCase() + '_' + locale.toUpperCase();
+            }
+
+            locale = locale.replace('_', '-');
+
+            try {
+                return window.Intl.DateTimeFormat(locale, options);
+            } catch (e) {
+                return window.Intl.DateTimeFormat('de-DE', options);
+            }
+        },
+
+        /**
+         * Return the date day formatter
+         *
+         * @return {window.Intl.DateTimeFormat}
+         */
+        $getDayFormatter: function () {
+            var locale = QUILocale.getCurrent();
+
+            var options = {
+                year : 'numeric',
+                month: '2-digit',
+                day  : '2-digit'
             };
 
             if (!locale.match('_')) {

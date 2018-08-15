@@ -40,6 +40,11 @@ class User
             return self::IS_NETTO_USER;
         }
 
+        if ($User instanceof QUI\ERP\User && $User->hasBruttoNettoStatus()) {
+            return $User->isNetto();
+        }
+
+
         $nettoStatus = $User->getAttribute('quiqqer.erp.isNettoUser');
 
         if (is_numeric($nettoStatus)) {
@@ -102,6 +107,9 @@ class User
         } catch (QUI\Exception $Exception) {
             // no address found
         }
+
+        // @todo es gibt neue einstellungen b2b, b2c b2bANDb2c ... von diesen einstellungen ausgehen
+        // @todo tax ist nicht optimal dafür
 
         $isNetto = $Config->getValue('shop', 'isNetto');
 
@@ -201,7 +209,7 @@ class User
      * Filter unwanted user attributes
      * Therefore we can use the attributes in the ERP stack
      *
-     * @param $attributes
+     * @param array $attributes
      * @return array
      */
     public static function filterCustomerAttributes($attributes = [])

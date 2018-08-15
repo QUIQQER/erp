@@ -47,7 +47,11 @@ class Coordinator extends QUI\Utils\Singleton
                 }
             }
 
-            QUI\Cache\Manager::set($cache, $collect);
+            try {
+                QUI\Cache\Manager::set($cache, $collect);
+            } catch (\Exception $Exception) {
+                QUI\System\Log::writeDebugException($Exception);
+            }
         }
 
         // filter provider
@@ -72,25 +76,68 @@ class Coordinator extends QUI\Utils\Singleton
 
     /**
      * Return the menu items for the shop panel
+     *
      * @return array
      */
     public function getMenuItems()
     {
-        $cache = 'erp/provider/menuItems';
+        $cache  = 'erp/provider/menuItems';
+        $Map    = new QUI\Controls\Sitemap\Map();
+        $Locale = QUI::getLocale();
 
         try {
-            $items = QUI\Cache\Manager::get($cache);
+            return QUI\Cache\Manager::get($cache);
         } catch (QUI\Cache\Exception $Exception) {
-            $items    = [];
             $provider = $this->getErpApiProvider();
 
             /* @var $Provider AbstractErpProvider */
             foreach ($provider as $Provider) {
-                $items = array_merge($Provider->getMenuItems(), $items);
+                $Provider->addMenuItems($Map);
             }
         }
 
-        return $items;
+        $result = $Map->toArray();
+
+        $sorting = function ($a, $b) use ($Locale) {
+            if (!isset($a['priority']) && !isset($b['priority'])) {
+                // sort by text
+                $aLocale = $Locale->get($a['text'][0], $a['text'][1]);
+                $bLocale = $Locale->get($b['text'][0], $b['text'][1]);
+
+                return strcmp($aLocale, $bLocale);
+            }
+
+            if (!isset($a['priority'])) {
+                return 1;
+            }
+
+            if (!isset($b['priority'])) {
+                return -1;
+            }
+
+            $pa = $a['priority'];
+            $pb = $b['priority'];
+
+            if ($pa == $pb) {
+                return 0;
+            }
+
+            return $pa < $pb ? -1 : 1;
+        };
+
+        usort($result['items'], $sorting);
+
+        foreach ($result['items'] as $key => $itemData) {
+            usort($result['items'][$key]['items'], $sorting);
+        }
+
+        try {
+            QUI\Cache\Manager::set($cache, $result);
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+        }
+
+        return $result;
     }
 
     /**

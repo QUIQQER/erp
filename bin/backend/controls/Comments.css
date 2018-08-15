@@ -7,16 +7,78 @@
     background: #f7f7f7;
     float: left;
     margin-bottom: 5px;
-    padding: 10px;
+    padding: 10px 5px 10px 0;
     width: 100%;
 }
 
-.quiqqer-erp-comments-comment-date {
+/** title
+ ================================================== */
+
+.quiqqer-erp-comments-title {
+    color: #586069;
     float: left;
+    line-height: 30px;
+    padding-bottom: 5px;
+    width: 100%;
+}
+
+.quiqqer-erp-comments-title-icon {
+    float: left;
+    line-height: 30px;
+    padding-top: 3px;
+    width: 30px;
+}
+
+.quiqqer-erp-comments-title-text {
+    float: left;
+}
+
+/** list
+ ================================================== */
+
+.quiqqer-erp-comments-list {
+    float: left;
+    margin-bottom: 10px;
+    padding-left: 30px;
+    position: relative;
+    width: 100%;
+}
+
+.quiqqer-erp-comments-list::before {
+    background-color: #eff1f3;
+    bottom: 0;
+    content: "";
+    display: block;
+    left: 7px;
+    position: absolute;
+    top: 0;
+    width: 2px;
+}
+
+.quiqqer-erp-comments-comment-type {
+    color: #8F9399;
+    float: left;
+    font-size: 18px;
+    text-align: center;
+    width: 40px;
+}
+
+.quiqqer-erp-comments-comment-data {
+    float: left;
+    text-align: center;
+    width: calc(100% - 50px);
+}
+
+.quiqqer-erp-comments-comment-time {
+    float: right;
+    font-size: 12px;
+    padding-right: 5px;
+    text-align: right;
+    width: 150px;
 }
 
 .quiqqer-erp-comments-comment-message {
-    clear: both;
     float: left;
-    width: 100%;
+    text-align: left;
+    width: calc(100% - 150px);
 }

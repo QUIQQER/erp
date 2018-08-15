@@ -32,8 +32,44 @@ class EventHandler
      */
     public static function onPackageSetup(Package $Package)
     {
-        if ($Package->getName() != 'quiqqer/erp') {
+        if ($Package->getName() !== 'quiqqer/erp') {
             return;
+        }
+    }
+
+    public static function onPackageConfigSave(QUI\Package\Package $Package, array $params)
+    {
+        if ($Package->getName() !== 'quiqqer/erp') {
+            return;
+        }
+
+        $languages = QUI::availableLanguages();
+        $languages = array_flip($languages);
+
+        try {
+            $Config = $Package->getConfig();
+
+            // timestampFormat
+            if (isset($params['timestampFormat'])) {
+                foreach ($params['timestampFormat'] as $language => $format) {
+                    if (isset($languages[$language])) {
+                        $Config->setValue('timestampFormat', $language, $format);
+                    }
+                }
+            }
+
+            // dateFormat
+            if (isset($params['dateFormat'])) {
+                foreach ($params['dateFormat'] as $language => $format) {
+                    if (isset($languages[$language])) {
+                        $Config->setValue('dateFormat', $language, $format);
+                    }
+                }
+            }
+
+            $Config->save();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
         }
     }
 
@@ -75,12 +111,15 @@ class EventHandler
         }
 
         // netto brutto user status
-        $User->setAttribute('quiqqer.erp.isNettoUser', false); // reset status
-
-        $User->setAttribute(
-            'quiqqer.erp.isNettoUser',
-            QUI\ERP\Utils\User::getBruttoNettoUserStatus($User)
-        );
+        // @todo im admin muss dieser schritt seperat gemacht werden
+        // @todo im admin muss festgelegt werden was der nutzer ist
+        // @todo das muss in das customer modul rein
+//        $User->setAttribute('quiqqer.erp.isNettoUser', false); // reset status
+//
+//        $User->setAttribute(
+//            'quiqqer.erp.isNettoUser',
+//            QUI\ERP\Utils\User::getBruttoNettoUserStatus($User)
+//        );
     }
 
     /**
@@ -125,6 +164,50 @@ class EventHandler
 
             // save VAT ID
             $User->setAttribute('quiqqer.erp.euVatId', $vatId);
+        }
+    }
+
+    /**
+     * event: on user address save
+     *
+     * @param QUI\Users\Address $Address
+     * @param QUI\Users\User $User
+     */
+    public static function onUserAddressSave(QUI\Users\Address $Address, QUI\Users\User $User)
+    {
+        if (!QUI::getUsers()->isUser($User)) {
+            return;
+        }
+
+        $Request = QUI::getRequest()->request;
+        $data    = $Request->get('data');
+
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+        }
+
+        if (empty($data) || !is_array($data)) {
+            return;
+        }
+
+        if (isset($data['vatId'])) {
+            $vatId = $data['vatId'];
+
+            try {
+                if (class_exists('QUI\ERP\Tax\Utils')
+                    && QUI\ERP\Tax\Utils::shouldVatIdValidationBeExecuted()
+                    && !empty($vatId)) {
+                    $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
+                }
+
+                // save VAT ID
+                $User->setAttribute('quiqqer.erp.euVatId', $vatId);
+                $User->save();
+            } catch (QUI\ERP\Tax\Exception $Exception) {
+                QUI\System\Log::writeDebugException($Exception);
+            } catch (\Exception $Exception) {
+                QUI\System\Log::writeException($Exception);
+            }
         }
     }
 
