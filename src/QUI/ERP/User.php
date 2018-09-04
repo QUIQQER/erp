@@ -195,6 +195,7 @@ class User extends QUI\QDOM implements UserInterface
             'data'      => $User->getAttributes(),
 
             'quiqqer.erp.euVatId' => $User->getAttribute('quiqqer.erp.euVatId'),
+            'quiqqer.erp.taxId'   => $User->getAttribute('quiqqer.erp.taxId')
         ]);
     }
 
@@ -325,6 +326,10 @@ class User extends QUI\QDOM implements UserInterface
 
         if ($this->getAttribute('quiqqer.erp.euVatId')) {
             $attributes['quiqqer.erp.euVatId'] = $this->getAttribute('quiqqer.erp.euVatId');
+        }
+
+        if ($this->getAttribute('quiqqer.erp.taxId')) {
+            $attributes['quiqqer.erp.taxId'] = $this->getAttribute('quiqqer.erp.taxId');
         }
 
         return $attributes;
