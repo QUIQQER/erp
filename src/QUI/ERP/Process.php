@@ -71,7 +71,10 @@ class Process
     }
 
     /**
-     * Return the invoice history
+     * Return the history of the process
+     * This history only contains the process history
+     *
+     * If you want the complete history of all process objects, use getCompleteHistory()
      *
      * @return QUI\ERP\Comments
      */
@@ -96,6 +99,30 @@ class Process
         }
 
         return $this->History;
+    }
+
+    /**
+     * Return a complete history of all process objects
+     * invoices invoices and orders
+     *
+     * @return Comments
+     */
+    public function getCompleteHistory()
+    {
+        $History = $this->getHistory();
+
+        $invoices = $this->getInvoices();
+        $orders   = $this->getOrders();
+
+        foreach ($invoices as $Invoice) {
+            $History->import($Invoice->getHistory());
+        }
+
+        foreach ($orders as $Order) {
+            $History->import($Order->getHistory());
+        }
+
+        return $History;
     }
 
     //endregion
@@ -139,9 +166,7 @@ class Process
     }
 
     /**
-     * Return all invoices from the process
-     *
-     * @return array
+     * @return Accounting\Invoice\Invoice[]|Accounting\Invoice\InvoiceTemporary[]
      */
     public function getInvoices()
     {
@@ -164,7 +189,7 @@ class Process
     }
 
     /**
-     * Return the order, if the process has an order
+     * Return the first order of the process
      *
      * @return null|Order\Order|Order\OrderInProcess|Order\Order|Order\Order
      */
@@ -191,6 +216,22 @@ class Process
         }
 
         return null;
+    }
+
+    /**
+     * Return all orders from the process
+     *
+     * @return array|Order\Order|Order\Order[]|Order\OrderInProcess
+     */
+    public function getOrders()
+    {
+        try {
+            QUI::getPackage('quiqqer/order');
+        } catch (QUI\Exception $Exception) {
+            return [];
+        }
+
+        return QUI\ERP\Order\Handler::getInstance()->getOrdersByGlobalProcessId($this->processId);
     }
 
     //endregion
