@@ -7,10 +7,10 @@
 namespace QUI\ERP;
 
 use QUI;
-use QUI\Permissions\Permission;
 
 /**
  * Class Process
+ * - represents a complete erp process
  *
  * @package QUI\ERP
  */
@@ -27,6 +27,11 @@ class Process
     protected $transactions = null;
 
     /**
+     * @var null|QUI\ERP\Comments
+     */
+    protected $History = null;
+
+    /**
      * Process constructor.
      *
      * @param string $processId - the global process id
@@ -36,25 +41,31 @@ class Process
         $this->processId = $processId;
     }
 
+    /**
+     * Return the db table name
+     *
+     * @return string
+     */
+    protected function table()
+    {
+        return QUI::getDBTableName('process');
+    }
+
     //region messages
 
     /**
-     * Add a comment to the history
+     * Add a comment to the history for the complete process
      *
-     * @param string $comment
+     * @param string $message
+     * @param int|bool $time - optional, unix timestamp
      */
-    public function addHistory($comment)
+    public function addHistory($message, $time = false)
     {
-        $history = $this->getAttribute('history');
-        $History = QUI\ERP\Comments::unserialize($history);
-
-        $History->addComment($comment);
-
-        $this->setAttribute('history', $History->toJSON());
+        $this->getHistory()->addComment($message, $time);
 
         QUI::getDataBase()->update(
-            Handler::getInstance()->invoiceTable(),
-            ['history' => $History->toJSON()],
+            $this->table(),
+            ['history' => $this->getHistory()->toJSON()],
             ['id' => $this->processId]
         );
     }
@@ -66,9 +77,25 @@ class Process
      */
     public function getHistory()
     {
-        $history = $this->getAttribute('history');
+        if ($this->History === null) {
+            $result = QUI::getDataBase()->fetch([
+                'from'  => $this->table(),
+                'where' => [
+                    'id' => $this->processId
+                ],
+                'limit' => 1
+            ]);
 
-        return QUI\ERP\Comments::unserialize($history);
+            $history = '';
+
+            if (isset($result[0]['history'])) {
+                $history = $result[0]['history'];
+            }
+
+            $this->History = QUI\ERP\Comments::unserialize($history);
+        }
+
+        return $this->History;
     }
 
     //endregion

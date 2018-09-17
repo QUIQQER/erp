@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database>
     <global>
-        <table name="payments_cash_inputs">
-            <field type="BIGINT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY">id</field>
-            <field type="BIGINT(20) NULL">orderId</field>
-            <field type="BIGINT(20) NULL">orderInProcessId</field>
-            <field type="BIGINT(20) NULL">invoiceId</field>
-            <field type="BIGINT(20) NULL">invoiceTemporaryId</field>
-            <field type="DOUBLE NULL">amount</field>
-            <field type="timestamp NULL default NULL">date</field>
-            <field type="TEXT NULL">currencyData</field>
-            <field type="TEXT NULL">user</field>
+        <table name="process">
+            <field type="VARCHAR(250) NOT NULL">id</field>
+            <field type="TEXT NULL">history</field>
 
             <primary>id</primary>
-            <auto_increment>id</auto_increment>
         </table>
     </global>
 </database>

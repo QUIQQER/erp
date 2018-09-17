@@ -92,12 +92,19 @@ class Comments
      * Add a comment
      *
      * @param string $message
+     * @param int|false $time - optional, unix timestamp
      */
-    public function addComment($message)
+    public function addComment($message, $time = false)
     {
+        if ($time === false) {
+            $time = time();
+        }
+
+        $message = QUI\Utils\Security\Orthos::clearFormRequest($message);
+
         $this->comments[] = [
             'message' => $message,
-            'time'    => time()
+            'time'    => (int)$time
         ];
     }
 
