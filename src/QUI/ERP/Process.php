@@ -93,6 +93,10 @@ class Process
 
             if (isset($result[0]['history'])) {
                 $history = $result[0]['history'];
+            } else {
+                QUI::getDataBase()->insert($this->table(), [
+                    'id' => $this->processId
+                ]);
             }
 
             $this->History = QUI\ERP\Comments::unserialize($history);
