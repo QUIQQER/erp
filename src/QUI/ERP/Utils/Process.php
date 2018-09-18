@@ -16,7 +16,7 @@ use QUI;
 class Process
 {
     /**
-     * Return all informations about a process
+     * Return all information about a process
      *
      * @param string $hash - process hash
      * @return array

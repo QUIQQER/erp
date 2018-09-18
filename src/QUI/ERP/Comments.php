@@ -12,6 +12,7 @@ use QUI;
  * Class Comments
  * - Invoice comments
  * - order comments
+ * - transaction comments
  *
  * Helper class to manage comment arrays
  *
@@ -92,12 +93,19 @@ class Comments
      * Add a comment
      *
      * @param string $message
+     * @param int|false $time - optional, unix timestamp
      */
-    public function addComment($message)
+    public function addComment($message, $time = false)
     {
+        if ($time === false) {
+            $time = time();
+        }
+
+        $message = QUI\Utils\Security\Orthos::clearFormRequest($message);
+
         $this->comments[] = [
             'message' => $message,
-            'time'    => time()
+            'time'    => (int)$time
         ];
     }
 
@@ -107,5 +115,35 @@ class Comments
     public function clear()
     {
         $this->comments = [];
+    }
+
+    /**
+     * Sort all comments via its time
+     */
+    public function sort()
+    {
+        usort($this->comments, function ($commentA, $commentB) {
+            if ($commentA['time'] == $commentB['time']) {
+                return 0;
+            }
+
+            return ($commentA['time'] < $commentB['time']) ? -1 : 1;
+        });
+    }
+
+    /**
+     * Import another Comments object into this Comments Object
+     *
+     * @param Comments $Comments
+     */
+    public function import(Comments $Comments)
+    {
+        $comments = $Comments->toArray();
+
+        foreach ($comments as $comment) {
+            $this->addComment($comment['message'], $comment['time']);
+        }
+
+        $this->sort();
     }
 }
