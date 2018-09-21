@@ -7,7 +7,6 @@
 namespace QUI\ERP\Accounting\PriceFactors;
 
 use QUI\ERP\Exception;
-use QUI\System\Log;
 use QUI\Utils\Math;
 
 /**
