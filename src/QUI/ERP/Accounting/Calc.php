@@ -574,6 +574,10 @@ class Calc
 
         foreach ($transactions as $Transaction) {
             /* @var $Transaction QUI\ERP\Accounting\Payments\Transactions\Transaction */
+            if ($Transaction->isPending()) {
+                // don't add pending transactions
+                continue;
+            }
 
             // calculate the paid amount
             $amount = Price::validatePrice($Transaction->getAmount());
