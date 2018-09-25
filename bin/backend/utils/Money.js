@@ -1,7 +1,9 @@
 /**
  * @module package/quiqqer/erp/bin/backend/utils/Money
  */
-define('package/quiqqer/erp/bin/backend/utils/Money', function () {
+define('package/quiqqer/erp/bin/backend/utils/Money', [
+    'Locale'
+], function (QUILocale) {
     "use strict";
 
     return {
@@ -20,6 +22,34 @@ define('package/quiqqer/erp/bin/backend/utils/Money', function () {
                     });
                 });
             });
+        },
+
+        /**
+         * Format the price for the backend
+         *
+         * @param value
+         * @return {Number|String}
+         */
+        formatPrice: function (value) {
+            if (value === '' || !value || value === 'false') {
+                return '';
+            }
+
+            var Formatter = QUILocale.getNumberFormatter({
+                minimumFractionDigits: 8
+            });
+
+            var groupingSeparator = QUILocale.getGroupingSeparator();
+            var decimalSeparator  = QUILocale.getDecimalSeparator();
+
+            var foundGroupSeparator   = typeOf(value) === 'string' && value.indexOf(groupingSeparator) >= 0;
+            var foundDecimalSeparator = typeOf(value) === 'string' && value.indexOf(decimalSeparator) >= 0;
+
+            if ((foundGroupSeparator || foundDecimalSeparator) && !(foundGroupSeparator && !foundDecimalSeparator)) {
+                return value;
+            }
+
+            return Formatter.format(parseFloat(value));
         }
     };
 });
