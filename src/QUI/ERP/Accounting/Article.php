@@ -42,6 +42,12 @@ class Article implements ArticleInterface
     protected $customData = [];
 
     /**
+     * Should the price displayed?
+     * default = yes
+     */
+    protected $displayPrice = true;
+
+    /**
      * @var bool
      */
     protected $calculated = false;
@@ -173,6 +179,10 @@ class Article implements ArticleInterface
 
         if (isset($attributes['customData']) && is_array($attributes['customData'])) {
             $this->customData = $attributes['customData'];
+        }
+
+        if (isset($attributes['displayPrice'])) {
+            $this->displayPrice = (bool)$attributes['displayPrice'];
         }
     }
 
@@ -393,6 +403,14 @@ class Article implements ArticleInterface
         );
     }
 
+    /**
+     * @return bool
+     */
+    public function displayPrice()
+    {
+        return $this->displayPrice;
+    }
+
     //region Discounts
 
     /**
@@ -514,6 +532,7 @@ class Article implements ArticleInterface
             'articleNo'    => $this->getArticleNo(),
             'description'  => $this->getDescription(),
             'unitPrice'    => $this->getUnitPrice()->value(),
+            'displayPrice' => $this->displayPrice(),
             'quantity'     => $this->getQuantity(),
             'sum'          => $this->getSum()->value(),
             'vat'          => $vat,

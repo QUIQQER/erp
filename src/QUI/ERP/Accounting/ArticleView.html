@@ -36,7 +36,9 @@
     <td class="articles-article-unitprice"
         data-label="{locale group='quiqqer/erp' var='article.list.articles.header.unitprice'}"
     >
+        {if $this->getAttribute('displayPrice')}
         {$calculated_price}
+        {/if}
     </td>
     {/if}
 
@@ -44,7 +46,9 @@
     <td class="articles-article-price"
         data-label="{locale group='quiqqer/erp' var='article.list.articles.header.price'}"
     >
+        {if $this->getAttribute('displayPrice')}
         {$calculated_sum}
+        {/if}
     </td>
     {/if}
 </tr>

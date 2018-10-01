@@ -58,4 +58,10 @@ interface ArticleInterface
      * @return array
      */
     public function toArray();
+
+    /**
+     * is the price displayed or not
+     * @return bool
+     */
+    public function displayPrice();
 }

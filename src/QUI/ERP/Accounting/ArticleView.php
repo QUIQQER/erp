@@ -72,6 +72,14 @@ class ArticleView extends QUI\QDOM
     }
 
     /**
+     * @return bool
+     */
+    public function displayPrice()
+    {
+        return $this->Article->displayPrice();
+    }
+
+    /**
      * Create the html
      *
      * @return string
