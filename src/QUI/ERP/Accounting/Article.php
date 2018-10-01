@@ -35,6 +35,13 @@ class Article implements ArticleInterface
     protected $customFields = [];
 
     /**
+     * Custom data for plugins and modules
+     *
+     * @var array
+     */
+    protected $customData = [];
+
+    /**
      * @var bool
      */
     protected $calculated = false;
@@ -111,7 +118,7 @@ class Article implements ArticleInterface
     /**
      * Article constructor.
      *
-     * @param array $attributes - (id, articleNo, title, description, unitPrice, quantity, discount)
+     * @param array $attributes - (id, articleNo, title, description, unitPrice, quantity, discount, customData)
      */
     public function __construct($attributes = [])
     {
@@ -162,6 +169,10 @@ class Article implements ArticleInterface
 
         if (isset($attributes['customFields']) && is_array($attributes['customFields'])) {
             $this->customFields = $attributes['customFields'];
+        }
+
+        if (isset($attributes['customData']) && is_array($attributes['customData'])) {
+            $this->customData = $attributes['customData'];
         }
     }
 
@@ -490,6 +501,12 @@ class Article implements ArticleInterface
             $discount = $this->Discount->toJSON();
         }
 
+        $class = get_called_class();
+
+        if (!empty($this->attributes['control'])) {
+            $class = $this->attributes['control'];
+        }
+
         return [
             // article data
             'id'           => $this->getId(),
@@ -502,8 +519,9 @@ class Article implements ArticleInterface
             'vat'          => $vat,
             'discount'     => $discount,
             'control'      => $this->attributes['control'],
-            'class'        => self::class,
+            'class'        => $class,
             'customFields' => $this->customFields,
+            'customData'   => $this->customData,
 
             // calculated data
             'calculated'   => [
@@ -544,6 +562,14 @@ class Article implements ArticleInterface
     public function getCustomFields()
     {
         return $this->customFields;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomData()
+    {
+        return $this->customData;
     }
 
     //endregion
