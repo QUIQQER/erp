@@ -65,6 +65,25 @@ class ArticleListUnique implements \IteratorAggregate
         $articles = $attributes['articles'];
 
         foreach ($articles as $article) {
+            if (!isset($article['class'])) {
+                $this->articles[] = new Article($article);
+                continue;
+            }
+
+            $class = $article['class'];
+
+            if (!class_exists($class)) {
+                $this->articles[] = new Article($article);
+                continue;
+            }
+
+            $interfaces = class_implements($class);
+
+            if (isset($interfaces[ArticleInterface::class])) {
+                $this->articles[] = new $class($article);
+                continue;
+            }
+
             $this->articles[] = new Article($article);
         }
 
