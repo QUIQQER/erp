@@ -34,6 +34,10 @@
 /** articles
  ========================================== */
 
+table.articles-article {
+    padding-bottom: 10px;
+}
+
 .articles-article-pos,
 .articles-article-quantity {
     text-align: center;
@@ -64,6 +68,14 @@
     /*color: #e91d2c;*/
     text-align: right;
     vertical-align: top;
+}
+
+.articles-article tr + tr td {
+    padding-top: 10px;
+}
+
+.quiqqer-order-basket-articles-article-fields {
+    margin-left: 20px;
 }
 
 /** sum
