@@ -10,7 +10,8 @@
         </description>
 
         <provider>
-            <erp src="\QUI\ERP\ErpProvider"/>
+            <erp src="\QUI\ERP\Provider\Erp"/>
+            <requirements src="\QUI\ERP\Provider\Requirements"/>
         </provider>
 
     </package>
