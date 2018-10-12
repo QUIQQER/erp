@@ -1,10 +1,10 @@
 <?php
 
 /**
- * This file contains QUI\ERP\ErpProvider
+ * This file contains QUI\ERP\Provider\Erp
  */
 
-namespace QUI\ERP;
+namespace QUI\ERP\Provider;
 
 use QUI;
 
@@ -16,9 +16,9 @@ use QUI\Controls\Sitemap\Item;
 /**
  * Class ErpProvider
  *
- * @package QUI\ERP\Products
+ * @package QUI\ERP\Provider\Products
  */
-class ErpProvider extends AbstractErpProvider
+class Erp extends AbstractErpProvider
 {
     /**
      * @param \QUI\Controls\Sitemap\Map $Map

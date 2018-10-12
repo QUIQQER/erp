@@ -255,6 +255,14 @@
             <de><![CDATA[Firma]]></de>
             <en><![CDATA[Company]]></en>
         </locale>
+        <locale name="message.default.area.missing">
+            <de><![CDATA[Bitte legen Sie eine standard Zone für Ihren E-Commerce System fest.]]></de>
+            <en><![CDATA[Please define a standard zone for your e-commerce system.]]></en>
+        </locale>
+        <locale name="message.default.area.ok">
+            <de><![CDATA[Standard Zone für Ihr E-Commerce System ist festgelegt.]]></de>
+            <en><![CDATA[Standard zone for your e-commerce system is set.]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">
