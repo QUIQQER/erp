@@ -277,6 +277,10 @@ class Calc
         if ($bruttoSum <= 0 || $nettoSum <= 0) {
             $bruttoSum = 0;
             $nettoSum  = 0;
+
+            foreach ($vatArray as $vat => $entry) {
+                $vatArray[$vat]['sum'] = 0;
+            }
         }
 
         $callback([
