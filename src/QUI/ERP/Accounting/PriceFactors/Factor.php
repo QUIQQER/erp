@@ -155,6 +155,10 @@ class Factor
      */
     public function getVatSum()
     {
+        if ($this->vat) {
+            return $this->nettoSum * ($this->vat / 100);
+        }
+
         return $this->sum - $this->nettoSum;
     }
 
