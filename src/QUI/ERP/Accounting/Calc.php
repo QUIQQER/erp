@@ -274,6 +274,11 @@ class Calc
             }
         }
 
+        if ($bruttoSum <= 0 || $nettoSum <= 0) {
+            $bruttoSum = 0;
+            $nettoSum  = 0;
+        }
+
         $callback([
             'sum'          => $bruttoSum,
             'subSum'       => $subSum,
