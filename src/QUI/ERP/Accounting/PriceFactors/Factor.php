@@ -50,6 +50,11 @@ class Factor
     protected $visible = 1;
 
     /**
+     * @var bool
+     */
+    protected $vat = false;
+
+    /**
      * FactorList constructor.
      *
      * @param array $data
@@ -87,6 +92,10 @@ class Factor
         $this->nettoSum          = $data['nettoSum'];
         $this->nettoSumFormatted = $data['nettoSumFormatted'];
         $this->visible           = (int)$data['visible'];
+
+        if (isset($data['vat'])) {
+            $this->vat = (int)$data['vat'];
+        }
     }
 
     /**
@@ -156,6 +165,10 @@ class Factor
      */
     public function getVat()
     {
+        if ($this->vat) {
+            return $this->vat;
+        }
+
         $vat      = abs($this->sum - $this->nettoSum);
         $nettoSum = abs($this->nettoSum);
 
@@ -194,7 +207,8 @@ class Factor
             'sumFormatted'      => $this->getSumFormatted(),
             'nettoSum'          => $this->getNettoSum(),
             'nettoSumFormatted' => $this->getNettoSumFormatted(),
-            'visible'           => $this->isVisible()
+            'visible'           => $this->isVisible(),
+            'vat'               => $this->getVat()
         ];
     }
 
