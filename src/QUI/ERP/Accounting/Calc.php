@@ -274,7 +274,7 @@ class Calc
             }
         }
 
-        if ($bruttoSum <= 0 || $nettoSum <= 0) {
+        if ($bruttoSum === 0 || $nettoSum === 0) {
             $bruttoSum = 0;
             $nettoSum  = 0;
 
