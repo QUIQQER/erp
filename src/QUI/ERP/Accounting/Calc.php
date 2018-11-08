@@ -749,6 +749,10 @@ class Calc
         $bruttoTotal = 0;
 
         foreach ($invoiceList as $invoice) {
+            if ((int)$invoice['type'] === Invoice::PAYMENT_STATUS_CANCELED) {
+                continue;
+            }
+            
             $nettoTotal = $nettoTotal + $invoice['calculated_nettosum'];
             $vatTotal   = $vatTotal + $invoice['calculated_vatsum'];
 
