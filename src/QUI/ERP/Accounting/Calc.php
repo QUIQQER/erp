@@ -249,6 +249,16 @@ class Calc
             $vatText[$vat] = self::getVatText($vat, $this->getUser());
         }
 
+        // delete 0 % vat, 0% vat is allowed to calculate more easily
+        if (isset($vatText[0])) {
+            unset($vatText[0]);
+        }
+
+        if (isset($vatArray[0])) {
+            unset($vatArray[0]);
+        }
+
+
         // gegenrechnung, wegen rundungsfehler
         if ($isNetto === false) {
             $priceFactorBruttoSums = 0;
