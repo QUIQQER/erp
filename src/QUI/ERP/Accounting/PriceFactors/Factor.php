@@ -53,6 +53,10 @@ class Factor
      * @var bool
      */
     protected $vat = false;
+    /**
+     * @var bool
+     */
+    protected $valueText = false;
 
     /**
      * FactorList constructor.
@@ -95,6 +99,10 @@ class Factor
 
         if (isset($data['vat'])) {
             $this->vat = (int)$data['vat'];
+        }
+
+        if (isset($data['valueText']) && is_string($data['valueText'])) {
+            $this->valueText = $data['valueText'];
         }
     }
 
@@ -212,6 +220,7 @@ class Factor
             'nettoSum'          => $this->getNettoSum(),
             'nettoSumFormatted' => $this->getNettoSumFormatted(),
             'visible'           => $this->isVisible(),
+            'valueText'         => empty($this->valueText) ? '' : $this->valueText,
             'vat'               => $this->getVat()
         ];
     }
