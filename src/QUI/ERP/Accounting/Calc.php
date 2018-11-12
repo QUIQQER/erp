@@ -759,8 +759,8 @@ class Calc
         $bruttoTotal = 0;
 
         foreach ($invoiceList as $invoice) {
-            if (isset($invoice['type']) &&
-                (int)$invoice['type'] === Invoice::PAYMENT_STATUS_CANCELED
+            if (isset($invoice['type']) && (int)$invoice['type'] === Handler::TYPE_INVOICE_CANCEL ||
+                isset($invoice['type']) && (int)$invoice['type'] === Handler::TYPE_INVOICE_STORNO
             ) {
                 continue;
             }
