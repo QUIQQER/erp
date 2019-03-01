@@ -441,11 +441,15 @@ class Calc
      *
      * @param integer $vat
      * @param UserInterface $User
+     * @param null|QUI\Locale $Locale - optional
+     *
      * @return array|string
      */
-    public static function getVatText($vat, UserInterface $User)
+    public static function getVatText($vat, UserInterface $User, $Locale = null)
     {
-        $Locale = $User->getLocale();
+        if ($Locale === null) {
+            $Locale = $User->getLocale();
+        }
 
         if (QUI\ERP\Utils\User::isNettoUser($User)) {
             if (QUI\ERP\Tax\Utils::isUserEuVatUser($User)) {
