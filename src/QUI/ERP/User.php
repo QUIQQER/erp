@@ -254,7 +254,28 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function getName()
     {
-        return $this->firstName.' '.$this->lastName;
+        $Address = $this->getAddress();
+
+        $saluation = $Address->getAttribute('salutation');
+        $firstName = $Address->getAttribute('firstname');
+
+        if (empty($firstName)) {
+            $firstName = $this->firstName;
+        }
+
+        $lastName = $Address->getAttribute('lastname');
+
+        if (empty($lastName)) {
+            $lastName = $this->lastName;
+        }
+
+        $name = $firstName.' '.$lastName;
+
+        if (!empty($saluation)) {
+            $name = $saluation.' '.$name;
+        }
+
+        return $name;
     }
 
     /**
