@@ -171,6 +171,21 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     public function setCurrency(QUI\ERP\Currency\Currency $Currency)
     {
         $this->Currency = $Currency;
+
+        $this->currencyData = [
+            'currency_sign' => $this->Currency->getSign(),
+            'currency_code' => $this->Currency->getCode(),
+            'user_currency' => '',
+            'currency_rate' => $this->Currency->getExchangeRate()
+        ];
+
+        if (isset($this->calculations['currencyData'])) {
+            $this->calculations['currencyData'] = [
+                'code' => $this->Currency->getCode(),
+                'sign' => $this->Currency->getSign(),
+                'rate' => $this->Currency->getExchangeRate()
+            ];
+        }
     }
 
     /**
@@ -191,6 +206,8 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
         // format
         $articles     = $data['articles'];
         $calculations = $data['calculations'];
+
+        $calculations['currencyData'] = $Currency->toArray();
 
         $calculations['vatSum'] = QUI\ERP\Accounting\Calc::calculateTotalVatOfInvoice(
             $calculations['vatArray']
@@ -282,6 +299,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
                 'currencyData' => $self->currencyData
             ];
 
+            $self->setCurrency($self->getCurrency());
             $self->calculated = true;
         });
 
