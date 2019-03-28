@@ -47,11 +47,11 @@ class Comments
      */
     public static function unserialize($data)
     {
-        if (is_string($data)) {
-            $data = json_decode($data, true);
+        if (\is_string($data)) {
+            $data = \json_decode($data, true);
         }
 
-        if (!is_array($data)) {
+        if (!\is_array($data)) {
             return new self();
         }
 
@@ -65,7 +65,7 @@ class Comments
      */
     public function serialize()
     {
-        return json_encode($this->toArray());
+        return \json_encode($this->toArray());
     }
 
     /**
@@ -98,7 +98,7 @@ class Comments
     public function addComment($message, $time = false)
     {
         if ($time === false) {
-            $time = time();
+            $time = \time();
         }
 
         $message = QUI\Utils\Security\Orthos::clearFormRequest($message);
@@ -122,7 +122,7 @@ class Comments
      */
     public function sort()
     {
-        usort($this->comments, function ($commentA, $commentB) {
+        \usort($this->comments, function ($commentA, $commentB) {
             if ($commentA['time'] == $commentB['time']) {
                 return 0;
             }

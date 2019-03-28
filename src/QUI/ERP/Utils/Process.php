@@ -52,7 +52,7 @@ class Process
             $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
             $transactions = $Transactions->getTransactionsByHash($hash);
 
-            $result['transactions'] = array_map(function ($Transaction) {
+            $result['transactions'] = \array_map(function ($Transaction) {
                 /* @var $Transaction QUI\ERP\Accounting\Payments\Transactions\Transaction */
                 return $Transaction->getAttributes();
             }, $transactions);

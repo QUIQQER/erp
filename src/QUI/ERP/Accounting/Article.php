@@ -178,11 +178,11 @@ class Article implements ArticleInterface
             $this->calculated = true;
         }
 
-        if (isset($attributes['customFields']) && is_array($attributes['customFields'])) {
+        if (isset($attributes['customFields']) && \is_array($attributes['customFields'])) {
             $this->customFields = $attributes['customFields'];
         }
 
-        if (isset($attributes['customData']) && is_array($attributes['customData'])) {
+        if (isset($attributes['customData']) && \is_array($attributes['customData'])) {
             $this->customData = $attributes['customData'];
         }
 
@@ -543,7 +543,7 @@ class Article implements ArticleInterface
             $discount = $this->Discount->toJSON();
         }
 
-        $class = get_called_class();
+        $class = \get_called_class();
 
         if (!empty($this->attributes['control'])) {
             $class = $this->attributes['control'];

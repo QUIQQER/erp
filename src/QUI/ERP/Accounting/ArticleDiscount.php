@@ -75,21 +75,21 @@ class ArticleDiscount
     {
         $data = [];
 
-        if (is_numeric($string)) {
+        if (\is_numeric($string)) {
             // number, float, int -> 5.99
             $data['value'] = QUI\ERP\Money\Price::validatePrice($string);
             $data['type']  = Calc::CALCULATION_COMPLEMENT;
-        } elseif (strpos($string, '{') !== false || strpos($string, '[') !== false) {
+        } elseif (\strpos($string, '{') !== false || \strpos($string, '[') !== false) {
             // json string
-            $data = json_decode($string, true);
+            $data = \json_decode($string, true);
 
-            if (!is_array($data)) {
+            if (!\is_array($data)) {
                 return null;
             }
         } else {
             // is normal string 5% or 5.99 €
-            if (strpos($string, '%') !== false) {
-                $data['value'] = (int)str_replace('%', '', $string);
+            if (\strpos($string, '%') !== false) {
+                $data['value'] = (int)\str_replace('%', '', $string);
                 $data['type']  = Calc::CALCULATION_PERCENTAGE;
             } else {
                 $data['value'] = QUI\ERP\Money\Price::validatePrice($string);
@@ -195,6 +195,6 @@ class ArticleDiscount
      */
     public function toJSON()
     {
-        return json_encode($this->toArray());
+        return \json_encode($this->toArray());
     }
 }

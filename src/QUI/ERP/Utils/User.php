@@ -47,7 +47,7 @@ class User
 
         $nettoStatus = $User->getAttribute('quiqqer.erp.isNettoUser');
 
-        if (is_numeric($nettoStatus)) {
+        if (\is_numeric($nettoStatus)) {
             $nettoStatus = (int)$nettoStatus;
         }
 
@@ -83,7 +83,7 @@ class User
         try {
             $Address = self::getUserERPAddress($User);
 
-            if (is_object($Address)
+            if (\is_object($Address)
                 && $Address
                 && $Address->getAttribute('company')
             ) {
@@ -94,7 +94,7 @@ class User
                 return self::IS_NETTO_USER;
             }
 
-            if (is_array($Address)
+            if (\is_array($Address)
                 && isset($Address['company'])
                 && $Address['company'] == 1
             ) {
@@ -214,7 +214,7 @@ class User
      */
     public static function filterCustomerAttributes($attributes = [])
     {
-        if (!is_array($attributes)) {
+        if (!\is_array($attributes)) {
             return [];
         }
 
@@ -243,7 +243,7 @@ class User
             'quiqqer.erp.isNettoUser'
         ];
 
-        $needle = array_flip($needle);
+        $needle = \array_flip($needle);
         $result = [];
 
         foreach ($attributes as $key => $value) {

@@ -40,14 +40,14 @@ class CalculationValue
      */
     public function __construct($number, $Currency = null, $precision = false)
     {
-        if (!is_numeric($number)) {
+        if (!\is_numeric($number)) {
             return;
         }
 
         $this->number = $number;
 
         // precision
-        if (is_numeric($precision)) {
+        if (\is_numeric($precision)) {
             $this->precision = $precision;
         } else {
             $this->precision = QUI\ERP\Defaults::getPrecision();
@@ -100,6 +100,6 @@ class CalculationValue
      */
     public function get()
     {
-        return round($this->number, $this->precision);
+        return \round($this->number, $this->precision);
     }
 }

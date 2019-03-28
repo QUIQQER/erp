@@ -112,17 +112,17 @@ class User extends QUI\QDOM implements UserInterface
             $this->uuid = $attributes['uuid'];
         }
 
-        if (isset($attributes['data']) && is_array($attributes['data'])) {
+        if (isset($attributes['data']) && \is_array($attributes['data'])) {
             $this->data = $attributes['data'];
             $this->setAttributes($this->data);
         }
 
-        if (isset($attributes['address']) && is_array($attributes['address'])) {
+        if (isset($attributes['address']) && \is_array($attributes['address'])) {
             $this->address = $attributes['address'];
         }
 
 
-        $needle = array_flip($needle);
+        $needle = \array_flip($needle);
 
         foreach ($attributes as $attribute => $value) {
             if (!isset($needle[$attribute])) {
@@ -381,7 +381,7 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function getType()
     {
-        return get_class($this);
+        return \get_class($this);
     }
 
     /**
@@ -408,7 +408,7 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function setAddress(QUI\Users\Address $Address)
     {
-        $this->address = json_decode($Address->toJSON(), true);
+        $this->address = \json_decode($Address->toJSON(), true);
     }
 
     /**
@@ -462,7 +462,7 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function hasBruttoNettoStatus()
     {
-        return is_bool($this->isNetto);
+        return \is_bool($this->isNetto);
     }
 
     /**

@@ -13,11 +13,11 @@
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_settings_validateVat',
     function ($vatId) {
-        if (!class_exists('\SoapClient')) {
+        if (!\class_exists('\SoapClient')) {
             return -1;
         }
 
-        if (!class_exists('\QUI\ERP\Tax\Utils')) {
+        if (!\class_exists('\QUI\ERP\Tax\Utils')) {
             return -1;
         }
 

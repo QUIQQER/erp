@@ -72,12 +72,12 @@ class ArticleListUnique implements \IteratorAggregate
 
             $class = $article['class'];
 
-            if (!class_exists($class)) {
+            if (!\class_exists($class)) {
                 $this->articles[] = new Article($article);
                 continue;
             }
 
-            $interfaces = class_implements($class);
+            $interfaces = \class_implements($class);
 
             if (isset($interfaces[ArticleInterface::class])) {
                 $this->articles[] = new $class($article);
@@ -118,8 +118,8 @@ class ArticleListUnique implements \IteratorAggregate
      */
     public static function unserialize($data)
     {
-        if (is_string($data)) {
-            $data = json_decode($data, true);
+        if (\is_string($data)) {
+            $data = \json_decode($data, true);
         }
 
         return new self($data);
@@ -132,7 +132,7 @@ class ArticleListUnique implements \IteratorAggregate
      */
     public function serialize()
     {
-        return json_encode($this->toArray());
+        return \json_encode($this->toArray());
     }
 
     /**
@@ -162,7 +162,7 @@ class ArticleListUnique implements \IteratorAggregate
      */
     public function count()
     {
-        return count($this->articles);
+        return \count($this->articles);
     }
 
     /**
@@ -183,7 +183,7 @@ class ArticleListUnique implements \IteratorAggregate
      */
     public function toArray()
     {
-        $articles = array_map(function ($Article) {
+        $articles = \array_map(function ($Article) {
             /* @var $Article Article */
             return $Article->toArray();
         }, $this->articles);
@@ -250,7 +250,7 @@ class ArticleListUnique implements \IteratorAggregate
 
         $pos = 1;
 
-        $articles = array_map(function ($Article) use ($Currency, &$pos) {
+        $articles = \array_map(function ($Article) use ($Currency, &$pos) {
             /* @var $Article Article */
             $View = $Article->getView();
             $View->setCurrency($Currency);
@@ -271,11 +271,11 @@ class ArticleListUnique implements \IteratorAggregate
             'vatArray'     => $vatArray
         ]);
 
-        if ($template && file_exists($template)) {
+        if ($template && \file_exists($template)) {
             return $Engine->fetch($template);
         }
 
-        return $Engine->fetch(dirname(__FILE__).'/ArticleList.html');
+        return $Engine->fetch(\dirname(__FILE__).'/ArticleList.html');
     }
 
     /**
@@ -288,7 +288,7 @@ class ArticleListUnique implements \IteratorAggregate
     public function toHTMLWithCSS()
     {
         $style = '<style>';
-        $style .= file_get_contents(dirname(__FILE__).'/ArticleList.css');
+        $style .= \file_get_contents(\dirname(__FILE__).'/ArticleList.css');
         $style .= '</style>';
 
         return $style.$this->toHTML();

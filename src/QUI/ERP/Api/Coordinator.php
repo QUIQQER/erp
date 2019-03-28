@@ -42,7 +42,7 @@ class Coordinator extends QUI\Utils\Singleton
                         continue;
                     }
 
-                    $collect = array_merge($collect, $Package->getProvider('erp'));
+                    $collect = \array_merge($collect, $Package->getProvider('erp'));
                 } catch (QUI\Exception $exception) {
                 }
             }
@@ -60,7 +60,7 @@ class Coordinator extends QUI\Utils\Singleton
         );
 
         foreach ($collect as $entry) {
-            if (!class_exists($entry)) {
+            if (!\class_exists($entry)) {
                 continue;
             }
 
@@ -104,7 +104,7 @@ class Coordinator extends QUI\Utils\Singleton
                 $aLocale = $Locale->get($a['text'][0], $a['text'][1]);
                 $bLocale = $Locale->get($b['text'][0], $b['text'][1]);
 
-                return strcmp($aLocale, $bLocale);
+                return \strcmp($aLocale, $bLocale);
             }
 
             if (!isset($a['priority'])) {
@@ -125,10 +125,10 @@ class Coordinator extends QUI\Utils\Singleton
             return $pa < $pb ? -1 : 1;
         };
 
-        usort($result['items'], $sorting);
+        \usort($result['items'], $sorting);
 
         foreach ($result['items'] as $key => $itemData) {
-            usort($result['items'][$key]['items'], $sorting);
+            \usort($result['items'][$key]['items'], $sorting);
         }
 
         try {
@@ -152,7 +152,7 @@ class Coordinator extends QUI\Utils\Singleton
 
         /* @var $Provider AbstractErpProvider */
         foreach ($provider as $Provider) {
-            $ranges = array_merge($Provider->getNumberRanges(), $ranges);
+            $ranges = \array_merge($Provider->getNumberRanges(), $ranges);
         }
 
         // @todo filter, only NumberRangeInterface are allowed
