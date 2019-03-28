@@ -34,7 +34,7 @@ class FactorList implements \IteratorAggregate, \Countable
      */
     public function __construct($data = [])
     {
-        if (!is_array($data)) {
+        if (!\is_array($data)) {
             return;
         }
 
@@ -50,7 +50,7 @@ class FactorList implements \IteratorAggregate, \Countable
      */
     public function count()
     {
-        return count($this->list);
+        return \count($this->list);
     }
 
     /**
@@ -60,7 +60,7 @@ class FactorList implements \IteratorAggregate, \Countable
      */
     public function toArray()
     {
-        return array_map(function ($Factor) {
+        return \array_map(function ($Factor) {
             /* @var $Factor Factor */
             return $Factor->toArray();
         }, $this->list);
@@ -73,7 +73,7 @@ class FactorList implements \IteratorAggregate, \Countable
      */
     public function toJSON()
     {
-        return json_encode($this->toArray());
+        return \json_encode($this->toArray());
     }
 
     //region iterator

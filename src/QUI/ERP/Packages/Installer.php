@@ -109,7 +109,7 @@ class Installer extends QUI\Utils\Singleton
      */
     public function install($packageName)
     {
-        if (!in_array($packageName, $this->getPackageList())) {
+        if (!\in_array($packageName, $this->getPackageList())) {
             throw new Exception([
                 'quiqqer/erp',
                 'exception.package.is.not.erp.package'
@@ -129,7 +129,7 @@ class Installer extends QUI\Utils\Singleton
      */
     public function getPackageList()
     {
-        return array_keys($this->packages);
+        return \array_keys($this->packages);
     }
 
     /**
@@ -141,7 +141,7 @@ class Installer extends QUI\Utils\Singleton
      */
     protected function getPackageRequirements($packageName)
     {
-        if (!in_array($packageName, $this->getPackageList())) {
+        if (!\in_array($packageName, $this->getPackageList())) {
             throw new Exception([
                 'quiqqer/erp',
                 'exception.erp.package.not.an.erp.package'
@@ -167,7 +167,7 @@ class Installer extends QUI\Utils\Singleton
      */
     public function setPackageRequirements($packageName)
     {
-        if (!in_array($packageName, $this->getPackageList())) {
+        if (!\in_array($packageName, $this->getPackageList())) {
             throw new Exception([
                 'quiqqer/erp',
                 'exception.package.is.not.erp.package'

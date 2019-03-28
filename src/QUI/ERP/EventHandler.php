@@ -44,7 +44,7 @@ class EventHandler
         }
 
         $languages = QUI::availableLanguages();
-        $languages = array_flip($languages);
+        $languages = \array_flip($languages);
 
         try {
             $Config = $Package->getConfig();
@@ -156,7 +156,7 @@ class EventHandler
         if (isset($data['vatId'])) {
             $vatId = $data['vatId'];
 
-            if (class_exists('QUI\ERP\Tax\Utils')
+            if (\class_exists('QUI\ERP\Tax\Utils')
                 && QUI\ERP\Tax\Utils::shouldVatIdValidationBeExecuted()
                 && !empty($vatId)) {
                 $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
@@ -182,11 +182,11 @@ class EventHandler
         $Request = QUI::getRequest()->request;
         $data    = $Request->get('data');
 
-        if (is_string($data)) {
-            $data = json_decode($data, true);
+        if (\is_string($data)) {
+            $data = \json_decode($data, true);
         }
 
-        if (empty($data) || !is_array($data)) {
+        if (empty($data) || !\is_array($data)) {
             return;
         }
 
@@ -194,7 +194,7 @@ class EventHandler
             $vatId = $data['vatId'];
 
             try {
-                if (class_exists('QUI\ERP\Tax\Utils')
+                if (\class_exists('QUI\ERP\Tax\Utils')
                     && QUI\ERP\Tax\Utils::shouldVatIdValidationBeExecuted()
                     && !empty($vatId)) {
                     $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
@@ -253,7 +253,7 @@ class EventHandler
 
         try {
             $Collector->append(
-                $Engine->fetch(dirname(__FILE__).'/FrontendUsers/customerData.html')
+                $Engine->fetch(\dirname(__FILE__).'/FrontendUsers/customerData.html')
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -286,7 +286,7 @@ class EventHandler
 
         try {
             $Collector->append(
-                $Engine->fetch(dirname(__FILE__).'/FrontendUsers/profileData.html')
+                $Engine->fetch(\dirname(__FILE__).'/FrontendUsers/profileData.html')
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -317,7 +317,7 @@ class EventHandler
 
         try {
             $Collector->append(
-                $Engine->fetch(dirname(__FILE__).'/FrontendUsers/createAddressBegin.html')
+                $Engine->fetch(\dirname(__FILE__).'/FrontendUsers/createAddressBegin.html')
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -348,7 +348,7 @@ class EventHandler
 
         try {
             $Collector->append(
-                $Engine->fetch(dirname(__FILE__).'/FrontendUsers/createAddressEnd.html')
+                $Engine->fetch(\dirname(__FILE__).'/FrontendUsers/createAddressEnd.html')
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -395,7 +395,7 @@ class EventHandler
 
         try {
             $Collector->append(
-                $Engine->fetch(dirname(__FILE__).'/FrontendUsers/editAddressBegin.html')
+                $Engine->fetch(\dirname(__FILE__).'/FrontendUsers/editAddressBegin.html')
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -428,7 +428,7 @@ class EventHandler
 
         try {
             $Collector->append(
-                $Engine->fetch(dirname(__FILE__).'/FrontendUsers/editAddressEnd.html')
+                $Engine->fetch(\dirname(__FILE__).'/FrontendUsers/editAddressEnd.html')
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);

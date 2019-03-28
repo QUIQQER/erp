@@ -89,9 +89,7 @@ class Calc
             $User = QUI::getUsers()->getSystemUser();
         }
 
-        if (!QUI::getUsers()->isUser($User)
-            && !QUI::getUsers()->isSystemUser($User)
-        ) {
+        if (!QUI::getUsers()->isUser($User) && !QUI::getUsers()->isSystemUser($User)) {
             $User = QUI::getUserBySession();
         }
 
@@ -126,7 +124,7 @@ class Calc
      */
     public function getCurrency()
     {
-        if (is_null($this->Currency)) {
+        if (\is_null($this->Currency)) {
             $this->Currency = QUI\ERP\Currency\Handler::getDefaultCurrency();
         }
 
@@ -143,10 +141,11 @@ class Calc
     public function calcArticleList(ArticleList $List, $callback = false)
     {
         // calc data
-        if (!is_callable($callback)) {
+        if (!\is_callable($callback)) {
             return $List->calc();
         }
 
+        $this->Currency = $List->getCurrency();
 
         $articles    = $List->getArticles();
         $isNetto     = QUI\ERP\Utils\User::isNettoUser($this->getUser());
@@ -224,7 +223,6 @@ class Calc
                 $vatArray[$vat] = [
                     'vat'  => $vat,
                     'text' => self::getVatText($vat, $this->getUser())
-                    // vorher war $vatSum, @todo wenn alles gut läuft, kommentar entfernen
                 ];
 
                 $vatArray[$vat]['sum'] = 0;
@@ -265,19 +263,19 @@ class Calc
 
             foreach ($priceFactors as $Factor) {
                 /* @var $Factor QUI\ERP\Products\Utils\PriceFactor */
-                $priceFactorBruttoSums = $priceFactorBruttoSums + round($Factor->getSum(), 2);
+                $priceFactorBruttoSums = $priceFactorBruttoSums + \round($Factor->getSum(), 2);
             }
 
             $priceFactorBruttoSum = $subSum + $priceFactorBruttoSums;
 
-            if ($priceFactorBruttoSum !== round($bruttoSum, 2)) {
-                $diff = $priceFactorBruttoSum - round($bruttoSum, 2);
+            if ($priceFactorBruttoSum !== \round($bruttoSum, 2)) {
+                $diff = $priceFactorBruttoSum - \round($bruttoSum, 2);
 
                 // if we have a diff, we change the first vat price factor
                 foreach ($priceFactors as $Factor) {
                     if ($Factor instanceof QUI\ERP\Products\Interfaces\PriceFactorWithVatInterface) {
-                        $Factor->setSum(round($Factor->getSum() - $diff, 2));
-                        $bruttoSum = round($bruttoSum, 2);
+                        $Factor->setSum(\round($Factor->getSum() - $diff, 2));
+                        $bruttoSum = \round($bruttoSum, 2);
                         break;
                     }
                 }
@@ -318,7 +316,7 @@ class Calc
     public function calcArticlePrice(Article $Article, $callback = false)
     {
         // calc data
-        if (!is_callable($callback)) {
+        if (!\is_callable($callback)) {
             $Article->calc($this);
 
             return $Article->getPrice();
@@ -409,12 +407,12 @@ class Calc
         $groupingSeparator = $this->getUser()->getLocale()->getGroupingSeparator();
         $precision         = QUI\ERP\Defaults::getPrecision();
 
-        if (strpos($value, $decimalSeparator) && $decimalSeparator != ' . ') {
-            $value = str_replace($groupingSeparator, '', $value);
+        if (\strpos($value, $decimalSeparator) && $decimalSeparator != '.') {
+            $value = \str_replace($groupingSeparator, '', $value);
         }
 
-        $value = str_replace(',', ' . ', $value);
-        $value = round($value, $precision);
+        $value = \str_replace(',', '.', $value);
+        $value = \round($value, $precision);
 
         return $value;
     }
@@ -497,7 +495,9 @@ class Calc
      *
      * @param Invoice $Invoice
      * @return array
+     *
      * @throws QUI\ERP\Exception
+     *
      * @deprecated use calculatePayments
      */
     public static function calculateInvoicePayments(Invoice $Invoice)
@@ -517,7 +517,7 @@ class Calc
     {
         if (self::isAllowedForCalculation($ToCalculate) === false) {
             QUI\ERP\Debug::getInstance()->log(
-                'Calc->calculatePayments(); Object is not allowed to calculate '.get_class($ToCalculate)
+                'Calc->calculatePayments(); Object is not allowed to calculate '.\get_class($ToCalculate)
             );
 
             throw new QUI\ERP\Exception('Object is not allowed to calculate');
@@ -532,17 +532,17 @@ class Calc
             $paidData = $ToCalculate->getAttribute('paid_data');
             $paid     = 0;
 
-            if (!is_array($paidData)) {
-                $paidData = json_decode($paidData, true);
+            if (!\is_array($paidData)) {
+                $paidData = \json_decode($paidData, true);
             }
 
-            if (!is_array($paidData)) {
+            if (!\is_array($paidData)) {
                 $paidData = [];
             }
 
             foreach ($paidData as $entry) {
                 if (isset($entry['amount'])) {
-                    $paid = $paid + floatval($entry['amount']);
+                    $paid = $paid + \floatval($entry['amount']);
                 }
             }
 
@@ -609,10 +609,10 @@ class Calc
             $date = $Transaction->getDate();
 
             if ($isValidTimeStamp($date) === false) {
-                $date = strtotime($date);
+                $date = \strtotime($date);
 
                 if ($isValidTimeStamp($date) === false) {
-                    $date = time();
+                    $date = \time();
                 }
             } else {
                 $date = (int)$date;
@@ -645,14 +645,23 @@ class Calc
 
         // workaround fix
         if ($ToCalculate->getAttribute('paid_date') != $paidDate) {
-            QUI::getDataBase()->update(
-                Handler::getInstance()->invoiceTable(),
-                ['paid_date' => $paidDate],
-                ['id' => $ToCalculate->getCleanId()]
-            );
+            try {
+                QUI::getDataBase()->update(
+                    Handler::getInstance()->invoiceTable(),
+                    ['paid_date' => $paidDate],
+                    ['id' => $ToCalculate->getCleanId()]
+                );
+            } catch (QUI\Database\Exception $Exception) {
+                QUI\System\Log::writeException($Exception);
+
+                throw new QUI\ERP\Exception(
+                    ['quiqqer/erp', 'exception.something.went.wrong'],
+                    $Exception->getCode()
+                );
+            }
         }
 
-        $ToCalculate->setAttribute('paid_data', json_encode($paidData));
+        $ToCalculate->setAttribute('paid_data', \json_encode($paidData));
         $ToCalculate->setAttribute('paid_date', $paidDate);
         $ToCalculate->setAttribute('paid', $sum);
         $ToCalculate->setAttribute('toPay', $toPay - $paid);
@@ -720,7 +729,7 @@ class Calc
      */
     public static function calculateTotal(array $invoiceList)
     {
-        if (!count($invoiceList)) {
+        if (!\count($invoiceList)) {
             $Currency = QUI\ERP\Defaults::getCurrency();
             $display  = $Currency->format(0);
 
@@ -749,7 +758,7 @@ class Calc
         }
 
         try {
-            $currency = json_decode($invoiceList[0]['currency_data'], true);
+            $currency = \json_decode($invoiceList[0]['currency_data'], true);
             $Currency = QUI\ERP\Currency\Handler::getCurrency($currency['code']);
         } catch (QUI\Exception $Exception) {
             $Currency = QUI\ERP\Defaults::getCurrency();
@@ -820,16 +829,16 @@ class Calc
      */
     public static function calculateTotalVatOfInvoice($vatArray)
     {
-        if (is_string($vatArray)) {
-            $vatArray = json_decode($vatArray, true);
+        if (\is_string($vatArray)) {
+            $vatArray = \json_decode($vatArray, true);
         }
 
-        if (!is_array($vatArray)) {
+        if (!\is_array($vatArray)) {
             return 0;
         }
 
-        return array_sum(
-            array_map(function ($vat) {
+        return \array_sum(
+            \array_map(function ($vat) {
                 return $vat['sum'];
             }, $vatArray)
         );

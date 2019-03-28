@@ -125,6 +125,6 @@ class ArticleView extends QUI\QDOM
             'customFields'          => $customFields
         ]);
 
-        return $Engine->fetch(dirname(__FILE__).'/ArticleView.html');
+        return $Engine->fetch(\dirname(__FILE__).'/ArticleView.html');
     }
 }

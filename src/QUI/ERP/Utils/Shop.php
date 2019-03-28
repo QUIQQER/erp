@@ -65,7 +65,7 @@ class Shop
      */
     public static function isB2B()
     {
-        return strpos(self::getBusinessType(), 'B2B') !== false;
+        return \strpos(self::getBusinessType(), 'B2B') !== false;
     }
 
     /**
@@ -76,7 +76,7 @@ class Shop
      */
     public static function isB2C()
     {
-        return strpos(self::getBusinessType(), 'B2C') !== false;
+        return \strpos(self::getBusinessType(), 'B2C') !== false;
     }
 
     /**

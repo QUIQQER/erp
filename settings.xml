@@ -10,7 +10,7 @@
                 </conf>
                 <conf name="precision">
                     <type>integer</type>
-                    <defaultValue>8</defaultValue>
+                    <defaultValue>3</defaultValue>
                 </conf>
             </section>
             <section name="sites">

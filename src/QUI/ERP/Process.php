@@ -249,7 +249,7 @@ class Process
     {
         $transactions = $this->getTransactions();
 
-        return !!count($transactions);
+        return !!\count($transactions);
     }
 
     /**

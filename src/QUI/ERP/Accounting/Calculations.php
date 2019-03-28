@@ -69,7 +69,7 @@ class Calculations
             $this->Currency = QUI\ERP\Defaults::getCurrency();
         }
 
-        if (is_array($articles)) {
+        if (\is_array($articles)) {
             foreach ($articles as $Article) {
                 if ($Article instanceof Article) {
                     $this->articles[] = $Article;

@@ -13,7 +13,7 @@
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_money_validatePrice',
     function ($value) {
-        return \QUI\ERP\Money\Price::validatePrice($value);
+        return QUI\ERP\Money\Price::validatePrice($value);
     },
     ['value'],
     'Permission::checkAdminUser'

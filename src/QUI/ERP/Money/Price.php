@@ -206,17 +206,17 @@ class Price
      */
     public static function validatePrice($value)
     {
-        if (is_float($value)) {
-            return round($value, 4);
+        if (\is_float($value)) {
+            return \round($value, 4);
         }
 
         $value      = (string)$value;
-        $isNegative = substr($value, 0, 1) === '-';
+        $isNegative = \substr($value, 0, 1) === '-';
 
         // value cleanup
-        $value = preg_replace('#[^\d,.]#i', '', $value);
+        $value = \preg_replace('#[^\d,.]#i', '', $value);
 
-        if (trim($value) === '') {
+        if (\trim($value) === '') {
             return null;
         }
 
@@ -226,28 +226,28 @@ class Price
             $negativeTurn = -1;
         }
 
-        $decimal   = mb_strpos($value, self::$decimalSeparator);
-        $thousands = mb_strpos($value, self::$thousandsSeparator);
+        $decimal   = \mb_strpos($value, self::$decimalSeparator);
+        $thousands = \mb_strpos($value, self::$thousandsSeparator);
 
         if ($thousands === false && $decimal === false) {
-            return round(floatval($value), 4) * $negativeTurn;
+            return \round(\floatval($value), 4) * $negativeTurn;
         }
 
         if ($thousands !== false && $decimal === false) {
-            if (mb_substr($value, -4, 1) === self::$thousandsSeparator) {
-                $value = str_replace(self::$thousandsSeparator, '', $value);
+            if (\mb_substr($value, -4, 1) === self::$thousandsSeparator) {
+                $value = \str_replace(self::$thousandsSeparator, '', $value);
             }
         }
 
         if ($thousands === false && $decimal !== false) {
-            $value = str_replace(self::$decimalSeparator, '.', $value);
+            $value = \str_replace(self::$decimalSeparator, '.', $value);
         }
 
         if ($thousands !== false && $decimal !== false) {
-            $value = str_replace(self::$thousandsSeparator, '', $value);
-            $value = str_replace(self::$decimalSeparator, '.', $value);
+            $value = \str_replace(self::$thousandsSeparator, '', $value);
+            $value = \str_replace(self::$decimalSeparator, '.', $value);
         }
 
-        return round(floatval($value), 4) * $negativeTurn;
+        return \round(\floatval($value), 4) * $negativeTurn;
     }
 }

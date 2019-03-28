@@ -122,6 +122,11 @@ class Article implements ArticleInterface
     protected $User = null;
 
     /**
+     * @var null
+     */
+    protected $Currency = null;
+
+    /**
      * Article constructor.
      *
      * @param array $attributes - (id, articleNo, title, description, unitPrice, quantity, discount, customData)
@@ -173,17 +178,19 @@ class Article implements ArticleInterface
             $this->calculated = true;
         }
 
-        if (isset($attributes['customFields']) && is_array($attributes['customFields'])) {
+        if (isset($attributes['customFields']) && \is_array($attributes['customFields'])) {
             $this->customFields = $attributes['customFields'];
         }
 
-        if (isset($attributes['customData']) && is_array($attributes['customData'])) {
+        if (isset($attributes['customData']) && \is_array($attributes['customData'])) {
             $this->customData = $attributes['customData'];
         }
 
         if (isset($attributes['displayPrice'])) {
             $this->displayPrice = (bool)$attributes['displayPrice'];
         }
+
+        $this->Currency = QUI\ERP\Currency\Handler::getDefaultCurrency();
     }
 
     /**
@@ -310,7 +317,7 @@ class Article implements ArticleInterface
             $unitPrice = $this->attributes['unitPrice'];
         }
 
-        return new Price($unitPrice, QUI\ERP\Defaults::getCurrency());
+        return new Price($unitPrice, $this->Currency);
     }
 
     /**
@@ -322,7 +329,7 @@ class Article implements ArticleInterface
     {
         $this->calc();
 
-        return new Price($this->sum, QUI\ERP\Defaults::getCurrency());
+        return new Price($this->sum, $this->Currency);
     }
 
     /**
@@ -375,6 +382,26 @@ class Article implements ArticleInterface
     }
 
     /**
+     * Return the currency of the article
+     *
+     * @return QUI\ERP\Currency\Currency|null
+     */
+    public function getCurrency()
+    {
+        return $this->Currency;
+    }
+
+    /**
+     * Set the currency for the article
+     *
+     * @param QUI\ERP\Currency\Currency $Currency
+     */
+    public function setCurrency(QUI\ERP\Currency\Currency $Currency)
+    {
+        $this->Currency = $Currency;
+    }
+
+    /**
      * Returns the article quantity
      *
      * @return int|bool
@@ -397,10 +424,7 @@ class Article implements ArticleInterface
     {
         $this->calc();
 
-        return new Price(
-            $this->sum,
-            QUI\ERP\Currency\Handler::getDefaultCurrency()
-        );
+        return new Price($this->sum, $this->Currency);
     }
 
     /**
@@ -519,7 +543,7 @@ class Article implements ArticleInterface
             $discount = $this->Discount->toJSON();
         }
 
-        $class = get_called_class();
+        $class = \get_called_class();
 
         if (!empty($this->attributes['control'])) {
             $class = $this->attributes['control'];

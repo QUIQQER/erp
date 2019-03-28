@@ -65,6 +65,17 @@ class Defaults
     }
 
     /**
+     * Return the currency of the user
+     *
+     * @param QUI\Interfaces\Users\User $User
+     * @return Currency\Currency|null
+     */
+    public static function getUserCurrency($User = null)
+    {
+        return QUI\ERP\Currency\Handler::getUserCurrency($User);
+    }
+
+    /**
      * Return the global brutto netto status
      *
      * @return int

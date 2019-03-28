@@ -101,7 +101,7 @@ class Factor
             $this->vat = (int)$data['vat'];
         }
 
-        if (isset($data['valueText']) && is_string($data['valueText'])) {
+        if (isset($data['valueText']) && \is_string($data['valueText'])) {
             $this->valueText = $data['valueText'];
         }
     }
@@ -181,8 +181,8 @@ class Factor
             return $this->vat;
         }
 
-        $vat      = abs($this->sum - $this->nettoSum);
-        $nettoSum = abs($this->nettoSum);
+        $vat      = \abs($this->sum - $this->nettoSum);
+        $nettoSum = \abs($this->nettoSum);
 
         return Math::percent($vat, $nettoSum);
     }
@@ -232,6 +232,6 @@ class Factor
      */
     public function toJSON()
     {
-        return json_encode($this->toArray());
+        return \json_encode($this->toArray());
     }
 }
