@@ -147,6 +147,7 @@ class Calc
             return $List->calc();
         }
 
+        $this->Currency = $List->getCurrency();
 
         $articles    = $List->getArticles();
         $isNetto     = QUI\ERP\Utils\User::isNettoUser($this->getUser());
@@ -224,7 +225,6 @@ class Calc
                 $vatArray[$vat] = [
                     'vat'  => $vat,
                     'text' => self::getVatText($vat, $this->getUser())
-                    // vorher war $vatSum, @todo wenn alles gut läuft, kommentar entfernen
                 ];
 
                 $vatArray[$vat]['sum'] = 0;
@@ -409,11 +409,11 @@ class Calc
         $groupingSeparator = $this->getUser()->getLocale()->getGroupingSeparator();
         $precision         = QUI\ERP\Defaults::getPrecision();
 
-        if (strpos($value, $decimalSeparator) && $decimalSeparator != ' . ') {
+        if (strpos($value, $decimalSeparator) && $decimalSeparator != '.') {
             $value = str_replace($groupingSeparator, '', $value);
         }
 
-        $value = str_replace(',', ' . ', $value);
+        $value = str_replace(',', '.', $value);
         $value = round($value, $precision);
 
         return $value;
@@ -497,7 +497,9 @@ class Calc
      *
      * @param Invoice $Invoice
      * @return array
+     *
      * @throws QUI\ERP\Exception
+     *
      * @deprecated use calculatePayments
      */
     public static function calculateInvoicePayments(Invoice $Invoice)
@@ -609,10 +611,10 @@ class Calc
             $date = $Transaction->getDate();
 
             if ($isValidTimeStamp($date) === false) {
-                $date = strtotime($date);
+                $date = \strtotime($date);
 
                 if ($isValidTimeStamp($date) === false) {
-                    $date = time();
+                    $date = \time();
                 }
             } else {
                 $date = (int)$date;
@@ -645,11 +647,20 @@ class Calc
 
         // workaround fix
         if ($ToCalculate->getAttribute('paid_date') != $paidDate) {
-            QUI::getDataBase()->update(
-                Handler::getInstance()->invoiceTable(),
-                ['paid_date' => $paidDate],
-                ['id' => $ToCalculate->getCleanId()]
-            );
+            try {
+                QUI::getDataBase()->update(
+                    Handler::getInstance()->invoiceTable(),
+                    ['paid_date' => $paidDate],
+                    ['id' => $ToCalculate->getCleanId()]
+                );
+            } catch (QUI\Database\Exception $Exception) {
+                QUI\System\Log::writeException($Exception);
+
+                throw new QUI\ERP\Exception(
+                    ['quiqqer/erp', 'exception.something.went.wrong'],
+                    $Exception->getCode()
+                );
+            }
         }
 
         $ToCalculate->setAttribute('paid_data', json_encode($paidData));

@@ -94,7 +94,7 @@
 
         <locale name="global_process_id">
             <de><![CDATA[Vorgangsnummer]]></de>
-            <en><![CDATA[Procedure number]]></en>
+            <en><![CDATA[Processing-ID]]></en>
         </locale>
     </groups>
 
@@ -262,6 +262,15 @@
         <locale name="message.default.area.ok">
             <de><![CDATA[Standard Zone für Ihr E-Commerce System ist festgelegt.]]></de>
             <en><![CDATA[Standard zone for your e-commerce system is set.]]></en>
+        </locale>
+        <locale name="exception.something.went.wrong">
+            <de><![CDATA[
+            Es tut uns leid aber leider ist etwas schief gelaufen.
+            Bitte nehmen Sie kontakt mit einem Administrator auf.
+            ]]></de>
+            <en><![CDATA[
+            We're sorry, but something went wrong. Please contact an administrator.
+            ]]></en>
         </locale>
     </groups>
 
