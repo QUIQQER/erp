@@ -186,6 +186,12 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
                 'rate' => $this->Currency->getExchangeRate()
             ];
         }
+
+        if (\count($this->articles)) {
+            foreach ($this->articles as $Article) {
+                $Article->setCurrency($Currency);
+            }
+        }
     }
 
     /**
@@ -320,6 +326,10 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
 
         if ($this->User) {
             $Article->setUser($this->User);
+        }
+
+        if ($this->Currency) {
+            $Article->setCurrency($this->Currency);
         }
     }
 
