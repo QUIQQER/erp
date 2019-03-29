@@ -725,12 +725,21 @@ class Calc
      * Calculate the total of the invoice list
      *
      * @param array $invoiceList - list of invoice array
+     * @param QUI\ERP\Currency\Currency|null $Currency
      * @return array
      */
-    public static function calculateTotal(array $invoiceList)
+    public static function calculateTotal(array $invoiceList, $Currency = null)
     {
+        if ($Currency === null) {
+            try {
+                $currency = \json_decode($invoiceList[0]['currency_data'], true);
+                $Currency = QUI\ERP\Currency\Handler::getCurrency($currency['code']);
+            } catch (QUI\Exception $Exception) {
+                $Currency = QUI\ERP\Defaults::getCurrency();
+            }
+        }
+
         if (!\count($invoiceList)) {
-            $Currency = QUI\ERP\Defaults::getCurrency();
             $display  = $Currency->format(0);
 
             return [
@@ -755,13 +764,6 @@ class Calc
                 'display_brutto_paid'  => $display,
                 'display_brutto_total' => $display
             ];
-        }
-
-        try {
-            $currency = \json_decode($invoiceList[0]['currency_data'], true);
-            $Currency = QUI\ERP\Currency\Handler::getCurrency($currency['code']);
-        } catch (QUI\Exception $Exception) {
-            $Currency = QUI\ERP\Defaults::getCurrency();
         }
 
         $nettoTotal = 0;
