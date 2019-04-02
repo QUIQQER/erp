@@ -21,6 +21,11 @@ class Defaults
     protected static $timestampFormat = [];
 
     /**
+     * @var null|bool
+     */
+    protected static $userRelatedCurrency = null;
+
+    /**
      * @var null|string
      */
     protected static $dateFormat = [];
@@ -72,6 +77,26 @@ class Defaults
      */
     public static function getUserCurrency($User = null)
     {
+        if (self::$userRelatedCurrency !== null) {
+            if (self::$userRelatedCurrency) {
+                return QUI\ERP\Currency\Handler::getUserCurrency($User);
+            }
+
+            return self::getCurrency();
+        }
+
+        try {
+            $Package = QUI::getPackage('quiqqer/erp');
+            $Config  = $Package->getConfig();
+
+            self::$userRelatedCurrency = $Config->get('general', 'userRelatedCurrency');
+
+            if (!self::$userRelatedCurrency) {
+                return self::getCurrency();
+            }
+        } catch (QUI\Exception $Exception) {
+        }
+
         return QUI\ERP\Currency\Handler::getUserCurrency($User);
     }
 

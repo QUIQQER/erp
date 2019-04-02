@@ -12,6 +12,10 @@
                     <type>integer</type>
                     <defaultValue>3</defaultValue>
                 </conf>
+                <conf name="userRelatedCurrency">
+                    <type>integer</type>
+                    <defaultValue>1</defaultValue>
+                </conf>
             </section>
             <section name="sites">
                 <conf name="terms_and_conditions">
@@ -28,7 +32,6 @@
         </config>
 
         <window name="ERP">
-
             <title>
                 <locale group="quiqqer/erp" var="window.erp.title"/>
             </title>
@@ -138,6 +141,26 @@
                             <text>
                                 <locale group="quiqqer/erp" var="menu.erp.sites.revocation"/>
                             </text>
+                        </input>
+                    </settings>
+                </category>
+
+                <category name="currencies" index="1">
+                    <settings title="general" name="general">
+                        <title>
+                            <locale group="quiqqer/erp" var="menu.erp.general.userRelatedCurrency.title"/>
+                        </title>
+                        <input type="checkbox" conf="general.userRelatedCurrency">
+                            <text>
+                                <locale group="quiqqer/erp"
+                                        var="menu.erp.general.userRelatedCurrency.input.title"
+                                />
+                            </text>
+                            <description>
+                                <locale group="quiqqer/erp"
+                                        var="menu.erp.general.userRelatedCurrency.input.description"
+                                />
+                            </description>
                         </input>
                     </settings>
                 </category>
