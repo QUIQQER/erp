@@ -190,7 +190,17 @@ class Article implements ArticleInterface
             $this->displayPrice = (bool)$attributes['displayPrice'];
         }
 
-        $this->Currency = QUI\ERP\Currency\Handler::getDefaultCurrency();
+        if (isset($attributes['currency'])) {
+            try {
+                $this->Currency = QUI\ERP\Currency\Handler::getCurrency($attributes['currency']);
+            } catch (QUI\Exception $Exception) {
+                QUI\System\Log::writeDebugException($Exception);
+            }
+        }
+
+        if (!$this->Currency) {
+            $this->Currency = QUI\ERP\Currency\Handler::getDefaultCurrency();
+        }
     }
 
     /**
