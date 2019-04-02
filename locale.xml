@@ -8,8 +8,8 @@
         </locale>
 
         <locale name="window.erp.title">
-            <de><![CDATA[Shop]]></de>
-            <en><![CDATA[Shop]]></en>
+            <de><![CDATA[E-Commerce]]></de>
+            <en><![CDATA[E-commerce]]></en>
         </locale>
         <locale name="menu.erp.general.title">
             <de><![CDATA[Allgemein]]></de>
@@ -126,8 +126,8 @@
         </locale>
 
         <locale name="profile.erp.title">
-            <de><![CDATA[Shop]]></de>
-            <en><![CDATA[Shop]]></en>
+            <de><![CDATA[E-Commerce]]></de>
+            <en><![CDATA[E-commerce]]></en>
         </locale>
 
         <locale name="menu.erp.sites.terms.and.conditions">
@@ -146,6 +146,22 @@
         <locale name="menu.erp.general.dateFormats.title">
             <de><![CDATA[Datums Formate]]></de>
             <en><![CDATA[Date Formats]]></en>
+        </locale>
+        <locale name="menu.erp.general.userRelatedCurrency.title">
+            <de><![CDATA[Benutzerbezogene Währung]]></de>
+            <en><![CDATA[User-Related Currency]]></en>
+        </locale>
+        <locale name="menu.erp.general.userRelatedCurrency.input.title">
+            <de><![CDATA[Benutzerbezogene Währung aktivieren]]></de>
+            <en><![CDATA[Activate User-Related Currency]]></en>
+        </locale>
+        <locale name="menu.erp.general.userRelatedCurrency.input.description">
+            <de><![CDATA[
+            Wenn diese Option aktiviert ist, werden Anhand der Liste der Währungsveraltung Preise im Frontend automatisch umgerechnet.
+            ]]></de>
+            <en><![CDATA[
+            If this option is activated, prices are automatically converted in the frontend by using the list of the currency management.
+            ]]></en>
         </locale>
         <locale name="shop.settings.general.precision.description">
             <de><![CDATA[
