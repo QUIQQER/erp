@@ -412,6 +412,7 @@ class Calc
         }
 
         $value = \str_replace(',', '.', $value);
+        $value = \floatval($value);
         $value = \round($value, $precision);
 
         return $value;
@@ -740,7 +741,7 @@ class Calc
         }
 
         if (!\count($invoiceList)) {
-            $display  = $Currency->format(0);
+            $display = $Currency->format(0);
 
             return [
                 'netto_toPay'         => 0,
