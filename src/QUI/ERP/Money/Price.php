@@ -33,6 +33,12 @@ class Price
     protected $startingPrice = false;
 
     /**
+     * Flag for Price from
+     * @var bool
+     */
+    protected $isMinimalPrice = false;
+
+    /**
      * @var array
      */
     protected $discounts;
@@ -80,10 +86,11 @@ class Price
     public function toArray()
     {
         return [
-            'price'         => $this->value(),
-            'currency'      => $this->getCurrency()->getCode(),
-            'display'       => $this->getDisplayPrice(),
-            'startingprice' => $this->isStartingPrice()
+            'price'          => $this->value(),
+            'currency'       => $this->getCurrency()->getCode(),
+            'display'        => $this->getDisplayPrice(),
+            'startingprice'  => $this->isStartingPrice(),
+            'isMinimalPrice' => $this->isMinimalPrice
         ];
     }
 
@@ -249,5 +256,35 @@ class Price
         }
 
         return \round(\floatval($value), 4) * $negativeTurn;
+    }
+
+    /**
+     * Return if the the price is minimal price and higher prices exists
+     *
+     * @return bool
+     */
+    public function isMinimalPrice()
+    {
+        return $this->isMinimalPrice;
+    }
+
+    /**
+     * enables the minimal price
+     * -> price from
+     * -> ab
+     */
+    public function enableMinimalPrice()
+    {
+        $this->isMinimalPrice = true;
+    }
+
+    /**
+     * enables the minimal price
+     * -> price from
+     * -> ab
+     */
+    public function disableMinimalPrice()
+    {
+        $this->isMinimalPrice = false;
     }
 }
