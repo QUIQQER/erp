@@ -34,6 +34,11 @@ class Calc
     const CALCULATION_COMPLEMENT = 2; // @todo raus und in product calc lassen
 
     /**
+     * Set the price for the product
+     */
+    const CALCULATION_COMPLETE = 3; // @todo raus und in product calc lassen
+
+    /**
      * Basis calculation -> netto
      */
     const CALCULATION_BASIS_NETTO = 1; // @todo raus und in product calc lassen
