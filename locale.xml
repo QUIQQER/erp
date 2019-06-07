@@ -25,8 +25,8 @@
         </locale>
 
         <locale name="price.starting.from">
-            <de><![CDATA[ab [price]]]></de>
-            <en><![CDATA[starting from [price]]]></en>
+            <de><![CDATA[ab]]></de>
+            <en><![CDATA[starting from]]></en>
         </locale>
 
         <locale name="article.list.articles.title">
