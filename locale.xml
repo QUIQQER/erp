@@ -47,7 +47,7 @@
         </locale>
         <locale name="article.list.articles.header.unitprice">
             <de><![CDATA[Einzelpreis]]></de>
-            <en><![CDATA[Unitprice]]></en>
+            <en><![CDATA[Unit Price]]></en>
         </locale>
         <locale name="article.list.articles.header.price">
             <de><![CDATA[Preis]]></de>
