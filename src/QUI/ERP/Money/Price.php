@@ -28,11 +28,6 @@ class Price
     protected $Currency;
 
     /**
-     * @var bool
-     */
-    protected $startingPrice = false;
-
-    /**
      * Flag for Price from
      * @var bool
      */
@@ -89,8 +84,7 @@ class Price
             'price'          => $this->value(),
             'currency'       => $this->getCurrency()->getCode(),
             'display'        => $this->getDisplayPrice(),
-            'startingprice'  => $this->isStartingPrice(),
-            'isMinimalPrice' => $this->isMinimalPrice
+            'isMinimalPrice' => $this->isMinimalPrice()
         ];
     }
 
@@ -121,26 +115,7 @@ class Price
      */
     public function getDisplayPrice()
     {
-        $price = $this->Currency->format($this->getPrice());
-
-        if ($this->isStartingPrice()) {
-            return $this->User->getLocale()->get(
-                'quiqqer/erp',
-                'price.starting.from',
-                ['price' => $price]
-            );
-        }
-
-        return $price;
-    }
-
-    /**
-     * Change the price to a starting price
-     * The price display is like (ab 30€, start at 30$)
-     */
-    public function changeToStartingPrice()
-    {
-        $this->startingPrice = true;
+        return $this->Currency->format($this->getPrice());
     }
 
     /**
@@ -191,14 +166,6 @@ class Price
     public function getCurrency()
     {
         return $this->Currency;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isStartingPrice()
-    {
-        return $this->startingPrice;
     }
 
     /**
