@@ -109,6 +109,16 @@ class Price
     }
 
     /**
+     * Alias for getPrice
+     *
+     * @return float
+     */
+    public function getValue()
+    {
+        return $this->getPrice();
+    }
+
+    /**
      * Return the price for the view / displaying
      *
      * @return string
