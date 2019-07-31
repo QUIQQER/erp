@@ -117,6 +117,10 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      */
     public function setUser(QUI\Interfaces\Users\User $User)
     {
+        if ($this->User === $User) {
+            return;
+        }
+
         $this->calculated = false;
         $this->User       = $User;
 
@@ -170,6 +174,10 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      */
     public function setCurrency(QUI\ERP\Currency\Currency $Currency)
     {
+        if ($this->Currency === $Currency) {
+            return;
+        }
+
         $this->Currency = $Currency;
 
         $this->currencyData = [
@@ -260,6 +268,15 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
         $this->calc();
 
         return new ArticleListUnique($this->toArray());
+    }
+
+    /**
+     * @param null $Calc
+     */
+    public function recalculate($Calc = null)
+    {
+        $this->calculated = false;
+        $this->calc($Calc);
     }
 
     /**
