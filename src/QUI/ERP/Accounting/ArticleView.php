@@ -37,6 +37,7 @@ class ArticleView extends QUI\QDOM
     public function __construct(Article $Article)
     {
         $this->Article = $Article;
+        $this->setAttributes($this->Article->toArray());
     }
 
     /**
@@ -72,30 +73,12 @@ class ArticleView extends QUI\QDOM
     }
 
     /**
-     * @return bool
+     * @return array
      */
-    public function displayPrice()
+    public function getCustomFields()
     {
-        return $this->Article->displayPrice();
-    }
-
-    /**
-     * Create the html
-     *
-     * @return string
-     *
-     * @throws QUI\Exception
-     */
-    public function toHTML()
-    {
-        $Engine   = QUI::getTemplateManager()->getEngine();
-        $Currency = $this->getCurrency();
-
         $customFields = [];
         $article      = $this->Article->toArray();
-        $calc         = $article['calculated'];
-
-        $this->setAttributes($article);
 
         foreach ($article['customFields'] as $field) {
             if (!isset($field['title'])) {
@@ -112,6 +95,43 @@ class ArticleView extends QUI\QDOM
 
             $customFields[] = $field;
         }
+
+        return $customFields;
+    }
+
+    /**
+     * @return bool
+     */
+    public function displayPrice()
+    {
+        return $this->Article->displayPrice();
+    }
+
+    public function getPrice()
+    {
+        $Currency = $this->getCurrency();
+        $calc     = $this->getAttribute('calculated');
+
+        return $Currency->format($calc['price']);
+    }
+
+    /**
+     * Create the html
+     *
+     * @return string
+     *
+     * @throws QUI\Exception
+     */
+    public function toHTML()
+    {
+        $Engine   = QUI::getTemplateManager()->getEngine();
+        $Currency = $this->getCurrency();
+
+        $customFields = $this->getCustomFields();
+        $article      = $this->Article->toArray();
+        $calc         = $article['calculated'];
+
+        $this->setAttributes($article);
 
         $Engine->assign([
             'this'                  => $this,

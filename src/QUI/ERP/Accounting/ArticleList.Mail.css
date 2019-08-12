@@ -1,0 +1,78 @@
+
+.articles-header {
+    font-size: 20px;
+}
+
+/** articles
+ ========================================== */
+
+.articles-body,
+.articles-body-article {
+    clear: both;
+    display: block;
+    float: left;
+    width: 100%;
+}
+
+.articles-body-article {
+    border-top: 1px solid #dedede;
+    clear: both;
+    display: block;
+    float: left;
+    padding-bottom: 10px;
+}
+
+.articles-body-article h2 {
+    font-size: 16px;
+}
+
+.articles-body-article-data-description,
+.articles-body-article-data-fields {
+    font-size: 13px;
+}
+
+.articles-body-article-image {
+    float: left;
+}
+
+.articles-body-article-data {
+    float: left;
+}
+
+.articles-body-article-price {
+    clear: both;
+    display: block;
+    float: left;
+    font-size: 16px;
+    text-align: right;
+    width: 100%;
+}
+
+/** sum
+ ========================================== */
+
+.articles-sum {
+    float: right;
+    margin-top: 20px;
+    text-align: right;
+}
+
+.articles-sum td {
+    font-size: 16px;
+}
+
+.articles-sum-row-subsum-text {
+    border-bottom: 1px solid #999999;
+}
+
+.articles-sum-row-subsum-value {
+    border-bottom: 1px solid #999999;
+}
+
+.articles-sum-row-sum-text {
+    border-bottom: 3px double #999999;
+}
+
+.articles-sum-row-sum-value {
+    border-bottom: 3px double #999999;
+}
