@@ -1,0 +1,96 @@
+{if $showHeader}
+<!-- articles -->
+<h1 class="articles-header">
+    {locale group="quiqqer/erp" var="article.list.articles.title"}
+</h1>
+{/if}
+
+<section class="articles-body">
+    {foreach $articles as $Article}
+    <div class="articles-body-article">
+        <div class="articles-body-article-image">
+
+        </div>
+        <div class="articles-body-article-data">
+            <h2>
+                {$Article->getAttribute('quantity')} x
+                {$Article->getAttribute('title')}
+            </h2>
+            <div class="articles-body-article-data-description">
+                {$Article->getAttribute('description')}
+            </div>
+            <ul class="articles-body-article-data-fields">
+                {foreach $Article->getCustomFields() as $field}
+                <li class="articles-body-article-data-fields-field">
+                    <span>{$field.title}:</span>
+                    <span>{$field.custom_calc.valueText}</span>
+                </li>
+                {/foreach}
+            </ul>
+        </div>
+
+        <div class="articles-body-article-price">
+            {if $Article->getAttribute('displayPrice')}
+            {$Article->getPrice()}
+            {/if}
+        </div>
+    </div>
+    {/foreach}
+</section>
+
+<!-- sum display -->
+<table class="articles-sum">
+    <tr class="articles-sum-row-subsum">
+        <td class="articles-sum-row-firstCell">
+            <span class="articles-sum-row-subsum-text">
+                {locale group="quiqqer/erp" var="article.list.articles.subtotal"}
+            </span>
+        </td>
+        <td style="width: 140px" class="articles-sum-row-sndCell">
+            <span class="articles-sum-row-subsum-value">
+                {$calculations.subSum}
+            </span>
+        </td>
+    </tr>
+
+    {foreach $priceFactors as $priceFactor}
+    <tr>
+        <td class="articles-sum-row-firstCell">
+            {$priceFactor.title} {if !empty($priceFactor.valueText)}({$priceFactor.valueText}){/if}
+        </td>
+        <td class="articles-sum-row-sndCell">
+            {$priceFactor.sumFormatted}
+        </td>
+    </tr>
+    {/foreach}
+
+    {if count($priceFactors)}
+    <tr>
+        <td colspan="2"><br/></td>
+    </tr>
+    {/if}
+
+    {foreach $vatArray as $vat}
+    <tr>
+        <td>
+            {$vat.text}
+        </td>
+        <td>
+            {$vat.sum}
+        </td>
+    </tr>
+    {/foreach}
+
+    <tr class="articles-sum-row-sum">
+        <td class="articles-sum-row-firstCell">
+            <span class="articles-sum-row-sum-text">
+                {locale group="quiqqer/erp" var="article.list.articles.sumtotal"}
+            </span>
+        </td>
+        <td class="articles-sum-row-sndCell">
+            <span class="articles-sum-row-sum-value">
+                {$calculations.sum}
+            </span>
+        </td>
+    </tr>
+</table>

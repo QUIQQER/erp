@@ -279,6 +279,15 @@ class ArticleListUnique implements \IteratorAggregate
     }
 
     /**
+     * @return string
+     * @throws QUI\Exception
+     */
+    public function toMailHTML()
+    {
+        return $this->toHTML(\dirname(__FILE__).'/ArticleList.Mail.html');
+    }
+
+    /**
      * Return the Article List as HTML, with CSS
      *
      * @return string
@@ -288,7 +297,7 @@ class ArticleListUnique implements \IteratorAggregate
     public function toHTMLWithCSS()
     {
         $style = '<style>';
-        $style .= \file_get_contents(\dirname(__FILE__).'/ArticleList.css');
+        $style .= \file_get_contents(\dirname(__FILE__).'/ArticleList.Mail.css');
         $style .= '</style>';
 
         return $style.$this->toHTML();
@@ -304,6 +313,22 @@ class ArticleListUnique implements \IteratorAggregate
     public function render()
     {
         return $this->toHTMLWithCSS();
+    }
+
+    /**
+     * Render the article list for mails
+     *
+     * @return string
+     *
+     * @throws QUI\Exception
+     */
+    public function renderForMail()
+    {
+        $style = '<style>';
+        $style .= \file_get_contents(\dirname(__FILE__).'/ArticleList.Mail.css');
+        $style .= '</style>';
+
+        return $style.$this->toMailHTML();
     }
 
     //region Price Factors
