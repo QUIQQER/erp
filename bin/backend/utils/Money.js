@@ -6,6 +6,8 @@ define('package/quiqqer/erp/bin/backend/utils/Money', [
 ], function (QUILocale) {
     "use strict";
 
+    var defaultCurrency = null;
+
     return {
         /**
          * Validate the price and return a validated price
@@ -50,6 +52,28 @@ define('package/quiqqer/erp/bin/backend/utils/Money', [
             }
 
             return Formatter.format(parseFloat(value));
+        },
+
+        /**
+         * Return the default currency
+         *
+         * @return {Promise}
+         */
+        getCurrency: function () {
+            if (defaultCurrency !== null) {
+                return Promise.resolve(defaultCurrency);
+            }
+
+            return new Promise(function (resolve) {
+                require(['Ajax'], function (QUIAjax) {
+                    QUIAjax.get('package_quiqqer_erp_ajax_money_getCurrency', function (result) {
+                        defaultCurrency = result;
+                        resolve(result);
+                    }, {
+                        'package': 'quiqqer/erp'
+                    });
+                });
+            });
         }
     };
 });
