@@ -45,16 +45,6 @@ class Price
     protected $User;
 
     /**
-     * @var string
-     */
-    protected static $decimalSeparator = ',';
-
-    /**
-     * @var string
-     */
-    protected static $thousandsSeparator = '.';
-
-    /**
      * Price constructor.
      *
      * @param float|int|double|string $price
@@ -210,26 +200,29 @@ class Price
             $negativeTurn = -1;
         }
 
-        $decimal   = \mb_strpos($value, self::$decimalSeparator);
-        $thousands = \mb_strpos($value, self::$thousandsSeparator);
+        $decimalSeparator  = QUI::getSystemLocale()->getDecimalSeparator();
+        $thousandSeparator = QUI::getSystemLocale()->getGroupingSeparator();
+
+        $decimal   = \mb_strpos($value, $decimalSeparator);
+        $thousands = \mb_strpos($value, $thousandSeparator);
 
         if ($thousands === false && $decimal === false) {
             return \round(\floatval($value), 4) * $negativeTurn;
         }
 
         if ($thousands !== false && $decimal === false) {
-            if (\mb_substr($value, -4, 1) === self::$thousandsSeparator) {
-                $value = \str_replace(self::$thousandsSeparator, '', $value);
+            if (\mb_substr($value, -4, 1) === $thousandSeparator) {
+                $value = \str_replace($thousandSeparator, '', $value);
             }
         }
 
         if ($thousands === false && $decimal !== false) {
-            $value = \str_replace(self::$decimalSeparator, '.', $value);
+            $value = \str_replace($decimalSeparator, '.', $value);
         }
 
         if ($thousands !== false && $decimal !== false) {
-            $value = \str_replace(self::$thousandsSeparator, '', $value);
-            $value = \str_replace(self::$decimalSeparator, '.', $value);
+            $value = \str_replace($thousandSeparator, '', $value);
+            $value = \str_replace($decimalSeparator, '.', $value);
         }
 
         return \round(\floatval($value), 4) * $negativeTurn;
