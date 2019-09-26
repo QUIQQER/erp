@@ -450,6 +450,10 @@ class User extends QUI\QDOM implements UserInterface
             return $this->existsAttribute('erp.isNettoUser');
         }
 
+        if ($this->existsAttribute('quiqqer.erp.isNettoUser')) {
+            return $this->existsAttribute('quiqqer.erp.isNettoUser');
+        }
+
         if ($this->isNetto === null) {
             $this->isNetto = QUI\ERP\Utils\User::getBruttoNettoUserStatus($this);
         }

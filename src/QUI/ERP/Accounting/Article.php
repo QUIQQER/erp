@@ -8,6 +8,7 @@ namespace QUI\ERP\Accounting;
 
 use QUI;
 use QUI\ERP\Money\Price;
+use QUI\ERP\Tax\Utils as TaxUtils;
 
 /**
  * Class Article
@@ -351,6 +352,30 @@ class Article implements ArticleInterface
     {
         if (isset($this->attributes['vat']) && $this->attributes['vat'] !== '') {
             return (int)$this->attributes['vat'];
+        }
+
+        // check if product exists and has a var
+        if (!empty($this->attributes['id'])) {
+            try {
+                $Area = null;
+
+                if ($this->getUser()) {
+                    $Area = QUI\ERP\Areas\Utils::getAreaByCountry($this->getUser()->getCountry());
+                }
+
+                if (!$Area) {
+                    $Area = QUI\ERP\Defaults::getArea();
+                }
+
+                $Product  = QUI\ERP\Products\Handler\Products::getProduct($this->attributes['id']);
+                $Vat      = $Product->getField(QUI\ERP\Products\Handler\Fields::FIELD_VAT);
+                $TaxType  = new QUI\ERP\Tax\TaxType($Vat->getValue());
+                $TaxEntry = TaxUtils::getTaxEntry($TaxType, $Area);
+
+                return $TaxEntry->getValue();
+            } catch (QUI\Exception $Exception) {
+                QUI\System\Log::addDebug($Exception->getMessage());
+            }
         }
 
         try {
