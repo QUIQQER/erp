@@ -21,7 +21,7 @@
   },
   "require": {
     "php": ">=5.3",
-    "quiqqer\/quiqqer": "1.*|dev-master|dev-dev",
+    "quiqqer\/quiqqer": "^1.4|dev-master|dev-dev",
     "quiqqer\/utils": ">=1.6|dev-master|dev-dev",
     "quiqqer\/watcher": ">=0.12|dev-master|dev-dev",
     "quiqqer\/translator": "1.*|dev-master|dev-dev",
