@@ -79,6 +79,7 @@ class ArticleView extends QUI\QDOM
     {
         $customFields = [];
         $article      = $this->Article->toArray();
+        $current      = QUI::getLocale()->getCurrent();
 
         foreach ($article['customFields'] as $field) {
             if (!isset($field['title'])) {
@@ -91,6 +92,14 @@ class ArticleView extends QUI\QDOM
 
             if (!isset($field['custom_calc']['value'])) {
                 continue;
+            }
+
+            if (\is_string($field['custom_calc']['valueText'])) {
+                // nothing
+            } elseif (isset($field['custom_calc']['valueText'][$current])) {
+                $field['custom_calc']['valueText'] = $field['custom_calc']['valueText'][$current];
+            } else {
+                $field['custom_calc']['valueText'] = '';
             }
 
             $customFields[] = $field;
@@ -107,6 +116,9 @@ class ArticleView extends QUI\QDOM
         return $this->Article->displayPrice();
     }
 
+    /**
+     * @return string
+     */
     public function getPrice()
     {
         $Currency = $this->getCurrency();
