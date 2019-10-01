@@ -8,7 +8,6 @@ namespace QUI\ERP\Money;
 
 use QUI;
 use QUI\ERP\Discount\Discount;
-use function GuzzleHttp\Psr7\str;
 
 /**
  * Class Price
@@ -211,12 +210,20 @@ class Price
             return \round(\floatval($value), 4) * $negativeTurn;
         }
 
-        if (\strpos($value, $decimalSeparator) !== false && \strpos($value, $thousandSeparator) !== false) {
-            $value = \str_replace($decimalSeparator, '', $value);
+        if ($thousands !== false && $decimal === false) {
+            if (\mb_substr($value, -4, 1) === $thousandSeparator) {
+                $value = \str_replace($thousandSeparator, '', $value);
+            }
         }
 
-        $value = \str_replace($thousandSeparator, '.', $value);
-        $value = \floatval($value);
+        if ($thousands === false && $decimal !== false) {
+            $value = \str_replace($decimalSeparator, '.', $value);
+        }
+
+        if ($thousands !== false && $decimal !== false) {
+            $value = \str_replace($thousandSeparator, '', $value);
+            $value = \str_replace($decimalSeparator, '.', $value);
+        }
 
         return \round(\floatval($value), 4) * $negativeTurn;
     }
