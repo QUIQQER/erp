@@ -603,8 +603,8 @@ class Calc
 
         foreach ($transactions as $Transaction) {
             /* @var $Transaction QUI\ERP\Accounting\Payments\Transactions\Transaction */
-            if ($Transaction->isPending()) {
-                // don't add pending transactions
+            if (!$Transaction->isComplete()) {
+                // don't add incomplete transactions
                 continue;
             }
 
