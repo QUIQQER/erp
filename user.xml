@@ -5,6 +5,7 @@
         <attribute>quiqqer.erp.taxId</attribute>
         <attribute>quiqqer.erp.address</attribute>
         <attribute>quiqqer.erp.isNettoUser</attribute>
+        <attribute>quiqqer.erp.discount</attribute>
     </attributes>
 
     <window>
