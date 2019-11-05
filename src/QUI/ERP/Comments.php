@@ -146,4 +146,42 @@ class Comments
 
         $this->sort();
     }
+
+    // region utils
+
+    /**
+     * @param QUI\Users\User $User
+     * @return Comments
+     *
+     * @throws QUI\Exception
+     * @throws QUI\ExceptionStack
+     */
+    public static function getCommentsByUser(QUI\Users\User $User)
+    {
+        $Comments = null;
+
+        if ($User->getAttribute('comments')) {
+            $json = \json_decode($User->getAttribute('comments'), true);
+
+            if (\is_array($json)) {
+                $Comments = new self($json);
+            }
+        }
+
+        if ($Comments === null) {
+            $Comments = new self();
+        }
+
+
+        QUI::getEvents()->fireEvent(
+            'quiqqerErpGetCommentsByUser',
+            [$User, $Comments]
+        );
+
+        $Comments->sort();
+
+        return $Comments;
+    }
+
+    // endregion
 }
