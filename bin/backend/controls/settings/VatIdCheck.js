@@ -108,8 +108,6 @@ define('package/quiqqer/erp/bin/backend/controls/settings/VatIdCheck', [
                     width    : 50
                 }
             }).inject(this.$Elm, 'after');
-
-            console.log('$onImport');
         }
     });
 });
