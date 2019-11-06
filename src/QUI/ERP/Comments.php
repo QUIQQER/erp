@@ -32,6 +32,10 @@ class Comments
      */
     public function __construct($comments = [])
     {
+        if (!$comments) {
+            return;
+        }
+
         foreach ($comments as $comment) {
             if (isset($comment['message']) && isset($comment['time'])) {
                 $this->comments[] = $comment;
