@@ -98,4 +98,20 @@ class Shop
     {
         return self::getBusinessType() === 'B2C';
     }
+
+    /**
+     * Is the shipping module installed?
+     *
+     * @return bool
+     */
+    public static function isShippingInstalled()
+    {
+        try {
+            QUI::getPackageManager()->getPackage('quiqqer/shipping');
+        } catch (\Exception $Exception) {
+            return false;
+        }
+
+        return true;
+    }
 }
