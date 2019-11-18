@@ -98,9 +98,15 @@ class Comments
      *
      * @param string $message
      * @param int|false $time - optional, unix timestamp
+     * @param string $source - optional, name of the package
+     * @param string $sourceIcon - optional, source icon
      */
-    public function addComment($message, $time = false)
-    {
+    public function addComment(
+        $message,
+        $time = false,
+        $source = '',
+        $sourceIcon = ''
+    ) {
         if ($time === false) {
             $time = \time();
         }
@@ -108,8 +114,10 @@ class Comments
         $message = QUI\Utils\Security\Orthos::clearFormRequest($message);
 
         $this->comments[] = [
-            'message' => $message,
-            'time'    => (int)$time
+            'message'    => $message,
+            'time'       => (int)$time,
+            'source'     => $source,
+            'sourceIcon' => $sourceIcon
         ];
     }
 
@@ -145,7 +153,20 @@ class Comments
         $comments = $Comments->toArray();
 
         foreach ($comments as $comment) {
-            $this->addComment($comment['message'], $comment['time']);
+            if (!isset($comment['source'])) {
+                $comment['source'] = '';
+            }
+
+            if (!isset($comment['sourceIcon'])) {
+                $comment['sourceIcon'] = '';
+            }
+
+            $this->addComment(
+                $comment['message'],
+                $comment['time'],
+                $comment['source'],
+                $comment['sourceIcon']
+            );
         }
 
         $this->sort();

@@ -87,6 +87,10 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     }
                 }
 
+                if (typeof entry.sourceIcon !== 'undefined' && entry.sourceIcon !== '') {
+                    type = entry.sourceIcon;
+                }
+
                 return {
                     date     : date,
                     time     : Formatter.format(date),
