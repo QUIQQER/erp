@@ -22,8 +22,11 @@
          data-id="{{id}}"
          data-source="{{source}}"
     >
-        <span class="quiqqer-erp-comments-comment-type" title="{{title}}">
+        <span class="quiqqer-erp-comments-comment-type" title="{{title}}"
+              {{#editable}}data-editable="1"{{/editable}}
+        >
             <span class="fa {{type}}"></span>
+            {{#editable}}<span class="fa fa-edit"></span>{{/editable}}
         </span>
         <div class="quiqqer-erp-comments-comment-data">
             <span class="quiqqer-erp-comments-comment-time">{{time}}</span>

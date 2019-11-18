@@ -7,7 +7,7 @@
     background: #f7f7f7;
     float: left;
     margin-bottom: 5px;
-    padding: 10px 5px 10px 0;
+    padding: 0 5px 0 0;
     width: 100%;
 }
 
@@ -58,14 +58,21 @@
 .quiqqer-erp-comments-comment-type {
     color: #8F9399;
     float: left;
+    height: 40px;
     font-size: 18px;
     text-align: center;
+    position: relative;
     width: 40px;
+}
+
+.quiqqer-erp-comments-comment-type .fa {
+    line-height: 40px;
 }
 
 .quiqqer-erp-comments-comment-data {
     float: left;
     text-align: center;
+    padding: 10px;
     width: calc(100% - 50px);
 }
 
@@ -81,4 +88,20 @@
     float: left;
     text-align: left;
     width: calc(100% - 150px);
+}
+
+.quiqqer-erp-comments-comment [data-editable="1"] .fa-edit {
+    background: #f7f7f7;
+    cursor: pointer;
+    display: none;
+    left: 0;
+    text-align: center;
+    top: 0;
+    position: absolute;
+    width: 100%;
+    z-index: 2;
+}
+
+.quiqqer-erp-comments-comment [data-editable="1"]:hover .fa-edit {
+    display: inline-block;
 }
