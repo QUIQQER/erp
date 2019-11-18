@@ -37,6 +37,10 @@ class Comments
         }
 
         foreach ($comments as $comment) {
+            if (!isset($comment['id'])) {
+                $comment['id'] = QUI\Utils\Uuid::get();
+            }
+
             if (isset($comment['message']) && isset($comment['time'])) {
                 $this->comments[] = $comment;
             }
@@ -100,15 +104,21 @@ class Comments
      * @param int|false $time - optional, unix timestamp
      * @param string $source - optional, name of the package
      * @param string $sourceIcon - optional, source icon
+     * @param string|false $id - optional, comment id, if needed, it will set one
      */
     public function addComment(
         $message,
         $time = false,
         $source = '',
-        $sourceIcon = ''
+        $sourceIcon = '',
+        $id = false
     ) {
         if ($time === false) {
             $time = \time();
+        }
+
+        if ($id === false) {
+            $id = QUI\Utils\Uuid::get();
         }
 
         $message = QUI\Utils\Security\Orthos::clearFormRequest($message);
@@ -117,7 +127,8 @@ class Comments
             'message'    => $message,
             'time'       => (int)$time,
             'source'     => $source,
-            'sourceIcon' => $sourceIcon
+            'sourceIcon' => $sourceIcon,
+            'id'         => $id
         ];
     }
 
@@ -161,11 +172,16 @@ class Comments
                 $comment['sourceIcon'] = '';
             }
 
+            if (!isset($comment['id'])) {
+                $comment['id'] = false;
+            }
+
             $this->addComment(
                 $comment['message'],
                 $comment['time'],
                 $comment['source'],
-                $comment['sourceIcon']
+                $comment['sourceIcon'],
+                $comment['id']
             );
         }
 

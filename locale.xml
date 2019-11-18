@@ -307,6 +307,10 @@
             <de><![CDATA[nä. zu vergebende Nummer]]></de>
             <en><![CDATA[next number to be assigned]]></en>
         </locale>
+        <locale name="comments.comment.title">
+            <de><![CDATA[Kommentar aus: [source]]]></de>
+            <en><![CDATA[Comment from: [source]]]></en>
+        </locale>
     </groups>
 
 </locales>

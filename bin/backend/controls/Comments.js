@@ -91,17 +91,27 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     type = entry.sourceIcon;
                 }
 
+                if (typeof entry.source === 'undefined') {
+                    entry.source = '';
+                }
+
+                if (typeof entry.id === 'undefined') {
+                    entry.id = '';
+                }
+
                 return {
                     date     : date,
                     time     : Formatter.format(date),
                     message  : entry.message,
                     type     : type,
-                    timestamp: entry.time
+                    timestamp: entry.time,
+                    id       : entry.id,
+                    source   : entry.source
                 };
             });
 
             // grouping
-            var i, len, day, date, entry;
+            var i, len, day, date, entry, title;
 
             var group        = {};
             var DayFormatter = this.$getDayFormatter();
@@ -118,11 +128,18 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     };
                 }
 
+                title = QUILocale.get(lg, 'comments.comment.title', {
+                    source: entry.source
+                });
+
                 group[day].data.push({
                     time     : entry.time,
                     message  : entry.message,
                     type     : entry.type,
-                    timestamp: entry.timestamp
+                    timestamp: entry.timestamp,
+                    id       : entry.id,
+                    source   : entry.source,
+                    title    : entry.source !== '' ? title : ''
                 });
             }
 
