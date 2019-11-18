@@ -18,10 +18,13 @@
 </div>
 <div class="quiqqer-erp-comments-list">
     {{#data}}
-    <div class="quiqqer-erp-comments-comment">
-    <span class="quiqqer-erp-comments-comment-type">
-        <span class="fa {{type}}"></span>
-    </span>
+    <div class="quiqqer-erp-comments-comment"
+         data-id="{{id}}"
+         data-source="{{source}}"
+    >
+        <span class="quiqqer-erp-comments-comment-type" title="{{title}}">
+            <span class="fa {{type}}"></span>
+        </span>
         <div class="quiqqer-erp-comments-comment-data">
             <span class="quiqqer-erp-comments-comment-time">{{time}}</span>
             <span class="quiqqer-erp-comments-comment-message">{{message}}</span>
