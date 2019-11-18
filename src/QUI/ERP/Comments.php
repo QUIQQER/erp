@@ -202,7 +202,22 @@ class Comments
         $Comments = null;
 
         if ($User->getAttribute('comments')) {
-            $json = \json_decode($User->getAttribute('comments'), true);
+            $isEditable = QUI\Permissions\Permission::hasPermission('quiqqer.customer.editComments');
+            $json       = \json_decode($User->getAttribute('comments'), true);
+
+            if (!\is_array($json)) {
+                $json = [];
+            }
+
+            foreach ($json as $key => $entry) {
+                if (!empty($json[$key]['id']) && !empty($json[$key]['source'])) {
+                    $json[$key]['editable'] = true;
+                }
+
+                if ($isEditable === false) {
+                    $json[$key]['editable'] = false;
+                }
+            }
 
             if (\is_array($json)) {
                 $Comments = new self($json);

@@ -1,5 +1,8 @@
 /**
  * @module package/quiqqer/erp/bin/backend/controls/Comments
+ * @author www.pcsg.de (Henning Leutz
+ *
+ * @event onEdit [self, Comment Node, data]
  *
  * Comments / History Display
  */
@@ -69,7 +72,8 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 return;
             }
 
-            var Formatter = this.$getFormatter();
+            var self      = this,
+                Formatter = this.$getFormatter();
 
             comments = comments.map(function (entry) {
                 var date = new Date(entry.time * 1000),
@@ -99,6 +103,10 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     entry.id = '';
                 }
 
+                if (typeof entry.editable === 'undefined') {
+                    entry.editable = false;
+                }
+
                 return {
                     date     : date,
                     time     : Formatter.format(date),
@@ -106,7 +114,8 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     type     : type,
                     timestamp: entry.time,
                     id       : entry.id,
-                    source   : entry.source
+                    source   : entry.source,
+                    editable : entry.editable
                 };
             });
 
@@ -139,7 +148,8 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     timestamp: entry.timestamp,
                     id       : entry.id,
                     source   : entry.source,
-                    title    : entry.source !== '' ? title : ''
+                    title    : entry.source !== '' ? title : '',
+                    editable : entry.editable
                 });
             }
 
@@ -164,6 +174,21 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     comments      : comments,
                     textNoComments: QUILocale.get(lg, 'comments.message.no.comments')
                 })
+            });
+
+            this.$Elm.getElements('[data-editable]').addEvent('click', function (event) {
+                var Parent = event.target;
+
+                if (!Parent.hasClass('quiqqer-erp-comments-comment')) {
+                    Parent = Parent.getParent('.quiqqer-erp-comments-comment');
+                }
+
+                var data = {
+                    id    : Parent.get('data-id'),
+                    source: Parent.get('data-source')
+                };
+
+                self.fireEvent('edit', [self, Parent, data]);
             });
         },
 
