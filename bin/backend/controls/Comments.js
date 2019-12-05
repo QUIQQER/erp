@@ -137,9 +137,15 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     };
                 }
 
-                title = QUILocale.get(lg, 'comments.comment.title', {
-                    source: entry.source
-                });
+                title = '';
+
+                if (entry.source !== '') {
+                    var packageTitle = QUILocale.get(entry.source, 'package.title');
+
+                    title = QUILocale.get(lg, 'comments.comment.title', {
+                        source: packageTitle + ' (' + entry.source + ')'
+                    });
+                }
 
                 group[day].data.push({
                     time     : entry.time,
