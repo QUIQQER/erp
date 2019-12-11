@@ -1,39 +1,38 @@
 {
-  "name": "quiqqer\/erp",
-  "type": "quiqqer-application",
-  "description": "",
-  "version": "dev-dev",
-  "license": [
-    "GPL-3.0+",
-    "PCSG QEL-1.0"
-  ],
-  "authors": [
-    {
-      "name": "Henning Leutz",
-      "email": "leutz@pcsg.de",
-      "homepage": "http:\/\/www.pcsg.de",
-      "role": "Developer"
+    "name": "quiqqer\/erp",
+    "type": "quiqqer-application",
+    "description": "",
+    "license": [
+        "GPL-3.0+",
+        "PCSG QEL-1.0"
+    ],
+    "authors": [
+        {
+            "name": "Henning Leutz",
+            "email": "leutz@pcsg.de",
+            "homepage": "http:\/\/www.pcsg.de",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "support@pcsg.de",
+        "url": "http:\/\/www.pcsg.de"
+    },
+    "require": {
+        "php": ">=5.3",
+        "quiqqer\/quiqqer": "^1.4|dev-master|dev-dev",
+        "quiqqer\/utils": ">=1.6|dev-master|dev-dev",
+        "quiqqer\/watcher": ">=0.12|dev-master|dev-dev",
+        "quiqqer\/translator": "1.*|dev-master|dev-dev",
+        "quiqqer\/employee": "1.*|dev-master|dev-dev",
+        "quiqqer\/customer": "1.*|dev-master|dev-dev",
+        "quiqqer\/qui-php": "1.*|>=0.11|dev-master|dev-dev",
+        "quiqqer\/smarty3": ">=1.7|dev-master|dev-dev",
+        "quiqqer\/frontend-users": "1.*|dev-master|dev-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "QUI\\ERP\\": "src\/QUI\/ERP"
+        }
     }
-  ],
-  "support": {
-    "email": "support@pcsg.de",
-    "url": "http:\/\/www.pcsg.de"
-  },
-  "require": {
-    "php": ">=5.3",
-    "quiqqer\/quiqqer": "^1.4|dev-master|dev-dev",
-    "quiqqer\/utils": ">=1.6|dev-master|dev-dev",
-    "quiqqer\/watcher": ">=0.12|dev-master|dev-dev",
-    "quiqqer\/translator": "1.*|dev-master|dev-dev",
-    "quiqqer\/employee": "1.*|dev-master|dev-dev",
-    "quiqqer\/customer": "1.*|dev-master|dev-dev",
-    "quiqqer/qui-php": "1.*|>=0.11|dev-master|dev-dev",
-    "quiqqer/smarty3": ">=1.7|dev-master|dev-dev",
-    "quiqqer/frontend-users": "1.*|dev-master|dev-dev"
-  },
-  "autoload": {
-    "psr-4": {
-      "QUI\\ERP\\": "src\/QUI\/ERP"
-    }
-  }
 }
