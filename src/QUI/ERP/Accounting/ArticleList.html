@@ -1,7 +1,7 @@
 {if $showHeader}
 <!-- articles -->
 <h1 class="articles-header">
-    {locale group="quiqqer/erp" var="article.list.articles.title"}
+    {locale group="quiqqer/erp" var="article.list.articles.title" Locale=$Locale}
 </h1>
 {/if}
 
@@ -10,19 +10,19 @@
     <thead>
     <tr class="articles-article-header">
         <th class="articles-article-header-pos">
-            {locale group="quiqqer/erp" var="article.list.articles.header.pos"}
+            {locale group="quiqqer/erp" var="article.list.articles.header.pos" Locale=$Locale}
         </th>
         <th class="articles-article-header-information">
-            {locale group="quiqqer/erp" var="article.list.articles.header.description"}
+            {locale group="quiqqer/erp" var="article.list.articles.header.description" Locale=$Locale}
         </th>
         <th class="articles-article-header-quantity">
-            {locale group="quiqqer/erp" var="article.list.articles.header.quantity"}
+            {locale group="quiqqer/erp" var="article.list.articles.header.quantity" Locale=$Locale}
         </th>
         <th class="articles-article-header-unitprice">
-            {locale group="quiqqer/erp" var="article.list.articles.header.unitprice"}
+            {locale group="quiqqer/erp" var="article.list.articles.header.unitprice" Locale=$Locale}
         </th>
         <th class="articles-article-header-price">
-            {locale group="quiqqer/erp" var="article.list.articles.header.price"}
+            {locale group="quiqqer/erp" var="article.list.articles.header.price" Locale=$Locale}
         </th>
     </tr>
     </thead>
@@ -39,12 +39,12 @@
     <tr class="articles-sum-row-subsum">
         <td class="articles-sum-row-firstCell">
             <span class="articles-sum-row-subsum-text">
-                {locale group="quiqqer/erp" var="article.list.articles.subtotal"}
+                {locale group="quiqqer/erp" var="article.list.articles.subtotal" Locale=$Locale}
             </span>
         </td>
         <td style="width: 140px" class="articles-sum-row-sndCell">
             <span class="articles-sum-row-subsum-value">
-                {$calculations.subSum}
+                {$calculations.subSum Locale=$Locale}
             </span>
         </td>
     </tr>
@@ -80,7 +80,7 @@
     <tr class="articles-sum-row-sum">
         <td class="articles-sum-row-firstCell">
             <span class="articles-sum-row-sum-text">
-                {locale group="quiqqer/erp" var="article.list.articles.sumtotal"}
+                {locale group="quiqqer/erp" var="article.list.articles.sumtotal" Locale=$Locale}
             </span>
         </td>
         <td class="articles-sum-row-sndCell">
