@@ -40,6 +40,11 @@ class ArticleListUnique implements \IteratorAggregate
     protected $PriceFactors = false;
 
     /**
+     * @var null
+     */
+    protected $Locale = null;
+
+    /**
      * ArticleList constructor.
      *
      * @param array $attributes
@@ -47,6 +52,8 @@ class ArticleListUnique implements \IteratorAggregate
      */
     public function __construct($attributes = [])
     {
+        $this->Locale = QUI::getLocale();
+
         $needles = ['articles', 'calculations'];
 
         foreach ($needles as $needle) {
@@ -106,6 +113,16 @@ class ArticleListUnique implements \IteratorAggregate
                 QUI\System\Log::writeDebugException($Exception);
             }
         }
+    }
+
+    /**
+     * Set locale
+     *
+     * @param QUI\Locale $Locale
+     */
+    public function setLocale(QUI\Locale $Locale)
+    {
+        $this->Locale = $Locale;
     }
 
     /**
@@ -268,7 +285,8 @@ class ArticleListUnique implements \IteratorAggregate
             'this'         => $this,
             'articles'     => $articles,
             'calculations' => $this->calculations,
-            'vatArray'     => $vatArray
+            'vatArray'     => $vatArray,
+            'Locale'       => $this->Locale
         ]);
 
         if ($template && \file_exists($template)) {
