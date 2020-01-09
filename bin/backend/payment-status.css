@@ -1,0 +1,53 @@
+.processing-status,
+.payment-status,
+.payment-status-0,
+.payment-status-1,
+.payment-status-2,
+    /*.payment-status-3,*/
+.payment-status-4,
+    /*.payment-status-5,*/
+.payment-status-11,
+.payment-status-12 {
+    border-width: 1px;
+    border-style: solid;
+    padding: 2px 5px;
+    text-transform: uppercase;
+}
+
+.payment-status-0 {
+    border-color: blue;
+    color: blue;
+}
+
+.payment-status-1 {
+    border-color: green;
+    color: green;
+}
+
+.payment-status-2 {
+    border-color: orange;
+    color: orange;
+}
+
+.payment-status-3 {
+    text-decoration: line-through;
+}
+
+.payment-status-4 {
+    border-color: red;
+    color: red;
+}
+
+.payment-status-5 {
+
+}
+
+.payment-status-11 {
+    border-color: purple;
+    color: purple;
+}
+
+.payment-status-12 {
+    border-color: #004e5a;
+    color: #004e5a;
+}

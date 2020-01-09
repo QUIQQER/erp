@@ -315,7 +315,7 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
-     * @return mixed
+     * @return QUI\Locale
      */
     public function getLocale()
     {
