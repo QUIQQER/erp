@@ -121,7 +121,10 @@ class Comments
             $id = QUI\Utils\Uuid::get();
         }
 
-        $message = QUI\Utils\Security\Orthos::clearFormRequest($message);
+        $message = \strip_tags($message, '<div><span><pre><p><br><hr>
+            <ul><ol><li><dl><dt><dd><strong><em><b><i><u>
+            <img><table><tbody><td><tfoot><th><thead><tr>'
+        );
 
         $this->comments[] = [
             'message'    => $message,
