@@ -181,7 +181,7 @@ class Price
     public static function validatePrice($value)
     {
         if (\is_float($value)) {
-            return \round($value, 4);
+            return \round($value, QUI\ERP\Defaults::getPrecision());
         }
 
         $value      = (string)$value;
@@ -225,7 +225,11 @@ class Price
             $value = \str_replace($decimalSeparator, '.', $value);
         }
 
-        return \round(\floatval($value), 4) * $negativeTurn;
+        $value = \floatval($value);
+        $value = \round($value, QUI\ERP\Defaults::getPrecision());
+        $value = $value * $negativeTurn;
+
+        return $value;
     }
 
     /**

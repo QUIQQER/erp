@@ -112,12 +112,12 @@
             <en><![CDATA[Price calculation basis]]></en>
         </locale>
         <locale name="user.settings.userNettoStatus.netto">
-            <de><![CDATA[netto]]></de>
-            <en><![CDATA[netto]]></en>
+            <de><![CDATA[gewerblich (netto / zzgl. MwSt.)]]></de>
+            <en><![CDATA[business (netto / incl. vat)]]></en>
         </locale>
         <locale name="user.settings.userNettoStatus.brutto">
-            <de><![CDATA[brutto]]></de>
-            <en><![CDATA[brutto]]></en>
+            <de><![CDATA[privat (brutto / inkl. MwSt.)]]></de>
+            <en><![CDATA[private (gross / incl. vat)]]></en>
         </locale>
 
         <locale name="user.profile.title">
