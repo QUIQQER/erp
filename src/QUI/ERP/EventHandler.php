@@ -75,9 +75,9 @@ class EventHandler
 
     /**
      * event: on user save
+     * @param QUI\Interfaces\Users\User $User
      * @todo prüfung auch für steuernummer
      *
-     * @param QUI\Interfaces\Users\User $User
      */
     public static function onUserSave(QUI\Interfaces\Users\User $User)
     {
@@ -248,7 +248,11 @@ class EventHandler
         $Engine->assign([
             'User'         => $User,
             'Address'      => $Address,
-            'businessType' => $businessType
+            'businessType' => $businessType,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
         ]);
 
         try {
@@ -281,7 +285,11 @@ class EventHandler
 
         $Engine->assign([
             'User'    => $User,
-            'Address' => $Address
+            'Address' => $Address,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
         ]);
 
         try {
@@ -312,7 +320,11 @@ class EventHandler
         }
 
         $Engine->assign([
-            'User' => $User
+            'User' => $User,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
         ]);
 
         try {
@@ -343,7 +355,11 @@ class EventHandler
         }
 
         $Engine->assign([
-            'User' => $User
+            'User' => $User,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
         ]);
 
         try {
@@ -390,7 +406,11 @@ class EventHandler
         $Engine->assign([
             'User'         => $User,
             'Address'      => $Address,
-            'businessType' => $businessType
+            'businessType' => $businessType,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
         ]);
 
         try {
@@ -423,7 +443,11 @@ class EventHandler
 
         $Engine->assign([
             'User'    => $User,
-            'Address' => $Address
+            'Address' => $Address,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
         ]);
 
         try {
