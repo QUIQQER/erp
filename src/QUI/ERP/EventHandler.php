@@ -143,10 +143,17 @@ class EventHandler
             return;
         }
 
+        if (isset($data['data'])) {
+            $data = \json_decode($data['data'], true);
+        }
+
         if (isset($data['company'])) {
             try {
                 $Address = $User->getStandardAddress();
-                $Address->setAttribute('company', $data['company']);
+                $Address->setAttribute(
+                    'company',
+                    QUI\Utils\Security\Orthos::clear($data['company'])
+                );
                 $Address->save();
             } catch (QUI\Exception $Exception) {
                 QUI\System\Log::writeDebugException($Exception);
@@ -163,7 +170,11 @@ class EventHandler
             }
 
             // save VAT ID
-            $User->setAttribute('quiqqer.erp.euVatId', $vatId);
+            $User->setAttribute('quiqqer.erp.euVatId', QUI\Utils\Security\Orthos::clear($vatId));
+        }
+
+        if (isset($data['chUID'])) {
+            $User->setAttribute('quiqqer.erp.chUID', QUI\Utils\Security\Orthos::clear($data['chUID']));
         }
     }
 
