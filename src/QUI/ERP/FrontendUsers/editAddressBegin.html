@@ -1,3 +1,4 @@
+{if $businessTypeIsChangeable}
 <label class="quiqqer-order-customerData-edit-businessType">
     <span class="quiqqer-frontendUsers-userdata-label">
         {locale group="quiqqer/erp" var="control.profile.CustomerData.businessType"}
@@ -11,7 +12,9 @@
         </option>
     </select>
 </label>
+{/if}
 
+{if $isB2B}
 <label class="quiqqer-order-customerData-edit-company" style="display: none">
     <span class="quiqqer-frontendUsers-userdata-label">
         {locale group="quiqqer/erp" var="control.profile.CustomerData.company"}
@@ -23,3 +26,4 @@
            value="{$Address->getAttribute('company')|escape:'html'}"
     />
 </label>
+{/if}
