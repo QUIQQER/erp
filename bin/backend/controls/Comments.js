@@ -37,6 +37,9 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
         initialize: function (options) {
             this.parent(options);
 
+            this.$filter   = false;
+            this.$comments = {};
+
             this.addEvents({
                 onCreate: this.$onCreate
             });
@@ -57,6 +60,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
         },
 
         /**
+         * insert / set comments
          *
          * @param {String|Object} comments
          */
@@ -72,8 +76,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 return;
             }
 
-            var self      = this,
-                Formatter = this.$getFormatter();
+            var Formatter = this.$getFormatter();
 
             comments = comments.map(function (entry) {
                 var date = new Date(entry.time * 1000),
@@ -159,20 +162,63 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 });
             }
 
-            // parse for mustache
-            comments = [];
+            this.$comments = group;
+            this.refresh();
+        },
+
+        /**
+         * refresh the display
+         */
+        refresh: function () {
+            var i, data, realData, commentEntries;
+            var self     = this;
+            var comments = [];
 
             var sortComments = function (a, b) {
                 return a.timestamp - b.timestamp;
             };
 
-            for (i in group) {
-                if (group.hasOwnProperty(i)) {
-                    // reverse comments
-                    group[i].data = group[i].data.sort(sortComments).reverse();
+            var commentClone = Object.clone(this.$comments);
 
-                    comments.push(group[i]);
+            var filterComments = function (entry) {
+                var message = entry.message.toLowerCase();
+                var type    = entry.type.toLowerCase();
+                var id      = entry.id.toLowerCase();
+
+                if (message.indexOf(self.$filter) === -1 &&
+                    type.indexOf(self.$filter) === -1 &&
+                    id.indexOf(self.$filter) === -1
+                ) {
+                    return;
                 }
+
+                this.push(entry);
+            };
+
+            for (i in commentClone) {
+                if (!commentClone.hasOwnProperty(i)) {
+                    continue;
+                }
+
+                commentEntries = commentClone[i];
+                data           = commentEntries.data;
+
+                if (this.$filter) {
+                    // check filter
+                    data     = [];
+                    realData = commentEntries.data; // copy
+
+                    realData.forEach(filterComments.bind(data));
+                }
+
+                if (!data.length) {
+                    continue;
+                }
+
+                // reverse comments
+                commentClone[i].data = data.sort(sortComments).reverse();
+
+                comments.push(commentClone[i]);
             }
 
             this.$Elm.set({
@@ -253,6 +299,28 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
             } catch (e) {
                 return window.Intl.DateTimeFormat('de-DE', options);
             }
+        },
+
+        //region filter
+
+        /**
+         * shows only comments which fits to the filter
+         *
+         * @param {String} value
+         */
+        filter: function (value) {
+            this.$filter = value.toString().toLowerCase();
+            this.refresh();
+        },
+
+        /**
+         * Clears the filter
+         */
+        clearFilter: function () {
+            this.$filter = false;
+            this.refresh();
         }
+
+        //endregion
     });
 });
