@@ -236,6 +236,9 @@ class Calc
             $vatArray[$vat]['sum'] = $vatArray[$vat]['sum'] + $vatSum;
         }
 
+        if ($isEuVatUser) {
+            $vatArray = [];
+        }
 
         // vat text
         $vatLists  = [];
@@ -334,6 +337,10 @@ class Calc
         $vat             = $Article->getVat();
         $basisNettoPrice = $nettoPrice;
         $nettoSubSum     = $this->round($nettoPrice * $Article->getQuantity());
+
+        if ($isEuVatUser) {
+            $vat = 0;
+        }
 
         // discounts
         $Discount = $Article->getDiscount();
