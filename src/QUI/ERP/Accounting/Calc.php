@@ -221,6 +221,10 @@ class Calc
             $nettoSum       = $nettoSum + $PriceFactor->getNettoSum();
             $priceFactorSum = $priceFactorSum + $PriceFactor->getNettoSum();
 
+            if ($isEuVatUser) {
+                $PriceFactor->setEuVatStatus(true);
+            }
+
             $vat    = $PriceFactor->getVat();
             $vatSum = $PriceFactor->getVatSum();
 
