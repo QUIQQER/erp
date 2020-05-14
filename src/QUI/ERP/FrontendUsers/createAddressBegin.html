@@ -15,7 +15,7 @@
 {/if}
 
 {if $isB2B}
-<label class="quiqqer-order-customerData-edit-company" style="display: none">
+<label class="quiqqer-order-customerData-edit-company" {if $isOnlyB2B === false}style="display: none"{/if}>
     <span class="quiqqer-frontendUsers-userdata-label">
         {locale group="quiqqer/erp" var="control.profile.CustomerData.company"}
     </span>
