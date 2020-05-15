@@ -51,11 +51,13 @@ class User
 
         if (QUI::getUsers()->isSystemUser($User)) {
             self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
             return self::$userBruttoNettoStatus[$uid];
         }
 
         if ($User instanceof QUI\ERP\User && $User->hasBruttoNettoStatus()) {
             self::$userBruttoNettoStatus[$uid] = $User->isNetto();
+
             return self::$userBruttoNettoStatus[$uid];
         }
 
@@ -69,6 +71,7 @@ class User
             case self::IS_NETTO_USER:
             case self::IS_BRUTTO_USER:
                 self::$userBruttoNettoStatus[$uid] = $nettoStatus;
+
                 return self::$userBruttoNettoStatus[$uid];
         }
 
@@ -77,6 +80,7 @@ class User
 
         if (!empty($euVatId) || !empty($taxId)) {
             self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
             return self::$userBruttoNettoStatus[$uid];
         }
 
@@ -84,6 +88,7 @@ class User
             $Package = QUI::getPackage('quiqqer/tax');
         } catch (QUI\Exception $Exception) {
             self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
+
             return self::$userBruttoNettoStatus[$uid];
         }
 
@@ -93,6 +98,7 @@ class User
             QUI\System\Log::writeDebugException($Exception);
 
             self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
             return self::$userBruttoNettoStatus[$uid];
         }
 
@@ -107,10 +113,12 @@ class User
             ) {
                 if ($Config->getValue('shop', 'companyForceBruttoPrice')) {
                     self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
+
                     return self::$userBruttoNettoStatus[$uid];
                 }
 
                 self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
                 return self::$userBruttoNettoStatus[$uid];
             }
 
@@ -120,10 +128,12 @@ class User
             ) {
                 if ($Config->getValue('shop', 'companyForceBruttoPrice')) {
                     self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
+
                     return self::$userBruttoNettoStatus[$uid];
                 }
 
                 self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
                 return self::$userBruttoNettoStatus[$uid];
             }
         } catch (QUI\Exception $Exception) {
@@ -137,6 +147,7 @@ class User
 
         if ($isNetto) {
             self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
             return self::$userBruttoNettoStatus[$uid];
         }
 
@@ -146,14 +157,17 @@ class User
 
             if ($Tax->getValue() == 0) {
                 self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
                 return self::$userBruttoNettoStatus[$uid];
             }
         } catch (QUI\Exception $Exception) {
             self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
             return self::$userBruttoNettoStatus[$uid];
         }
 
         self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
+
         return self::$userBruttoNettoStatus[$uid];
     }
 

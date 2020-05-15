@@ -37,6 +37,10 @@ class EventHandler
         }
     }
 
+    /**
+     * @param Package $Package
+     * @param array $params
+     */
     public static function onPackageConfigSave(QUI\Package\Package $Package, array $params)
     {
         if ($Package->getName() !== 'quiqqer/erp') {
@@ -264,6 +268,7 @@ class EventHandler
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
             'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
             'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
         ]);
 
         try {
@@ -301,6 +306,7 @@ class EventHandler
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
             'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
             'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
         ]);
 
         try {
@@ -336,6 +342,7 @@ class EventHandler
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
             'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
             'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
         ]);
 
         try {
@@ -371,6 +378,7 @@ class EventHandler
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
             'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
             'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
         ]);
 
         try {
@@ -422,6 +430,7 @@ class EventHandler
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
             'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
             'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
         ]);
 
         try {
@@ -459,6 +468,7 @@ class EventHandler
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
             'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
             'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
         ]);
 
         try {
