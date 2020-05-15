@@ -15,14 +15,17 @@
 {/if}
 
 {if $isB2B}
+{assign var=r value=""}
 <label class="quiqqer-order-customerData-edit-company" {if $isOnlyB2B === false}style="display: none"{/if}>
     <span class="quiqqer-frontendUsers-userdata-label">
         {locale group="quiqqer/erp" var="control.profile.CustomerData.company"}
+        {if $settings.company.required}{assign var=r value="required"}*{/if}
     </span>
     <input type="text"
            name="company"
            class="quiqqer-frontendUsers-userdata-field"
            autocomplete="organization"
+           {$r}
     />
 </label>
 {/if}
