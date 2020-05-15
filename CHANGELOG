@@ -1,0 +1,29 @@
+1.1
+------
+
+Features
+
+- CH (Switzerland) Company name
+- feat: quiqqer/customer#30 - ERP comments -> Added Filter to the Backendcontrols
+- feat: runtime cache for user brutto/netto status
+- Company Addressfields consider Frontend Users Settings
+
+Fixes
+
+- fix: Consider only B2B / only B2C at the address select
+- fix: Consider eu vat at price factors
+- refactor: Requirements are now QUIQQER >= 1.5, dev-master, dev-dev
+
+
+1.0
+======
+
+Release notes for 1.0.0
+
+Features
+------
+
+The QUIQQER ERP module bundles all QUIQQER modules which you need for a ERP (Enterprise Resource Planning) system.
+
+It is your central point to successfully realize your project. The ERP system transforms QUIQQER
+into a fully-fledged e-commerce shop or into your invoice management.  Start your e-business now.
