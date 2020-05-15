@@ -1,3 +1,4 @@
+{if $isB2B}
 <label class="quiqqer-order-customerData-edit-vatId quiqqer-erp-userProfile-vat"
        style="display: none"
 >
@@ -10,3 +11,4 @@
            value="{$User->getAttribute('quiqqer.erp.euVatId')|escape:'html'}"
     />
 </label>
+{/if}

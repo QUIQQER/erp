@@ -59,6 +59,11 @@ class Factor
     protected $valueText = false;
 
     /**
+     * @var
+     */
+    protected $euVat = false;
+
+    /**
      * FactorList constructor.
      *
      * @param array $data
@@ -133,6 +138,10 @@ class Factor
      */
     public function getSum()
     {
+        if ($this->euVat) {
+            return $this->getNettoSum();
+        }
+
         return $this->sum;
     }
 
@@ -163,6 +172,10 @@ class Factor
      */
     public function getVatSum()
     {
+        if ($this->euVat) {
+            return 0;
+        }
+
         if ($this->vat) {
             return $this->nettoSum * ($this->vat / 100);
         }
@@ -177,6 +190,10 @@ class Factor
      */
     public function getVat()
     {
+        if ($this->euVat) {
+            return 0;
+        }
+
         if ($this->vat) {
             return $this->vat;
         }
@@ -234,4 +251,21 @@ class Factor
     {
         return \json_encode($this->toArray());
     }
+
+    //region eu vat
+
+    public function isEuVat()
+    {
+        return $this->euVat;
+    }
+
+    /**
+     * @param bool $status
+     */
+    public function setEuVatStatus(bool $status)
+    {
+        $this->euVat = $status;
+    }
+
+    //endregion
 }

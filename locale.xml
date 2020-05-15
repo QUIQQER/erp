@@ -91,6 +91,10 @@
             <de><![CDATA[Umsatzsteuer-ID]]></de>
             <en><![CDATA[VAT ID]]></en>
         </locale>
+        <locale name="quiqqer.erp.chUID">
+            <de><![CDATA[Unternehmens-ID (UID)]]></de>
+            <en><![CDATA[Company ID (UID)]]></en>
+        </locale>
 
         <locale name="global_process_id">
             <de><![CDATA[Vorgangsnummer]]></de>
@@ -112,12 +116,12 @@
             <en><![CDATA[Price calculation basis]]></en>
         </locale>
         <locale name="user.settings.userNettoStatus.netto">
-            <de><![CDATA[netto]]></de>
-            <en><![CDATA[netto]]></en>
+            <de><![CDATA[gewerblich (netto / zzgl. MwSt.)]]></de>
+            <en><![CDATA[business (netto / incl. vat)]]></en>
         </locale>
         <locale name="user.settings.userNettoStatus.brutto">
-            <de><![CDATA[brutto]]></de>
-            <en><![CDATA[brutto]]></en>
+            <de><![CDATA[privat (brutto / inkl. MwSt.)]]></de>
+            <en><![CDATA[private (gross / incl. vat)]]></en>
         </locale>
 
         <locale name="user.profile.title">

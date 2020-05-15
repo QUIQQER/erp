@@ -1,4 +1,7 @@
-<section class="quiqqer-frontendUsers-userdata-section quiqqer-erp-userProfile-vat">
+{if $isB2B}
+<section class="quiqqer-frontendUsers-userdata-section quiqqer-erp-userProfile-vat"
+         data-qui="package/quiqqer/erp/bin/frontend/controls/frontendUsers/VatType"
+>
     <header>
         <h2>{locale group="quiqqer/erp" var="user.profile.userdata.title"}</h2>
     </header>
@@ -13,4 +16,16 @@
                value="{$User->getAttribute('quiqqer.erp.euVatId')|escape:'html'}"
         />
     </label>
+
+    <label class="quiqqer-order-customerData-edit-chUID">
+        <span class="quiqqer-frontendUsers-userdata-label">
+            {locale group="quiqqer/erp" var="quiqqer.erp.chUID"}
+        </span>
+        <input type="text"
+               name="chUID"
+               class="quiqqer-frontendUsers-userdata-field"
+               value="{$User->getAttribute('quiqqer.erp.chUID')|escape:'html'}"
+        />
+    </label>
 </section>
+{/if}

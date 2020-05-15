@@ -28,6 +28,13 @@ class User
     const IS_BRUTTO_USER = 2;
 
     /**
+     * Runtime cache for user brutt/netto status
+     *
+     * @var array
+     */
+    protected static $userBruttoNettoStatus = [];
+
+    /**
      * Return the brutto netto status
      * is the user a netto or brutto user
      *
@@ -36,14 +43,23 @@ class User
      */
     public static function getBruttoNettoUserStatus(UserInterface $User)
     {
+        $uid = $User->getId();
+
+        if (isset(self::$userBruttoNettoStatus[$uid])) {
+            return self::$userBruttoNettoStatus[$uid];
+        }
+
         if (QUI::getUsers()->isSystemUser($User)) {
-            return self::IS_NETTO_USER;
+            self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
+            return self::$userBruttoNettoStatus[$uid];
         }
 
         if ($User instanceof QUI\ERP\User && $User->hasBruttoNettoStatus()) {
-            return $User->isNetto();
-        }
+            self::$userBruttoNettoStatus[$uid] = $User->isNetto();
 
+            return self::$userBruttoNettoStatus[$uid];
+        }
 
         $nettoStatus = $User->getAttribute('quiqqer.erp.isNettoUser');
 
@@ -54,20 +70,26 @@ class User
         switch ($nettoStatus) {
             case self::IS_NETTO_USER:
             case self::IS_BRUTTO_USER:
-                return $nettoStatus;
+                self::$userBruttoNettoStatus[$uid] = $nettoStatus;
+
+                return self::$userBruttoNettoStatus[$uid];
         }
 
         $euVatId = $User->getAttribute('quiqqer.erp.euVatId');
         $taxId   = $User->getAttribute('quiqqer.erp.taxId');
 
         if (!empty($euVatId) || !empty($taxId)) {
-            return self::IS_NETTO_USER;
+            self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
+            return self::$userBruttoNettoStatus[$uid];
         }
 
         try {
             $Package = QUI::getPackage('quiqqer/tax');
         } catch (QUI\Exception $Exception) {
-            return self::IS_BRUTTO_USER;
+            self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
+
+            return self::$userBruttoNettoStatus[$uid];
         }
 
         try {
@@ -75,7 +97,9 @@ class User
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
 
-            return self::IS_NETTO_USER;
+            self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
+            return self::$userBruttoNettoStatus[$uid];
         }
 
         // @todo quiqqer.erp.isNettoUser beachten, die eigenschaft ist besser, gab es damals noch nicht
@@ -88,10 +112,14 @@ class User
                 && $Address->getAttribute('company')
             ) {
                 if ($Config->getValue('shop', 'companyForceBruttoPrice')) {
-                    return self::IS_BRUTTO_USER;
+                    self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
+
+                    return self::$userBruttoNettoStatus[$uid];
                 }
 
-                return self::IS_NETTO_USER;
+                self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
+                return self::$userBruttoNettoStatus[$uid];
             }
 
             if (\is_array($Address)
@@ -99,10 +127,14 @@ class User
                 && $Address['company'] == 1
             ) {
                 if ($Config->getValue('shop', 'companyForceBruttoPrice')) {
-                    return self::IS_BRUTTO_USER;
+                    self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
+
+                    return self::$userBruttoNettoStatus[$uid];
                 }
 
-                return self::IS_NETTO_USER;
+                self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
+                return self::$userBruttoNettoStatus[$uid];
             }
         } catch (QUI\Exception $Exception) {
             // no address found
@@ -114,7 +146,9 @@ class User
         $isNetto = $Config->getValue('shop', 'isNetto');
 
         if ($isNetto) {
-            return self::IS_NETTO_USER;
+            self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
+            return self::$userBruttoNettoStatus[$uid];
         }
 
 
@@ -122,13 +156,19 @@ class User
             $Tax = QUI\ERP\Tax\Utils::getTaxByUser($User);
 
             if ($Tax->getValue() == 0) {
-                return self::IS_NETTO_USER;
+                self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
+                return self::$userBruttoNettoStatus[$uid];
             }
         } catch (QUI\Exception $Exception) {
-            return self::IS_NETTO_USER;
+            self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+
+            return self::$userBruttoNettoStatus[$uid];
         }
 
-        return self::IS_BRUTTO_USER;
+        self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
+
+        return self::$userBruttoNettoStatus[$uid];
     }
 
     /**

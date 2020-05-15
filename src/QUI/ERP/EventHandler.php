@@ -37,6 +37,10 @@ class EventHandler
         }
     }
 
+    /**
+     * @param Package $Package
+     * @param array $params
+     */
     public static function onPackageConfigSave(QUI\Package\Package $Package, array $params)
     {
         if ($Package->getName() !== 'quiqqer/erp') {
@@ -75,9 +79,9 @@ class EventHandler
 
     /**
      * event: on user save
+     * @param QUI\Interfaces\Users\User $User
      * @todo prüfung auch für steuernummer
      *
-     * @param QUI\Interfaces\Users\User $User
      */
     public static function onUserSave(QUI\Interfaces\Users\User $User)
     {
@@ -143,10 +147,17 @@ class EventHandler
             return;
         }
 
+        if (isset($data['data'])) {
+            $data = \json_decode($data['data'], true);
+        }
+
         if (isset($data['company'])) {
             try {
                 $Address = $User->getStandardAddress();
-                $Address->setAttribute('company', $data['company']);
+                $Address->setAttribute(
+                    'company',
+                    QUI\Utils\Security\Orthos::clear($data['company'])
+                );
                 $Address->save();
             } catch (QUI\Exception $Exception) {
                 QUI\System\Log::writeDebugException($Exception);
@@ -163,7 +174,11 @@ class EventHandler
             }
 
             // save VAT ID
-            $User->setAttribute('quiqqer.erp.euVatId', $vatId);
+            $User->setAttribute('quiqqer.erp.euVatId', QUI\Utils\Security\Orthos::clear($vatId));
+        }
+
+        if (isset($data['chUID'])) {
+            $User->setAttribute('quiqqer.erp.chUID', QUI\Utils\Security\Orthos::clear($data['chUID']));
         }
     }
 
@@ -248,7 +263,12 @@ class EventHandler
         $Engine->assign([
             'User'         => $User,
             'Address'      => $Address,
-            'businessType' => $businessType
+            'businessType' => $businessType,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
         ]);
 
         try {
@@ -281,7 +301,12 @@ class EventHandler
 
         $Engine->assign([
             'User'    => $User,
-            'Address' => $Address
+            'Address' => $Address,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
         ]);
 
         try {
@@ -311,8 +336,29 @@ class EventHandler
             return;
         }
 
+        try {
+            $Conf     = QUI::getPackage('quiqqer/frontend-users')->getConfig();
+            $settings = $Conf->getValue('profile', 'addressFields');
+
+            if (!empty($settings)) {
+                $settings = \json_decode($settings, true);
+            } else {
+                $settings = [];
+            }
+
+            $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray($settings));
+        } catch (QUI\Exception $Exception) {
+            $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray([]));
+        }
+
         $Engine->assign([
-            'User' => $User
+            'User' => $User,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
+            'isOnlyB2C'                => QUI\ERP\Utils\Shop::isOnlyB2C(),
         ]);
 
         try {
@@ -342,8 +388,29 @@ class EventHandler
             return;
         }
 
+        try {
+            $Conf     = QUI::getPackage('quiqqer/frontend-users')->getConfig();
+            $settings = $Conf->getValue('profile', 'addressFields');
+
+            if (!empty($settings)) {
+                $settings = \json_decode($settings, true);
+            } else {
+                $settings = [];
+            }
+
+            $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray($settings));
+        } catch (QUI\Exception $Exception) {
+            $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray([]));
+        }
+
         $Engine->assign([
-            'User' => $User
+            'User' => $User,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
+            'isOnlyB2C'                => QUI\ERP\Utils\Shop::isOnlyB2C(),
         ]);
 
         try {
@@ -374,6 +441,21 @@ class EventHandler
             return;
         }
 
+        try {
+            $Conf     = QUI::getPackage('quiqqer/frontend-users')->getConfig();
+            $settings = $Conf->getValue('profile', 'addressFields');
+
+            if (!empty($settings)) {
+                $settings = \json_decode($settings, true);
+            } else {
+                $settings = [];
+            }
+
+            $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray($settings));
+        } catch (QUI\Exception $Exception) {
+            $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray([]));
+        }
+
         // business type
         $businessType = 'b2c';
         $company      = $Address->getAttribute('company');
@@ -390,7 +472,13 @@ class EventHandler
         $Engine->assign([
             'User'         => $User,
             'Address'      => $Address,
-            'businessType' => $businessType
+            'businessType' => $businessType,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
+            'isOnlyB2C'                => QUI\ERP\Utils\Shop::isOnlyB2C(),
         ]);
 
         try {
@@ -414,6 +502,21 @@ class EventHandler
         }
 
         try {
+            $Conf     = QUI::getPackage('quiqqer/frontend-users')->getConfig();
+            $settings = $Conf->getValue('profile', 'addressFields');
+
+            if (!empty($settings)) {
+                $settings = \json_decode($settings, true);
+            } else {
+                $settings = [];
+            }
+
+            $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray($settings));
+        } catch (QUI\Exception $Exception) {
+            $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray([]));
+        }
+
+        try {
             $Engine = QUI::getTemplateManager()->getEngine();
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -423,7 +526,13 @@ class EventHandler
 
         $Engine->assign([
             'User'    => $User,
-            'Address' => $Address
+            'Address' => $Address,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
+            'isOnlyB2C'                => QUI\ERP\Utils\Shop::isOnlyB2C(),
         ]);
 
         try {

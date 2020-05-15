@@ -80,6 +80,34 @@ class Shop
     }
 
     /**
+     * Is the shop an b2c and b2b shop, but b2c is more important
+     *
+     * @return bool
+     */
+    public static function isB2BPrioritized()
+    {
+        if (self::isB2B() === false) {
+            return false;
+        }
+
+        return \strpos(self::getBusinessType(), 'B2B') === 0;
+    }
+
+    /**
+     * Is the shop an b2c and b2b shop, but b2c is more important
+     *
+     * @return bool
+     */
+    public static function isB2CPrioritized()
+    {
+        if (self::isB2C() === false) {
+            return false;
+        }
+
+        return \strpos(self::getBusinessType(), 'B2C') === 0;
+    }
+
+    /**
      * Is the shop only b2b?
      *
      * @return bool
