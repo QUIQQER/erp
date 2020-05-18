@@ -24,6 +24,9 @@
                 <conf name="revocation">
                     <type><![CDATA[string]]></type>
                 </conf>
+                <conf name="privacy_policy">
+                    <type><![CDATA[string]]></type>
+                </conf>
             </section>
 
             <section name="paymentsChangeable"/>
@@ -140,6 +143,13 @@
                                data-qui="controls/projects/project/site/MultiLangSelect">
                             <text>
                                 <locale group="quiqqer/erp" var="menu.erp.sites.revocation"/>
+                            </text>
+                        </input>
+
+                        <input conf="sites.privacy_policy"
+                               data-qui="controls/projects/project/site/MultiLangSelect">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.sites.privacy_policy"/>
                             </text>
                         </input>
                     </settings>
