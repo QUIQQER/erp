@@ -142,6 +142,10 @@
             <de><![CDATA[Widerrufsbelehrung]]></de>
             <en><![CDATA[Revocation policy]]></en>
         </locale>
+        <locale name="menu.erp.sites.privacy_policy">
+            <de><![CDATA[Datenschutzerklärung]]></de>
+            <en><![CDATA[Privacy Policy]]></en>
+        </locale>
 
         <locale name="shop.settings.general.precision">
             <de><![CDATA[Verwendete Nachkommastellen]]></de>
