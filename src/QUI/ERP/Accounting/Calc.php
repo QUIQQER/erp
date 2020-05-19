@@ -26,27 +26,27 @@ class Calc
     /**
      * Percentage calculation
      */
-    const CALCULATION_PERCENTAGE = 1; // @todo raus und in product calc lassen
+    const CALCULATION_PERCENTAGE = 1;
 
     /**
      * Standard calculation
      */
-    const CALCULATION_COMPLEMENT = 2; // @todo raus und in product calc lassen
+    const CALCULATION_COMPLEMENT = 2;
 
     /**
      * Set the price for the product
      */
-    const CALCULATION_COMPLETE = 3; // @todo raus und in product calc lassen
+    const CALCULATION_COMPLETE = 3;
 
     /**
      * Basis calculation -> netto
      */
-    const CALCULATION_BASIS_NETTO = 1; // @todo raus und in product calc lassen
+    const CALCULATION_BASIS_NETTO = 1;
 
     /**
      * Basis calculation -> from current price
      */
-    const CALCULATION_BASIS_CURRENTPRICE = 2; // @todo raus und in product calc lassen
+    const CALCULATION_BASIS_CURRENTPRICE = 2;
 
     /**
      * Basis brutto
@@ -56,7 +56,14 @@ class Calc
      * geht vnn der netto basis aus, welche alle price faktoren schon beinhaltet
      * alle felder sind in diesem price schon enthalten
      */
-    const CALCULATION_BASIS_BRUTTO = 3; // @todo raus und in product calc lassen
+    const CALCULATION_BASIS_BRUTTO = 3;
+
+    /**
+     * Berechnet auf Basis des Preises inklusive Steuern
+     * Zum Beispiel MwSt
+     *
+     */
+    const CALCULATION_BASIS_VAT_BRUTTO = 4;
 
     /**
      * @var UserInterface
@@ -156,6 +163,10 @@ class Calc
         $isNetto     = QUI\ERP\Utils\User::isNettoUser($this->getUser());
         $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($this->getUser());
 
+        // @todo get currency decimal precision
+        $Currency  = $this->getCurrency();
+        $precision = 2;
+
         $subSum   = 0;
         $nettoSum = 0;
         $vatArray = [];
@@ -250,9 +261,12 @@ class Calc
         $bruttoSum = $nettoSum;
 
         foreach ($vatArray as $vatEntry) {
-            $vatLists[$vatEntry['vat']] = true; // liste für MWST texte
+            $vat = $vatEntry['vat'];
 
-            $bruttoSum = $bruttoSum + $vatEntry['sum'];
+            $vatLists[$vat]        = true; // liste für MWST texte
+            $vatArray[$vat]['sum'] = \round($vatEntry['sum'], $precision);
+
+            $bruttoSum = $bruttoSum + $vatArray[$vat]['sum'];
         }
 
         foreach ($vatLists as $vat => $bool) {
@@ -275,19 +289,19 @@ class Calc
 
             foreach ($priceFactors as $Factor) {
                 /* @var $Factor QUI\ERP\Products\Utils\PriceFactor */
-                $priceFactorBruttoSums = $priceFactorBruttoSums + \round($Factor->getSum(), 2);
+                $priceFactorBruttoSums = $priceFactorBruttoSums + \round($Factor->getSum(), $precision);
             }
 
             $priceFactorBruttoSum = $subSum + $priceFactorBruttoSums;
 
-            if ($priceFactorBruttoSum !== \round($bruttoSum, 2)) {
-                $diff = $priceFactorBruttoSum - \round($bruttoSum, 2);
+            if ($priceFactorBruttoSum !== \round($bruttoSum, $precision)) {
+                $diff = $priceFactorBruttoSum - \round($bruttoSum, $precision);
 
                 // if we have a diff, we change the first vat price factor
                 foreach ($priceFactors as $Factor) {
                     if ($Factor instanceof QUI\ERP\Products\Interfaces\PriceFactorWithVatInterface) {
-                        $Factor->setSum(\round($Factor->getSum() - $diff, 2));
-                        $bruttoSum = \round($bruttoSum, 2);
+                        $Factor->setSum(\round($Factor->getSum() - $diff, $precision));
+                        $bruttoSum = \round($bruttoSum, $precision);
                         break;
                     }
                 }
