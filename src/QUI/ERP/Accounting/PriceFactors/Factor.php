@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file contains QUI\ERP\Accounting\PriceFactors\FactorList
+ * This file contains QUI\ERP\Accounting\PriceFactors\Factor
  */
 
 namespace QUI\ERP\Accounting\PriceFactors;
