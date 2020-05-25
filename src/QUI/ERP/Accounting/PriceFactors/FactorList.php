@@ -39,6 +39,11 @@ class FactorList implements \IteratorAggregate, \Countable
         }
 
         foreach ($data as $factorData) {
+            if ($factorData instanceof Factor) {
+                $this->list[] = $factorData;
+                continue;
+            }
+
             $this->list[] = new Factor($factorData);
         }
     }
