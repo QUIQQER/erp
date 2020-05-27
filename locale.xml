@@ -53,6 +53,10 @@
             <de><![CDATA[Preis]]></de>
             <en><![CDATA[Price]]></en>
         </locale>
+        <locale name="article.list.articles.header.vat">
+            <de><![CDATA[MwSt.]]></de>
+            <en><![CDATA[VAT]]></en>
+        </locale>
         <locale name="article.list.articles.subtotal">
             <de><![CDATA[Zwischensumme:]]></de>
             <en><![CDATA[Subtotal:]]></en>

@@ -354,7 +354,7 @@ class Article implements ArticleInterface
             return (int)$this->attributes['vat'];
         }
 
-        // check if product exists and has a var
+        // check if product exists and has a vat
         if (!empty($this->attributes['id'])) {
             try {
                 $Area = null;

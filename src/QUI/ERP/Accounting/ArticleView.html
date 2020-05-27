@@ -25,6 +25,9 @@
             {/foreach}
         </ul>
     </td>
+    <td class="articles-article-vat">
+        {$this->getAttribute('vat')}%
+    </td>
 
     {if $this->getAttribute('quantity') !== false}
     <td class="articles-article-quantity"
