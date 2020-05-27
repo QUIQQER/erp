@@ -200,6 +200,8 @@ class ArticleListUnique implements \IteratorAggregate
      */
     public function toArray()
     {
+        $this->calc();
+
         $articles = \array_map(function ($Article) {
             /* @var $Article Article */
             return $Article->toArray();
