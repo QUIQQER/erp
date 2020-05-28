@@ -323,6 +323,10 @@
             <de><![CDATA[Kommentar aus: [source]]]></de>
             <en><![CDATA[Comment from: [source]]]></en>
         </locale>
+        <locale name="article.summary.window.title">
+            <de><![CDATA[Artikelübersichtsrechnung]]></de>
+            <en><![CDATA[Article overview calculation]]></en>
+        </locale>
     </groups>
 
 </locales>
