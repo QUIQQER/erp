@@ -256,9 +256,13 @@ class Calc
         }
 
         // vat text
-        $vatLists  = [];
-        $vatText   = [];
-        $bruttoSum = $nettoSum;
+        $vatLists = [];
+        $vatText  = [];
+
+        $nettoSum    = \round($nettoSum, $precision);
+        $nettoSubSum = \round($nettoSubSum, $precision);
+        $subSum      = \round($subSum, $precision);
+        $bruttoSum   = $nettoSum;
 
         foreach ($vatArray as $vatEntry) {
             $vat = $vatEntry['vat'];
@@ -268,6 +272,8 @@ class Calc
 
             $bruttoSum = $bruttoSum + $vatArray[$vat]['sum'];
         }
+
+        $bruttoSum = \round($bruttoSum, $precision);
 
         foreach ($vatLists as $vat => $bool) {
             $vatText[$vat] = self::getVatText($vat, $this->getUser());
@@ -293,6 +299,7 @@ class Calc
             }
 
             $priceFactorBruttoSum = $subSum + $priceFactorBruttoSums;
+            $priceFactorBruttoSum = \round($priceFactorBruttoSum, $precision);
 
             if ($priceFactorBruttoSum !== \round($bruttoSum, $precision)) {
                 $diff = $priceFactorBruttoSum - \round($bruttoSum, $precision);
