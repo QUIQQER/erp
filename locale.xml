@@ -57,6 +57,10 @@
             <de><![CDATA[MwSt.]]></de>
             <en><![CDATA[VAT]]></en>
         </locale>
+        <locale name="article.list.articles.header.articleNo">
+            <de><![CDATA[Artikel Nr.]]></de>
+            <en><![CDATA[Article No.]]></en>
+        </locale>
         <locale name="article.list.articles.subtotal">
             <de><![CDATA[Zwischensumme:]]></de>
             <en><![CDATA[Subtotal:]]></en>
