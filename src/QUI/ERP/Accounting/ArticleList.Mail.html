@@ -16,6 +16,10 @@
                 {$Article->getAttribute('quantity')} x
                 {$Article->getAttribute('title')}
             </h2>
+            <div class="articles-body-article-data-articleNo">
+                {locale group="quiqqer/erp" var="article.list.articles.header.articleNo"}:
+                {$Article->getAttribute('articleNo')}
+            </div>
             <div class="articles-body-article-data-description">
                 {$Article->getAttribute('description')}
             </div>
