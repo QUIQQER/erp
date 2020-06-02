@@ -235,7 +235,7 @@ class Calc
                 $priceFactorValue = $PriceFactor->getValue();
                 $vatValue         = $PriceFactor->getVat();
 
-                if ($vatValue === 0) {
+                if ($vatValue === null) {
                     $vatValue = QUI\ERP\Tax\Utils::getTaxByUser($this->getUser())->getValue();
                 }
 
