@@ -21,6 +21,7 @@ class Article implements ArticleInterface
      * @var array
      */
     protected $attributes = [
+        'id'      => '',
         'control' => '',
         'class'   => ''
     ];

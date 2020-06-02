@@ -8,6 +8,7 @@ namespace QUI\ERP\Accounting\PriceFactors;
 
 use QUI\ERP\Exception;
 use QUI\Utils\Math;
+use QUI\ERP\Accounting\Calc as ERPCalc;
 
 /**
  * Class FactorList
@@ -53,10 +54,26 @@ class Factor
      * @var bool
      */
     protected $vat = false;
+
     /**
      * @var bool
      */
     protected $valueText = false;
+
+    /**
+     * @var mixed
+     */
+    protected $value;
+
+    /**
+     * @var integer
+     */
+    protected $calculation = ERPCalc::CALCULATION_COMPLEMENT;
+
+    /**
+     * @var integer
+     */
+    protected $calculation_basis = ERPCalc::CALCULATION_BASIS_NETTO;
 
     /**
      * @var
@@ -79,7 +96,8 @@ class Factor
             'sumFormatted',
             'nettoSum',
             'nettoSumFormatted',
-            'visible'
+            'visible',
+            'value'
         ];
 
         foreach ($fields as $field) {
@@ -101,6 +119,15 @@ class Factor
         $this->nettoSum          = $data['nettoSum'];
         $this->nettoSumFormatted = $data['nettoSumFormatted'];
         $this->visible           = (int)$data['visible'];
+        $this->value             = $data['value'];
+
+        if (isset($data['calculation'])) {
+            $this->calculation = (int)$data['calculation'];
+        }
+
+        if (isset($data['calculation_basis'])) {
+            $this->calculation_basis = (int)$data['calculation_basis'];
+        }
 
         if (isset($data['vat'])) {
             $this->vat = (int)$data['vat'];
@@ -129,6 +156,14 @@ class Factor
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 
     /**
@@ -217,6 +252,22 @@ class Factor
     /**
      * @return int
      */
+    public function getCalculation()
+    {
+        return $this->calculation;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCalculationBasis()
+    {
+        return $this->calculation_basis;
+    }
+
+    /**
+     * @return int
+     */
     public function isVisible()
     {
         return $this->visible;
@@ -237,8 +288,11 @@ class Factor
             'nettoSum'          => $this->getNettoSum(),
             'nettoSumFormatted' => $this->getNettoSumFormatted(),
             'visible'           => $this->isVisible(),
+            'value'             => $this->getValue(),
             'valueText'         => empty($this->valueText) ? '' : $this->valueText,
-            'vat'               => $this->getVat()
+            'vat'               => $this->getVat(),
+            'calculation'       => $this->getCalculation(),
+            'calculation_basis' => $this->getCalculationBasis()
         ];
     }
 
@@ -268,4 +322,24 @@ class Factor
     }
 
     //endregion
+
+    public function setSum($sum)
+    {
+        $this->sum = $sum;
+    }
+
+    public function setSumFormatted($sumFormatted)
+    {
+        $this->nettoSumFormatted = $sumFormatted;
+    }
+
+    public function setNettoSum($sum)
+    {
+        $this->nettoSum = $sum;
+    }
+
+    public function setNettoSumFormatted($sumFormatted)
+    {
+        $this->nettoSumFormatted = $sumFormatted;
+    }
 }
