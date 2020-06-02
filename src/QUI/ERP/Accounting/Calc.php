@@ -229,6 +229,54 @@ class Calc
 
         /* @var $PriceFactor QUI\ERP\Accounting\PriceFactors\Factor */
         foreach ($priceFactors as $PriceFactor) {
+            // percent - Prozent Angabe
+            if ($PriceFactor->getCalculation() === self::CALCULATION_PERCENTAGE) {
+                $calcBasis        = $PriceFactor->getCalculationBasis();
+                $priceFactorValue = $PriceFactor->getValue();
+                $vatValue         = $PriceFactor->getVat();
+
+                if ($vatValue === 0) {
+                    $vatValue = QUI\ERP\Tax\Utils::getTaxByUser($this->getUser())->getValue();
+                }
+
+                switch ($calcBasis) {
+                    default:
+                    case self::CALCULATION_BASIS_NETTO:
+                        $percentage = $priceFactorValue / 100 * $nettoSubSum;
+                        break;
+
+                    case self::CALCULATION_BASIS_BRUTTO:
+                    case self::CALCULATION_BASIS_CURRENTPRICE:
+                        $percentage = $priceFactorValue / 100 * $nettoSum;
+                        break;
+
+                    case self::CALCULATION_BASIS_VAT_BRUTTO:
+                        if ($isNetto) {
+                            $bruttoSubSum = $subSum * ($vatValue / 100 + 1);
+                            $percentage   = $priceFactorValue / 100 * $bruttoSubSum;
+                        } else {
+                            $percentage = $priceFactorValue / 100 * $subSum;
+                        }
+                        break;
+                }
+
+                $percentage = \round($percentage, $precision);
+                $vatSum     = \round($PriceFactor->getVatSum(), $precision);
+
+                // set netto sum
+                $PriceFactor->setNettoSum($percentage);
+
+                if ($isNetto) {
+                    $PriceFactor->setSum($PriceFactor->getNettoSum());
+                } else {
+                    $PriceFactor->setSum($vatSum + $PriceFactor->getNettoSum());
+                }
+
+                // formatted
+                $PriceFactor->setNettoSumFormatted($Currency->format($PriceFactor->getNettoSum()));
+                $PriceFactor->setSumFormatted($Currency->format($PriceFactor->getSum()));
+            }
+
             $nettoSum       = $nettoSum + $PriceFactor->getNettoSum();
             $priceFactorSum = $priceFactorSum + $PriceFactor->getNettoSum();
 
