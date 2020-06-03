@@ -100,8 +100,8 @@
             <en><![CDATA[VAT ID]]></en>
         </locale>
         <locale name="quiqqer.erp.chUID">
-            <de><![CDATA[Unternehmens-ID (UID)]]></de>
-            <en><![CDATA[Company ID (UID)]]></en>
+            <de><![CDATA[Unternehmens-ID (UID, Schweiz)]]></de>
+            <en><![CDATA[Company ID (UID, Switzerland)]]></en>
         </locale>
 
         <locale name="global_process_id">
