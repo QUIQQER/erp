@@ -502,6 +502,14 @@ class EventHandler
         }
 
         try {
+            $Engine = QUI::getTemplateManager()->getEngine();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+
+            return;
+        }
+
+        try {
             $Conf     = QUI::getPackage('quiqqer/frontend-users')->getConfig();
             $settings = $Conf->getValue('profile', 'addressFields');
 
@@ -514,14 +522,6 @@ class EventHandler
             $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray($settings));
         } catch (QUI\Exception $Exception) {
             $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray([]));
-        }
-
-        try {
-            $Engine = QUI::getTemplateManager()->getEngine();
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-
-            return;
         }
 
         $Engine->assign([
