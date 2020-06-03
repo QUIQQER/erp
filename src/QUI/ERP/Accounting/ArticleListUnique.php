@@ -116,6 +116,30 @@ class ArticleListUnique implements \IteratorAggregate
     }
 
     /**
+     * placeholder. unique list cant be recalculate
+     * recalculate makes the unique article list compatible to the article list
+     *
+     * @param $Calc
+     */
+    public function recalculate($Calc = null)
+    {
+        // placeholder. unique list cant be recalculate
+    }
+
+    /**
+     * placeholder. unique list cant be calc
+     * calc makes the unique article list compatible to the article list
+     *
+     * @param $Calc
+     * @return $this
+     */
+    public function calc($Calc = null)
+    {
+        // placeholder. unique list cant be calc
+        return $this;
+    }
+
+    /**
      * Set locale
      *
      * @param QUI\Locale $Locale
