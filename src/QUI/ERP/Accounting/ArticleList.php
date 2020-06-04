@@ -363,6 +363,19 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     }
 
     /**
+     * @param $pos
+     * @return Article|null
+     */
+    public function getArticle($pos)
+    {
+        if (isset($this->articles[$pos])) {
+            return $this->articles[$pos];
+        }
+
+        return null;
+    }
+
+    /**
      * Replace an article at a specific position
      *
      * @param Article $Article
