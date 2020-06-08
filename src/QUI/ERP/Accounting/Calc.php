@@ -163,15 +163,13 @@ class Calc
         $isNetto     = QUI\ERP\Utils\User::isNettoUser($this->getUser());
         $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($this->getUser());
 
-        // @todo get currency decimal precision
         $Currency  = $this->getCurrency();
-        $precision = 2;
+        $precision = $Currency->getPrecision();
 
         $subSum   = 0;
         $nettoSum = 0;
         $vatArray = [];
 
-        /* @var $Article Article */
         foreach ($articles as $Article) {
             // add netto price
             try {
