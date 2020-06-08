@@ -16,6 +16,11 @@ use QUI\ERP\Accounting\Calc as ERPCalc;
 class Factor
 {
     /**
+     * @var mixed|string
+     */
+    protected $identifier = '';
+
+    /**
      * @var string
      */
     protected $title = '';
@@ -136,6 +141,18 @@ class Factor
         if (isset($data['valueText']) && \is_string($data['valueText'])) {
             $this->valueText = $data['valueText'];
         }
+
+        if (isset($data['identifier']) && \is_string($data['identifier'])) {
+            $this->identifier = $data['identifier'];
+        }
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 
     /**
@@ -281,6 +298,7 @@ class Factor
     public function toArray()
     {
         return [
+            'identifier'        => $this->identifier,
             'title'             => $this->getTitle(),
             'description'       => $this->getDescription(),
             'sum'               => $this->getSum(),
@@ -323,21 +341,33 @@ class Factor
 
     //endregion
 
+    /**
+     * @param int|float $sum
+     */
     public function setSum($sum)
     {
         $this->sum = $sum;
     }
 
+    /**
+     * @param string $sumFormatted
+     */
     public function setSumFormatted($sumFormatted)
     {
         $this->nettoSumFormatted = $sumFormatted;
     }
 
+    /**
+     * @param int|float $sum
+     */
     public function setNettoSum($sum)
     {
         $this->nettoSum = $sum;
     }
 
+    /**
+     * @param string $sumFormatted
+     */
     public function setNettoSumFormatted($sumFormatted)
     {
         $this->nettoSumFormatted = $sumFormatted;
