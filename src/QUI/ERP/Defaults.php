@@ -50,13 +50,13 @@ class Defaults
     }
 
     /**
-     * @return QUI\Countries\Country
+     * Return the default country
      *
-     * @todo ERP standard land als einstellung
+     * @return QUI\Countries\Country
      */
     public static function getCountry()
     {
-        return QUI\Countries\Manager::get('de');
+        return QUI\Countries\Manager::getDefaultCountry();
     }
 
     /**
