@@ -157,6 +157,13 @@ class Calc
             return $List->calc();
         }
 
+        // user order address
+        $Order = $List->getOrder();
+
+        if ($Order) {
+            $this->getUser()->setAttribute('CurrentAddress', $Order->getDeliveryAddress());
+        }
+
         $this->Currency = $List->getCurrency();
 
         $articles    = $List->getArticles();
