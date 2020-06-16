@@ -8,6 +8,7 @@ namespace QUI\ERP\Utils;
 
 use QUI;
 use QUI\Interfaces\Users\User as UserInterface;
+use QUI\Users\Address;
 
 /**
  * Class User Utils
@@ -192,6 +193,31 @@ class User
      */
     public static function getUserArea(UserInterface $User)
     {
+        $CurrentAddress = $User->getAttribute('CurrentAddress');
+
+        if ($CurrentAddress instanceof Address) {
+            $Country = $CurrentAddress->getCountry();
+            $Area    = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+
+            if ($Area) {
+                return $Area;
+            }
+        }
+
+        try {
+            $addressId = $User->getAttribute('quiqqer.erp.address');
+            $Address   = $User->getAddress($addressId);
+            $Country   = $Address->getCountry();
+            $Area      = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+
+            if ($Area) {
+                return $Area;
+            }
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addDebug($Exception->getMessage());
+        }
+
+
         $Country = $User->getCountry();
         $Area    = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
 
@@ -293,5 +319,20 @@ class User
         }
 
         return $result;
+    }
+
+    /**
+     * @param UserInterface $User
+     * @param $Address
+     */
+    public static function setUserCurrentAddress(
+        QUI\Interfaces\Users\User $User,
+        $Address
+    ) {
+        if (\class_exists('QUI\ERP\Tax\Utils')) {
+            QUI\ERP\Tax\Utils::cleanUpUserTaxCache($User);
+        }
+
+        $User->setAttribute('CurrentAddress', $Address);
     }
 }

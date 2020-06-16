@@ -32,6 +32,11 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     protected $User = null;
 
     /**
+     * @var QUI\ERP\Order\AbstractOrder
+     */
+    protected $Order = null;
+
+    /**
      * @var QUI\ERP\Currency\Currency
      */
     protected $Currency = null;
@@ -416,6 +421,26 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     public function importPriceFactors(QUI\ERP\Accounting\PriceFactors\FactorList $PriceFactors)
     {
         $this->PriceFactors = $PriceFactors;
+    }
+
+    //endregion
+
+    //region order
+
+    /**
+     * @param QUI\ERP\Order\AbstractOrder $Order
+     */
+    public function setOrder(QUI\ERP\Order\AbstractOrder $Order)
+    {
+        $this->Order = $Order;
+    }
+
+    /**
+     * @return QUI\ERP\Order\AbstractOrder|null
+     */
+    public function getOrder()
+    {
+        return $this->Order;
     }
 
     //endregion
