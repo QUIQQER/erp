@@ -12,22 +12,23 @@ use QUI\HtmlToPdf\Document;
 interface OutputProviderInterface
 {
     /**
-     * Get preview HTML of an entity output
+     * Get output type
      *
-     * @param string|int $entityId
-     * @param string $template
-     * @return string - Preview HTML
+     * The output type determines the type of templates/providers that are used
+     * to output documents.
+     *
+     * @return string
      */
-    public static function getPreview($entityId, string $template);
+    public static function getOutputType();
 
     /**
-     * Get PDF Document of an entity output
+     * Fill the OutputTemplate with appropriate entity data
      *
      * @param string|int $entityId
-     * @param string $template
-     * @return Document
+     * @param OutputTemplate $Template
+     * @return void
      */
-    public static function getPDFDocument($entityId, string $template);
+    public static function parseTemplate($entityId, OutputTemplate $Template);
 
     /**
      * Get e-mail address of the document recipient

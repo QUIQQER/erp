@@ -76,6 +76,7 @@ class Output
             $Package  = QUI::getPackage($package['name']);
             $composer = $Package->getComposerData();
 
+            // @todo change if package name is changed to "quiqqer/erp-accounting-templates"
             if ($defaultIsDisabled && $Package->getName() === 'quiqqer/invoice-accounting-template') {
                 continue;
             }
@@ -84,6 +85,7 @@ class Output
                 continue;
             }
 
+            // @todo change to "quiqqer-erp-template"
             if ($composer['type'] !== 'quiqqer-invoice-template') {
                 continue;
             }
