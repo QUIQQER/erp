@@ -7,18 +7,17 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
     'qui/QUI',
     'qui/controls/windows/Confirm',
     'qui/controls/buttons/Select',
-    'qui/controls/Sandbox',
+    'qui/controls/elements/Sandbox',
 
     'Ajax',
     'Locale',
     'Mustache',
     'Users',
-    'package/quiqqer/erp/bin/Invoices',
 
     'text!package/quiqqer/erp/bin/backend/controls/OutputDialog.html',
     'css!package/quiqqer/erp/bin/backend/controls/OutputDialog.css'
 
-], function (QUI, QUIConfirm, QUISelect, QUISandbox, QUIAjax, QUILocale, Mustache, Users, Invoices, template) {
+], function (QUI, QUIConfirm, QUISelect, QUISandbox, QUIAjax, QUILocale, Mustache, Users, template) {
     "use strict";
 
     var lg = 'quiqqer/erp';
@@ -31,12 +30,14 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
         Binds: [
             '$onOpen',
             '$onOutputChange',
-            '$onPrintFinish'
+            '$onPrintFinish',
+            '$getPreview'
         ],
 
         options: {
-            entityId : false,    // Clean entity ID WITHOUT prefix and suffix
-            'package': false,    // Output provider package
+            entityId  : false,  // Clean entity ID WITHOUT prefix and suffix
+            entityType: false,  // Entity type (e.g. "Invoice", "InvoiceTemporary" etc.)
+            provider  : false,  // Output provider package
 
             //downloadUrl: false
 
@@ -49,7 +50,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
             this.setAttributes({
                 icon         : 'fa fa-print',
-                title        : QUILocale.get(lg, 'dialog.print.title'),
+                title        : QUILocale.get(lg, 'controls.OutputDialog.title'),
                 autoclose    : false,
                 cancel_button: {
                     textimage: 'fa fa-close',
@@ -61,6 +62,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             this.$Preview     = null;
             this.$invoiceData = null;
             this.$cutomerMail = null;
+            this.$Template    = null;
 
             this.addEvents({
                 onOpen     : this.$onOpen,
@@ -111,42 +113,135 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 });
             };
 
-            if (!this.getAttribute('invoiceId')) {
-                onError('No invoice ID was given.');
-                return;
-            }
+            Content.set({
+                html: Mustache.render(template, {
+                    entityId       : self.getAttribute('entityId'),
+                    labelEntityId  : QUILocale.get(lg, 'controls.OutputDialog.labelEntityId'),
+                    labelTemplate  : QUILocale.get(lg, 'controls.OutputDialog.labelTemplate'),
+                    labelOutputType: QUILocale.get(lg, 'controls.OutputDialog.labelOutputType'),
+                    labelEmail     : QUILocale.get('quiqqer/quiqqer', 'recipient')
+                })
+            });
+
+            Content.addClass('quiqqer-erp-outputDialog');
+
+            this.$Output = new QUISelect({
+                localeStorage: 'quiqqer-invoice-print-dialog',
+                name         : 'output',
+                styles       : {
+                    border: 'none',
+                    width : '100%'
+                },
+                events       : {
+                    onChange: self.$onOutputChange
+                }
+            });
+
+
+            this.$Output.appendChild(
+                QUILocale.get(lg, 'controls.OutputDialog.data.output.print'),
+                'print',
+                'fa fa-print'
+            );
+
+            this.$Output.appendChild(
+                QUILocale.get(lg, 'controls.OutputDialog.data.output.pdf'),
+                'pdf',
+                'fa fa-file-pdf-o'
+            );
+
+            this.$Output.appendChild(
+                QUILocale.get(lg, 'controls.OutputDialog.data.output.email'),
+                'email',
+                'fa fa-envelope-o'
+            );
+
+            this.$Output.inject(Content.getElement('.field-output'));
+
+            //if (typeof self.$invoiceData.customer_data !== 'undefined') {
+            //    var data = JSON.decode(self.$invoiceData.customer_data);
+            //
+            //    if (data && typeof data.email !== 'undefined') {
+            //        self.$cutomerMail = data.email;
+            //    }
+            //
+            //    if (data && (self.$cutomerMail === null || self.$cutomerMail === '')) {
+            //        return new Promise(function (resolve) {
+            //            // get customer id
+            //            Users.get(data.id).load().then(function (User) {
+            //                self.$cutomerMail = User.getAttribute('email');
+            //                resolve();
+            //            }).catch(function (Exception) {
+            //                //onError(Exception);
+            //                resolve();
+            //            });
+            //        });
+            //    }
+            //}
 
             Promise.all([
-                Invoices.get(this.getAttribute('invoiceId')),
-                Invoices.getTemplates(),
-                Invoices.getInvoicePreview(this.getAttribute('invoiceId'))
+                this.$getTemplates(),
+                this.$getEntityData()
             ]).then(function (result) {
-                var templates = result[1],
-                    html      = result[2],
-                    prfx      = '';
+                var templates  = result[0];
+                var EntityData = result[1];
 
-                self.$invoiceData = result[0];
+                var Form     = Content.getElement('form'),
+                    Selected = false;
 
-                if (typeof self.$invoiceData.id_prefix !== 'undefined') {
-                    prfx = self.$invoiceData.id_prefix;
+                for (var i = 0, len = templates.length; i < len; i++) {
+                    new Element('option', {
+                        value          : templates[i].id,
+                        html           : templates[i].title,
+                        'data-provider': templates[i].provider
+                    }).inject(Form.elements.template);
+
+                    if (!Selected) {
+                        Selected = templates[i];
+                    }
                 }
 
-                Content.set({
-                    html: Mustache.render(template, {
-                        invoiceNumber    : prfx + self.$invoiceData.id,
-                        textInvoiceNumber: QUILocale.get(lg, 'dialog.print.data.number'),
-                        textOutput       : QUILocale.get(lg, 'dialog.print.data.output'),
-                        textTemplate     : QUILocale.get(lg, 'dialog.print.data.template'),
-                        textEmail        : QUILocale.get('quiqqer/quiqqer', 'recipient')
-                    })
+                Form.elements.template.addEvent('change', function (event) {
+                    self.$Template = {
+                        id      : event.target.value,
+                        provider: event.target.get('data-provider')
+                    };
+
+                    self.$renderPreview();
                 });
 
-                Content.addClass('quiqqer-invoice-printDialog');
+                // Set initial template and render preview
+                Form.elements.template.value = Selected.id;
+                self.$Template               = {
+                    id      : Selected.id,
+                    provider: Selected.provider
+                };
 
-                self.$Preview = Content.getElement('.quiqqer-invoice-printDialog-preview');
+                self.$renderPreview();
+
+                // Customer data
+                self.$cutomerMail = EntityData.email;
+                self.$onOutputChange();
+
+                self.Loader.hide();
+            }).catch(function (e) {
+                onError(e);
+            });
+        },
+
+        /**
+         * Render preview with selected template
+         */
+        $renderPreview: function () {
+            var PreviewContent = this.getContent().getElement('.quiqqer-erp-outputDialog-preview');
+
+            this.Loader.show();
+
+            this.$getPreview().then(function (previewHtml) {
+                PreviewContent.set('html', '');
 
                 new QUISandbox({
-                    content: html,
+                    content: previewHtml,
                     styles : {
                         height : 1240,
                         padding: 20,
@@ -154,85 +249,10 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     },
                     events : {
                         onLoad: function (Box) {
-                            Box.getElm().addClass('quiqqer-invoice-printDialog-invoice-preview');
+                            Box.getElm().addClass('quiqqer-erp-outputDialog-invoice-preview');
                         }
                     }
-                }).inject(self.$Preview);
-
-                var Form     = Content.getElement('form'),
-                    selected = '';
-
-                for (var i = 0, len = templates.length; i < len; i++) {
-                    new Element('option', {
-                        value: templates[i].name,
-                        html : templates[i].title
-                    }).inject(Form.elements.template);
-
-                    if (templates[i].default) {
-                        selected = templates[i].name;
-                    }
-                }
-
-                Form.elements.template.value = selected;
-
-                self.$Output = new QUISelect({
-                    localeStorage: 'quiqqer-invoice-print-dialog',
-                    name         : 'output',
-                    styles       : {
-                        border: 'none',
-                        width : '100%'
-                    },
-                    events       : {
-                        onChange: self.$onOutputChange
-                    }
-                });
-
-
-                self.$Output.appendChild(
-                    QUILocale.get(lg, 'dialog.print.data.output.print'),
-                    'print',
-                    'fa fa-print'
-                );
-
-                self.$Output.appendChild(
-                    QUILocale.get(lg, 'dialog.print.data.output.pdf'),
-                    'pdf',
-                    'fa fa-file-pdf-o'
-                );
-
-                self.$Output.appendChild(
-                    QUILocale.get(lg, 'dialog.print.data.output.email'),
-                    'email',
-                    'fa fa-envelope-o'
-                );
-
-                self.$Output.inject(Content.getElement('.field-output'));
-
-                if (typeof self.$invoiceData.customer_data !== 'undefined') {
-                    var data = JSON.decode(self.$invoiceData.customer_data);
-
-                    if (data && typeof data.email !== 'undefined') {
-                        self.$cutomerMail = data.email;
-                    }
-
-                    if (data && (self.$cutomerMail === null || self.$cutomerMail === '')) {
-                        return new Promise(function (resolve) {
-                            // get customer id
-                            Users.get(data.id).load().then(function (User) {
-                                self.$cutomerMail = User.getAttribute('email');
-                                resolve();
-                            }).catch(function (Exception) {
-                                //onError(Exception);
-                                resolve();
-                            });
-                        });
-                    }
-                }
-            }).then(function () {
-                self.$onOutputChange();
-                self.Loader.hide();
-            }).catch(function (e) {
-                onError(e);
+                }).inject(PreviewContent);
             });
         },
 
@@ -428,7 +448,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
         $onChangeToPrint: function () {
             var Submit = this.getButton('submit');
 
-            Submit.setAttribute('text', QUILocale.get(lg, 'dialog.print.data.output.print.btn'));
+            Submit.setAttribute('text', QUILocale.get(lg, 'controls.OutputDialog.data.output.print.btn'));
             Submit.setAttribute('textimage', 'fa fa-print');
         },
 
@@ -438,7 +458,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
         $onChangeToPDF: function () {
             var Submit = this.getButton('submit');
 
-            Submit.setAttribute('text', QUILocale.get(lg, 'dialog.print.data.output.pdf.btn'));
+            Submit.setAttribute('text', QUILocale.get(lg, 'controls.OutputDialog.data.output.pdf.btn'));
             Submit.setAttribute('textimage', 'fa fa-file-pdf-o');
         },
 
@@ -451,7 +471,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
             Recipient.getParent('tr').setStyle('display', null);
 
-            Submit.setAttribute('text', QUILocale.get(lg, 'dialog.print.data.output.email.btn'));
+            Submit.setAttribute('text', QUILocale.get(lg, 'controls.OutputDialog.data.output.email.btn'));
             Submit.setAttribute('textimage', 'fa fa-envelope-o');
 
             if (this.$cutomerMail && Recipient.value === '') {
@@ -466,14 +486,15 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          *
          * @return {Promise}
          */
-        $getEntityData: function() {
+        $getEntityData: function () {
             var self = this;
 
             return new Promise(function (resolve, reject) {
-                QUIAjax.get('', resolve, {
-                    'package' : 'quiqqer/erp',
-                    entityType: self.getAttribute('entityType'),
-                    onError   : reject
+                QUIAjax.get('package_quiqqer_erp_ajax_output_getEntityData', resolve, {
+                    'package': 'quiqqer/erp',
+                    provider : self.getAttribute('provider'),
+                    entityId : self.getAttribute('entityId'),
+                    onError  : reject
                 })
             });
         },
@@ -487,10 +508,32 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             var self = this;
 
             return new Promise(function (resolve, reject) {
-                QUIAjax.get('', resolve, {
+                QUIAjax.get('package_quiqqer_erp_ajax_output_getTemplates', resolve, {
                     'package' : 'quiqqer/erp',
                     entityType: self.getAttribute('entityType'),
                     onError   : reject
+                })
+            });
+        },
+
+        /**
+         * Fetch available templates based on entity type
+         *
+         * @return {Promise}
+         */
+        $getPreview: function () {
+            var self = this;
+
+            return new Promise(function (resolve, reject) {
+                QUIAjax.get('package_quiqqer_erp_ajax_output_getPreview', resolve, {
+                    'package': 'quiqqer/erp',
+                    entity   : JSON.encode({
+                        provider: self.getAttribute('provider'),
+                        id      : self.getAttribute('entityId'),
+                        type    : self.getAttribute('entityType')
+                    }),
+                    template : JSON.encode(self.$Template),
+                    onError  : reject
                 })
             });
         }

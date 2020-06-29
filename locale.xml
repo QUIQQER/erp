@@ -331,6 +331,21 @@
             <de><![CDATA[Artikelübersichtsrechnung]]></de>
             <en><![CDATA[Article overview calculation]]></en>
         </locale>
+        
+        <!-- Controls -->
+        <locale name="controls.OutputDialog.labelEntityId">
+            <de><![CDATA[Beleg-Nr.]]></de>
+            <en><![CDATA[Document no.]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.labelTemplate">
+            <de><![CDATA[Vorlage (Template)]]></de>
+            <en><![CDATA[Template]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.labelOutputType">
+            <de><![CDATA[Ausgabe]]></de>
+            <en><![CDATA[Output]]></en>
+        </locale>
+        
     </groups>
 
 </locales>

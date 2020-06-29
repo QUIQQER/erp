@@ -19,16 +19,16 @@ interface OutputProviderInterface
      *
      * @return string
      */
-    public static function getOutputType();
+    public static function getEntityType();
 
     /**
      * Fill the OutputTemplate with appropriate entity data
      *
      * @param string|int $entityId
      * @param OutputTemplate $Template
-     * @return void
+     * @return array
      */
-    public static function parseTemplate($entityId, OutputTemplate $Template);
+    public static function getTemplateData($entityId, OutputTemplate $Template);
 
     /**
      * Get e-mail address of the document recipient
