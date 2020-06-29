@@ -21,7 +21,6 @@ QUI::$Ajax->registerFunction(
                 $entity['type'],
                 $template['provider'],
                 $template['id']
-
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
