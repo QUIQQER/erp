@@ -36,10 +36,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
         options: {
             entityId  : false,  // Clean entity ID WITHOUT prefix and suffix
-            entityType: false,  // Entity type (e.g. "Invoice", "InvoiceTemporary" etc.)
-            provider  : false,  // Output provider package
-
-            //downloadUrl: false
+            entityType: false,  // Entity type (e.g. "Invoice")
 
             maxHeight: 800,
             maxWidth : 1400
@@ -249,7 +246,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     },
                     events : {
                         onLoad: function (Box) {
-                            Box.getElm().addClass('quiqqer-erp-outputDialog-invoice-preview');
+                            Box.getElm().addClass('quiqqer-erp-outputDialog-preview');
                         }
                     }
                 }).inject(PreviewContent);
@@ -301,10 +298,11 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 self.Loader.show();
 
                 new Element('iframe', {
-                    src   : URL_OPT_DIR + 'quiqqer/erp/bin/backend/printInvoice.php?' + Object.toQueryString({
-                        invoiceId: invoiceId,
-                        oid      : self.getId(),
-                        template : Form.elements.template.value
+                    src   : URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/print.php?' + Object.toQueryString({
+                        id : self.getAttribute('entityId'),
+                        t  : self.getAttribute('entityType'),
+                        oid: self.getId(),
+                        tpl: Form.elements.template.value
                     }),
                     id    : id,
                     styles: {
@@ -353,10 +351,11 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     Form    = Content.getElement('form');
 
                 new Element('iframe', {
-                    src   : URL_OPT_DIR + 'quiqqer/erp/bin/backend/downloadInvoice.php?' + Object.toQueryString({
-                        invoiceId: invoiceId,
-                        oid      : self.getId(),
-                        template : Form.elements.template.value
+                    src   : URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/download.php?' + Object.toQueryString({
+                        id : self.getAttribute('entityId'),
+                        t  : self.getAttribute('entityType'),
+                        oid: self.getId(),
+                        tpl: Form.elements.template.value
                     }),
                     id    : id,
                     styles: {
@@ -394,11 +393,12 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     Form    = Content.getElement('form');
 
                 new Element('iframe', {
-                    src   : URL_OPT_DIR + 'quiqqer/erp/bin/backend/sendInvoice.php?' + Object.toQueryString({
-                        invoiceId: invoiceId,
+                    src   : URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/send.php?' + Object.toQueryString({
+                        id       : self.getAttribute('entityId'),
+                        t        : self.getAttribute('entityType'),
                         oid      : self.getId(),
-                        recipient: recipient,
-                        template : Form.elements.template.value
+                        tpl      : Form.elements.template.value,
+                        recipient: recipient
                     }),
                     id    : id,
                     styles: {
@@ -492,7 +492,6 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             return new Promise(function (resolve, reject) {
                 QUIAjax.get('package_quiqqer_erp_ajax_output_getEntityData', resolve, {
                     'package': 'quiqqer/erp',
-                    provider : self.getAttribute('provider'),
                     entityId : self.getAttribute('entityId'),
                     onError  : reject
                 })
@@ -528,9 +527,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 QUIAjax.get('package_quiqqer_erp_ajax_output_getPreview', resolve, {
                     'package': 'quiqqer/erp',
                     entity   : JSON.encode({
-                        provider: self.getAttribute('provider'),
-                        id      : self.getAttribute('entityId'),
-                        type    : self.getAttribute('entityType')
+                        id  : self.getAttribute('entityId'),
+                        type: self.getAttribute('entityType')
                     }),
                     template : JSON.encode(self.$Template),
                     onError  : reject

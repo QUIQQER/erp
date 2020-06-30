@@ -3,6 +3,8 @@
 namespace QUI\ERP\Output;
 
 use QUI\HtmlToPdf\Document;
+use QUI\Interfaces\Users\User;
+use QUI\Locale;
 
 /**
  * Interface OutputProviderInterface
@@ -22,13 +24,37 @@ interface OutputProviderInterface
     public static function getEntityType();
 
     /**
+     * Get download filename (without file extension)
+     *
+     * @param string|int $entityId
+     * @return string
+     */
+    public static function getDownloadFileName($entityId);
+
+    /**
+     * Get output Locale by entity
+     *
+     * @param string|int $entityId
+     * @return Locale
+     */
+    public static function getLocale($entityId);
+
+    /**
      * Fill the OutputTemplate with appropriate entity data
      *
      * @param string|int $entityId
-     * @param OutputTemplate $Template
      * @return array
      */
-    public static function getTemplateData($entityId, OutputTemplate $Template);
+    public static function getTemplateData($entityId);
+
+    /**
+     * Checks if $User has permission to download the document of $entityId
+     *
+     * @param string|int $entityId
+     * @param User $User
+     * @return bool
+     */
+    public static function hasDownloadPermission($entityId, User $User);
 
     /**
      * Get e-mail address of the document recipient
@@ -37,4 +63,21 @@ interface OutputProviderInterface
      * @return string|false - E-Mail address or false if no e-mail address available
      */
     public static function getEmailAddress($entityId);
+
+    /**
+     * Get e-mail subject when document is sent via mail
+     *
+     * @param string|int $entityId
+     * @return string
+     */
+    public static function getMailSubject($entityId);
+
+    /**
+     * Get e-mail body when document is sent via mail
+     *
+     * @param string|int $entityId
+     * @param string $outputHtml
+     * @return string
+     */
+    public static function getMailBody($entityId, string $outputHtml);
 }

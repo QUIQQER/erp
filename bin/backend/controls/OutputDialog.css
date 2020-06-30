@@ -1,22 +1,27 @@
-.quiqqer-invoice-printDialog {
+.quiqqer-erp-outputDialog {
     padding: 10px !important;
+    display: flex;
 }
 
-.quiqqer-invoice-printDialog form {
-    float: left;
+.quiqqer-erp-outputDialog .field-container-item {
+    width: 150px !important;
+}
+
+.quiqqer-erp-outputDialog-options {
+    padding: 5px;
     width: 400px;
 }
 
-.quiqqer-invoice-printDialog form table {
+.quiqqer-erp-outputDialog form table {
     border: none;
     padding: 0;
 }
 
-.quiqqer-invoice-printDialog select {
+.quiqqer-erp-outputDialog select {
     width: 100%;
 }
 
-.quiqqer-invoice-printDialog-preview {
+.quiqqer-erp-outputDialog-preview {
     background-color: #efefef;
     float: left;
     height: 100%;
@@ -25,7 +30,7 @@
     width: calc(100% - 400px);
 }
 
-.quiqqer-invoice-printDialog-invoice-preview {
+.quiqqer-erp-outputDialog-preview {
     background: #fff;
     box-shadow: 0 0 0 0.75pt #d1d1d1, 0 0 3pt 0.75pt #ccc;
     border: none;

@@ -3,7 +3,10 @@
 define('QUIQQER_SYSTEM', true);
 define('QUIQQER_AJAX', true);
 
-require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/header.php';
+require_once dirname(__FILE__, 6).'/header.php';
+
+use QUI\ERP\Output\Output;
+use QUI\Utils\Security\Orthos;
 
 $User = QUI::getUserBySession();
 
@@ -11,27 +14,19 @@ if (!$User->canUseBackend()) {
     exit;
 }
 
-$Request   = QUI::getRequest();
-$Invoices  = QUI\ERP\Accounting\Invoice\Handler::getInstance();
-$invoiceId = $Request->query->get('invoiceId');
+$Request    = QUI::getRequest();
+$entityId   = Orthos::clear($Request->query->get('id'));
+$entityType = Orthos::clear($Request->query->get('t'));
+$template   = Orthos::clear($Request->query->get('tpl'));
+$quiId      = Orthos::clear($Request->query->get('oid'));
 
-try {
-    $Invoice = QUI\ERP\Accounting\Invoice\Utils\Invoice::getInvoiceByString($invoiceId);
-} catch (QUI\Exception $Exception) {
-    QUI\System\Log::writeException($Exception);
-    exit;
-}
-
-$streamFile = URL_OPT_DIR.'quiqqer/invoice/bin/backend/printStreamInvoice.php?invoiceId='.$Invoice->getId();
-
-if (isset($_REQUEST['template'])) {
-    try {
-        QUI::getPackage($_REQUEST['template']);
-        $streamFile .= '&template='.$_REQUEST['template'];
-    } catch (QUI\Exception $Exception) {
-        QUI\System\Log::writeDebugException($Exception);
-    }
-}
+$streamFile = URL_OPT_DIR.'quiqqer/erp/bin/output/backend/printStream.php?';
+$streamFile .= \http_build_query([
+    'id'  => $entityId,
+    't'   => $entityType,
+    'tpl' => $template,
+    'oid' => $quiId
+]);
 
 echo '
 <html>

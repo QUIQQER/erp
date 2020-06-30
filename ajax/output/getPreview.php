@@ -16,10 +16,10 @@ QUI::$Ajax->registerFunction(
 
         try {
             return ERPOutput::getDocumentHtml(
-                $entity['provider'],
                 $entity['id'],
                 $entity['type'],
-                $template['provider'],
+                null,
+                ERPOutput::getOutputTemplateProviderByPackage($template['provider']),
                 $template['id']
             );
         } catch (\Exception $Exception) {

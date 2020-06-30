@@ -304,6 +304,16 @@
             We're sorry, but something went wrong. Please contact an administrator.
             ]]></en>
         </locale>
+
+        <locale name="Output.send.success">
+            <de><![CDATA[E-Mail erfolgreich versandt.]]></de>
+            <en><![CDATA[E-Mail sent successfully.]]></en>
+        </locale>
+        <locale name="exception.Output.sendPdfViaMail.missing_recipient">
+            <de><![CDATA[Das Dokument kann nicht per E-Mail versendet werden, da keine gültige Empfänger E-Mail-Adresse angegeben wurde.]]></de>
+            <en><![CDATA[The document cannot be sent by e-mail because no valid recipient e-mail address has been specified.]]></en>
+        </locale>
+
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">
@@ -344,6 +354,34 @@
         <locale name="controls.OutputDialog.labelOutputType">
             <de><![CDATA[Ausgabe]]></de>
             <en><![CDATA[Output]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.print">
+            <de><![CDATA[Drucken]]></de>
+            <en><![CDATA[Print]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.pdf">
+            <de><![CDATA[Als PDF speichern]]></de>
+            <en><![CDATA[Save as PDF]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.email">
+            <de><![CDATA[Per E-Mail versenden]]></de>
+            <en><![CDATA[Send via e-mail]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.print.btn">
+            <de><![CDATA[Drucken]]></de>
+            <en><![CDATA[Print]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.pdf.btn">
+            <de><![CDATA[Herunterladen]]></de>
+            <en><![CDATA[Download]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.email.btn">
+            <de><![CDATA[Senden]]></de>
+            <en><![CDATA[Send]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.title">
+            <de><![CDATA[Beleg Druck / PDF / Versand]]></de>
+            <en><![CDATA[Document print / PDF / send]]></en>
         </locale>
         
     </groups>

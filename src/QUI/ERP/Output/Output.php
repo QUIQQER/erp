@@ -4,6 +4,7 @@ namespace QUI\ERP\Output;
 
 use QUI;
 use QUI\ERP\Accounting\Invoice\Settings;
+use QUI\ERP\Accounting\Invoice\Utils\Invoice as InvoiceUtils;
 
 /**
  * Class Output
@@ -16,51 +17,35 @@ class Output
      * Get the ERP Output Provider for a specific package
      *
      * @param string $package
-     * @return OutputProviderInterface|false - OutputProvider class (static) or false if
+     * @return OutputProviderInterface|false - OutputProvider class (static) or false if none found
      */
     public static function getOutputProviderByPackage(string $package)
     {
-//        $cache = 'quiqqer/backendsearch/providers';
-//
-//        try {
-//            return QUI\Cache\Manager::get($cache);
-//        } catch (QUI\Cache\Exception $Exception) {
-//        }
-
-        $packages = QUI::getPackageManager()->getInstalled();
-        $provider = [];
-
-        foreach ($packages as $installedPackage) {
-            try {
-                $Package = QUI::getPackage($installedPackage['name']);
-
-                if (!$Package->isQuiqqerPackage()) {
-                    continue;
-                }
-
-                if ($Package->getName() !== $package) {
-                    continue;
-                }
-
-                $packageProvider = $Package->getProvider();
-
-                if (empty($packageProvider['erpOutput'])) {
-                    continue;
-                }
-
-                $class = $packageProvider['erpOutput'][0];
-
-                if (!\class_exists($class)) {
-                    continue;
-                }
-
-                return $class;
-            } catch (QUI\Exception $Exception) {
-                QUI\System\Log::writeException($Exception);
+        foreach (self::getAllOutputProviders() as $outputProvider) {
+            if ($outputProvider['package'] === $package) {
+                return $outputProvider['class'];
             }
         }
 
-//        QUI\Cache\Manager::set($cache, $provider);
+        return false;
+    }
+
+    /**
+     * Get the OutputProvider for a specific entity type
+     *
+     * @param string $entityType
+     * @return OutputProviderInterface|false - OutputProvider class (static) or false if none found
+     */
+    public static function getOutputProviderByEntityType(string $entityType)
+    {
+        foreach (self::getAllOutputProviders() as $outputProvider) {
+            /** @var OutputProviderInterface $class */
+            $class = $outputProvider['class'];
+
+            if ($class::getEntityType() === $entityType) {
+                return $class;
+            }
+        }
 
         return false;
     }
@@ -68,40 +53,171 @@ class Output
     /**
      * Get HTML output for a specific document
      *
-     * @param string $entityProvider
-     * @param string $entityId
+     * @param string|int $entityId
      * @param string $entityType
-     * @param string $templateProvider (optional)
+     * @param OutputProviderInterface $OutputProvider (optional)
+     * @param OutputTemplateProviderInterface $TemplateProvider (optional)
      * @param string $template (optional)
      *
      * @return string
+     *
+     * @throws QUI\Exception
      */
     public static function getDocumentHtml(
-        string $entityProvider,
-        string $entityId,
+        $entityId,
         string $entityType,
-        string $templateProvider = null,
+        $OutputProvider = null,
+        $TemplateProvider = null,
         string $template = null
     ) {
-        if (empty($templateProvider)) {
-            $OutputTemplateProvider = self::getDefaultOutputTemplateProviderForEntityType($entityType);
-        } else {
-            $OutputTemplateProvider = self::getOutputTemplateProviderByPackage($templateProvider);
+        if (empty($OutputProvider)) {
+            $OutputProvider = self::getOutputProviderByEntityType($entityType);
         }
 
-        $OutputProvider = self::getOutputProviderByPackage($entityProvider);
+        if (empty($TemplateProvider)) {
+            $TemplateProvider = self::getDefaultOutputTemplateProviderForEntityType($entityType);
+        }
 
         $OutputTemplate = new OutputTemplate(
-            $OutputTemplateProvider,
+            $TemplateProvider,
+            $OutputProvider,
+            $entityId,
             $entityType,
             $template
         );
 
-        $Engine       = $OutputTemplate->getEngine();
-        $templateData = $OutputProvider::getTemplateData($entityId, $OutputTemplate);
-        $Engine->assign($templateData);
+        return $OutputTemplate->getHTML();
+    }
 
-        return $OutputTemplate->render();
+    /**
+     * Get HTML output for a specific document
+     *
+     * @param string|int $entityId
+     * @param string $entityType
+     * @param OutputProviderInterface $OutputProvider (optional)
+     * @param OutputTemplateProviderInterface $TemplateProvider (optional)
+     * @param string $template (optional)
+     *
+     * @return QUI\HtmlToPdf\Document
+     *
+     * @throws QUI\Exception
+     */
+    public static function getDocumentPdf(
+        $entityId,
+        string $entityType,
+        $OutputProvider = null,
+        $TemplateProvider = null,
+        string $template = null
+    ) {
+        if (empty($OutputProvider)) {
+            $OutputProvider = self::getOutputProviderByEntityType($entityType);
+        }
+
+        if (empty($TemplateProvider)) {
+            $TemplateProvider = self::getDefaultOutputTemplateProviderForEntityType($entityType);
+        }
+
+        $OutputTemplate = new OutputTemplate(
+            $TemplateProvider,
+            $OutputProvider,
+            $entityId,
+            $entityType,
+            $template
+        );
+
+        return $OutputTemplate->getPDFDocument();
+    }
+
+    /**
+     * Get HTML output for a specific document
+     *
+     * @param string|int $entityId
+     * @param string $entityType
+     *
+     * @return string
+     */
+    public static function getDocumentPdfDownloadUrl(
+        $entityId,
+        string $entityType
+    ) {
+        $url = URL_OPT_DIR.'quiqqer/erp/bin/output/frontend/download.php?';
+        $url .= \http_build_query([
+            'id' => $entityId,
+            't'  => $entityType
+        ]);
+
+        return $url;
+    }
+
+    /**
+     * Get document as e-mail with PDF attachment
+     *
+     * @param string|int $entityId
+     * @param string $entityType
+     * @param OutputProviderInterface $OutputProvider (optional)
+     * @param OutputTemplateProviderInterface $TemplateProvider (optional)
+     * @param string $template (optional)
+     * @param string $recipientEmail (optional)
+     *
+     * @return void
+     *
+     * @throws QUI\Exception
+     */
+    public static function sendPdfViaMail(
+        $entityId,
+        string $entityType,
+        $OutputProvider = null,
+        $TemplateProvider = null,
+        string $template = null,
+        string $recipientEmail = null
+    ) {
+        if (empty($OutputProvider)) {
+            $OutputProvider = self::getOutputProviderByEntityType($entityType);
+        }
+
+        if (empty($TemplateProvider)) {
+            $TemplateProvider = self::getDefaultOutputTemplateProviderForEntityType($entityType);
+        }
+
+        $OutputTemplate = new OutputTemplate(
+            $TemplateProvider,
+            $OutputProvider,
+            $entityId,
+            $entityType,
+            $template
+        );
+
+        $outputHtml = $OutputTemplate->getHTML();
+        $pdfFile    = $OutputTemplate->getPDFDocument()->createPDF();
+
+        if (empty($recipientEmail) || !QUI\Utils\Security\Orthos::checkMailSyntax($recipientEmail)) {
+            $recipientEmail = $OutputProvider::getEmailAddress($entityId);
+        }
+
+        if (empty($recipientEmail)) {
+            throw new QUI\ERP\Exception([
+                'quiqqer/erp',
+                'exception.Output.sendPdfViaMail.missing_recipient'
+            ]);
+        }
+
+// mail send
+        $Mailer = new QUI\Mail\Mailer();
+
+        $Mailer->addRecipient($recipientEmail);
+        $Mailer->addAttachment($pdfFile);
+
+        $Mailer->setSubject($OutputProvider::getMailSubject($entityId));
+        $Mailer->setBody($OutputProvider::getMailBody($entityId, $outputHtml));
+
+        $Mailer->send();
+
+// @todo fire event
+
+// Delete PDF file after send
+        if (\file_exists($pdfFile)) {
+            \unlink($pdfFile);
+        }
     }
 
     /**
@@ -111,8 +227,10 @@ class Output
      * @return OutputTemplateProviderInterface|false - OutputProvider class (static) or false if
      * @throws QUI\Exception
      */
-    public static function getOutputTemplateProviderByPackage(string $package)
-    {
+    public
+    static function getOutputTemplateProviderByPackage(
+        string $package
+    ) {
         foreach (self::getAllOutputTemplateProviders() as $provider) {
             if ($provider['package'] === $package) {
                 return $provider['class'];
@@ -129,8 +247,10 @@ class Output
      * @return array
      * @throws QUI\Exception
      */
-    public static function getTemplates(string $entityType)
-    {
+    public
+    static function getTemplates(
+        string $entityType
+    ) {
         $templates = [];
 
         foreach (self::getAllOutputTemplateProviders() as $provider) {
@@ -155,8 +275,10 @@ class Output
      * @param string $entityType
      * @return OutputTemplateProviderInterface|false
      */
-    public static function getDefaultOutputTemplateProviderForEntityType(string $entityType)
-    {
+    public
+    static function getDefaultOutputTemplateProviderForEntityType(
+        string $entityType
+    ) {
         foreach (self::getAllOutputTemplateProviders() as $provider) {
             /** @var OutputTemplateProviderInterface $class */
             $class             = $provider['class'];
@@ -171,11 +293,56 @@ class Output
     }
 
     /**
+     * Get all available ERP Output provider classes
+     *
+     * @return array - Provider classes
+     */
+    public
+    static function getAllOutputProviders()
+    {
+        $packages        = QUI::getPackageManager()->getInstalled();
+        $providerClasses = [];
+
+        foreach ($packages as $installedPackage) {
+            try {
+                $Package = QUI::getPackage($installedPackage['name']);
+
+                if (!$Package->isQuiqqerPackage()) {
+                    continue;
+                }
+
+                $packageProvider = $Package->getProvider();
+
+                if (empty($packageProvider['erpOutput'])) {
+                    continue;
+                }
+
+                /** @var OutputProviderInterface $class */
+                $class = $packageProvider['erpOutput'][0];
+
+                if (!\class_exists($class)) {
+                    continue;
+                }
+
+                $providerClasses[] = [
+                    'class'   => $class,
+                    'package' => $installedPackage['name']
+                ];
+            } catch (QUI\Exception $Exception) {
+                QUI\System\Log::writeException($Exception);
+            }
+        }
+
+        return $providerClasses;
+    }
+
+    /**
      * Get all available ERP Output Template provider classes
      *
      * @return array - Provider classes
      */
-    public static function getAllOutputTemplateProviders()
+    public
+    static function getAllOutputTemplateProviders()
     {
         $packages        = QUI::getPackageManager()->getInstalled();
         $providerClasses = [];
