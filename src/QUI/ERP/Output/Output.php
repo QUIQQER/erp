@@ -227,10 +227,8 @@ class Output
      * @return OutputTemplateProviderInterface|false - OutputProvider class (static) or false if
      * @throws QUI\Exception
      */
-    public
-    static function getOutputTemplateProviderByPackage(
-        string $package
-    ) {
+    public static function getOutputTemplateProviderByPackage(string $package)
+    {
         foreach (self::getAllOutputTemplateProviders() as $provider) {
             if ($provider['package'] === $package) {
                 return $provider['class'];
@@ -247,10 +245,8 @@ class Output
      * @return array
      * @throws QUI\Exception
      */
-    public
-    static function getTemplates(
-        string $entityType
-    ) {
+    public static function getTemplates(string $entityType)
+    {
         $templates = [];
 
         foreach (self::getAllOutputTemplateProviders() as $provider) {
@@ -275,10 +271,8 @@ class Output
      * @param string $entityType
      * @return OutputTemplateProviderInterface|false
      */
-    public
-    static function getDefaultOutputTemplateProviderForEntityType(
-        string $entityType
-    ) {
+    public static function getDefaultOutputTemplateProviderForEntityType(string $entityType)
+    {
         foreach (self::getAllOutputTemplateProviders() as $provider) {
             /** @var OutputTemplateProviderInterface $class */
             $class             = $provider['class'];
@@ -297,8 +291,7 @@ class Output
      *
      * @return array - Provider classes
      */
-    public
-    static function getAllOutputProviders()
+    public static function getAllOutputProviders()
     {
         $packages        = QUI::getPackageManager()->getInstalled();
         $providerClasses = [];
@@ -341,8 +334,7 @@ class Output
      *
      * @return array - Provider classes
      */
-    public
-    static function getAllOutputTemplateProviders()
+    public static function getAllOutputTemplateProviders()
     {
         $packages        = QUI::getPackageManager()->getInstalled();
         $providerClasses = [];
