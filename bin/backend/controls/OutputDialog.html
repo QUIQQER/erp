@@ -47,6 +47,20 @@
                     </label>
                 </td>
             </tr>
+            {{^showMarkAsSentOption}}
+            <tr style="display: none">
+                <td>
+                    <label class="field-container">
+                    <span class="field-container-item" title="{{labelMarkAsSent}}">
+                        {{labelMarkAsSent}}
+                    </span>
+                        <input type="checkbox"
+                               name="mark_as_sent"
+                               class="field-container-field"/>
+                    </label>
+                </td>
+            </tr>
+            {{/showMarkAsSentOption}}
             </tbody>
         </table>
     </form>

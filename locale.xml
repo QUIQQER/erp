@@ -355,6 +355,10 @@
             <de><![CDATA[Ausgabe]]></de>
             <en><![CDATA[Output]]></en>
         </locale>
+        <locale name="controls.OutputDialog.labelMarkAsSent">
+            <de><![CDATA[Als versandt markieren]]></de>
+            <en><![CDATA[Mark as sent]]></en>
+        </locale>
         <locale name="controls.OutputDialog.data.output.print">
             <de><![CDATA[Drucken]]></de>
             <en><![CDATA[Print]]></en>
@@ -382,6 +386,14 @@
         <locale name="controls.OutputDialog.title">
             <de><![CDATA[Beleg Druck / PDF / Versand]]></de>
             <en><![CDATA[Document print / PDF / send]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.no_templates_found">
+            <de><![CDATA[Keine Vorlagen gefunden]]></de>
+            <en><![CDATA[No templates found]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.no_preview">
+            <de><![CDATA[Die Vorschau ist aktuell nicht verfügbar, da keine Vorlage ausgewählt oder gefunden wurde.]]></de>
+            <en><![CDATA[The preview is currently not available because no template was selected or found.]]></en>
         </locale>
         
     </groups>

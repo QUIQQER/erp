@@ -1,6 +1,8 @@
 /**
  * @module package/quiqqer/erp/bin/backend/controls/OutputDialog
  * @author www.pcsg.de (Patrick Müller)
+ *
+ * @event onOuput [FormData, this] - Fires if the user submits the popup with a chosen output format
  */
 define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
@@ -8,6 +10,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
     'qui/controls/windows/Confirm',
     'qui/controls/buttons/Select',
     'qui/controls/elements/Sandbox',
+
+    'qui/utils/Form',
 
     'Ajax',
     'Locale',
@@ -17,7 +21,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
     'text!package/quiqqer/erp/bin/backend/controls/OutputDialog.html',
     'css!package/quiqqer/erp/bin/backend/controls/OutputDialog.css'
 
-], function (QUI, QUIConfirm, QUISelect, QUISandbox, QUIAjax, QUILocale, Mustache, Users, template) {
+], function (QUI, QUIConfirm, QUISelect, QUISandbox, QUIFormUtils, QUIAjax, QUILocale, Mustache, Users, template) {
     "use strict";
 
     var lg = 'quiqqer/erp';
@@ -38,6 +42,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             entityId  : false,  // Clean entity ID WITHOUT prefix and suffix
             entityType: false,  // Entity type (e.g. "Invoice")
 
+            showMarkAsSentOption: false,    // show checkbox for "Mark as sent"
+
             maxHeight: 800,
             maxWidth : 1400
         },
@@ -57,7 +63,6 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
             this.$Output      = null;
             this.$Preview     = null;
-            this.$invoiceData = null;
             this.$cutomerMail = null;
             this.$Template    = null;
 
@@ -112,18 +117,20 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
             Content.set({
                 html: Mustache.render(template, {
-                    entityId       : self.getAttribute('entityId'),
-                    labelEntityId  : QUILocale.get(lg, 'controls.OutputDialog.labelEntityId'),
-                    labelTemplate  : QUILocale.get(lg, 'controls.OutputDialog.labelTemplate'),
-                    labelOutputType: QUILocale.get(lg, 'controls.OutputDialog.labelOutputType'),
-                    labelEmail     : QUILocale.get('quiqqer/quiqqer', 'recipient')
+                    entityId            : self.getAttribute('entityId'),
+                    labelEntityId       : QUILocale.get(lg, 'controls.OutputDialog.labelEntityId'),
+                    labelTemplate       : QUILocale.get(lg, 'controls.OutputDialog.labelTemplate'),
+                    labelOutputType     : QUILocale.get(lg, 'controls.OutputDialog.labelOutputType'),
+                    labelEmail          : QUILocale.get('quiqqer/quiqqer', 'recipient'),
+                    showMarkAsSentOption: self.getAttribute('showMarkAsSentOption') ? true : false,
+                    labelMarkAsSent     : QUILocale.get(lg, 'controls.OutputDialog.labelMarkAsSent'),
                 })
             });
 
             Content.addClass('quiqqer-erp-outputDialog');
 
             this.$Output = new QUISelect({
-                localeStorage: 'quiqqer-invoice-print-dialog',
+                localeStorage: 'quiqqer-erp-output-dialog',
                 name         : 'output',
                 styles       : {
                     border: 'none',
@@ -133,7 +140,6 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     onChange: self.$onOutputChange
                 }
             });
-
 
             this.$Output.appendChild(
                 QUILocale.get(lg, 'controls.OutputDialog.data.output.print'),
@@ -155,27 +161,6 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
             this.$Output.inject(Content.getElement('.field-output'));
 
-            //if (typeof self.$invoiceData.customer_data !== 'undefined') {
-            //    var data = JSON.decode(self.$invoiceData.customer_data);
-            //
-            //    if (data && typeof data.email !== 'undefined') {
-            //        self.$cutomerMail = data.email;
-            //    }
-            //
-            //    if (data && (self.$cutomerMail === null || self.$cutomerMail === '')) {
-            //        return new Promise(function (resolve) {
-            //            // get customer id
-            //            Users.get(data.id).load().then(function (User) {
-            //                self.$cutomerMail = User.getAttribute('email');
-            //                resolve();
-            //            }).catch(function (Exception) {
-            //                //onError(Exception);
-            //                resolve();
-            //            });
-            //        });
-            //    }
-            //}
-
             Promise.all([
                 this.$getTemplates(),
                 this.$getEntityData()
@@ -185,6 +170,28 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
                 var Form     = Content.getElement('form'),
                     Selected = false;
+
+                if (!templates.length) {
+                    new Element('option', {
+                        value: '#',
+                        html : QUILocale.get(lg, 'controls.OutputDialog.no_templates_found'),
+                    }).inject(Form.elements.template);
+
+                    Form.elements.template.disabled = true;
+
+                    var PreviewContent = self.getContent().getElement('.quiqqer-erp-outputDialog-preview');
+
+                    new Element('div', {
+                        'class': 'quiqqer-erp-outputDialog-nopreview',
+                        html   : QUILocale.get(lg, 'controls.OutputDialog.no_preview')
+                    }).inject(PreviewContent);
+
+                    self.$Output.disable();
+                    self.getButton('submit').disable();
+
+                    self.Loader.hide();
+                    return;
+                }
 
                 for (var i = 0, len = templates.length; i < len; i++) {
                     new Element('option', {
@@ -277,21 +284,28 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             }
 
             Run.then(function () {
+                var Form = self.getContent().getElement('form');
+
+                self.fireEvent('output', [
+                    QUIFormUtils.getFormData(Form),
+                    self
+                ]);
+
                 self.Loader.hide();
             });
         },
 
         /**
-         * Print the invoice
+         * Print the document
          *
          * @return {Promise}
          */
         print: function () {
-            var self      = this,
-                invoiceId = this.getAttribute('invoiceId');
+            var self     = this,
+                entityId = this.getAttribute('entityId');
 
             return new Promise(function (resolve) {
-                var id      = 'print-invoice-' + invoiceId,
+                var id      = 'print-document-' + entityId,
                     Content = self.getContent(),
                     Form    = Content.getElement('form');
 
@@ -299,7 +313,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
                 new Element('iframe', {
                     src   : URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/print.php?' + Object.toQueryString({
-                        id : self.getAttribute('entityId'),
+                        id : entityId,
                         t  : self.getAttribute('entityType'),
                         oid: self.getId(),
                         tpl: Form.elements.template.value
@@ -315,7 +329,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 }).inject(document.body);
 
                 self.addEvent('onPrintFinish', function (self, pId) {
-                    if (pId === invoiceId) {
+                    if (pId === entityId) {
                         resolve();
                     }
                 });
@@ -331,28 +345,28 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             this.fireEvent('printFinish', [this, id]);
 
             (function () {
-                document.getElements('#print-invoice-' + id).destroy();
+                document.getElements('#print-document-' + id).destroy();
                 this.close();
             }).delay(1000, this);
         },
 
         /**
-         * Export the invoice as PDF
+         * Export the document as PDF
          *
          * @return {Promise}
          */
         saveAsPdf: function () {
-            var self      = this,
-                invoiceId = this.getAttribute('invoiceId');
+            var self     = this,
+                entityId = this.getAttribute('entityId');
 
             return new Promise(function (resolve) {
-                var id      = 'download-invoice-' + invoiceId,
+                var id      = 'download-document-' + entityId,
                     Content = self.getContent(),
                     Form    = Content.getElement('form');
 
                 new Element('iframe', {
                     src   : URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/download.php?' + Object.toQueryString({
-                        id : self.getAttribute('entityId'),
+                        id : entityId,
                         t  : self.getAttribute('entityType'),
                         oid: self.getId(),
                         tpl: Form.elements.template.value
@@ -378,23 +392,23 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
         },
 
         /**
-         * Send the invoice to an E-Mail
+         * Send the document via e-mail
          *
          * @return {Promise}
          */
         sendAsEmail: function () {
             var self      = this,
-                invoiceId = this.getAttribute('invoiceId'),
+                entityId  = this.getAttribute('entityId'),
                 recipient = this.getElm().getElement('[name="recipient"]').value;
 
             return new Promise(function (resolve) {
-                var id      = 'mail-invoice-' + invoiceId,
+                var id      = 'mail-document-' + entityId,
                     Content = self.getContent(),
                     Form    = Content.getElement('form');
 
                 new Element('iframe', {
                     src   : URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/send.php?' + Object.toQueryString({
-                        id       : self.getAttribute('entityId'),
+                        id       : entityId,
                         t        : self.getAttribute('entityType'),
                         oid      : self.getId(),
                         tpl      : Form.elements.template.value,
