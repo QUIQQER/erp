@@ -21,7 +21,7 @@
 <label class="quiqqer-order-customerData-edit-company">
     <span class="quiqqer-frontendUsers-userdata-label">
         {locale group="quiqqer/erp" var="control.profile.CustomerData.company"}
-        {if $settings.company.required}{assign var=r value="required"}{/if}
+        {if isset($settings) && $settings.company.required}{assign var=r value="required"}{/if}
     </span>
     <input type="text"
            name="company"
