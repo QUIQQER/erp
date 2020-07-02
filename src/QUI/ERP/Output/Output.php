@@ -74,8 +74,16 @@ class Output
             $OutputProvider = self::getOutputProviderByEntityType($entityType);
         }
 
+        if (empty($OutputProvider)) {
+            throw new QUI\Exception('No output provider found for entity type "'.$entityType.'"');
+        }
+
         if (empty($TemplateProvider)) {
             $TemplateProvider = self::getDefaultOutputTemplateProviderForEntityType($entityType);
+        }
+
+        if (empty($TemplateProvider)) {
+            throw new QUI\Exception('No default output template provider found for entity type "'.$entityType.'"');
         }
 
         $OutputTemplate = new OutputTemplate(

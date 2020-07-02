@@ -47,17 +47,20 @@
                     </label>
                 </td>
             </tr>
-            {{^showMarkAsSentOption}}
-            <tr style="display: none">
+            {{#showMarkAsSentOption}}
+            <tr>
                 <td>
                     <label class="field-container">
                     <span class="field-container-item" title="{{labelMarkAsSent}}">
                         {{labelMarkAsSent}}
                     </span>
-                        <input type="checkbox"
-                               name="mark_as_sent"
-                               class="field-container-field"/>
+                        <div class="field-container-field">
+                            <input type="checkbox" name="mark_as_sent"/>
+                        </div>
                     </label>
+                    <div class="field-container-item-desc">
+                        {{{descMarkAsSent}}}
+                    </div>
                 </td>
             </tr>
             {{/showMarkAsSentOption}}
@@ -65,4 +68,16 @@
         </table>
     </form>
 </div>
+{{#mailEditor}}
+<div class="quiqqer-erp-outputDialog-preview-mailEditor">
+    <label>
+        <span>{{labelMailSubject}}</span>
+        <input class="quiqqer-erp-outputDialog-preview-mailEditor-subject" type="text"/>
+    </label>
+    <label>
+        <span>{{labelMailContent}}</span>
+        <textarea class="quiqqer-erp-outputDialog-preview-mailEditor-content"></textarea>
+    </label>
+</div>
+{{/mailEditor}}
 <div class="quiqqer-erp-outputDialog-preview"></div>

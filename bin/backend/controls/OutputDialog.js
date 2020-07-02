@@ -43,6 +43,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             entityType: false,  // Entity type (e.g. "Invoice")
 
             showMarkAsSentOption: false,    // show checkbox for "Mark as sent"
+            mailEditor          : false,    // shows editable subject and body for mail output
 
             maxHeight: 800,
             maxWidth : 1400
@@ -123,7 +124,9 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     labelOutputType     : QUILocale.get(lg, 'controls.OutputDialog.labelOutputType'),
                     labelEmail          : QUILocale.get('quiqqer/quiqqer', 'recipient'),
                     showMarkAsSentOption: self.getAttribute('showMarkAsSentOption') ? true : false,
+                    mailEditor          : self.getAttribute('mailEditor') ? true : false,
                     labelMarkAsSent     : QUILocale.get(lg, 'controls.OutputDialog.labelMarkAsSent'),
+                    descMarkAsSent      : QUILocale.get(lg, 'controls.OutputDialog.descMarkAsSent')
                 })
             });
 
@@ -241,7 +244,21 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
             this.Loader.show();
 
+            var showPreviewError = function () {
+                PreviewContent.set('html', '');
+
+                new Element('div', {
+                    'class': 'quiqqer-erp-outputDialog-nopreview',
+                    html   : QUILocale.get(lg, 'controls.OutputDialog.preview_error')
+                }).inject(PreviewContent);
+            };
+
             this.$getPreview().then(function (previewHtml) {
+                if (!previewHtml) {
+                    showPreviewError();
+                    return;
+                }
+
                 PreviewContent.set('html', '');
 
                 new QUISandbox({
@@ -257,6 +274,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                         }
                     }
                 }).inject(PreviewContent);
+            }).catch(function () {
+                showPreviewError();
             });
         },
 
