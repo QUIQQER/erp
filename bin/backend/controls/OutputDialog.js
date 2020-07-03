@@ -43,7 +43,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             entityType: false,  // Entity type (e.g. "Invoice")
 
             showMarkAsSentOption: false,    // show checkbox for "Mark as sent"
-            mailEditor          : false,    // shows editable subject and body for mail output
+            mailEditor          : true,    // shows editable subject and body for mail output @todo default false
 
             maxHeight: 800,
             maxWidth : 1400
@@ -66,6 +66,9 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             this.$Preview     = null;
             this.$cutomerMail = null;
             this.$Template    = null;
+
+            this.$MailSubject = null;
+            this.$MailContent = null;
 
             this.addEvents({
                 onOpen     : this.$onOpen,
@@ -230,7 +233,29 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 self.$cutomerMail = EntityData.email;
                 self.$onOutputChange();
 
-                self.Loader.hide();
+                // Load mail editor
+                if (!self.getAttribute('mailEditor')) {
+                    self.Loader.hide();
+                    return;
+                }
+
+                require(['Editors'], function(Editors) {
+                    Editors.getEditor().then(function (Editor) {
+                        Editor.addEvent('onLoaded', function () {
+                            self.Loader.hide();
+                            self.fireEvent('load', [self]);
+                        });
+
+                        Editor.inject(
+                            Content.getElement('.quiqqer-erp-outputDialog-preview-mailEditor-content')
+                        );
+
+                        self.$MailContent = Editor;
+                        self.$MailContent.setContent('test');
+
+                        self.Loader.hide();
+                    });
+                });
             }).catch(function (e) {
                 onError(e);
             });

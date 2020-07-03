@@ -9,7 +9,7 @@ use QUI\ERP\Output\Output as ERPOutput;
  */
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_output_getEntityData',
-    function ($entityId, $provider) {
+    function ($entityId, $provider, $template, $templateProvider) {
         $OutputProvider = ERPOutput::getOutputProviderByPackage($provider);
 
         if (empty($OutputProvider)) {
@@ -20,6 +20,6 @@ QUI::$Ajax->registerFunction(
             'email' => $OutputProvider::getEmailAddress($entityId)
         ];
     },
-    ['entityId', 'provider'],
+    ['entityId', 'provider', 'template'],
     'Permission::checkAdminUser'
 );
