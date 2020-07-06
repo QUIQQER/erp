@@ -35,7 +35,10 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             '$onOpen',
             '$onOutputChange',
             '$onPrintFinish',
-            '$getPreview'
+            '$getPreview',
+            '$onChangeToEmail',
+            '$onChangeToPDF',
+            '$onChangeToPrint'
         ],
 
         options: {
@@ -62,10 +65,10 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 }
             });
 
-            this.$Output      = null;
-            this.$Preview     = null;
-            this.$cutomerMail = null;
-            this.$Template    = null;
+            this.$Output       = null;
+            this.$Preview      = null;
+            this.$customerMail = null;
+            this.$Template     = null;
 
             this.$Mail = {
                 subject: false,
@@ -252,7 +255,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 self.$renderPreview();
 
                 // Customer data
-                self.$cutomerMail = EntityData.email;
+                self.$customerMail = EntityData.email;
                 self.$onOutputChange();
 
                 self.Loader.hide();
@@ -494,8 +497,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             Submit.setAttribute('text', QUILocale.get(lg, 'controls.OutputDialog.data.output.email.btn'));
             Submit.setAttribute('textimage', 'fa fa-envelope-o');
 
-            if (this.$cutomerMail && Recipient.value === '') {
-                Recipient.value = this.$cutomerMail;
+            if (this.$customerMail && Recipient.value === '') {
+                Recipient.value = this.$customerMail;
             }
 
             Recipient.focus();
@@ -511,9 +514,10 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
             return new Promise(function (resolve, reject) {
                 QUIAjax.get('package_quiqqer_erp_ajax_output_getEntityData', resolve, {
-                    'package': 'quiqqer/erp',
-                    entityId : self.getAttribute('entityId'),
-                    onError  : reject
+                    'package' : 'quiqqer/erp',
+                    entityId  : self.getAttribute('entityId'),
+                    entityType: self.getAttribute('entityType'),
+                    onError   : reject
                 })
             });
         },
