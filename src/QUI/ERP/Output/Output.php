@@ -166,6 +166,8 @@ class Output
      * @param OutputTemplateProviderInterface $TemplateProvider (optional)
      * @param string $template (optional)
      * @param string $recipientEmail (optional)
+     * @param string $mailSubject (optional)
+     * @param string $mailContent (optional)
      *
      * @return void
      *
@@ -177,7 +179,9 @@ class Output
         $OutputProvider = null,
         $TemplateProvider = null,
         string $template = null,
-        string $recipientEmail = null
+        string $recipientEmail = null,
+        string $mailSubject = null,
+        string $mailContent = null
     ) {
         if (empty($OutputProvider)) {
             $OutputProvider = self::getOutputProviderByEntityType($entityType);
@@ -195,8 +199,7 @@ class Output
             $template
         );
 
-        $outputHtml = $OutputTemplate->getHTML();
-        $pdfFile    = $OutputTemplate->getPDFDocument()->createPDF();
+        $pdfFile = $OutputTemplate->getPDFDocument()->createPDF();
 
         if (empty($recipientEmail) || !QUI\Utils\Security\Orthos::checkMailSyntax($recipientEmail)) {
             $recipientEmail = $OutputProvider::getEmailAddress($entityId);
@@ -209,20 +212,29 @@ class Output
             ]);
         }
 
-// mail send
+        // mail send
         $Mailer = new QUI\Mail\Mailer();
 
         $Mailer->addRecipient($recipientEmail);
         $Mailer->addAttachment($pdfFile);
 
-        $Mailer->setSubject($OutputProvider::getMailSubject($entityId));
-        $Mailer->setBody($OutputProvider::getMailBody($entityId, $outputHtml));
+        if (!empty($mailSubject)) {
+            $Mailer->setSubject($mailSubject);
+        } else {
+            $Mailer->setSubject($OutputProvider::getMailSubject($entityId));
+        }
+
+        if (!empty($mailContent)) {
+            $Mailer->setBody($mailContent);
+        } else {
+            $Mailer->setBody($OutputProvider::getMailBody($entityId));
+        }
 
         $Mailer->send();
 
-// @todo fire event
+        // @todo fire event
 
-// Delete PDF file after send
+        // Delete PDF file after send
         if (\file_exists($pdfFile)) {
             \unlink($pdfFile);
         }

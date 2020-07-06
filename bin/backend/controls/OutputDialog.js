@@ -43,7 +43,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             entityType: false,  // Entity type (e.g. "Invoice")
 
             showMarkAsSentOption: false,    // show checkbox for "Mark as sent"
-            mailEditor          : true,    // shows editable subject and body for mail output @todo default false
+            mailEditor          : true,     // shows editable subject and body for mail output
 
             maxHeight: 800,
             maxWidth : 1400
@@ -67,8 +67,10 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             this.$cutomerMail = null;
             this.$Template    = null;
 
-            this.$MailSubject = null;
-            this.$MailContent = null;
+            this.$Mail = {
+                subject: false,
+                content: false
+            };
 
             this.addEvents({
                 onOpen     : this.$onOpen,
@@ -103,8 +105,6 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             this.getContent().set('html', '');
 
             var onError = function (error) {
-                console.error(error);
-
                 self.close().then(function () {
                     self.destroy();
                 });
@@ -121,19 +121,41 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
             Content.set({
                 html: Mustache.render(template, {
-                    entityId            : self.getAttribute('entityId'),
+                    entityId            : this.getAttribute('entityId'),
                     labelEntityId       : QUILocale.get(lg, 'controls.OutputDialog.labelEntityId'),
                     labelTemplate       : QUILocale.get(lg, 'controls.OutputDialog.labelTemplate'),
                     labelOutputType     : QUILocale.get(lg, 'controls.OutputDialog.labelOutputType'),
                     labelEmail          : QUILocale.get('quiqqer/quiqqer', 'recipient'),
-                    showMarkAsSentOption: self.getAttribute('showMarkAsSentOption') ? true : false,
-                    mailEditor          : self.getAttribute('mailEditor') ? true : false,
+                    showMarkAsSentOption: this.getAttribute('showMarkAsSentOption') ? true : false,
+                    mailEditor          : this.getAttribute('mailEditor') ? true : false,
+                    labelOpenMailEditor : QUILocale.get(lg, 'controls.OutputDialog.labelOpenMailEditor'),
                     labelMarkAsSent     : QUILocale.get(lg, 'controls.OutputDialog.labelMarkAsSent'),
                     descMarkAsSent      : QUILocale.get(lg, 'controls.OutputDialog.descMarkAsSent')
                 })
             });
 
             Content.addClass('quiqqer-erp-outputDialog');
+
+            // "To mail editor" button
+            if (this.getAttribute('mailEditor')) {
+                Content.getElement('.quiqqer-erp-outputDialog-openMailEditor').addEvent('click', function () {
+                    require(['package/quiqqer/erp/bin/backend/controls/OutputMailEditor'], function (OutputMailEditor) {
+                        new OutputMailEditor({
+                            entityId  : self.getAttribute('entityId'),
+                            entityType: self.getAttribute('entityType'),
+
+                            mailSubject: self.$Mail.subject,
+                            mailContent: self.$Mail.content,
+
+                            events: {
+                                onMailSubmit: function (MailData) {
+                                    self.$Mail = MailData;
+                                }
+                            }
+                        }).open();
+                    });
+                });
+            }
 
             this.$Output = new QUISelect({
                 localeStorage: 'quiqqer-erp-output-dialog',
@@ -233,29 +255,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 self.$cutomerMail = EntityData.email;
                 self.$onOutputChange();
 
-                // Load mail editor
-                if (!self.getAttribute('mailEditor')) {
-                    self.Loader.hide();
-                    return;
-                }
-
-                require(['Editors'], function(Editors) {
-                    Editors.getEditor().then(function (Editor) {
-                        Editor.addEvent('onLoaded', function () {
-                            self.Loader.hide();
-                            self.fireEvent('load', [self]);
-                        });
-
-                        Editor.inject(
-                            Content.getElement('.quiqqer-erp-outputDialog-preview-mailEditor-content')
-                        );
-
-                        self.$MailContent = Editor;
-                        self.$MailContent.setContent('test');
-
-                        self.Loader.hide();
-                    });
-                });
+                self.Loader.hide();
             }).catch(function (e) {
                 onError(e);
             });
@@ -323,7 +323,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     break;
 
                 case 'email':
-                    Run = this.sendAsEmail();
+                    Run = this.$sendMail();
                     break;
             }
 
@@ -357,10 +357,11 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
                 new Element('iframe', {
                     src   : URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/print.php?' + Object.toQueryString({
-                        id : entityId,
-                        t  : self.getAttribute('entityType'),
-                        oid: self.getId(),
-                        tpl: Form.elements.template.value
+                        id   : entityId,
+                        t    : self.getAttribute('entityType'),
+                        oid  : self.getId(),
+                        tpl  : Form.elements.template.value,
+                        tplpr: Form.elements.template.get('data-provider')
                     }),
                     id    : id,
                     styles: {
@@ -410,10 +411,11 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
                 new Element('iframe', {
                     src   : URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/download.php?' + Object.toQueryString({
-                        id : entityId,
-                        t  : self.getAttribute('entityType'),
-                        oid: self.getId(),
-                        tpl: Form.elements.template.value
+                        id   : entityId,
+                        t    : self.getAttribute('entityType'),
+                        oid  : self.getId(),
+                        tpl  : Form.elements.template.value,
+                        tplpr: Form.elements.template.get('data-provider')
                     }),
                     id    : id,
                     styles: {
@@ -431,46 +433,6 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
                 (function () {
                     document.getElements('#' + id).destroy();
-                }).delay(20000, this);
-            });
-        },
-
-        /**
-         * Send the document via e-mail
-         *
-         * @return {Promise}
-         */
-        sendAsEmail: function () {
-            var self      = this,
-                entityId  = this.getAttribute('entityId'),
-                recipient = this.getElm().getElement('[name="recipient"]').value;
-
-            return new Promise(function (resolve) {
-                var id      = 'mail-document-' + entityId,
-                    Content = self.getContent(),
-                    Form    = Content.getElement('form');
-
-                new Element('iframe', {
-                    src   : URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/send.php?' + Object.toQueryString({
-                        id       : entityId,
-                        t        : self.getAttribute('entityType'),
-                        oid      : self.getId(),
-                        tpl      : Form.elements.template.value,
-                        recipient: recipient
-                    }),
-                    id    : id,
-                    styles: {
-                        position: 'absolute',
-                        top     : -200,
-                        left    : -200,
-                        width   : 50,
-                        height  : 50
-                    }
-                }).inject(document.body);
-
-                (function () {
-                    document.getElements('#' + id).destroy();
-                    resolve();
                 }).delay(20000, this);
             });
         },
@@ -590,6 +552,29 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     }),
                     template : JSON.encode(self.$Template),
                     onError  : reject
+                })
+            });
+        },
+
+        /**
+         * Get data of the entity that is outputted
+         *
+         * @return {Promise}
+         */
+        $sendMail: function () {
+            var self = this,
+                Form = this.getContent().getElement('form');
+
+            return new Promise(function (resolve, reject) {
+                QUIAjax.get('package_quiqqer_erp_ajax_output_sendMail', resolve, {
+                    'package'       : 'quiqqer/erp',
+                    entityId        : self.getAttribute('entityId'),
+                    entityType      : self.getAttribute('entityType'),
+                    template        : Form.elements.template.value,
+                    templateProvider: Form.elements.template.get('data-provider'),
+                    mailSubject     : self.$Mail.subject,
+                    mailContent     : self.$Mail.content,
+                    onError         : reject
                 })
             });
         }

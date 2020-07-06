@@ -76,8 +76,7 @@ interface OutputProviderInterface
      * Get e-mail body when document is sent via mail
      *
      * @param string|int $entityId
-     * @param string $outputHtml
      * @return string
      */
-    public static function getMailBody($entityId, string $outputHtml);
+    public static function getMailBody($entityId);
 }

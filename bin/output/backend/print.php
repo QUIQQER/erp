@@ -14,18 +14,20 @@ if (!$User->canUseBackend()) {
     exit;
 }
 
-$Request    = QUI::getRequest();
-$entityId   = Orthos::clear($Request->query->get('id'));
-$entityType = Orthos::clear($Request->query->get('t'));
-$template   = Orthos::clear($Request->query->get('tpl'));
-$quiId      = Orthos::clear($Request->query->get('oid'));
+$Request          = QUI::getRequest();
+$entityId         = Orthos::clear($Request->query->get('id'));
+$entityType       = Orthos::clear($Request->query->get('t'));
+$template         = Orthos::clear($Request->query->get('tpl'));
+$templateProvider = Orthos::clear($Request->query->get('tplpr'));
+$quiId            = Orthos::clear($Request->query->get('oid'));
 
 $streamFile = URL_OPT_DIR.'quiqqer/erp/bin/output/backend/printStream.php?';
 $streamFile .= \http_build_query([
-    'id'  => $entityId,
-    't'   => $entityType,
-    'tpl' => $template,
-    'oid' => $quiId
+    'id'    => $entityId,
+    't'     => $entityType,
+    'tpl'   => $template,
+    'tplpr' => $templateProvider,
+    'oid'   => $quiId
 ]);
 
 echo '

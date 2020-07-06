@@ -19,11 +19,12 @@ if (!$User->canUseBackend()) {
     exit;
 }
 
-$Request    = QUI::getRequest();
-$entityId   = Orthos::clear($Request->query->get('id'));
-$entityType = Orthos::clear($Request->query->get('t'));
-$template   = Orthos::clear($Request->query->get('tpl'));
-$quiId      = Orthos::clear($Request->query->get('oid'));
+$Request          = QUI::getRequest();
+$entityId         = Orthos::clear($Request->query->get('id'));
+$entityType       = Orthos::clear($Request->query->get('t'));
+$template         = Orthos::clear($Request->query->get('tpl'));
+$templateProvider = Orthos::clear($Request->query->get('tplpr'));
+$quiId            = Orthos::clear($Request->query->get('oid'));
 
 $errorOutput = function ($message) use ($quiId) {
     echo '
@@ -52,7 +53,7 @@ try {
         $entityId,
         $entityType,
         null,
-        null,
+        Output::getOutputTemplateProviderByPackage($templateProvider),
         $template ?: null
     );
 

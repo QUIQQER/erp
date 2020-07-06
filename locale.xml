@@ -111,6 +111,12 @@
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
+
+        <locale name="exception.ajax.output.sendMail.error">
+            <de><![CDATA[Leider ist beim E-Mail-Verand ein unerwarteter Fehler aufgetreten. Bitte wiederholen Sie den Vorgang, prüfen Sie die Fehler-Logs oder kontaktieren Sie einen Administator.]]></de>
+            <en><![CDATA[Unfortunately, an unexpected error has occurred when sending the e-mail. Please repeat the process, check the error logs or contact an administrator.]]></en>
+        </locale>
+
         <locale name="user.settings.title">
             <de><![CDATA[Rechnungsdaten]]></de>
             <en><![CDATA[Billing Details]]></en>
@@ -359,6 +365,10 @@
             <de><![CDATA[Als versandt markieren]]></de>
             <en><![CDATA[Mark as sent]]></en>
         </locale>
+        <locale name="controls.OutputDialog.labelOpenMailEditor">
+            <de><![CDATA[E-Mail bearbeiten]]></de>
+            <en><![CDATA[Edit e-mail]]></en>
+        </locale>
         <locale name="controls.OutputDialog.data.output.print">
             <de><![CDATA[Drucken]]></de>
             <en><![CDATA[Print]]></en>
@@ -402,6 +412,23 @@
         <locale name="controls.OutputDialog.descMarkAsSent">
             <de><![CDATA[Markiert den Beleg als versandt, sofern noch kein Versanddatum gesetzt ist.]]></de>
             <en><![CDATA[Marks the document as sent, provided that no shipping date has been set.]]></en>
+        </locale>
+
+        <locale name="controls.OutputMailEditor.title">
+            <de><![CDATA[E-Mail für Beleg bearbeiten]]></de>
+            <en><![CDATA[Edit document e-mail]]></en>
+        </locale>
+        <locale name="controls.OutputMailEditor.labelMailSubject">
+            <de><![CDATA[Betreff]]></de>
+            <en><![CDATA[Subject]]></en>
+        </locale>
+        <locale name="controls.OutputMailEditor.labelMailContent">
+            <de><![CDATA[Inhalt (ohne Kopf- und Fußzeile)]]></de>
+            <en><![CDATA[Content (without header and footer)]]></en>
+        </locale>
+        <locale name="controls.OutputMailEditor.info" html="true">
+            <de><![CDATA[<b>Hinweis:</b> Der Beleg wird als PDF-Datei im Anhang der E-Mail mitgesendet.]]></de>
+            <en><![CDATA[<b>Hint:</b> The document is sent as a PDF file attached to the e-mail.]]></en>
         </locale>
         
     </groups>
