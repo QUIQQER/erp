@@ -158,7 +158,7 @@ class Output
     }
 
     /**
-     * Get document as e-mail with PDF attachment
+     * Send document as e-mail with PDF attachment
      *
      * @param string|int $entityId
      * @param string $entityType
@@ -232,7 +232,7 @@ class Output
 
         $Mailer->send();
 
-        // @todo fire event
+        QUI::getEvents()->fireEvent('quiqqerErpOutputSendMail', [$entityId, $entityType, $recipientEmail]);
 
         // Delete PDF file after send
         if (\file_exists($pdfFile)) {
