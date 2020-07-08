@@ -24,6 +24,14 @@ interface OutputProviderInterface
     public static function getEntityType();
 
     /**
+     * Get title for the output entity
+     *
+     * @param Locale $Locale (optional) - If ommitted use \QUI::getLocale()
+     * @return mixed
+     */
+    public static function getEntityTypeTitle(Locale $Locale = null);
+
+    /**
      * Get download filename (without file extension)
      *
      * @param string|int $entityId

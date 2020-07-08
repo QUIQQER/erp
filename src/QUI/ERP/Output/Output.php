@@ -261,24 +261,40 @@ class Output
     /**
      * Get available templates for $entityType (e.g. "Invoice", "InvoiceTemporary" etc.)
      *
-     * @param string $entityType
+     * @param string $entityType (optional) - Restrict to templates of $entityType [default: fetch templates for all entity types]
      * @return array
-     * @throws QUI\Exception
      */
-    public static function getTemplates(string $entityType)
+    public static function getTemplates(string $entityType = null)
     {
-        $templates = [];
+        $templates       = [];
+        $outputProviders = [];
+
+        if (empty($entityType)) {
+            $outputProviders = \array_column(self::getAllOutputProviders(), 'class');
+        } else {
+            $OutputProvider = self::getOutputProviderByEntityType($entityType);
+
+            if ($OutputProvider) {
+                $outputProviders[] = $OutputProvider;
+            }
+        }
 
         foreach (self::getAllOutputTemplateProviders() as $provider) {
             /** @var OutputTemplateProviderInterface $class */
             $class   = $provider['class'];
             $package = $provider['package'];
 
-            $providerTemplates = $class::getTemplates($entityType);
+            /** @var OutputProviderInterface $OutputProvider */
+            foreach ($outputProviders as $OutputProvider) {
+                $entityType = $OutputProvider::getEntityType();
 
-            foreach ($providerTemplates as $providerTemplate) {
-                $providerTemplate['provider'] = $package;
-                $templates[]                  = $providerTemplate;
+                foreach ($class::getTemplates($entityType) as $providerTemplate) {
+                    $providerTemplate['provider']        = $package;
+                    $providerTemplate['entityType']      = $entityType;
+                    $providerTemplate['entityTypeTitle'] = $OutputProvider::getEntityTypeTitle();
+
+                    $templates[] = $providerTemplate;
+                }
             }
         }
 
@@ -311,7 +327,7 @@ class Output
      *
      * @return array - Provider classes
      */
-    public static function getAllOutputProviders()
+    protected static function getAllOutputProviders()
     {
         $packages        = QUI::getPackageManager()->getInstalled();
         $providerClasses = [];
@@ -354,7 +370,7 @@ class Output
      *
      * @return array - Provider classes
      */
-    public static function getAllOutputTemplateProviders()
+    protected static function getAllOutputTemplateProviders()
     {
         $packages        = QUI::getPackageManager()->getInstalled();
         $providerClasses = [];

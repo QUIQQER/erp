@@ -108,6 +108,12 @@
             <de><![CDATA[Vorgangsnummer]]></de>
             <en><![CDATA[Processing-ID]]></en>
         </locale>
+
+        <locale name="OutputProvider.entity.title.Dunning">
+            <de><![CDATA[Mahnung]]></de>
+            <en><![CDATA[Dunning]]></en>
+        </locale>
+
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -159,6 +165,15 @@
         <locale name="menu.erp.sites.privacy_policy">
             <de><![CDATA[Datenschutzerklärung]]></de>
             <en><![CDATA[Privacy Policy]]></en>
+        </locale>
+
+        <locale name="menu.erp.output.title">
+            <de><![CDATA[Belege-Ausgabe / PDF]]></de>
+            <en><![CDATA[Document output / PDF]]></en>
+        </locale>
+        <locale name="menu.erp.output.default_templates">
+            <de><![CDATA[Standard-Templates]]></de>
+            <en><![CDATA[Default templates]]></en>
         </locale>
 
         <locale name="shop.settings.general.precision">

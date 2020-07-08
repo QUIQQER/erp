@@ -1,0 +1,20 @@
+<table class="data-table data-table-flexbox">
+    <tbody>
+    {{#templates}}
+    <tr>
+        <td>
+            <label class="field-container">
+                <span class="field-container-item" title="{{entityTypeTitle}}">
+                    {{title}}
+                </span>
+                <select class="field-container-field">
+                    {{#outputTemplates}}
+                    <option value="{{id}}">{{title}}</option>
+                    {{/outputTemplates}}
+                </select>
+            </label>
+        </td>
+    </tr>
+    {{/templates}}
+    </tbody>
+</table>

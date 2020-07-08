@@ -29,6 +29,12 @@
                 </conf>
             </section>
 
+            <section name="output">
+                <conf name="default_templates">
+                    <type><![CDATA[string]]></type>
+                </conf>
+            </section>
+
             <section name="paymentsChangeable"/>
             <section name="timestampFormat"/>
             <section name="dateFormat"/>
@@ -152,6 +158,20 @@
                                 <locale group="quiqqer/erp" var="menu.erp.sites.privacy_policy"/>
                             </text>
                         </input>
+                    </settings>
+
+                    <settings>
+                        <title>
+                            <locale group="quiqqer/erp" var="menu.erp.output.title"/>
+                        </title>
+
+                        <input conf="output.default_templates"
+                               data-qui="package/quiqqer/erp/bin/backend/controls/settings/OutputTemplates">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.output.default_templates"/>
+                            </text>
+                        </input>
+
                     </settings>
                 </category>
 
