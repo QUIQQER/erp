@@ -225,14 +225,20 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 }
 
                 for (var i = 0, len = templates.length; i < len; i++) {
+                    var Template = templates[i];
+
+                    if (Template.isSystemDefault && EntityData.hideSystemDefaultTemplate) {
+                        continue;
+                    }
+
                     new Element('option', {
-                        value          : templates[i].id,
-                        html           : templates[i].title,
-                        'data-provider': templates[i].provider
+                        value          : Template.id,
+                        html           : Template.title,
+                        'data-provider': Template.provider
                     }).inject(Form.elements.template);
 
-                    if (!Selected) {
-                        Selected = templates[i];
+                    if (!Selected && Template.isDefault) {
+                        Selected = Template;
                     }
                 }
 
@@ -268,6 +274,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * Render preview with selected template
          */
         $renderPreview: function () {
+            var self           = this;
             var PreviewContent = this.getContent().getElement('.quiqqer-erp-outputDialog-preview');
 
             this.Loader.show();
@@ -282,6 +289,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             };
 
             this.$getPreview().then(function (previewHtml) {
+                self.Loader.hide();
+
                 if (!previewHtml) {
                     showPreviewError();
                     return;
@@ -303,6 +312,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     }
                 }).inject(PreviewContent);
             }).catch(function () {
+                self.Loader.hide();
                 showPreviewError();
             });
         },

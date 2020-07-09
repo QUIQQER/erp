@@ -70,20 +70,20 @@ class OutputTemplate
         $templates = $this->TemplateProvider::getTemplates($entityType);
 
         if (empty($template)) {
-            $template = $templates[0]['id'];
+            $template = $templates[0];
         } else {
             // Check if $template is provided by template provider
             $templateIsProvided = false;
 
-            foreach ($templates as $providerTemplate) {
-                if ($providerTemplate['id'] === $template) {
+            foreach ($templates as $providerTemplateId) {
+                if ($providerTemplateId === $template) {
                     $templateIsProvided = true;
                     break;
                 }
             }
 
             if (!$templateIsProvided) {
-                $template = $templates[0]['id'];
+                $template = $templates[0];
             }
         }
 

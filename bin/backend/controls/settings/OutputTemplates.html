@@ -3,16 +3,27 @@
     {{#templates}}
     <tr>
         <td>
-            <label class="field-container">
+            <div class="field-container">
                 <span class="field-container-item" title="{{entityTypeTitle}}">
                     {{title}}
                 </span>
-                <select class="field-container-field">
-                    {{#outputTemplates}}
-                    <option value="{{id}}">{{title}}</option>
-                    {{/outputTemplates}}
-                </select>
-            </label>
+                <div class="field-container-field">
+                    <select class="quiqqer-erp-settings-output-templates-default-select" data-entitytype="{{entityType}}">
+                        {{#outputTemplates}}
+                        <option value="{{id}}--{{provider}}"
+                                data-systemdefault="{{isSystemDefault}}"
+                                data-provider="{{provider}}"
+                        >
+                            {{title}}
+                        </option>
+                        {{/outputTemplates}}
+                    </select>
+                    <label class="quiqqer-erp-settings-output-templates-hide-system-default quiqqer-erp-settings-output-templates__hidden">
+                        <input type="checkbox"/>
+                        <label>{{labelHideSystemDefault}}</label>
+                    </label>
+                </div>
+            </div>
         </td>
     </tr>
     {{/templates}}

@@ -286,12 +286,28 @@ class Output
 
             /** @var OutputProviderInterface $OutputProvider */
             foreach ($outputProviders as $OutputProvider) {
-                $entityType = $OutputProvider::getEntityType();
+                $entityType            = $OutputProvider::getEntityType();
+                $defaultOutputTemplate = self::getDefaultOutputTemplateForEntityType($entityType);
 
-                foreach ($class::getTemplates($entityType) as $providerTemplate) {
-                    $providerTemplate['provider']        = $package;
-                    $providerTemplate['entityType']      = $entityType;
-                    $providerTemplate['entityTypeTitle'] = $OutputProvider::getEntityTypeTitle();
+                foreach ($class::getTemplates($entityType) as $providerTemplateId) {
+                    $templateTitle = $class::getTemplateTitle($providerTemplateId);
+
+                    if ($provider['isSystemDefault']) {
+                        $templateTitle .= ' '.QUI::getLocale()->get('quiqqer/erp', 'output.default_template.suffix');
+                    }
+
+                    $isDefault = $defaultOutputTemplate['provider'] === $provider['package'] &&
+                                 $defaultOutputTemplate['id'] === $providerTemplateId;
+
+                    $providerTemplate = [
+                        'id'              => $providerTemplateId,
+                        'title'           => $templateTitle,
+                        'provider'        => $package,
+                        'isSystemDefault' => $provider['isSystemDefault'],
+                        'isDefault'       => $isDefault,
+                        'entityType'      => $entityType,
+                        'entityTypeTitle' => $OutputProvider::getEntityTypeTitle()
+                    ];
 
                     $templates[] = $providerTemplate;
                 }
@@ -299,6 +315,41 @@ class Output
         }
 
         return $templates;
+    }
+
+    /**
+     * Return default template id for a specific entity type
+     *
+     * @param string $entityType
+     * @return array - Containting template ID and template provider package
+     */
+    public static function getDefaultOutputTemplateForEntityType(string $entityType)
+    {
+        $fallBackTemplate = [
+            'id'                => 'system_default',
+            'provider'          => 'quiqqer/invoice-accounting-template',
+            'hideSystemDefault' => false
+        ];
+
+        try {
+            $Conf             = QUI::getPackage('quiqqer/erp')->getConfig();
+            $defaultTemplates = $Conf->get('output', 'default_templates');
+
+            if (empty($defaultTemplates)) {
+                return $fallBackTemplate;
+            }
+
+            $defaultTemplates = \json_decode($defaultTemplates, true);
+
+            if (empty($defaultTemplates[$entityType])) {
+                return $fallBackTemplate;
+            }
+
+            return $defaultTemplates[$entityType];
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+            return $fallBackTemplate;
+        }
     }
 
     /**
@@ -397,8 +448,9 @@ class Output
                 }
 
                 $providerClasses[] = [
-                    'class'   => $class,
-                    'package' => $installedPackage['name']
+                    'class'           => $class,
+                    'package'         => $installedPackage['name'],
+                    'isSystemDefault' => $installedPackage['name'] === 'quiqqer/invoice-accounting-template'
                 ];
             } catch (QUI\Exception $Exception) {
                 QUI\System\Log::writeException($Exception);

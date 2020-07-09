@@ -108,10 +108,9 @@
             <de><![CDATA[Vorgangsnummer]]></de>
             <en><![CDATA[Processing-ID]]></en>
         </locale>
-
-        <locale name="OutputProvider.entity.title.Dunning">
-            <de><![CDATA[Mahnung]]></de>
-            <en><![CDATA[Dunning]]></en>
+        <locale name="output.default_template.suffix">
+            <de><![CDATA[(System-Standard)]]></de>
+            <en><![CDATA[(System default)]]></en>
         </locale>
 
     </groups>
@@ -168,12 +167,12 @@
         </locale>
 
         <locale name="menu.erp.output.title">
-            <de><![CDATA[Belege-Ausgabe / PDF]]></de>
+            <de><![CDATA[Beleg-Ausgabe / PDF]]></de>
             <en><![CDATA[Document output / PDF]]></en>
         </locale>
         <locale name="menu.erp.output.default_templates">
-            <de><![CDATA[Standard-Templates]]></de>
-            <en><![CDATA[Default templates]]></en>
+            <de><![CDATA[Vorausgewählte Templates]]></de>
+            <en><![CDATA[Preselected templates]]></en>
         </locale>
 
         <locale name="shop.settings.general.precision">
@@ -444,6 +443,11 @@
         <locale name="controls.OutputMailEditor.info" html="true">
             <de><![CDATA[<b>Hinweis:</b> Der Beleg wird als PDF-Datei im Anhang der E-Mail mitgesendet.]]></de>
             <en><![CDATA[<b>Hint:</b> The document is sent as a PDF file attached to the e-mail.]]></en>
+        </locale>
+        
+        <locale name="controls.settings.OutputTemplates.tpl.labelHideSystemDefault">
+            <de><![CDATA[System-Standard Template im Ausgabe-Dialog nicht zur Auswahl anbieten]]></de>
+            <en><![CDATA[Do not offer System Standard Template for selection in output dialog]]></en>
         </locale>
         
     </groups>

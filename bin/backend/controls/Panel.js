@@ -158,8 +158,6 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
 
                     return;
                 }
-
-                console.log(typeOf(cls));
             });
         }
     });
