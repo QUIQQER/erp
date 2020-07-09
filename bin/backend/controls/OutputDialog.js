@@ -245,7 +245,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 Form.elements.template.addEvent('change', function (event) {
                     self.$Template = {
                         id      : event.target.value,
-                        provider: event.target.get('data-provider')
+                        provider: event.target.getElement('option[value="' + event.target.value + '"]')
+                            .get('data-provider')
                     };
 
                     self.$renderPreview();
@@ -373,8 +374,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                         id   : entityId,
                         t    : self.getAttribute('entityType'),
                         oid  : self.getId(),
-                        tpl  : Form.elements.template.value,
-                        tplpr: Form.elements.template.get('data-provider')
+                        tpl  : self.$Template.id,
+                        tplpr: self.$Template.provider
                     }),
                     id    : id,
                     styles: {
@@ -427,8 +428,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                         id   : entityId,
                         t    : self.getAttribute('entityType'),
                         oid  : self.getId(),
-                        tpl  : Form.elements.template.value,
-                        tplpr: Form.elements.template.get('data-provider')
+                        tpl  : self.$Template.id,
+                        tplpr: self.$Template.provider
                     }),
                     id    : id,
                     styles: {
@@ -584,8 +585,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     'package'       : 'quiqqer/erp',
                     entityId        : self.getAttribute('entityId'),
                     entityType      : self.getAttribute('entityType'),
-                    template        : Form.elements.template.value,
-                    templateProvider: Form.elements.template.get('data-provider'),
+                    template        : self.$Template.id,
+                    templateProvider: self.$Template.provider,
                     mailSubject     : self.$Mail.subject,
                     mailContent     : self.$Mail.content,
                     onError         : reject

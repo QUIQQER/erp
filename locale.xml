@@ -416,8 +416,8 @@
             <en><![CDATA[No templates found]]></en>
         </locale>
         <locale name="controls.OutputDialog.no_preview">
-            <de><![CDATA[Die Vorschau ist aktuell nicht verfügbar, da keine Vorlage ausgewählt oder gefunden wurde.]]></de>
-            <en><![CDATA[The preview is currently not available because no template was selected or found.]]></en>
+            <de><![CDATA[Das Dokument ist aktuell nicht verfügbar, da keine Vorlage ausgewählt oder gefunden wurde.]]></de>
+            <en><![CDATA[The document is currently not available because no template was selected or found.]]></en>
         </locale>
         <locale name="controls.OutputDialog.preview_error">
             <de><![CDATA[Die Vorschau konnte leider nicht geladen werden. Bitte prüfen Sie die Fehler-Logs oder kontaktieren Sie einen Administrator.]]></de>

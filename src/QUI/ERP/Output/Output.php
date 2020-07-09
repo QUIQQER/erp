@@ -400,16 +400,16 @@ class Output
                 }
 
                 /** @var OutputProviderInterface $class */
-                $class = $packageProvider['erpOutput'][0];
+                foreach ($packageProvider['erpOutput'] as $class) {
+                    if (!\class_exists($class)) {
+                        continue;
+                    }
 
-                if (!\class_exists($class)) {
-                    continue;
+                    $providerClasses[] = [
+                        'class'   => $class,
+                        'package' => $installedPackage['name']
+                    ];
                 }
-
-                $providerClasses[] = [
-                    'class'   => $class,
-                    'package' => $installedPackage['name']
-                ];
             } catch (QUI\Exception $Exception) {
                 QUI\System\Log::writeException($Exception);
             }
@@ -443,17 +443,17 @@ class Output
                 }
 
                 /** @var OutputTemplateProviderInterface $class */
-                $class = $packageProvider['erpOutputTemplate'][0];
+                foreach ($packageProvider['erpOutputTemplate'] as $class) {
+                    if (!\class_exists($class)) {
+                        continue;
+                    }
 
-                if (!\class_exists($class)) {
-                    continue;
+                    $providerClasses[] = [
+                        'class'           => $class,
+                        'package'         => $installedPackage['name'],
+                        'isSystemDefault' => $installedPackage['name'] === 'quiqqer/invoice-accounting-template'
+                    ];
                 }
-
-                $providerClasses[] = [
-                    'class'           => $class,
-                    'package'         => $installedPackage['name'],
-                    'isSystemDefault' => $installedPackage['name'] === 'quiqqer/invoice-accounting-template'
-                ];
             } catch (QUI\Exception $Exception) {
                 QUI\System\Log::writeException($Exception);
             }
