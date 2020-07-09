@@ -189,9 +189,14 @@ class OutputTemplate
         $Output = new QUI\Output();
         $Output->setSetting('use-system-image-paths', true);
 
-        return $Output->parse($this->TemplateProvider::getBodyHtml(
-            $this->template, $this->entityType, $this->Engine, $this->Entity
-        ));
+        return $Output->parse(
+            $this->TemplateProvider::getBodyHtml(
+                $this->template,
+                $this->entityType,
+                $this->Engine,
+                $this->Entity
+            )
+        );
     }
 
     /**
