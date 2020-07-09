@@ -58,6 +58,7 @@ class Output
      * @param OutputProviderInterface $OutputProvider (optional)
      * @param OutputTemplateProviderInterface $TemplateProvider (optional)
      * @param string $template (optional)
+     * @param bool $preview (optional) - Get preview HTML
      *
      * @return string
      *
@@ -68,7 +69,8 @@ class Output
         string $entityType,
         $OutputProvider = null,
         $TemplateProvider = null,
-        string $template = null
+        string $template = null,
+        bool $preview = false
     ) {
         if (empty($OutputProvider)) {
             $OutputProvider = self::getOutputProviderByEntityType($entityType);
@@ -94,7 +96,7 @@ class Output
             $template
         );
 
-        return $OutputTemplate->getHTML();
+        return $OutputTemplate->getHTML($preview);
     }
 
     /**

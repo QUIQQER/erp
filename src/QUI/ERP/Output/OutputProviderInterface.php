@@ -32,6 +32,14 @@ interface OutputProviderInterface
     public static function getEntityTypeTitle(Locale $Locale = null);
 
     /**
+     * Get the entity the output is created for
+     *
+     * @param string|int $entityId
+     * @return mixed
+     */
+    public static function getEntity($entityId);
+
+    /**
      * Get download filename (without file extension)
      *
      * @param string|int $entityId

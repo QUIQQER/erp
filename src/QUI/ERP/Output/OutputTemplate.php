@@ -46,6 +46,18 @@ class OutputTemplate
     protected $entityId;
 
     /**
+     * The entity the output is created for
+     *
+     * @var mixed
+     */
+    protected $Entity;
+
+    /**
+     * @var bool
+     */
+    protected $preview = false;
+
+    /**
      * Template constructor.
      *
      * @param OutputTemplateProviderInterface $TemplateProvider - Template provider class
@@ -90,17 +102,20 @@ class OutputTemplate
         $this->template   = $template;
         $this->entityType = $entityType;
         $this->entityId   = $entityId;
+        $this->Entity     = $this->OutputProvider::getEntity($entityId);
     }
 
     /**
      * Render the html
      *
+     * @param bool $preview (optional) -
      * @return string - HTML content
      */
-    public function getHTML()
+    public function getHTML($preview = false)
     {
         $templateData = $this->OutputProvider::getTemplateData($this->entityId);
         $this->Engine->assign($templateData);
+        $this->preview = $preview;
 
         return $this->getHTMLHeader().
                $this->getHTMLBody().
@@ -161,7 +176,7 @@ class OutputTemplate
      */
     public function getHTMLHeader()
     {
-        return $this->TemplateProvider::getHeaderHtml($this->template, $this->entityType, $this->Engine);
+        return $this->TemplateProvider::getHeaderHtml($this->template, $this->entityType, $this->Engine, $this->Entity);
     }
 
     /**
@@ -174,7 +189,9 @@ class OutputTemplate
         $Output = new QUI\Output();
         $Output->setSetting('use-system-image-paths', true);
 
-        return $Output->parse($this->TemplateProvider::getBodyHtml($this->template, $this->entityType, $this->Engine));
+        return $Output->parse($this->TemplateProvider::getBodyHtml(
+            $this->template, $this->entityType, $this->Engine, $this->Entity
+        ));
     }
 
     /**
@@ -184,7 +201,33 @@ class OutputTemplate
      */
     public function getHTMLFooter()
     {
-        return $this->TemplateProvider::getFooterHtml($this->template, $this->entityType, $this->Engine);
+        $footerHtml = '<div class="quiqqer-erp-output-footer">';
+
+        $footerHtml .= $this->TemplateProvider::getFooterHtml(
+            $this->template,
+            $this->entityType,
+            $this->Engine,
+            $this->Entity
+        );
+
+        $footerHtml .= '</div>';
+
+        $css = '';
+
+        if ($this->preview) {
+            $css = '<style>';
+            $css .= '
+            .quiqqer-erp-output-footer {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+            }
+        ';
+            $css .= '</style>';
+        }
+
+        return $css.$footerHtml;
     }
 
     //endregion

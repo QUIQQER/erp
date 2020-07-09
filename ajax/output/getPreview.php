@@ -20,7 +20,8 @@ QUI::$Ajax->registerFunction(
                 $entity['type'],
                 null,
                 ERPOutput::getOutputTemplateProviderByPackage($template['provider']),
-                $template['id']
+                $template['id'],
+                true
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
