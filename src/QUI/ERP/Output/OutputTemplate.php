@@ -106,6 +106,14 @@ class OutputTemplate
     }
 
     /**
+     * @return mixed
+     */
+    public function getEntity()
+    {
+        return $this->Entity;
+    }
+
+    /**
      * Render the html
      *
      * @param bool $preview (optional) -
@@ -113,7 +121,9 @@ class OutputTemplate
      */
     public function getHTML($preview = false)
     {
-        $templateData = $this->OutputProvider::getTemplateData($this->entityId);
+        $templateData                    = $this->OutputProvider::getTemplateData($this->entityId);
+        $templateData['erpOutputEntity'] = $this->Entity;
+
         $this->Engine->assign($templateData);
         $this->preview = $preview;
 
