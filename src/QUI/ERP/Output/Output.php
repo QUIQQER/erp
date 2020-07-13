@@ -342,7 +342,7 @@ class Output
     {
         $fallBackTemplate = [
             'id'                => 'system_default',
-            'provider'          => 'quiqqer/invoice-accounting-template',
+            'provider'          => 'quiqqer/erp-accounting-templates',
             'hideSystemDefault' => false
         ];
 
@@ -464,7 +464,7 @@ class Output
                     $providerClasses[] = [
                         'class'           => $class,
                         'package'         => $installedPackage['name'],
-                        'isSystemDefault' => $installedPackage['name'] === 'quiqqer/invoice-accounting-template'
+                        'isSystemDefault' => $installedPackage['name'] === 'quiqqer/erp-accounting-templates'
                     ];
                 }
             } catch (QUI\Exception $Exception) {
