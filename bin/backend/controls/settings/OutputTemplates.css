@@ -1,0 +1,17 @@
+.quiqqer-erp-settings-output-templates__hidden {
+    display: none !important;
+}
+
+.quiqqer-erp-settings-output-templates-default-select {
+    width: 100%;
+}
+
+.quiqqer-erp-settings-output-templates-hide-system-default {
+    display: block;
+    float: none !important;
+    width: 100% !important;
+}
+
+.quiqqer-erp-settings-output-templates-hide-system-default > label {
+    float: none !important;
+}
