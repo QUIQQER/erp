@@ -1,0 +1,19 @@
+.quiqqer-erp-outputMailEditor-mailEditor > label {
+    display: block;
+    margin: 10px 0;
+    width: 100%;
+}
+
+.quiqqer-erp-outputMailEditor-mailEditor-subject {
+    display: block;
+    width: 100%;
+}
+
+.quiqqer-erp-outputMailEditor-info {
+    float: left;
+    margin-top: 10px;
+}
+
+.quiqqer-erp-outputMailEditor-mailEditor-content {
+    height: 550px;
+}

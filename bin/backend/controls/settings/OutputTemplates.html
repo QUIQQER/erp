@@ -1,0 +1,31 @@
+<table class="data-table data-table-flexbox">
+    <tbody>
+    {{#templates}}
+    <tr>
+        <td>
+            <div class="field-container">
+                <span class="field-container-item" title="{{entityTypeTitle}}">
+                    {{title}}
+                </span>
+                <div class="field-container-field">
+                    <select class="quiqqer-erp-settings-output-templates-default-select" data-entitytype="{{entityType}}">
+                        {{#outputTemplates}}
+                        <option value="{{id}}--{{provider}}"
+                                data-systemdefault="{{isSystemDefault}}"
+                                data-provider="{{provider}}"
+                        >
+                            {{title}}
+                        </option>
+                        {{/outputTemplates}}
+                    </select>
+                    <label class="quiqqer-erp-settings-output-templates-hide-system-default quiqqer-erp-settings-output-templates__hidden">
+                        <input type="checkbox"/>
+                        <label>{{labelHideSystemDefault}}</label>
+                    </label>
+                </div>
+            </div>
+        </td>
+    </tr>
+    {{/templates}}
+    </tbody>
+</table>

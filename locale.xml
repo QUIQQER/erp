@@ -108,9 +108,20 @@
             <de><![CDATA[Vorgangsnummer]]></de>
             <en><![CDATA[Processing-ID]]></en>
         </locale>
+        <locale name="output.default_template.suffix">
+            <de><![CDATA[(System-Standard)]]></de>
+            <en><![CDATA[(System default)]]></en>
+        </locale>
+
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
+
+        <locale name="exception.ajax.output.sendMail.error">
+            <de><![CDATA[Leider ist beim E-Mail-Verand ein unerwarteter Fehler aufgetreten. Bitte wiederholen Sie den Vorgang, prüfen Sie die Fehler-Logs oder kontaktieren Sie einen Administator.]]></de>
+            <en><![CDATA[Unfortunately, an unexpected error has occurred when sending the e-mail. Please repeat the process, check the error logs or contact an administrator.]]></en>
+        </locale>
+
         <locale name="user.settings.title">
             <de><![CDATA[Rechnungsdaten]]></de>
             <en><![CDATA[Billing Details]]></en>
@@ -153,6 +164,15 @@
         <locale name="menu.erp.sites.privacy_policy">
             <de><![CDATA[Datenschutzerklärung]]></de>
             <en><![CDATA[Privacy Policy]]></en>
+        </locale>
+
+        <locale name="menu.erp.output.title">
+            <de><![CDATA[Beleg-Ausgabe / PDF]]></de>
+            <en><![CDATA[Document output / PDF]]></en>
+        </locale>
+        <locale name="menu.erp.output.default_templates">
+            <de><![CDATA[Vorausgewählte Templates]]></de>
+            <en><![CDATA[Preselected templates]]></en>
         </locale>
 
         <locale name="shop.settings.general.precision">
@@ -304,6 +324,16 @@
             We're sorry, but something went wrong. Please contact an administrator.
             ]]></en>
         </locale>
+
+        <locale name="Output.send.success">
+            <de><![CDATA[E-Mail erfolgreich versandt.]]></de>
+            <en><![CDATA[E-Mail sent successfully.]]></en>
+        </locale>
+        <locale name="exception.Output.sendPdfViaMail.missing_recipient">
+            <de><![CDATA[Das Dokument kann nicht per E-Mail versendet werden, da keine gültige Empfänger E-Mail-Adresse angegeben wurde.]]></de>
+            <en><![CDATA[The document cannot be sent by e-mail because no valid recipient e-mail address has been specified.]]></en>
+        </locale>
+
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">
@@ -331,6 +361,95 @@
             <de><![CDATA[Artikelübersichtsrechnung]]></de>
             <en><![CDATA[Article overview calculation]]></en>
         </locale>
+        
+        <!-- Controls -->
+        <locale name="controls.OutputDialog.labelEntityId">
+            <de><![CDATA[Beleg-Nr.]]></de>
+            <en><![CDATA[Document no.]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.labelTemplate">
+            <de><![CDATA[Vorlage (Template)]]></de>
+            <en><![CDATA[Template]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.labelOutputType">
+            <de><![CDATA[Ausgabe]]></de>
+            <en><![CDATA[Output]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.labelMarkAsSent">
+            <de><![CDATA[Als versandt markieren]]></de>
+            <en><![CDATA[Mark as sent]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.labelOpenMailEditor">
+            <de><![CDATA[E-Mail bearbeiten]]></de>
+            <en><![CDATA[Edit e-mail]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.print">
+            <de><![CDATA[Drucken]]></de>
+            <en><![CDATA[Print]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.pdf">
+            <de><![CDATA[Als PDF speichern]]></de>
+            <en><![CDATA[Save as PDF]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.email">
+            <de><![CDATA[Per E-Mail versenden]]></de>
+            <en><![CDATA[Send via e-mail]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.print.btn">
+            <de><![CDATA[Drucken]]></de>
+            <en><![CDATA[Print]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.pdf.btn">
+            <de><![CDATA[Herunterladen]]></de>
+            <en><![CDATA[Download]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.email.btn">
+            <de><![CDATA[Senden]]></de>
+            <en><![CDATA[Send]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.title">
+            <de><![CDATA[Beleg Druck / PDF / Versand]]></de>
+            <en><![CDATA[Document print / PDF / send]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.no_templates_found">
+            <de><![CDATA[Keine Vorlagen gefunden]]></de>
+            <en><![CDATA[No templates found]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.no_preview">
+            <de><![CDATA[Das Dokument ist aktuell nicht verfügbar, da keine Vorlage ausgewählt oder gefunden wurde.]]></de>
+            <en><![CDATA[The document is currently not available because no template was selected or found.]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.preview_error">
+            <de><![CDATA[Die Vorschau konnte leider nicht geladen werden. Bitte prüfen Sie die Fehler-Logs oder kontaktieren Sie einen Administrator.]]></de>
+            <en><![CDATA[The preview could not loaded. Please check the error logs or contact an administrator.]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.descMarkAsSent">
+            <de><![CDATA[Markiert den Beleg als versandt, sofern noch kein Versanddatum gesetzt ist.]]></de>
+            <en><![CDATA[Marks the document as sent, provided that no shipping date has been set.]]></en>
+        </locale>
+
+        <locale name="controls.OutputMailEditor.title">
+            <de><![CDATA[E-Mail für Beleg bearbeiten]]></de>
+            <en><![CDATA[Edit document e-mail]]></en>
+        </locale>
+        <locale name="controls.OutputMailEditor.labelMailSubject">
+            <de><![CDATA[Betreff]]></de>
+            <en><![CDATA[Subject]]></en>
+        </locale>
+        <locale name="controls.OutputMailEditor.labelMailContent">
+            <de><![CDATA[Inhalt (ohne Kopf- und Fußzeile)]]></de>
+            <en><![CDATA[Content (without header and footer)]]></en>
+        </locale>
+        <locale name="controls.OutputMailEditor.info" html="true">
+            <de><![CDATA[<b>Hinweis:</b> Der Beleg wird als PDF-Datei im Anhang der E-Mail mitgesendet.]]></de>
+            <en><![CDATA[<b>Hint:</b> The document is sent as a PDF file attached to the e-mail.]]></en>
+        </locale>
+        
+        <locale name="controls.settings.OutputTemplates.tpl.labelHideSystemDefault">
+            <de><![CDATA[System-Standard Template im Ausgabe-Dialog nicht zur Auswahl anbieten]]></de>
+            <en><![CDATA[Do not offer System Standard Template for selection in output dialog]]></en>
+        </locale>
+        
     </groups>
 
 </locales>
