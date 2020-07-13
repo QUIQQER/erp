@@ -1,7 +1,8 @@
 {
     "name": "quiqqer\/erp",
     "type": "quiqqer-application",
-    "description": "",
+    "description": "Basic QUIQQER ERP module.",
+    "version": "1.2.0",
     "license": [
         "GPL-3.0+",
         "PCSG QEL-1.0"
