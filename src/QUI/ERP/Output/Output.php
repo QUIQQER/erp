@@ -317,7 +317,7 @@ class Output
         }
 
         // Sort so that system default is first
-        \usort($templates, function($a, $b) {
+        \usort($templates, function ($a, $b) {
             if ($a['isSystemDefault']) {
                 return -1;
             }
