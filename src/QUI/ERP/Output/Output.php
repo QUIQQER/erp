@@ -316,6 +316,19 @@ class Output
             }
         }
 
+        // Sort so that system default is first
+        \usort($templates, function($a, $b) {
+            if ($a['isSystemDefault']) {
+                return -1;
+            }
+
+            if ($b['isSystemDefault']) {
+                return 1;
+            }
+
+            return 0;
+        });
+
         return $templates;
     }
 

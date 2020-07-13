@@ -127,19 +127,17 @@ define('package/quiqqer/erp/bin/backend/controls/settings/OutputTemplates', [
 
                     Select.value = EntitySetting.id + '--' + EntitySetting.provider;
 
-                    if (EntitySetting.hideSystemDefault) {
-                        var DefaultCheckbox = Select.getParent().getElement(
-                            '.quiqqer-erp-settings-output-templates-hide-system-default input'
-                        );
+                    var DefaultCheckbox = Select.getParent().getElement(
+                        '.quiqqer-erp-settings-output-templates-hide-system-default input'
+                    );
 
-                        DefaultCheckbox.checked = true;
+                    var Option = Select.getElement('option[value="' + Select.value + '"]');
 
-                        var Option = Select.getElement('option[value="' + Select.value + '"]');
-
-                        if (!parseInt(Option.get('data-systemdefault'))) {
-                            DefaultCheckbox.getParent().removeClass('quiqqer-erp-settings-output-templates__hidden');
-                        }
+                    if (!parseInt(Option.get('data-systemdefault'))) {
+                        DefaultCheckbox.getParent().removeClass('quiqqer-erp-settings-output-templates__hidden');
                     }
+
+                    DefaultCheckbox.checked = EntitySetting.hideSystemDefault;
                 }
             });
         },
