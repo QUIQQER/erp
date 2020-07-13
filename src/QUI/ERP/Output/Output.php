@@ -203,6 +203,11 @@ class Output
 
         $pdfFile = $OutputTemplate->getPDFDocument()->createPDF();
 
+        // Re-name PDF
+        $pdfDir   = QUI::getPackage('quiqqer/erp')->getVarDir();
+        $mailFile = $pdfDir.$OutputProvider::getDownloadFileName($entityId).'.pdf';
+        \rename($pdfFile, $mailFile);
+
         if (empty($recipientEmail) || !QUI\Utils\Security\Orthos::checkMailSyntax($recipientEmail)) {
             $recipientEmail = $OutputProvider::getEmailAddress($entityId);
         }
@@ -218,7 +223,7 @@ class Output
         $Mailer = new QUI\Mail\Mailer();
 
         $Mailer->addRecipient($recipientEmail);
-        $Mailer->addAttachment($pdfFile);
+        $Mailer->addAttachment($mailFile);
 
         if (!empty($mailSubject)) {
             $Mailer->setSubject($mailSubject);
@@ -237,8 +242,8 @@ class Output
         QUI::getEvents()->fireEvent('quiqqerErpOutputSendMail', [$entityId, $entityType, $recipientEmail]);
 
         // Delete PDF file after send
-        if (\file_exists($pdfFile)) {
-            \unlink($pdfFile);
+        if (\file_exists($mailFile)) {
+            \unlink($mailFile);
         }
     }
 
