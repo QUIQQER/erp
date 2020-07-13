@@ -375,6 +375,15 @@ class Output
      */
     public static function getDefaultOutputTemplateProviderForEntityType(string $entityType)
     {
+        $defaultEntityTypeTemplate = self::getDefaultOutputTemplateForEntityType($entityType);
+
+        foreach (self::getAllOutputTemplateProviders() as $provider) {
+            if ($provider['package'] === $defaultEntityTypeTemplate['provider']) {
+                return $provider['class'];
+            }
+        }
+
+        // Fallback: Choose next available provider
         foreach (self::getAllOutputTemplateProviders() as $provider) {
             /** @var OutputTemplateProviderInterface $class */
             $class             = $provider['class'];
@@ -471,6 +480,19 @@ class Output
                 QUI\System\Log::writeException($Exception);
             }
         }
+
+        // Sort providers that system default is first
+        \usort($providerClasses, function ($a, $b) {
+            if ($a['isSystemDefault']) {
+                return -1;
+            }
+
+            if ($b['isSystemDefault']) {
+                return 1;
+            }
+
+            return 0;
+        });
 
         return $providerClasses;
     }
