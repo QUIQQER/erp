@@ -354,7 +354,7 @@ class Factor
      */
     public function setSumFormatted($sumFormatted)
     {
-        $this->nettoSumFormatted = $sumFormatted;
+        $this->sumFormatted = $sumFormatted;
     }
 
     /**
@@ -371,5 +371,21 @@ class Factor
     public function setNettoSumFormatted($sumFormatted)
     {
         $this->nettoSumFormatted = $sumFormatted;
+    }
+
+    /**
+     * @param int|float $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * @param string $valueText
+     */
+    public function setValueText($valueText)
+    {
+        $this->valueText = $valueText;
     }
 }
