@@ -196,11 +196,15 @@ class User
         $CurrentAddress = $User->getAttribute('CurrentAddress');
 
         if ($CurrentAddress instanceof Address) {
-            $Country = $CurrentAddress->getCountry();
-            $Area    = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+            try {
+                $Country = $CurrentAddress->getCountry();
+                $Area    = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
 
-            if ($Area) {
-                return $Area;
+                if ($Area) {
+                    return $Area;
+                }
+            } catch (QUI\Exception $Exception) {
+                QUI\System\Log::addDebug($Exception->getMessage());
             }
         }
 
