@@ -103,7 +103,6 @@ class User
             return self::$userBruttoNettoStatus[$uid];
         }
 
-        // @todo quiqqer.erp.isNettoUser beachten, die eigenschaft ist besser, gab es damals noch nicht
         // verifizierung als unternehm einbauen
         try {
             $Address = self::getUserERPAddress($User);

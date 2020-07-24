@@ -113,6 +113,14 @@
             <en><![CDATA[(System default)]]></en>
         </locale>
 
+        <locale name="user.settings.userNettoStatus.netto">
+            <de><![CDATA[gewerblich (netto / zzgl. MwSt.)]]></de>
+            <en><![CDATA[business (netto / incl. vat)]]></en>
+        </locale>
+        <locale name="user.settings.userNettoStatus.brutto">
+            <de><![CDATA[privat (brutto / inkl. MwSt.)]]></de>
+            <en><![CDATA[private (gross / incl. vat)]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -133,14 +141,6 @@
         <locale name="user.settings.userNettoStatus">
             <de><![CDATA[Preis-Berechnungsgrundlage]]></de>
             <en><![CDATA[Price calculation basis]]></en>
-        </locale>
-        <locale name="user.settings.userNettoStatus.netto">
-            <de><![CDATA[gewerblich (netto / zzgl. MwSt.)]]></de>
-            <en><![CDATA[business (netto / incl. vat)]]></en>
-        </locale>
-        <locale name="user.settings.userNettoStatus.brutto">
-            <de><![CDATA[privat (brutto / inkl. MwSt.)]]></de>
-            <en><![CDATA[private (gross / incl. vat)]]></en>
         </locale>
 
         <locale name="user.profile.title">
