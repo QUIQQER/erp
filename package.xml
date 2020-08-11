@@ -9,6 +9,8 @@
             <locale group="quiqqer/erp" var="package.title"/>
         </description>
 
+        <image src="URL_OPT_DIR/quiqqer/erp/bin/images/Logo.png"/>
+
         <provider>
             <erp src="\QUI\ERP\Provider\Erp"/>
             <requirements src="\QUI\ERP\Provider\Requirements"/>
