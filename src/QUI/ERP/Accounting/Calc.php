@@ -290,7 +290,7 @@ class Calc
             }
 
             $vat    = $PriceFactor->getVat();
-            $vatSum = $PriceFactor->getVatSum();
+            $vatSum = \round($PriceFactor->getVatSum(), $precision);
 
             if (!isset($vatArray[$vat])) {
                 $vatArray[$vat] = [
