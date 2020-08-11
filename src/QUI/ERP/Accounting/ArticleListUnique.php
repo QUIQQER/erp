@@ -97,7 +97,6 @@ class ArticleListUnique implements \IteratorAggregate
         $this->calculations = $attributes['calculations'];
         $this->showHeader   = isset($attributes['showHeader']) ? $attributes['showHeader'] : true;
 
-
         // price factors
         $this->PriceFactors = new ErpFactorList();
 

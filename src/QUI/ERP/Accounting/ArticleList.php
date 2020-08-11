@@ -112,6 +112,10 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
         }
 
         parent::__construct($attributes);
+
+        if (!empty($this->calculations)) {
+            $this->calculated = true;
+        }
     }
 
     /**
