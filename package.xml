@@ -11,10 +11,27 @@
 
         <image src="URL_OPT_DIR/quiqqer/erp/bin/images/Logo.png"/>
 
+        <preview>
+            <image src="URL_OPT_DIR/quiqqer/erp/bin/preview-1.png"/>
+            <image src="URL_OPT_DIR/quiqqer/erp/bin/preview-2.png"/>
+        </preview>
+
+        <support>
+            <email><![CDATA[support@pcsg.de]]></email>
+            <forum><![CDATA[https://community.quiqqer.com]]></forum>
+            <source><![CDATA[https://dev.quiqqer.com/quiqqer/erp]]></source>
+            <issues><![CDATA[https://dev.quiqqer.com/quiqqer/erp/issues]]></issues>
+            <wiki><![CDATA[https://dev.quiqqer.com/quiqqer/erp/wikis/home]]></wiki>
+        </support>
+
+        <copyright>
+            <name><![CDATA[PCSG - Computer & Internet Service OHG]]></name>
+            <license><![CDATA[GPL-3.0+]]></license>
+        </copyright>
+
         <provider>
             <erp src="\QUI\ERP\Provider\Erp"/>
             <requirements src="\QUI\ERP\Provider\Requirements"/>
         </provider>
-
     </package>
 </quiqqer>
