@@ -126,8 +126,10 @@
     <groups name="quiqqer/erp" datatype="php">
 
         <locale name="exception.ajax.output.sendMail.error">
-            <de><![CDATA[Leider ist beim E-Mail-Verand ein unerwarteter Fehler aufgetreten. Bitte wiederholen Sie den Vorgang, prüfen Sie die Fehler-Logs oder kontaktieren Sie einen Administator.]]></de>
-            <en><![CDATA[Unfortunately, an unexpected error has occurred when sending the e-mail. Please repeat the process, check the error logs or contact an administrator.]]></en>
+            <de>
+                <![CDATA[Leider ist beim E-Mail-Verand ein unerwarteter Fehler aufgetreten. Bitte wiederholen Sie den Vorgang, prüfen Sie die Fehler-Logs oder kontaktieren Sie einen Administator.]]></de>
+            <en>
+                <![CDATA[Unfortunately, an unexpected error has occurred when sending the e-mail. Please repeat the process, check the error logs or contact an administrator.]]></en>
         </locale>
 
         <locale name="user.settings.title">
@@ -330,8 +332,10 @@
             <en><![CDATA[E-Mail sent successfully.]]></en>
         </locale>
         <locale name="exception.Output.sendPdfViaMail.missing_recipient">
-            <de><![CDATA[Das Dokument kann nicht per E-Mail versendet werden, da keine gültige Empfänger E-Mail-Adresse angegeben wurde.]]></de>
-            <en><![CDATA[The document cannot be sent by e-mail because no valid recipient e-mail address has been specified.]]></en>
+            <de>
+                <![CDATA[Das Dokument kann nicht per E-Mail versendet werden, da keine gültige Empfänger E-Mail-Adresse angegeben wurde.]]></de>
+            <en>
+                <![CDATA[The document cannot be sent by e-mail because no valid recipient e-mail address has been specified.]]></en>
         </locale>
 
     </groups>
@@ -361,7 +365,7 @@
             <de><![CDATA[Artikelübersichtsrechnung]]></de>
             <en><![CDATA[Article overview calculation]]></en>
         </locale>
-        
+
         <!-- Controls -->
         <locale name="controls.OutputDialog.labelEntityId">
             <de><![CDATA[Beleg-Nr.]]></de>
@@ -416,11 +420,13 @@
             <en><![CDATA[No templates found]]></en>
         </locale>
         <locale name="controls.OutputDialog.no_preview">
-            <de><![CDATA[Das Dokument ist aktuell nicht verfügbar, da keine Vorlage ausgewählt oder gefunden wurde.]]></de>
+            <de>
+                <![CDATA[Das Dokument ist aktuell nicht verfügbar, da keine Vorlage ausgewählt oder gefunden wurde.]]></de>
             <en><![CDATA[The document is currently not available because no template was selected or found.]]></en>
         </locale>
         <locale name="controls.OutputDialog.preview_error">
-            <de><![CDATA[Die Vorschau konnte leider nicht geladen werden. Bitte prüfen Sie die Fehler-Logs oder kontaktieren Sie einen Administrator.]]></de>
+            <de>
+                <![CDATA[Die Vorschau konnte leider nicht geladen werden. Bitte prüfen Sie die Fehler-Logs oder kontaktieren Sie einen Administrator.]]></de>
             <en><![CDATA[The preview could not loaded. Please check the error logs or contact an administrator.]]></en>
         </locale>
         <locale name="controls.OutputDialog.descMarkAsSent">
@@ -444,12 +450,66 @@
             <de><![CDATA[<b>Hinweis:</b> Der Beleg wird als PDF-Datei im Anhang der E-Mail mitgesendet.]]></de>
             <en><![CDATA[<b>Hint:</b> The document is sent as a PDF file attached to the e-mail.]]></en>
         </locale>
-        
+
         <locale name="controls.settings.OutputTemplates.tpl.labelHideSystemDefault">
             <de><![CDATA[System-Standard Template im Ausgabe-Dialog nicht zur Auswahl anbieten]]></de>
             <en><![CDATA[Do not offer System Standard Template for selection in output dialog]]></en>
         </locale>
-        
-    </groups>
 
+        <locale name="journal.timeFilter.month">
+            <de><![CDATA[Monat]]></de>
+            <en><![CDATA[Month]]></en>
+        </locale>
+        <locale name="journal.timeFilter.quarter">
+            <de><![CDATA[Quartal]]></de>
+            <en><![CDATA[Quarter]]></en>
+        </locale>
+        <locale name="journal.timeFilter.halfYear">
+            <de><![CDATA[Halbjahr]]></de>
+            <en><![CDATA[Half-Year]]></en>
+        </locale>
+        <locale name="journal.timeFilter.year">
+            <de><![CDATA[Jahr]]></de>
+            <en><![CDATA[Year]]></en>
+        </locale>
+        <locale name="journal.timeFilter.period">
+            <de><![CDATA[Zeitspanne]]></de>
+            <en><![CDATA[Period of time]]></en>
+        </locale>
+        <locale name="journal.timeFilter.period.select">
+            <de><![CDATA[[from] bis [to]]]></de>
+            <en><![CDATA[[from] to [to]]]></en>
+        </locale>
+        <locale name="journal.timeFilter.change.year">
+            <de><![CDATA[Jahr ändern]]></de>
+            <en><![CDATA[Change year]]></en>
+        </locale>
+
+
+        <locale name="quarter.1">
+            <de><![CDATA[1. Quartal]]></de>
+            <en><![CDATA[1st quarter]]></en>
+        </locale>
+        <locale name="quarter.2">
+            <de><![CDATA[2. Quartal]]></de>
+            <en><![CDATA[2nd quarter]]></en>
+        </locale>
+        <locale name="quarter.3">
+            <de><![CDATA[3. Quartal]]></de>
+            <en><![CDATA[3rd quarter]]></en>
+        </locale>
+        <locale name="quarter.4">
+            <de><![CDATA[4. Quartal]]></de>
+            <en><![CDATA[4th quarter]]></en>
+        </locale>
+
+        <locale name="halfYear.1">
+            <de><![CDATA[1 Halbjahr]]></de>
+            <en><![CDATA[1 half year]]></en>
+        </locale>
+        <locale name="halfYear.2">
+            <de><![CDATA[2 Halbjahr]]></de>
+            <en><![CDATA[2 half year]]></en>
+        </locale>
+    </groups>
 </locales>
