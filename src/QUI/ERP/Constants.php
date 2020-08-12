@@ -53,4 +53,9 @@ class Constants
      * @var int
      */
     const TYPE_INVOICE_CANCEL = 5;
+
+    /**
+     * ID of the invoice product text field
+     */
+    const INVOICE_PRODUCT_TEXT_ID = 102;
 }

@@ -50,7 +50,7 @@ QUI::$Ajax->registerFunction(
             try {
                 $Description = $Product->getField(Fields::FIELD_SHORT_DESC);
                 $InvoiceText = $Product->getField(
-                    QUI\ERP\Accounting\Invoice\Handler::INVOICE_PRODUCT_TEXT_ID
+                    QUI\ERP\Constants::INVOICE_PRODUCT_TEXT_ID
                 );
 
                 if (!$InvoiceText->isEmpty()) {
