@@ -1,0 +1,123 @@
+.quiqqer-erp-backend-erpArticle {
+    align-items: stretch;
+    border-bottom: 1px solid #DEDEDE;
+    border-left: 2px solid #FFFFFF;
+    clear: both;
+    display: flex;
+    flex-direction: row;
+    float: left;
+    min-height: 50px;
+    position: relative;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-erpArticle .cell-editable:focus {
+    box-shadow: 0 0 5px #2F8FC6;
+}
+
+.quiqqer-erp-backend-erpArticle-select {
+    border-left: 2px solid #2F8FC6;
+}
+
+.quiqqer-erp-backend-erpArticle .cell {
+    padding: 10px;
+    position: relative;
+}
+
+.quiqqer-erp-backend-erpArticle .cell-editable:hover {
+    background: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.quiqqer-erp-backend-erpArticle-pos {
+    width: 50px;
+}
+
+.quiqqer-erp-backend-erpArticle-text {
+    width: calc(100% - 800px);
+}
+
+.quiqqer-erp-backend-erpArticle-text-title {
+    clear: both;
+    font-weight: bold;
+    margin-bottom: 5px;
+    position: relative;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-erpArticle-text-description {
+    clear: both;
+    position: relative;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-erpArticle-text-description-edit {
+    background: #EFEFEF;
+    border: 1px solid #EFEFEF;
+    height: 100%;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 100%
+}
+
+.quiqqer-erp-backend-erpArticle-text-description-buttons {
+    height: 50px;
+    text-align: center;
+}
+
+.quiqqer-erp-backend-erpArticle-quantity {
+    text-align: right;
+    width: 100px;
+}
+
+.quiqqer-erp-backend-erpArticle-articleNo,
+.quiqqer-erp-backend-erpArticle-unitPrice,
+.quiqqer-erp-backend-erpArticle-price,
+.quiqqer-erp-backend-erpArticle-vat,
+.quiqqer-erp-backend-erpArticle-discount,
+.quiqqer-erp-backend-erpArticle-total {
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    width: 100px;
+    white-space: nowrap;
+}
+
+.quiqqer-erp-backend-erpArticle-articleNo {
+    text-align: left;
+}
+
+.quiqqer-erp-backend-erpArticle-total {
+    width: 150px;
+}
+
+.quiqqer-erp-backend-erpArticle-buttons {
+    background: #fff;
+    bottom: 0;
+    opacity: 0;
+    padding: 10px;
+    position: absolute;
+    right: 0;
+    text-align: right;
+    transition: opacity 0.2s;
+    width: 150px;
+    z-index: 10;
+}
+
+.quiqqer-erp-backend-erpArticle-buttons button {
+    padding: 0 5px;
+    line-height: 20px;
+    margin-left: 5px;
+}
+
+.quiqqer-erp-backend-erpArticle:hover .quiqqer-erp-backend-erpArticle-buttons {
+    opacity: 1;
+    transition: opacity 0.2s;
+}
+
+.quiqqer-erp-dialog-edit-article-description input {
+    margin-bottom: 10px;
+    width: 100%;
+}

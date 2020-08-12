@@ -1,0 +1,64 @@
+.quiqqer-erp-backend-erpItems {
+    display: block;
+    overflow: auto;
+    position: relative;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-erpItems-container {
+    min-width: 1000px;
+}
+
+.quiqqer-erp-backend-erpItems-header {
+    background: #DEDEDE;
+    float: left;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-erpItems-items {
+    display: inline-block;
+    height: calc(100% - 30px);
+    overflow: auto;
+    position: relative;
+    width: 100%;
+}
+
+.header-cell {
+    float: left;
+    padding: 5px 10px;
+}
+
+.quiqqer-erp-backend-erpItems-header-pos {
+    width: 50px;
+}
+
+.quiqqer-erp-backend-erpItems-header-description {
+    width: calc(100% - 800px);
+}
+
+.quiqqer-erp-backend-erpItems-header-quantity {
+    text-align: right;
+    width: 100px;
+}
+
+.quiqqer-erp-backend-erpItems-header-articleNo,
+.quiqqer-erp-backend-erpItems-header-unitPrice,
+.quiqqer-erp-backend-erpItems-header-price,
+.quiqqer-erp-backend-erpItems-header-vat,
+.quiqqer-erp-backend-erpItems-header-discount,
+.quiqqer-erp-backend-erpItems-header-total {
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    width: 100px;
+    white-space: nowrap;
+}
+
+.quiqqer-erp-backend-erpItems-header-articleNo {
+    text-align: left;
+}
+
+.quiqqer-erp-backend-erpItems-header-total {
+    width: 150px;
+}

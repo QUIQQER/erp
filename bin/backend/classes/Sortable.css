@@ -1,0 +1,44 @@
+
+.quiqqer-erp-sortableClone {
+
+}
+
+.quiqqer-erp-sortableClone-placeholder {
+    background: #fff;
+    color: #999;
+    cursor: pointer;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-erpArticlePlaceholder-pos,
+.quiqqer-erp-backend-erpArticlePlaceholder-articleNo,
+.quiqqer-erp-backend-erpArticlePlaceholder-title,
+.quiqqer-erp-backend-erpArticlePlaceholder-quantity,
+.quiqqer-erp-backend-erpArticlePlaceholder-unitPrice,
+.quiqqer-erp-backend-erpArticlePlaceholder-price {
+    float: left;
+    padding: 10px;
+}
+
+.quiqqer-erp-backend-erpArticlePlaceholder-pos {
+    width: 50px;
+}
+
+.quiqqer-erp-backend-erpArticlePlaceholder-articleNo,
+.quiqqer-erp-backend-erpArticlePlaceholder-quantity,
+.quiqqer-erp-backend-erpArticlePlaceholder-unitPrice,
+.quiqqer-erp-backend-erpArticlePlaceholder-price {
+    width: 100px;
+}
+
+.quiqqer-erp-backend-erpArticlePlaceholder-title {
+    width: calc(100% - 800px);
+}
+
+.quiqqer-erp-backend-erpArticlePlaceholder-quantity,
+.quiqqer-erp-backend-erpArticlePlaceholder-unitPrice,
+.quiqqer-erp-backend-erpArticlePlaceholder-price {
+    text-align: right;
+}

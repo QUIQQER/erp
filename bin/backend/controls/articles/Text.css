@@ -1,0 +1,88 @@
+.quiqqer-erp-backend-erpArticleText {
+    align-items: stretch;
+    border-bottom: 1px solid #DEDEDE;
+    border-left: 2px solid #FFFFFF;
+    clear: both;
+    display: flex;
+    flex-direction: row;
+    float: left;
+    min-height: 50px;
+    position: relative;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-erpArticle-select {
+    border-left: 2px solid #2F8FC6;
+}
+
+.quiqqer-erp-backend-erpArticleText .cell {
+    padding: 10px;
+    position: relative;
+}
+
+.quiqqer-erp-backend-erpArticleText .cell-editable:hover {
+    background: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.quiqqer-erp-backend-erpArticleText-pos {
+    width: 50px;
+}
+
+.quiqqer-erp-backend-erpArticleText-text {
+    width: calc(100% - 250px);
+}
+
+.quiqqer-erp-backend-erpArticleText-text-title {
+    clear: both;
+    font-weight: bold;
+    margin-bottom: 5px;
+    position: relative;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-erpArticleText-text-description {
+    clear: both;
+    position: relative;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-erpArticleText-text-description-edit {
+    background: #EFEFEF;
+    border: 1px solid #EFEFEF;
+    height: 100%;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 100%
+}
+
+.quiqqer-erp-backend-erpArticleText-text-description-buttons {
+    height: 50px;
+    text-align: center;
+}
+
+.quiqqer-erp-backend-erpArticleText-buttons {
+    background: #fff;
+    bottom: 0;
+    opacity: 0;
+    padding: 10px;
+    position: absolute;
+    right: 0;
+    text-align: right;
+    transition: opacity 0.2s;
+    width: 150px;
+    z-index: 10;
+}
+
+.quiqqer-erp-backend-erpArticleText-buttons button {
+    padding: 0 5px;
+    line-height: 20px;
+    margin-left: 5px;
+}
+
+.quiqqer-erp-backend-erpArticleText:hover .quiqqer-erp-backend-erpArticleText-buttons {
+    opacity: 1;
+    transition: opacity 0.2s;
+}
