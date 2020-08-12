@@ -1,0 +1,44 @@
+
+.quiqqer-erp-backend-temporaryErp-summary {
+    background: #FFFFFF;
+    border-top: 2px solid #DEDEDE;
+    cursor: pointer;
+    float: left;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-temporaryErp-summary:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.quiqqer-erp-backend-temporaryErp-summary-pos,
+.quiqqer-erp-backend-temporaryErp-summary-total {
+    border-top: 1px solid #DEDEDE;
+    clear: both;
+    float: left;
+    padding: 5px;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-temporaryErp-summary-pos-title,
+.quiqqer-erp-backend-temporaryErp-summary-pos-netto,
+.quiqqer-erp-backend-temporaryErp-summary-pos-brutto,
+.quiqqer-erp-backend-temporaryErp-summary-total-title,
+.quiqqer-erp-backend-temporaryErp-summary-total-vat,
+.quiqqer-erp-backend-temporaryErp-summary-total-netto,
+.quiqqer-erp-backend-temporaryErp-summary-total-brutto {
+    float: left;
+    width: 200px;
+}
+
+.quiqqer-erp-backend-temporaryErp-summary-total-vat {
+    width: 400px;
+}
+
+.quiqqer-erp-backend-temporaryErp-summary-pos-title {
+    width: calc(100% - 400px);
+}
+
+.quiqqer-erp-backend-temporaryErp-summary-total-title {
+    width: calc(100% - 800px);
+}

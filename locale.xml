@@ -121,6 +121,51 @@
             <de><![CDATA[privat (brutto / inkl. MwSt.)]]></de>
             <en><![CDATA[private (gross / incl. vat)]]></en>
         </locale>
+
+        <locale name="products.articleNo">
+            <de><![CDATA[Artikel Nr.]]></de>
+            <en><![CDATA[Article No.]]></en>
+        </locale>
+        <locale name="products.description">
+            <de><![CDATA[Produkt Beschreibung]]></de>
+            <en><![CDATA[Product description]]></en>
+        </locale>
+        <locale name="products.quantity">
+            <de><![CDATA[Menge]]></de>
+            <en><![CDATA[Quantity]]></en>
+        </locale>
+        <locale name="products.unitPrice">
+            <de><![CDATA[Einzelpreis]]></de>
+            <en><![CDATA[Unit price]]></en>
+        </locale>
+        <locale name="products.price">
+            <de><![CDATA[Preis]]></de>
+            <en><![CDATA[Price]]></en>
+        </locale>
+        <locale name="products.vat">
+            <de><![CDATA[MwSt.]]></de>
+            <en><![CDATA[VAT]]></en>
+        </locale>
+        <locale name="products.table.vat">
+            <de><![CDATA[MwSt. Satz]]></de>
+            <en><![CDATA[VAT rate]]></en>
+        </locale>
+        <locale name="products.discount">
+            <de><![CDATA[Rabatt]]></de>
+            <en><![CDATA[Discount]]></en>
+        </locale>
+        <locale name="products.sum">
+            <de><![CDATA[Summe]]></de>
+            <en><![CDATA[Total]]></en>
+        </locale>
+        <locale name="articleList.article.button.delete">
+            <de><![CDATA[Artikel entfernen]]></de>
+            <en><![CDATA[Remove article]]></en>
+        </locale>
+        <locale name="articleList.article.button.replace">
+            <de><![CDATA[Artikel ersetzen]]></de>
+            <en><![CDATA[Replace article]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -456,6 +501,15 @@
             <en><![CDATA[Do not offer System Standard Template for selection in output dialog]]></en>
         </locale>
 
+        <locale name="erp.articleList.article.button.delete">
+            <de><![CDATA[Artikel entfernen]]></de>
+            <en><![CDATA[Remove article]]></en>
+        </locale>
+        <locale name="erp.articleList.article.button.replace">
+            <de><![CDATA[Artikel ersetzen]]></de>
+            <en><![CDATA[Replace article]]></en>
+        </locale>
+
         <locale name="journal.timeFilter.month">
             <de><![CDATA[Monat]]></de>
             <en><![CDATA[Month]]></en>
@@ -510,6 +564,23 @@
         <locale name="halfYear.2">
             <de><![CDATA[2 Halbjahr]]></de>
             <en><![CDATA[2 half year]]></en>
+        </locale>
+
+        <locale name="dialog.edit.description.title">
+            <de><![CDATA[Beschreibung von Artikel: [articleNo] [articleTitle]]]></de>
+            <en><![CDATA[Description of article: [articleNo] [articleTitle]]]></en>
+        </locale>
+        <locale name="dialog.delete.article.title">
+            <de><![CDATA[Artikel wirklich löschen?]]></de>
+            <en><![CDATA[Delete the article?]]></en>
+        </locale>
+        <locale name="dialog.delete.article.text">
+            <de><![CDATA[Möchten Sie den Artikel wirklich löschen?]]></de>
+            <en><![CDATA[Are you sure you want to delete the article?]]></en>
+        </locale>
+        <locale name="dialog.delete.article.information">
+            <de><![CDATA[Der Artikel wird unwiderruflich gelöscht.]]></de>
+            <en><![CDATA[The article is irrevocably deleted.]]></en>
         </locale>
     </groups>
 </locales>
