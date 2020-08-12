@@ -53,5 +53,4 @@ class Constants
      * @var int
      */
     const TYPE_INVOICE_CANCEL = 5;
-
 }
