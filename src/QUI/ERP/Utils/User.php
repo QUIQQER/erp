@@ -40,7 +40,7 @@ class User
      * is the user a netto or brutto user
      *
      * @param UserInterface $User
-     * @return bool
+     * @return integer
      */
     public static function getBruttoNettoUserStatus(UserInterface $User)
     {
@@ -103,23 +103,24 @@ class User
             return self::$userBruttoNettoStatus[$uid];
         }
 
-        // verifizierung als unternehm einbauen
+        // Verifizierung als Unternehmen einbauen
         try {
             $Address = self::getUserERPAddress($User);
 
-            if (\is_object($Address)
-                && $Address
-                && $Address->getAttribute('company')
-            ) {
-                if ($Config->getValue('shop', 'companyForceBruttoPrice')) {
-                    self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
+            if (\is_object($Address) && $Address) {
+                $company = $Address->getAttribute('company');
+
+                if (!empty($company)) {
+                    if ($Config->getValue('shop', 'companyForceBruttoPrice')) {
+                        self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
+
+                        return self::$userBruttoNettoStatus[$uid];
+                    }
+
+                    self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
 
                     return self::$userBruttoNettoStatus[$uid];
                 }
-
-                self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
-
-                return self::$userBruttoNettoStatus[$uid];
             }
 
             if (\is_array($Address)
