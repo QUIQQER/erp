@@ -619,7 +619,7 @@ class Calc
         );
 
         // if payment status is paid, take it immediately and do not query any transactions
-        if ($ToCalculate->getAttribute('paid_status') === Invoice::PAYMENT_STATUS_PAID) {
+        if ($ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_PAID) {
             $paidData = $ToCalculate->getAttribute('paid_data');
             $paid     = 0;
 
@@ -765,13 +765,13 @@ class Calc
         ) {
             // Leave everything as it is
         } elseif ((float)$ToCalculate->getAttribute('toPay') == 0) {
-            $ToCalculate->setAttribute('paid_status', Invoice::PAYMENT_STATUS_PAID);
+            $ToCalculate->setAttribute('paid_status', QUI\ERP\Constants::PAYMENT_STATUS_PAID);
         } elseif ($ToCalculate->getAttribute('paid') == 0) {
-            $ToCalculate->setAttribute('paid_status', Invoice::PAYMENT_STATUS_OPEN);
+            $ToCalculate->setAttribute('paid_status', QUI\ERP\Constants::PAYMENT_STATUS_OPEN);
         } elseif ($ToCalculate->getAttribute('toPay')
                   && $calculations['sum'] != $ToCalculate->getAttribute('paid')
         ) {
-            $ToCalculate->setAttribute('paid_status', Invoice::PAYMENT_STATUS_PART);
+            $ToCalculate->setAttribute('paid_status', QUI\ERP\Constants::PAYMENT_STATUS_PART);
         }
 
         QUI\ERP\Debug::getInstance()->log([
