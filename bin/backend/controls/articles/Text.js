@@ -19,12 +19,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
 ], function (Article, QUIButton, QUILocale, Mustache, template) {
     "use strict";
 
-    var lg = 'quiqqer/Article';
+    var lg = 'quiqqer/erp';
 
     return new Class({
 
         Extends: Article,
-        Type   : 'package/quiqqer/Article/bin/backend/controls/articles/Text',
+        Type   : 'package/quiqqer/erp/bin/backend/controls/articles/Text',
 
         Binds: [
             '$onEditTitle',
