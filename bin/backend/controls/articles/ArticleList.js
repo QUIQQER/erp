@@ -603,7 +603,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             this.$articles = articles;
 
-            this.$calc().then(function () {
+            this.$executeCalculation().then(function () {
                 if (self.$articles.length) {
                     self.$articles[0].select();
                 }
