@@ -8,13 +8,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
     'qui/QUI',
     'qui/controls/Control',
+    'package/quiqqer/erp/bin/backend/controls/articles/Article',
     'Mustache',
     'Locale',
 
     'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.html',
     'css!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.css'
 
-], function (QUI, QUIControl, Mustache, QUILocale, template) {
+], function (QUI, QUIControl, Article, Mustache, QUILocale, template) {
     "use strict";
 
     return new Class({
@@ -101,49 +102,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 return;
             }
 
-            var self = this;
-
-            List.addEvent('onCalc', function (List) {
-                var data = List.getCalculation();
-
-                self.$NettoSum.set('html', self.$Formatter.format(data.nettoSum));
-                self.$BruttoSum.set('html', self.$Formatter.format(data.sum));
-
-                if (typeOf(data.vatArray) === 'array' && !data.vatArray.length) {
-                    self.$VAT.set('html', '---');
-                    return;
-                }
-
-                var key, Entry;
-                var vatText = '';
-
-                for (key in data.vatArray) {
-                    if (!data.vatArray.hasOwnProperty(key)) {
-                        continue;
-                    }
-
-                    Entry = data.vatArray[key];
-
-                    if (typeof Entry.sum === 'undefined') {
-                        Entry.sum = 0;
-                    }
-
-                    if (typeof Entry.text === 'undefined') {
-                        Entry.text = '';
-                    }
-
-                    if (Entry.text === '') {
-                        Entry.text = '';
-                    }
-
-                    Entry.sum = parseFloat(Entry.sum);
-
-                    vatText = vatText + Entry.text + ' (' + self.$Formatter.format(Entry.sum) + ')<br />';
-                }
-
-                self.$VAT.set('html', vatText);
-            });
-
+            List.addEvent('onCalc', this.$refreshArticleSelect);
             List.addEvent('onArticleSelect', this.$refreshArticleSelect);
         },
 
@@ -226,30 +185,68 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
          * event: onArticleSelect
          *
          * @param List
-         * @param Article
+         * @param ArticleInstance
          */
-        $refreshArticleSelect: function (List, Article) {
-            var self = this;
+        $refreshArticleSelect: function (List, ArticleInstance) {
+            var calculated = List.getCalculation();
 
-            require(['Ajax'], function (QUIAjax) {
-                QUIAjax.get('package_quiqqer_erp_ajax_products_summary', function (result) {
-                    console.warn('##################');
-                    console.warn(result);
+            if (typeof calculated.calculations === 'undefined') {
+                return;
+            }
 
-                    self.$ArticleNettoSum.set(
-                        'html',
-                        self.$Formatter.format(result.calculated.nettoSum)
-                    );
+            var calc = calculated.calculations;
 
-                    self.$ArticleBruttoSum.set(
-                        'html',
-                        self.$Formatter.format(result.calculated.sum)
-                    );
-                }, {
-                    'package': 'quiqqer/erp',
-                    article  : JSON.encode(Article.getAttributes())
-                });
-            });
+            if (ArticleInstance instanceof Article) {
+                var articleCalc = ArticleInstance.getCalculations();
+
+                if (articleCalc && typeof articleCalc.nettoSum !== 'undefined') {
+                    this.$ArticleNettoSum.set('html', this.$Formatter.format(articleCalc.nettoSum));
+                } else {
+                    this.$ArticleNettoSum.set('html', '---');
+                }
+
+                if (articleCalc && typeof articleCalc.sum !== 'undefined') {
+                    this.$ArticleBruttoSum.set('html', this.$Formatter.format(articleCalc.sum));
+                } else {
+                    this.$ArticleBruttoSum.set('html', '---');
+                }
+            }
+
+            this.$NettoSum.set('html', this.$Formatter.format(calc.nettoSum));
+            this.$BruttoSum.set('html', this.$Formatter.format(calc.sum));
+
+            // vat display
+            if (typeOf(calc.vatArray) === 'array' && !calc.vatArray.length) {
+                this.$VAT.set('html', '---');
+            } else {
+                var key, Entry;
+                var vatText = '';
+
+                for (key in calc.vatArray) {
+                    if (!calc.vatArray.hasOwnProperty(key)) {
+                        continue;
+                    }
+
+                    Entry = calc.vatArray[key];
+
+                    if (typeof Entry.sum === 'undefined') {
+                        Entry.sum = 0;
+                    }
+
+                    if (typeof Entry.text === 'undefined') {
+                        Entry.text = '';
+                    }
+
+                    if (Entry.text === '') {
+                        Entry.text = '';
+                    }
+
+                    Entry.sum = parseFloat(Entry.sum);
+                    vatText   = vatText + Entry.text + ' (' + this.$Formatter.format(Entry.sum) + ')<br />';
+                }
+
+                this.$VAT.set('html', vatText);
+            }
         }
     });
 });

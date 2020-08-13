@@ -38,6 +38,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             '$onArticleSelect',
             '$onArticleUnSelect',
             '$onArticleReplace',
+            '$onArticleCalc',
             '$calc',
             '$onInject'
         ],
@@ -245,13 +246,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             Child.setUser(this.$user);
             Child.setPosition(this.$articles.length);
+            Child.setAttribute('List', this);
 
             Child.addEvents({
-                onDelete  : this.$onArticleDelete,
-                onSelect  : this.$onArticleSelect,
-                onUnSelect: this.$onArticleUnSelect,
-                onReplace : this.$onArticleReplace,
-                onCalc    : this.$calc
+                onDelete     : this.$onArticleDelete,
+                onSelect     : this.$onArticleSelect,
+                onUnSelect   : this.$onArticleUnSelect,
+                onReplace    : this.$onArticleReplace,
+                onArticleCalc: this.$onArticleCalc
             });
 
             if (this.$Container) {
@@ -342,18 +344,32 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         $executeCalculation: function () {
             var self = this;
 
+            if (this.$calculationRunning) {
+                return new Promise(function (resolve) {
+                    var trigger = function () {
+                        resolve(self.$calculations);
+                        self.removeEvent('onCalc', trigger);
+                    };
+
+                    self.addEvent('onCalc', trigger);
+                });
+            }
+
+            this.$calculationRunning = true;
+
             return new Promise(function (resolve) {
                 var articles = self.$articles.map(function (Article) {
                     return Article.getAttributes();
                 });
 
                 QUIAjax.get('package_quiqqer_erp_ajax_products_calc', function (result) {
-                    self.$calculations = result;
+                    self.$calculations       = result;
+                    self.$calculationRunning = false;
                     self.fireEvent('calc', [self, result]);
                     resolve(result);
                 }, {
                     'package': 'quiqqer/erp',
-                    articles : JSON.encode(articles),
+                    articles : JSON.encode({articles: articles}),
                     user     : JSON.encode(self.$user)
                 });
             });
@@ -587,7 +603,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             this.$articles = articles;
 
-            this.$executeCalculation().then(function () {
+            this.$calc().then(function () {
                 if (self.$articles.length) {
                     self.$articles[0].select();
                 }
@@ -628,6 +644,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         $onArticleReplace: function (Article) {
             this.fireEvent('articleReplaceClick', [this, Article]);
+        },
+
+        /**
+         * event: on article calculation
+         *
+         * @param Article
+         * @param calculation
+         */
+        $onArticleCalc: function (Article, calculation) {
+            this.$calculations = calculation;
         },
 
         /**

@@ -12,7 +12,7 @@
  */
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_summary',
-    function ($article) {
+    function ($article, $user) {
         $article = \json_decode($article, true);
 
         $Brutto = new QUI\ERP\User([
@@ -38,8 +38,10 @@ QUI::$Ajax->registerFunction(
         $Article->setUser($Brutto);
         $Article->calc($Calc);
 
-        return $Article->toArray();
+        $result = $Article->toArray();
+
+        return $result;
     },
-    ['article'],
+    ['article', 'user'],
     'Permission::checkAdminUser'
 );

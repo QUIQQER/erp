@@ -11,9 +11,13 @@
  */
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_calc',
-    function ($params, $user) {
-        $params = \json_decode($params, true);
-        $user   = \json_decode($user, true);
+    function ($articles, $user) {
+        $articles = \json_decode($articles, true);
+        $user     = \json_decode($user, true);
+
+        if (!\is_array($articles)) {
+            $articles = [];
+        }
 
         if (!empty($user)) {
             try {
@@ -26,11 +30,14 @@ QUI::$Ajax->registerFunction(
             $Calc = QUI\ERP\Accounting\Calc::getInstance();
         }
 
-        $Article = new QUI\ERP\Accounting\Article($params);
-        $Article->calc($Calc);
+        $Articles = new QUI\ERP\Accounting\ArticleList($articles);
+        $Articles->setUser($Calc->getUser());
+        $Articles->calc($Calc);
 
-        return $Article->toArray();
+        $result = $Articles->toArray();
+
+        return $result;
     },
-    ['params', 'user'],
+    ['articles', 'user'],
     'Permission::checkAdminUser'
 );
