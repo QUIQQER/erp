@@ -363,7 +363,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 });
 
                 QUIAjax.get('package_quiqqer_erp_ajax_products_calc', function (result) {
-                    self.$calculations = result;
+                    self.$calculations       = result;
+                    self.$calculationRunning = false;
                     self.fireEvent('calc', [self, result]);
                     resolve(result);
                 }, {
