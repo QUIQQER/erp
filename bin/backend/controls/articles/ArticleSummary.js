@@ -8,13 +8,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
     'qui/QUI',
     'qui/controls/Control',
+    'package/quiqqer/erp/bin/backend/controls/articles/Article',
     'Mustache',
     'Locale',
 
     'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.html',
     'css!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.css'
 
-], function (QUI, QUIControl, Mustache, QUILocale, template) {
+], function (QUI, QUIControl, Article, Mustache, QUILocale, template) {
     "use strict";
 
     return new Class({
@@ -102,48 +103,50 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             }
 
             var self = this;
+            //
+            // List.addEvent('onCalc', function (List) {
+            //     return;
+            //     var data = List.getCalculation();
+            //     console.log(data);
+            //     self.$NettoSum.set('html', self.$Formatter.format(data.nettoSum));
+            //     self.$BruttoSum.set('html', self.$Formatter.format(data.sum));
+            //
+            //     if (typeOf(data.vatArray) === 'array' && !data.vatArray.length) {
+            //         self.$VAT.set('html', '---');
+            //         return;
+            //     }
+            //
+            //     var key, Entry;
+            //     var vatText = '';
+            //
+            //     for (key in data.vatArray) {
+            //         if (!data.vatArray.hasOwnProperty(key)) {
+            //             continue;
+            //         }
+            //
+            //         Entry = data.vatArray[key];
+            //
+            //         if (typeof Entry.sum === 'undefined') {
+            //             Entry.sum = 0;
+            //         }
+            //
+            //         if (typeof Entry.text === 'undefined') {
+            //             Entry.text = '';
+            //         }
+            //
+            //         if (Entry.text === '') {
+            //             Entry.text = '';
+            //         }
+            //
+            //         Entry.sum = parseFloat(Entry.sum);
+            //
+            //         vatText = vatText + Entry.text + ' (' + self.$Formatter.format(Entry.sum) + ')<br />';
+            //     }
+            //
+            //     self.$VAT.set('html', vatText);
+            // });
 
-            List.addEvent('onCalc', function (List) {
-                var data = List.getCalculation();
-
-                self.$NettoSum.set('html', self.$Formatter.format(data.nettoSum));
-                self.$BruttoSum.set('html', self.$Formatter.format(data.sum));
-
-                if (typeOf(data.vatArray) === 'array' && !data.vatArray.length) {
-                    self.$VAT.set('html', '---');
-                    return;
-                }
-
-                var key, Entry;
-                var vatText = '';
-
-                for (key in data.vatArray) {
-                    if (!data.vatArray.hasOwnProperty(key)) {
-                        continue;
-                    }
-
-                    Entry = data.vatArray[key];
-
-                    if (typeof Entry.sum === 'undefined') {
-                        Entry.sum = 0;
-                    }
-
-                    if (typeof Entry.text === 'undefined') {
-                        Entry.text = '';
-                    }
-
-                    if (Entry.text === '') {
-                        Entry.text = '';
-                    }
-
-                    Entry.sum = parseFloat(Entry.sum);
-
-                    vatText = vatText + Entry.text + ' (' + self.$Formatter.format(Entry.sum) + ')<br />';
-                }
-
-                self.$VAT.set('html', vatText);
-            });
-
+            List.addEvent('onCalc', this.$refreshArticleSelect);
             List.addEvent('onArticleSelect', this.$refreshArticleSelect);
         },
 
@@ -228,7 +231,35 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
          * @param List
          * @param Article
          */
-        $refreshArticleSelect: function (List, Article) {
+        $refreshArticleSelect: function (List, ArticleInstance) {
+            var calculated = List.getCalculation();
+
+            if (typeof calculated.calculations === 'undefined') {
+                return;
+            }
+
+            var calc = calculated.calculations;
+
+            if (ArticleInstance instanceof Article) {
+                var articleCalc = ArticleInstance.getCalculations();
+
+                if (articleCalc && typeof articleCalc.nettoSum !== 'undefined') {
+                    this.$ArticleNettoSum.set('html', this.$Formatter.format(articleCalc.nettoSum));
+                } else {
+                    this.$ArticleNettoSum.set('html', '---');
+                }
+
+                if (articleCalc && typeof articleCalc.sum !== 'undefined') {
+                    this.$ArticleBruttoSum.set('html', this.$Formatter.format(articleCalc.sum));
+                } else {
+                    this.$ArticleBruttoSum.set('html', '---');
+                }
+            }
+
+            this.$NettoSum.set('html', this.$Formatter.format(calc.nettoSum));
+            this.$BruttoSum.set('html', this.$Formatter.format(calc.sum));
+
+            return;
             var self = this;
 
             require(['Ajax'], function (QUIAjax) {
@@ -236,15 +267,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                     console.warn('##################');
                     console.warn(result);
 
-                    self.$ArticleNettoSum.set(
-                        'html',
-                        self.$Formatter.format(result.calculated.nettoSum)
-                    );
+                    self.$ArticleNettoSum.set('html', self.$Formatter.format(result.calculated.nettoSum));
+                    self.$ArticleBruttoSum.set('html', self.$Formatter.format(result.calculated.sum));
 
-                    self.$ArticleBruttoSum.set(
-                        'html',
-                        self.$Formatter.format(result.calculated.sum)
-                    );
+                    self.$NettoSum.set('html', self.$Formatter.format(result.calculated.nettoSum));
+                    self.$BruttoSum.set('html', self.$Formatter.format(result.calculated.sum));
                 }, {
                     'package': 'quiqqer/erp',
                     article  : JSON.encode(Article.getAttributes())

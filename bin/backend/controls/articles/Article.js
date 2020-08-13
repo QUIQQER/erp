@@ -301,8 +301,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 var price     = Formatter.format(product.calculated.nettoSubSum);
                 var total     = Formatter.format(product.calculated.nettoSum);
 
-                self.$calculations = product;
-
                 var setElement = function (Node, text) {
                     var isInEditMode = Node.getElement('input');
 
@@ -337,16 +335,37 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @return {Promise}
          */
         $calc: function () {
-            var self = this;
+            var Calc;
 
-            return new Promise(function (resolve, reject) {
-                //QUIAjax.get('package_quiqqer_invoice_ajax_invoices_temporary_product_calc', resolve, {
-                QUIAjax.get('package_quiqqer_erp_ajax_products_calc', resolve, {
-                    'package': 'quiqqer/erp',
-                    onError  : reject,
-                    params   : JSON.encode(self.getAttributes()),
-                    user     : JSON.encode(self.$user)
+            var self = this,
+                attr = self.getAttributes(),
+                pos  = parseInt(attr.position);
+
+            if (this.getAttribute('List')) {
+                Calc = this.getAttribute('List').$executeCalculation();
+            } else {
+                Calc = new Promise(function (resolve, reject) {
+                    QUIAjax.get('package_quiqqer_erp_ajax_products_calc', resolve, {
+                        'package': 'quiqqer/erp',
+                        onError  : reject,
+                        params   : JSON.encode({
+                            articles: [attr]
+                        }),
+                        user     : JSON.encode(self.$user)
+                    });
                 });
+            }
+
+            return Calc.then(function (result) {
+                var articles = result.articles;
+                var article  = articles.filter(function (article) {
+                    return parseInt(article.position) === pos;
+                })[0];
+
+                self.$calculations = article;
+                self.fireEvent('calc', [self, result, article]);
+
+                return article;
             });
         },
 
@@ -356,7 +375,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @returns {{}|*}
          */
         getCalculations: function () {
-            return this.$calculations;
+            if (!this.$calculations) {
+                return {};
+            }
+
+            return this.$calculations.calculated;
         },
 
         /**

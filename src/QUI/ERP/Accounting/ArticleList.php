@@ -241,6 +241,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
         $calculations['display_vatSum'] = $Currency->format($calculations['vatSum']);
 
         foreach ($articles as $key => $article) {
+            $articles[$key]['position']          = $key + 1;
             $articles[$key]['display_sum']       = $Currency->format($article['sum']);
             $articles[$key]['display_unitPrice'] = $Currency->format($article['unitPrice']);
         }
