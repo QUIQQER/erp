@@ -19,6 +19,22 @@ class Constants
     const PAYMENT_STATUS_PLAN = 12;
 
     /**
+     * Order is only created
+     */
+    const ORDER_STATUS_CREATED = 0;
+
+    /**
+     * Order is posted (Invoice created)
+     * Bestellung ist gebucht (Invoice erstellt)
+     */
+    const ORDER_STATUS_POSTED = 1; // Bestellung ist gebucht (Invoice erstellt)
+
+    /**
+     * Order is canceled
+     */
+    const ORDER_STATUS_STORNO = 2; // Bestellung ist storniert
+
+    /**
      * @var int
      */
     const TYPE_INVOICE = 1;

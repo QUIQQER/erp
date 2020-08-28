@@ -77,6 +77,16 @@ class Comments
     }
 
     /**
+     * Comments are empty?
+     *
+     * @retun bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->comments);
+    }
+
+    /**
      * Generates a storable json representation of the list
      * Alias for serialize()
      *
