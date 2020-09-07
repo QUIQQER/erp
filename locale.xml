@@ -196,8 +196,8 @@
         </locale>
 
         <locale name="profile.erp.title">
-            <de><![CDATA[E-Commerce]]></de>
-            <en><![CDATA[E-commerce]]></en>
+            <de><![CDATA[Bestellungen]]></de>
+            <en><![CDATA[Orders]]></en>
         </locale>
 
         <locale name="menu.erp.sites.terms.and.conditions">
