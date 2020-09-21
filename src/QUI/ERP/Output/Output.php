@@ -237,6 +237,8 @@ class Output
             $Mailer->setBody($OutputProvider::getMailBody($entityId));
         }
 
+        QUI::getEvents()->fireEvent('quiqqerErpOutputSendMailBefore', [$entityId, $entityType, $recipientEmail, $Mailer]);
+
         $Mailer->send();
 
         QUI::getEvents()->fireEvent('quiqqerErpOutputSendMail', [$entityId, $entityType, $recipientEmail]);
