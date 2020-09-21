@@ -6,6 +6,15 @@
 /** articles
  ========================================== */
 
+.articles-article {
+    width: 100%;
+}
+
+.articles-article th,
+.articles-article td {
+    text-align: right;
+}
+
 .articles-body,
 .articles-body-article {
     clear: both;
