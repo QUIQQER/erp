@@ -11,6 +11,11 @@
             <de><![CDATA[E-Commerce]]></de>
             <en><![CDATA[E-commerce]]></en>
         </locale>
+
+        <locale name="menu.erp.company.title">
+            <de><![CDATA[Unternehmensdaten]]></de>
+            <en><![CDATA[Company data]]></en>
+        </locale>
         <locale name="menu.erp.general.title">
             <de><![CDATA[Allgemein]]></de>
             <en><![CDATA[General]]></en>
@@ -211,6 +216,93 @@
         <locale name="menu.erp.sites.privacy_policy">
             <de><![CDATA[Datenschutzerklärung]]></de>
             <en><![CDATA[Privacy Policy]]></en>
+        </locale>
+
+        <locale name="menu.erp.company.name">
+            <de><![CDATA[Firmenname]]></de>
+            <en><![CDATA[Company name]]></en>
+        </locale>
+        <locale name="menu.erp.company.owner">
+            <de><![CDATA[Inhaber / Geschäftsführer]]></de>
+            <en><![CDATA[Owner]]></en>
+        </locale>
+        <locale name="menu.erp.company.street">
+            <de><![CDATA[Straße]]></de>
+            <en><![CDATA[Street]]></en>
+        </locale>
+        <locale name="menu.erp.company.zipCode">
+            <de><![CDATA[PLZ]]></de>
+            <en><![CDATA[ZIP code]]></en>
+        </locale>
+        <locale name="menu.erp.company.city">
+            <de><![CDATA[Ort]]></de>
+            <en><![CDATA[City]]></en>
+        </locale>
+        <locale name="menu.erp.company.country">
+            <de><![CDATA[Land]]></de>
+            <en><![CDATA[Country]]></en>
+        </locale>
+        <locale name="menu.erp.company.phone">
+            <de><![CDATA[Telefon]]></de>
+            <en><![CDATA[Phone]]></en>
+        </locale>
+        <locale name="menu.erp.company.fax">
+            <de><![CDATA[Fax]]></de>
+            <en><![CDATA[Fax]]></en>
+        </locale>
+        <locale name="menu.erp.company.email">
+            <de><![CDATA[E-Mail]]></de>
+            <en><![CDATA[E-Mail]]></en>
+        </locale>
+        <locale name="menu.erp.company.web">
+            <de><![CDATA[Website]]></de>
+            <en><![CDATA[Website]]></en>
+        </locale>
+
+        <locale name="menu.erp.company.taxId">
+            <de><![CDATA[Umsatzsteuer ID]]></de>
+            <en><![CDATA[Tax ID]]></en>
+        </locale>
+        <locale name="menu.erp.company.taxNumber">
+            <de><![CDATA[Steuernummer]]></de>
+            <en><![CDATA[Tax number]]></en>
+        </locale>
+        <locale name="menu.erp.company.hrb">
+            <de><![CDATA[HRB]]></de>
+            <en><![CDATA[HRB number]]></en>
+        </locale>
+        <locale name="menu.erp.company.court">
+            <de><![CDATA[Amtsgericht]]></de>
+            <en><![CDATA[Court]]></en>
+        </locale>
+
+        <locale name="menu.erp.company.bank.title">
+            <de><![CDATA[Bankerbindung]]></de>
+            <en><![CDATA[Bank details]]></en>
+        </locale>
+        <locale name="menu.erp.company.bankName">
+            <de><![CDATA[Bankname]]></de>
+            <en><![CDATA[Bank name]]></en>
+        </locale>
+        <locale name="menu.erp.company.bankCode">
+            <de><![CDATA[BLZ]]></de>
+            <en><![CDATA[Bank code]]></en>
+        </locale>
+        <locale name="menu.erp.company.bankAccountNumber">
+            <de><![CDATA[Kontonummer]]></de>
+            <en><![CDATA[Account number]]></en>
+        </locale>
+        <locale name="menu.erp.company.bankBic">
+            <de><![CDATA[BIC]]></de>
+            <en><![CDATA[Bic code]]></en>
+        </locale>
+        <locale name="menu.erp.company.bankIban">
+            <de><![CDATA[IBAN]]></de>
+            <en><![CDATA[IBAN]]></en>
+        </locale>
+        <locale name="menu.erp.company.bankSwift">
+            <de><![CDATA[SWIFT]]></de>
+            <en><![CDATA[SWIFT]]></en>
         </locale>
 
         <locale name="menu.erp.output.title">
