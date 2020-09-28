@@ -350,6 +350,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 ]);
 
                 self.Loader.hide();
+            }, function() {
+                self.Loader.hide();
             });
         },
 
@@ -589,6 +591,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     templateProvider: self.$Template.provider,
                     mailSubject     : self.$Mail.subject,
                     mailContent     : self.$Mail.content,
+                    mailRecipient   : Form.elements.recipient.value,
                     onError         : reject
                 })
             });
