@@ -474,6 +474,12 @@
             <en>
                 <![CDATA[The document cannot be sent by e-mail because no valid recipient e-mail address has been specified.]]></en>
         </locale>
+        <locale name="exception.Output.sendPdfViaMail.recpient_address_invalid">
+            <de>
+                <![CDATA[Das Dokument kann nicht per E-Mail versendet werden, da die angegebene Empfänger E-Mail-Adresse ungültig.]]></de>
+            <en>
+                <![CDATA[The document cannot be sent by e-mail because the recipient e-mail address is invalid.]]></en>
+        </locale>
 
     </groups>
 

@@ -10,6 +10,7 @@ use QUI\Utils\Security\Orthos;
  * @param string $entityType
  * @param string $template
  * @param string $templateProvider
+ * @param string $mailRecipient
  * @param string $mailSubject (optional)
  * @param string $mailContent (optional)
  *
@@ -17,7 +18,7 @@ use QUI\Utils\Security\Orthos;
  */
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_output_sendMail',
-    function ($entityId, $entityType, $template, $templateProvider, $mailSubject, $mailContent) {
+    function ($entityId, $entityType, $template, $templateProvider, $mailRecipient, $mailSubject, $mailContent) {
         try {
             $entityType = Orthos::clear($entityType);
 
@@ -34,10 +35,13 @@ QUI::$Ajax->registerFunction(
                 $OutputProvider,
                 $TemplateProvider,
                 Orthos::clear($template),
-                null,
+                Orthos::clear($mailRecipient),
                 $mailSubject,
                 $mailContent
             );
+        } catch (QUI\ERP\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+            throw $Exception;
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
@@ -51,6 +55,6 @@ QUI::$Ajax->registerFunction(
             QUI::getLocale()->get('quiqqer/erp', 'Output.send.success')
         );
     },
-    ['entityId', 'entityType', 'template', 'templateProvider', 'mailSubject', 'mailContent'],
+    ['entityId', 'entityType', 'template', 'templateProvider', 'mailRecipient', 'mailSubject', 'mailContent'],
     'Permission::checkAdminUser'
 );
