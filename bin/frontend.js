@@ -60,6 +60,7 @@ document.addEvent('domready', function () {
 
                                             Session.set('quiqqer.erp.b2b.status', 1).then(function () {
                                                 Win.close();
+                                                window.location.reload();
                                             });
                                         }
                                     }
@@ -79,6 +80,7 @@ document.addEvent('domready', function () {
 
                                             Session.set('quiqqer.erp.b2b.status', 2).then(function () {
                                                 Win.close();
+                                                window.location.reload();
                                             });
                                         }
                                     }
