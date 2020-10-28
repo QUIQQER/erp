@@ -28,6 +28,14 @@
             <de><![CDATA[Nummernkreise]]></de>
             <en><![CDATA[Number ranges]]></en>
         </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.title">
+            <de><![CDATA[Geschäftskundenabfrage]]></de>
+            <en><![CDATA[Business customer request]]></en>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.desc">
+            <de><![CDATA[Für welche Zonen soll eine Geschäftskundenabfrage im Frontend stattfinden]]></de>
+            <en><![CDATA[For which zones should a business customer query take place in the frontend]]></en>
+        </locale>
 
         <locale name="price.starting.from">
             <de><![CDATA[ab]]></de>
