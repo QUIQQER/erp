@@ -26,6 +26,16 @@ class EventHandler
     }
 
     /**
+     * @param QUI\Template $Template
+     */
+    public static function onTemplateGetHeader(QUI\Template $Template)
+    {
+        $Template->extendHeaderWithJavaScriptFile(
+            URL_OPT_DIR.'quiqqer/erp/bin/frontend.js'
+        );
+    }
+
+    /**
      * event: on package setup
      *
      * @param Package $Package

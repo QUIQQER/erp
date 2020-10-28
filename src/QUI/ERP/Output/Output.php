@@ -208,7 +208,14 @@ class Output
         $mailFile = $pdfDir.$OutputProvider::getDownloadFileName($entityId).'.pdf';
         \rename($pdfFile, $mailFile);
 
-        if (empty($recipientEmail) || !QUI\Utils\Security\Orthos::checkMailSyntax($recipientEmail)) {
+        if (!QUI\Utils\Security\Orthos::checkMailSyntax($recipientEmail)) {
+            throw new QUI\ERP\Exception([
+                'quiqqer/erp',
+                'exception.Output.sendPdfViaMail.recpient_address_invalid'
+            ]);
+        }
+
+        if (empty($recipientEmail)) {
             $recipientEmail = $OutputProvider::getEmailAddress($entityId);
         }
 
@@ -236,6 +243,8 @@ class Output
         } else {
             $Mailer->setBody($OutputProvider::getMailBody($entityId));
         }
+
+        QUI::getEvents()->fireEvent('quiqqerErpOutputSendMailBefore', [$entityId, $entityType, $recipientEmail, $Mailer]);
 
         $Mailer->send();
 

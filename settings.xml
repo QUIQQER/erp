@@ -16,7 +16,76 @@
                     <type>integer</type>
                     <defaultValue>1</defaultValue>
                 </conf>
+                <conf name="customerRequestWindow">
+                    <type>string</type>
+                </conf>
             </section>
+
+            <section name="company">
+                <conf name="name">
+                    <type>string</type>
+                </conf>
+                <conf name="owner">
+                    <type>string</type>
+                </conf>
+                <conf name="street">
+                    <type>string</type>
+                </conf>
+                <conf name="zipCode">
+                    <type>string</type>
+                </conf>
+                <conf name="city">
+                    <type>string</type>
+                </conf>
+                <conf name="country">
+                    <type>string</type>
+                </conf>
+                <conf name="phone">
+                    <type>string</type>
+                </conf>
+                <conf name="fax">
+                    <type>string</type>
+                </conf>
+                <conf name="email">
+                    <type>string</type>
+                </conf>
+                <conf name="web">
+                    <type>string</type>
+                </conf>
+                <conf name="taxId">
+                    <type>string</type>
+                </conf>
+                <conf name="taxNumber">
+                    <type>string</type>
+                </conf>
+                <conf name="hrb">
+                    <type>string</type>
+                </conf>
+                <conf name="court">
+                    <type>string</type>
+                </conf>
+
+                <conf name="bankName">
+                    <type>string</type>
+                </conf>
+                <conf name="bankCode">
+                    <type>string</type>
+                </conf>
+                <conf name="bankAccountNumber">
+                    <type>string</type>
+                </conf>
+                <conf name="bankBic">
+                    <type>string</type>
+                </conf>
+                <conf name="bankIban">
+                    <type>string</type>
+                </conf>
+                <conf name="bankSwift">
+                    <type>string</type>
+                </conf>
+            </section>
+
+
             <section name="sites">
                 <conf name="terms_and_conditions">
                     <type><![CDATA[string]]></type>
@@ -89,6 +158,122 @@
                             <description>
                                 <locale group="quiqqer/erp" var="shop.settings.general.precision.description"/>
                             </description>
+                        </input>
+                    </settings>
+
+                    <settings>
+                        <title>
+                            <locale group="quiqqer/erp" var="menu.erp.company.title"/>
+                        </title>
+
+                        <input type="text" conf="company.name">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.name"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.owner">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.owner"/>
+                            </text>
+                        </input>
+
+                        <input type="text" conf="company.street">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.street"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.zipCode">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.zipCode"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.city">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.city"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.country">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.country"/>
+                            </text>
+                        </input>
+
+                        <input type="text" conf="company.phone">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.phone"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.fax">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.fax"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.email">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.email"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.web">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.web"/>
+                            </text>
+                        </input>
+
+                        <input type="text" conf="company.taxId">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.taxId"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.taxNumber">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.taxNumber"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.hrb">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.hrb"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.court">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.court"/>
+                            </text>
+                        </input>
+                    </settings>
+
+                    <settings>
+                        <title>
+                            <locale group="quiqqer/erp" var="menu.erp.company.bank.title"/>
+                        </title>
+                        <input type="text" conf="company.bankName">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.bankName"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.bankCode">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.bankCode"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.bankAccountNumber">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.bankAccountNumber"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.bankBic">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.bankBic"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.bankIban">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.bankIban"/>
+                            </text>
+                        </input>
+                        <input type="text" conf="company.bankSwift">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.company.bankSwift"/>
+                            </text>
                         </input>
                     </settings>
 
@@ -171,7 +356,19 @@
                                 <locale group="quiqqer/erp" var="menu.erp.output.default_templates"/>
                             </text>
                         </input>
+                    </settings>
 
+                    <settings>
+                        <title>
+                            <locale group="quiqqer/erp" var="menu.erp.b2cb2bFrontendWindow.title"/>
+                        </title>
+
+                        <input conf="general.customerRequestWindow"
+                               data-qui="package/quiqqer/erp/bin/backend/controls/settings/CustomerRequestWindowSettings">
+                            <text>
+                                <locale group="quiqqer/erp" var="menu.erp.b2cb2bFrontendWindow.desc"/>
+                            </text>
+                        </input>
                     </settings>
                 </category>
 
