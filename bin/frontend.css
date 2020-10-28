@@ -1,0 +1,39 @@
+.quiqqer-erp-customer-request {
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+}
+
+.quiqqer-erp-customer-request-text {
+    display: inline-block;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    width: 100%;
+}
+
+.quiqqer-erp-customer-request button {
+    margin: 10px;
+    padding-bottom: 10px;
+    width: 40%;
+}
+
+.quiqqer-erp-customer-request-buttons {
+    text-align: center;
+    width: 100%;
+}
+
+.quiqqer-erp-customer-request-answer,
+.quiqqer-erp-customer-request-desc {
+    display: block;
+    clear: both;
+}
+
+.quiqqer-erp-customer-request-answer {
+    font-size: 1.5rem;
+}
+
+.quiqqer-erp-customer-request-desc {
+    font-size: 0.75rem;
+}

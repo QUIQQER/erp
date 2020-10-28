@@ -34,7 +34,27 @@
         </locale>
         <locale name="menu.erp.b2cb2bFrontendWindow.desc">
             <de><![CDATA[Für welche Zonen soll eine Geschäftskundenabfrage im Frontend stattfinden]]></de>
-            <en><![CDATA[For which zones should a business customer query take place in the frontend]]></en>
+            <en><![CDATA[For which zones should a business customer request take place in the frontend]]></en>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.frontend.text">
+            <de><![CDATA[Sind Sie Geschäftskunde?]]></de>
+            <en><![CDATA[Are you a business customer?]]></en>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.frontend.yes">
+            <de><![CDATA[Ja]]></de>
+            <en><![CDATA[Yes]]></en>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.frontend.yes.desc">
+            <de><![CDATA[Alle Preise zzgl. gesetzl. MwSt.]]></de>
+            <en><![CDATA[All prices plus VAT]]></en>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.frontend.no">
+            <de><![CDATA[Nein]]></de>
+            <en><![CDATA[No]]></en>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.frontend.no.desc">
+            <de><![CDATA[Alle Preise inkl. gesetzl. MwSt.]]></de>
+            <en><![CDATA[All prices include VAT]]></en>
         </locale>
 
         <locale name="price.starting.from">

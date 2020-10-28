@@ -44,6 +44,14 @@ class User
      */
     public static function getBruttoNettoUserStatus(UserInterface $User)
     {
+        if ($User instanceof QUI\Users\Nobody) {
+            $status = QUI::getSession()->get('quiqqer.erp.b2b.status');
+
+            if (\is_numeric($status)) {
+                return (int)$status;
+            }
+        }
+
         $uid = $User->getId();
 
         if (isset(self::$userBruttoNettoStatus[$uid])) {
