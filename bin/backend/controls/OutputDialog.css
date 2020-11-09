@@ -12,6 +12,10 @@
     width: 400px;
 }
 
+.quiqqer-erp-outputDialog-options select {
+    overflow: hidden;
+}
+
 .quiqqer-erp-outputDialog form table {
     border: none;
     padding: 0;
@@ -37,6 +41,7 @@
     display: block;
     margin: 0 auto;
 }
+
 .quiqqer-erp-outputDialog-openMailEditor {
     background-color: #dedede;
     border-bottom-left-radius: 5px;

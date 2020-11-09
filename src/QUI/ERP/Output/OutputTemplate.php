@@ -238,6 +238,10 @@ class OutputTemplate
                 bottom: 0;
                 width: 100%;
             }
+            
+            .quiqqer-erp-output-footer footer {
+                position: static !important;            
+            }
         ';
             $css .= '</style>';
         }
