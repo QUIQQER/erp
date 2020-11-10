@@ -56,6 +56,10 @@
             <de><![CDATA[Alle Preise inkl. gesetzl. MwSt.]]></de>
             <en><![CDATA[All prices include VAT]]></en>
         </locale>
+        <locale name="menu.erp.manufacturers.title">
+            <de><![CDATA[Hersteller]]></de>
+            <en><![CDATA[Manufacturers]]></en>
+        </locale>
 
         <locale name="price.starting.from">
             <de><![CDATA[ab]]></de>
@@ -708,5 +712,80 @@
             <de><![CDATA[Der Artikel wird unwiderruflich gelöscht.]]></de>
             <en><![CDATA[The article is irrevocably deleted.]]></en>
         </locale>
+
+        <locale name="controls.manufacturers.AdministrationPanel.title">
+            <de><![CDATA[Hersteller]]></de>
+            <en><![CDATA[Manufacturers]]></en>
+        </locale>
+
+        <locale name="controls.manufacturers.Administration.no_group.information">
+            <de><![CDATA[Es können aktuell keine Hersteller gelistet werden, da im Produktfeld "Hersteller" noch keine Gruppen zugewiesen sind. Bitte öffnen Sie die Produktfeld-Verwaltung unter <b>Verwaltung -> Shop -> Produktfelder</b> und editieren das Feld "Hersteller" (ID 8). Dort weisen Sie in den Feld-Optionen mindestens eine Gruppe zu.]]></de>
+            <en><![CDATA[Currently no manufacturers can be listed because no groups have been assigned in the product field "Manufacturer" yet. Please open the product field administration under <b>Administration -> Shop -> Product fields</b> and edit the field "Manufacturer" (ID 8). There you assign at least one group in the field options.]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.no_group.title">
+            <de><![CDATA[Hersteller können nicht gelistet werden]]></de>
+            <en><![CDATA[Manufacturers cannot be listed]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.no_group.text">
+            <de><![CDATA[Hersteller können nicht gelistet werden]]></de>
+            <en><![CDATA[Manufacturers cannot be listed]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.no_group.submit">
+            <de><![CDATA[OK]]></de>
+            <en><![CDATA[OK]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.searchPlaceholder">
+            <de><![CDATA[Hersteller durchsuchen...]]></de>
+            <en><![CDATA[Search manufacturers...]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterTitle">
+            <de><![CDATA[Felder bei der Suche beachten]]></de>
+            <en><![CDATA[Search fields considered]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterUserId">
+            <de><![CDATA[Benutzer-ID]]></de>
+            <en><![CDATA[User ID]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterUsername">
+            <de><![CDATA[Benutzername]]></de>
+            <en><![CDATA[Username]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterFirstname">
+            <de><![CDATA[Vorname]]></de>
+            <en><![CDATA[First name]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterLastname">
+            <de><![CDATA[Nachname]]></de>
+            <en><![CDATA[Last name]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterEmail">
+            <de><![CDATA[E-Mail-Adresse]]></de>
+            <en><![CDATA[Email address]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterCompany">
+            <de><![CDATA[Firma]]></de>
+            <en><![CDATA[Company]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tbl.header.active_status">
+            <de><![CDATA[Aktiv]]></de>
+            <en><![CDATA[Active]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.dateFilterTitle">
+            <de><![CDATA[Erstellungsdatum]]></de>
+            <en><![CDATA[Create date]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.dateFilterFrom">
+            <de><![CDATA[von]]></de>
+            <en><![CDATA[bis]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.dateFilterTo">
+            <de><![CDATA[bis]]></de>
+            <en><![CDATA[to]]></en>
+        </locale>
+        <locale name="controls.manufacturers.create.ManufacturerWindow.title">
+            <de><![CDATA[Neuen Hersteller anlegen]]></de>
+            <en><![CDATA[Create new manufacturer]]></en>
+        </locale>
+
     </groups>
 </locales>

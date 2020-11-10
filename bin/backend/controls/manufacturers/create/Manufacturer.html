@@ -1,0 +1,126 @@
+<form class="quiqqer-erp-manufacturers-create-container">
+    <ul>
+        <li>
+            <section class="quiqqer-erp-manufacturers-create-manufacturerNo">
+                <h1>{{manufacturerNoHeader}}</h1>
+                {{{manufacturerNoText}}}
+
+                <label>
+                    <span>{{manufacturerNoInputHeader}}</span>
+                    <input type="text" name="manufacturerId"/>
+                </label>
+            </section>
+        </li>
+        <li>
+            <section class="quiqqer-erp-manufacturers-create-manufacturerData">
+                <div class="quiqqer-erp-manufacturers-create-manufacturerData-container">
+                    <h1>{{manufacturerDataHeader}}</h1>
+                    {{{manufacturerDataText}}}
+
+                    <table class="data-table data-table-flexbox">
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressCompany}}
+                                </span>
+                                    <input type="text" name="address-company" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressSalutation}}
+                                </span>
+                                    <input type="text" name="address-salutation" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressFirstname}}
+                                </span>
+                                    <input type="text" name="address-firstname" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressLastname}}
+                                </span>
+                                    <input type="text" name="address-lastname" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressStreet}}
+                                </span>
+                                    <input type="text" name="address-street_no" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressZIP}}
+                                </span>
+                                    <input type="text" name="address-zip" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressCity}}
+                                </span>
+                                    <input type="text" name="address-city" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressCountry}}
+                                </span>
+                                    <select type="text" name="address-country" class="field-container-field">
+                                        <option value=""></option>
+                                    </select>
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+        </li>
+        <li>
+            <section class="quiqqer-erp-manufacturers-create-manufacturerGroups">
+                <div class="quiqqer-erp-manufacturers-create-manufacturerGroups-container">
+                    <h1>{{manufacturerGroupsHeader}}</h1>
+                    {{{manufacturerGroupsText}}}
+
+                    <ul class="quiqqer-erp-manufacturers-create-manufacturerGroups-list"></ul>
+                </div>
+            </section>
+        </li>
+    </ul>
+</form>
+<div class="quiqqer-erp-manufacturers-create-button">
+    <button class="qui-button" name="previous">
+        {{previousButton}}
+    </button>
+    <button class="qui-button" name="next">
+        {{nextButton}}
+    </button>
+</div>

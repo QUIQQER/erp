@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+
+    <item parent="/apps/"
+          name="manufacturers"
+          require="package/quiqqer/erp/bin/backend/controls/manufacturers/AdministrationPanel"
+          icon="fa fa-wrench"
+          permission="quiqqer.erp.manufacturers.manage"
+    >
+        <locale group="quiqqer/erp" var="menu.erp.manufacturers.title"/>
+    </item>
+
+</menu>
