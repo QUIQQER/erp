@@ -7,7 +7,7 @@
 
                 <label>
                     <span>{{manufacturerNoInputHeader}}</span>
-                    <input type="text" name="manufacturerId"/>
+                    <input type="text" name="manufacturerId" maxlength="50"/>
                 </label>
             </section>
         </li>
@@ -24,7 +24,12 @@
                                 <span class="field-container-item">
                                     {{textAddressCompany}}
                                 </span>
-                                    <input type="text" name="address-company" value="" class="field-container-field">
+                                    <input type="text"
+                                           name="address-company"
+                                           value=""
+                                           class="field-container-field"
+                                           maxlength="100"
+                                    >
                                 </label>
                             </td>
                         </tr>
@@ -34,7 +39,12 @@
                                 <span class="field-container-item">
                                     {{textAddressSalutation}}
                                 </span>
-                                    <input type="text" name="address-salutation" value="" class="field-container-field">
+                                    <input type="text"
+                                           name="address-salutation"
+                                           value=""
+                                           class="field-container-field"
+                                           maxlength="10"
+                                    >
                                 </label>
                             </td>
                         </tr>
@@ -44,7 +54,12 @@
                                 <span class="field-container-item">
                                     {{textAddressFirstname}}
                                 </span>
-                                    <input type="text" name="address-firstname" value="" class="field-container-field">
+                                    <input type="text"
+                                           name="address-firstname"
+                                           value=""
+                                           class="field-container-field"
+                                           maxlength="40"
+                                    >
                                 </label>
                             </td>
                         </tr>
@@ -54,7 +69,12 @@
                                 <span class="field-container-item">
                                     {{textAddressLastname}}
                                 </span>
-                                    <input type="text" name="address-lastname" value="" class="field-container-field">
+                                    <input type="text"
+                                           name="address-lastname"
+                                           value=""
+                                           class="field-container-field"
+                                           maxlength="40"
+                                    >
                                 </label>
                             </td>
                         </tr>
@@ -97,6 +117,16 @@
                                     <select type="text" name="address-country" class="field-container-field">
                                         <option value=""></option>
                                     </select>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressEmail}}
+                                </span>
+                                    <input type="text" name="address-email" value="" class="field-container-field">
                                 </label>
                             </td>
                         </tr>

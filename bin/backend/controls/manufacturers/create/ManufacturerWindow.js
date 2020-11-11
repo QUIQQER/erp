@@ -11,7 +11,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
 ], function (QUIPopup, QUILocale, CreateManufacturer) {
     "use strict";
 
-    var lg = 'quiqqer/manufacturer';
+    var lg = 'quiqqer/erp';
 
     return new Class({
 
@@ -23,9 +23,10 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
         ],
 
         options: {
-            maxHeight: 700,
-            maxWidth : 600,
-            buttons  : false
+            maxHeight         : 700,
+            maxWidth          : 600,
+            buttons           : false,
+            backgroundClosable: false
         },
 
         initialize: function (options) {
@@ -63,6 +64,10 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
                     onCreateManufacturerEnd: function (Instance, manufacturerId) {
                         self.fireEvent('submit', [self, manufacturerId]);
                         self.close();
+                    },
+
+                    onCreateManufacturerError: function () {
+                        self.Loader.hide();
                     }
                 }
             }).inject(this.getContent());

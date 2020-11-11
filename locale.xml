@@ -203,17 +203,49 @@
             <de><![CDATA[Artikel ersetzen]]></de>
             <en><![CDATA[Replace article]]></en>
         </locale>
+        
+        <!-- Permissions -->
+        <locale name="permission.quiqqer.erp_manufacturers._header">
+            <de><![CDATA[Shop - Hersteller]]></de>
+            <en><![CDATA[Shop - Manufacturers]]></en>
+        </locale>
+        <locale name="permission.quiqqer.erp_manufacturers.create">
+            <de><![CDATA[Darf neue Hersteller anlegen]]></de>
+            <en><![CDATA[Is allowed to create new manufacturers]]></en>
+        </locale>
+        <locale name="permission.quiqqer.erp_manufacturers.view">
+            <de><![CDATA[Darf die Hersteller-Verwaltung ansehen]]></de>
+            <en><![CDATA[Is allowed to view the manufacturer management]]></en>
+        </locale>
+
+        <!-- Menu -->
+        <locale name="menu.erp.title">
+            <de><![CDATA[Shop]]></de>
+            <en><![CDATA[Shop]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
 
+        <locale name="message.ajax.manufacturers.create.newManufacturer.success" html="true">
+            <de><![CDATA[Hersteller <b>[manufacturerId]</b> wurde erfolgreich erstellt.]]></de>
+            <en><![CDATA[Manufacturer <b>[manufacturerId]</b> was created successfully.]]></en>
+        </locale>
+        
         <locale name="exception.ajax.output.sendMail.error">
             <de>
                 <![CDATA[Leider ist beim E-Mail-Verand ein unerwarteter Fehler aufgetreten. Bitte wiederholen Sie den Vorgang, prüfen Sie die Fehler-Logs oder kontaktieren Sie einen Administator.]]></de>
             <en>
                 <![CDATA[Unfortunately, an unexpected error has occurred when sending the e-mail. Please repeat the process, check the error logs or contact an administrator.]]></en>
         </locale>
-
+        <locale name="exception.Manufacturers.createManufacturer.id_already_exists">
+            <de><![CDATA[Die eingegebene Herstellernummer ist bereits vergeben. Bitte wählen Sie eine andere Herstellernummer.]]></de>
+            <en><![CDATA[The entered manufacturer number is already assigned. Please select a different manufacturer number.]]></en>
+        </locale>
+        <locale name="exception.ajax.manufacturers.create.newManufacturer.error">
+            <de><![CDATA[Bei Erstellung des Herstellers ist ein unerwarteter Fehler aufgetreten. Bitte wiederholen Sie den Vorgang oder kontaktieren Sie einen Administrator.]]></de>
+            <en><![CDATA[An unexpected error occurred when creating the manufacturer. Please repeat the process or contact an administrator.]]></en>
+        </locale>
         <locale name="user.settings.title">
             <de><![CDATA[Rechnungsdaten]]></de>
             <en><![CDATA[Billing Details]]></en>
@@ -782,9 +814,58 @@
             <de><![CDATA[bis]]></de>
             <en><![CDATA[to]]></en>
         </locale>
+        <locale name="controls.manufacturers.Administration.btn.create">
+            <de><![CDATA[Neuer Hersteller]]></de>
+            <en><![CDATA[New manufacturer]]></en>
+        </locale>
         <locale name="controls.manufacturers.create.ManufacturerWindow.title">
             <de><![CDATA[Neuen Hersteller anlegen]]></de>
             <en><![CDATA[Create new manufacturer]]></en>
+        </locale>
+
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerNoHeader">
+            <de><![CDATA[Neuen Hersteller anlegen]]></de>
+            <en><![CDATA[Create new manufacturer]]></en>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerNoText" html="true">
+            <de><![CDATA[Bitte legen Sie eine Herstellernummer bzw. -bezeichner fest.<br/>Diese Angabe kann später jederzeit geändert werden.]]></de>
+            <en><![CDATA[Please define a unique manufacturer number / identifier.<br/>This number can be changed later at any time.]]></en>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerNoInputHeader">
+            <de><![CDATA[Herstellernummer / -bezeichner]]></de>
+            <en><![CDATA[Manufacturer number / identifier]]></en>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerDataHeader">
+            <de><![CDATA[Herstellerdaten]]></de>
+            <en><![CDATA[Manufacturer data]]></en>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerDataText">
+            <de><![CDATA[Legen Sie hier die grundlegenden Herstellerdaten fest. Diese Daten können später noch geändert werden.]]></de>
+            <en><![CDATA[Define the basic manufacturer data here. These data can be changed later.]]></en>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerGroupsHeader">
+            <de><![CDATA[Herstellergruppen]]></de>
+            <en><![CDATA[Manufacturer groups]]></en>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerGroupsText">
+            <de><![CDATA[Bitte wählen Sie mindestens eine Hersteller-Gruppe aus, zu der der neue Hersteller zugewiesen wird.]]></de>
+            <en><![CDATA[Please select at least one manufacturer group to which the new manufacturer will be assigned.]]></en>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.previousButton">
+            <de><![CDATA[Zurück]]></de>
+            <en><![CDATA[Back]]></en>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.nextButton">
+            <de><![CDATA[Weiter]]></de>
+            <en><![CDATA[Continue]]></en>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.createButton">
+            <de><![CDATA[Hersteller anlegen]]></de>
+            <en><![CDATA[Create manufacturer]]></en>
+        </locale>
+        <locale name="controls.manufacturers.create.ManufacturerWindow.title">
+            <de><![CDATA[Neuer Hersteller]]></de>
+            <en><![CDATA[New manufacturer]]></en>
         </locale>
 
     </groups>

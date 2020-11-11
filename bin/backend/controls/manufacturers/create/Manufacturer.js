@@ -1,6 +1,13 @@
 /**
+ * Creation process for new manufacturer user
+ *
  * @module package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufacturer
  * @author www.pcsg.de (Patrick Müller)
+ *
+ * @event onLoad [this] - Fires when the control is fully loaded
+ * @event onCreateManufacturerBegin [this] - Fires right before the create request is sent to the server
+ * @event onCreateManufacturerEnd [this, manufacturerId] - Fires if the create requests finished successfully
+ * @event onCreateManufacturerError [this] - Fires if the create requests aborts due to an error
  */
 define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufacturer', [
 
@@ -29,16 +36,18 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
         Binds: [
             '$onInject',
             'next',
-            'previous'
+            'previous',
+            '$onGroupSelectChange'
         ],
 
         initialize: function (options) {
             this.parent(options);
 
-            this.$Container = null;
-            this.$List      = null;
-            this.$Form      = null;
-            this.$GroupList = null;
+            this.$Container   = null;
+            this.$List        = null;
+            this.$Form        = null;
+            this.$GroupList   = null;
+            this.$groupInputs = null;
 
             this.addEvents({
                 onInject: this.$onInject
@@ -74,9 +83,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
                 textAddressZIP       : QUILocale.get('quiqqer/quiqqer', 'zip'),
                 textAddressCity      : QUILocale.get('quiqqer/quiqqer', 'city'),
                 textAddressCountry   : QUILocale.get('quiqqer/quiqqer', 'country'),
-
-                textGroup : QUILocale.get(lg, lgPrefix + 'textGroup'),
-                textGroups: QUILocale.get(lg, lgPrefix + 'textGroups'),
+                textAddressEmail     : QUILocale.get('quiqqer/quiqqer', 'email'),
 
                 previousButton: QUILocale.get(lg, lgPrefix + 'previousButton'),
                 nextButton    : QUILocale.get(lg, lgPrefix + 'nextButton')
@@ -153,10 +160,13 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
                     new Element('li', {
                         html: '<label>' +
                             '<input type="checkbox" data-id="' + Group.id + '"/>' +
-                            '<span>' + Group.name + '</span>' +
+                            '<span>' + Group.name + ' (' + Group.id + ')</span>' +
                             '</label>'
                     }).inject(self.$GroupList);
                 }
+
+                self.$groupInputs = self.$GroupList.getElements('input');
+                self.$groupInputs.addEvent('change', self.$onGroupSelectChange);
 
                 // Country list
                 var countries     = result[1];
@@ -188,9 +198,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
             var manufacturerId = elements.manufacturerId.value;
             var groupIds       = [];
 
-            var groupInputs = this.$GroupList.getElement('input');
-
-            groupInputs.forEach(function (Input) {
+            this.$groupInputs.forEach(function (Input) {
                 if (Input.checked) {
                     groupIds.push(Input.get('data-id'));
                 }
@@ -204,20 +212,29 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
                 'street_no' : elements['address-street_no'].value,
                 'zip'       : elements['address-zip'].value,
                 'city'      : elements['address-city'].value,
-                'country'   : elements['address-country'].value
+                'country'   : elements['address-country'].value,
+                'email'     : elements['address-email'].value
             };
 
             this.fireEvent('createManufacturerBegin', [this]);
 
-            QUIAjax.post('package_quiqqer_manufacturer_ajax_backend_create_createManufacturer', function (manufacturerId) {
+            QUIAjax.post('package_quiqqer_erp_ajax_manufacturers_create_newManufacturer', function (manufacturerId) {
                 self.fireEvent('createManufacturerEnd', [self, manufacturerId]);
             }, {
                 'package'     : 'quiqqer/erp',
                 manufacturerId: manufacturerId,
                 address       : JSON.encode(Address),
-                groupIds      : JSON.encode(groupIds)
-            }, function (e) {
-                console.log("TODO: hide loader");
+                groupIds      : JSON.encode(groupIds),
+                onError       : function () {
+                    self.fireEvent('createManufacturerError', [self]);
+
+                    // Not pretty but sufficient for now
+                    self.previous().then(function () {
+                        self.previous();
+                    }).then(function () {
+                        self.showManufacturerNumber();
+                    });
+                }
             });
         },
 
@@ -240,8 +257,12 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
 
             // change last step button
             if (newTop - height <= scrollHeight * -1) {
-                this.$Next.set('html', QUILocale.get(lg, 'window.manufacturer.creation.create'));
+                this.$Next.set(
+                    'html',
+                    QUILocale.get(lg, 'controls.manufacturers.create.Manufacturer.tpl.createButton')
+                );
                 this.$Next.set('data-last', 1);
+                this.$Next.disabled = true; // Disable "create" button until at least one manufacturer group is selected
             }
 
             // check if last step
@@ -269,8 +290,9 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
             var height = this.$Container.getSize().y;
             var newTop = this.$roundToStepPos(top + height);
 
-            this.$Next.set('html', QUILocale.get(lg, 'window.manufacturer.creation.next'));
+            this.$Next.set('html', QUILocale.get(lg, 'controls.manufacturers.create.Manufacturer.tpl.nextButton'));
             this.$Next.set('data-last', null);
+            this.$Next.disabled = false;
 
             if (newTop > 0) {
                 newTop = 0;
@@ -295,6 +317,22 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
             var pos    = Math.round(currentPos / height) * -1;
 
             return pos * height * -1;
+        },
+
+        /**
+         * Triggers if the user (de)selects a manufacturer group
+         */
+        $onGroupSelectChange: function () {
+            for (var i = 0, len = this.$groupInputs.length; i < len; i++) {
+                var Input = this.$groupInputs[i];
+
+                if (Input.checked) {
+                    this.$Next.disabled = false;
+                    return;
+                }
+            }
+
+            this.$Next.disabled = true;
         },
 
         /**

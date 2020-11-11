@@ -72,3 +72,15 @@
 .quiqqer-erp-manufacturers-create-manufacturerData-container table {
     margin-top: 20px;
 }
+
+.quiqqer-erp-manufacturers-create-manufacturerGroups-list {
+    margin-top: 10px !important;
+}
+
+.quiqqer-erp-manufacturers-create-manufacturerGroups-list li {
+    padding: 5px 0;
+}
+
+.quiqqer-erp-manufacturers-create-manufacturerGroups-list input {
+    margin: 0 5px 0 0;
+}

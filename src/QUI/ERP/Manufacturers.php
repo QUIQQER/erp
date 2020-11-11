@@ -42,11 +42,113 @@ class Manufacturers
     }
 
     /**
+     * Create a new manufacturer user
+     *
+     * @param string $manufacturerId - QUIQQER username
+     * @param array $address
+     * @param array $groupIds - QUIQQER group IDs of manufacturer groups
+     *
+     * @return QUI\Users\User
+     *
+     * @throws Exception
+     * @throws QUI\Exception
+     * @throws QUI\Permissions\Exception
+     */
+    public static function createManufacturer(string $manufacturerId, array $address = [], array $groupIds = [])
+    {
+        QUI\Permissions\Permission::checkPermission('quiqqer.erp_manufacturers.create');
+
+        $Users          = QUI::getUsers();
+        $manufacturerId = $Users::clearUsername($manufacturerId);
+
+        // Check ID
+        if ($Users->usernameExists($manufacturerId)) {
+            throw new Exception([
+                'quiqqer/erp',
+                'exception.Manufacturers.createManufacturer.id_already_exists',
+                [
+                    'userId' => $manufacturerId
+                ]
+            ]);
+        }
+
+        $SystemUser = $Users->getSystemUser();
+        $User       = $Users->createChild($manufacturerId, $SystemUser);
+
+        if (!empty($address)) {
+            try {
+                $Address = $User->getStandardAddress();
+            } catch (QUI\Exception $Exception) {
+                $Address = $User->addAddress();
+            }
+
+            $needles = [
+                'salutation',
+                'firstname',
+                'lastname',
+                'company',
+                'delivery',
+                'street_no',
+                'zip',
+                'city',
+                'country'
+            ];
+
+            foreach ($needles as $needle) {
+                if (!isset($address[$needle])) {
+                    $address[$needle] = '';
+                }
+            }
+
+            $Address->setAttribute('salutation', $address['salutation']);
+            $Address->setAttribute('firstname', $address['firstname']);
+            $Address->setAttribute('lastname', $address['lastname']);
+            $Address->setAttribute('company', $address['company']);
+            $Address->setAttribute('delivery', $address['delivery']);
+            $Address->setAttribute('street_no', $address['street_no']);
+            $Address->setAttribute('zip', $address['zip']);
+            $Address->setAttribute('city', $address['city']);
+            $Address->setAttribute('country', $address['country']);
+
+            // E-Mail
+            if (!empty($address['email'])) {
+                $User->setAttribute('email', $address['email']);
+                $Address->addMail($address['email']);
+            }
+
+            $Address->save();
+
+            if (!$User->getAttribute('firstname') || $User->getAttribute('firstname') === '') {
+                $User->setAttribute('firstname', $address['firstname']);
+            }
+
+            if (!$User->getAttribute('lastname') || $User->getAttribute('lastname') === '') {
+                $User->setAttribute('lastname', $address['lastname']);
+            }
+        }
+
+        // groups
+        $manufacturerGroupIds = self::getManufacturerGroupIds();
+
+        foreach ($groupIds as $groupId) {
+            $groupId = (int)$groupId;
+
+            if (\in_array($groupId, $manufacturerGroupIds)) {
+                $User->addToGroup($groupId);
+            }
+        }
+
+        $User->save($SystemUser);
+
+        return $User;
+    }
+
+    /**
      * Search manufacturers
      *
      * @param array $searchParams
      * @param bool $countOnly (optional) - get count for search result only [default: false]
-     * @return int[]|int - membership user IDs or count
+     * @return int[]|int - Manufacturer user IDs or count
      */
     public static function search(array $searchParams, $countOnly = false)
     {
@@ -72,7 +174,7 @@ class Manufacturers
 
         foreach (self::getManufacturerGroupIds() as $groupId) {
             $whereOr[] = "u.`usergroup` LIKE :group".$gc;
-            $bind      = 'group'.$gc;
+            $bind      = 'group'.$gc++;
 
             $binds[$bind] = [
                 'value' => '%,'.$groupId.',%',

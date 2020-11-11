@@ -232,7 +232,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
                 buttons: [{
                     name     : 'add',
                     textimage: 'fa fa-plus',
-                    text     : QUILocale.get(lg, 'manufacturer.window.create.title'),
+                    text     : QUILocale.get(lg, 'controls.manufacturers.Administration.btn.create'),
                     events   : {
                         onClick: self.openAddWindow
                     }
@@ -320,7 +320,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
          */
         $gridDblClick: function () {
             var userId = this.$Grid.getSelectedData()[0].id;
-            QUIPanelUtils.openUserPanel(userId);
+            this.$openManufacturer(userId);
         },
 
         /**
@@ -432,11 +432,23 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
                 options = this.$Grid.options,
                 Form    = this.$SearchContainer.getElement('form');
 
+            var sortOn = options.sortOn;
+
+            switch (options.sortOn) {
+                case 'active_status':
+                    sortOn = 'active';
+                    break;
+
+                case 'usergroup_display':
+                    sortOn = 'usergroup';
+                    break;
+            }
+
             var params = {
                 perPage: options.perPage || 50,
                 page   : options.page || 1,
                 sortBy : options.sortBy,
-                sortOn : options.sortOn,
+                sortOn : sortOn,
                 search : this.$SearchInput.value,
                 filter : {
                     id          : Form.elements.userId.checked ? 1 : 0,
@@ -522,53 +534,8 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
 
             this.fireEvent('manufacturerOpenBegin', [this, userId]);
 
-            require([
-                'package/quiqqer/erp/bin/backend/controls/manufacturers/manufacturer/Panel',
-                'utils/Panels'
-            ], function (Panel, PanelUtils) {
-                if (self.isInWindow()) {
-                    var Container = new Element('div', {
-                        'class': 'quiqqer-erp-manufacturers-administration-manufacturer',
-                        styles : {
-                            left   : -50,
-                            opacity: 0
-                        }
-                    }).inject(self.getElm());
-
-                    self.$ManufacturerPanel = new Panel({
-                        header          : false,
-                        userId          : userId,
-                        showUserButton  : true,
-                        showDeleteButton: false,
-                        events          : {
-                            onError: function (Instance) {
-                                if (!Instance.$User) {
-                                    self.setAttribute('manufacturerId', false);
-                                }
-                            }
-                        }
-                    }).inject(Container);
-
-                    self.fireEvent('manufacturerOpen', [this, userId, self.$ManufacturerPanel]);
-
-                    moofx(Container).animate({
-                        left   : 0,
-                        opacity: 1
-                    }, {
-                        callback: function () {
-                            self.$ManufacturerPanel.fireEvent('show');
-                            self.fireEvent('manufacturerOpenEnd', [this, userId, self.$ManufacturerPanel]);
-                        }
-                    });
-
-                    return;
-                }
-
-                PanelUtils.openPanelInTasks(
-                    new Panel({
-                        userId: userId
-                    })
-                );
+            QUIPanelUtils.openUserPanel(userId).then(function () {
+                self.fireEvent('manufacturerOpenEnd', [this, userId, self.$ManufacturerPanel]);
             });
         },
 
@@ -608,37 +575,37 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
             });
         },
 
-        /**
-         * opens the manufacturer delete window
-         */
-        openDeleteWindow: function () {
-            var self = this;
-
-            new QUIConfirm({
-                title      : QUILocale.get(lg, 'manufacturer.window.delete.title'),
-                text       : QUILocale.get(lg, 'manufacturer.window.delete.text'),
-                information: QUILocale.get(lg, 'manufacturer.window.delete.information'),
-                icon       : 'fa fa-trash',
-                texticon   : 'fa fa-trash',
-                maxHeight  : 400,
-                maxWidth   : 600,
-                autoclose  : false,
-                events     : {
-                    onSubmit: function (Win) {
-                        Win.Loader.show();
-
-                        var selected = self.$Grid.getSelectedData().map(function (entry) {
-                            return entry.id;
-                        });
-
-                        Users.deleteUsers(selected).then(function () {
-                            Win.close();
-                            self.refresh();
-                        });
-                    }
-                }
-            }).open();
-        },
+        ///**
+        // * opens the manufacturer delete window
+        // */
+        //openDeleteWindow: function () {
+        //    var self = this;
+        //
+        //    new QUIConfirm({
+        //        title      : QUILocale.get(lg, 'manufacturer.window.delete.title'),
+        //        text       : QUILocale.get(lg, 'manufacturer.window.delete.text'),
+        //        information: QUILocale.get(lg, 'manufacturer.window.delete.information'),
+        //        icon       : 'fa fa-trash',
+        //        texticon   : 'fa fa-trash',
+        //        maxHeight  : 400,
+        //        maxWidth   : 600,
+        //        autoclose  : false,
+        //        events     : {
+        //            onSubmit: function (Win) {
+        //                Win.Loader.show();
+        //
+        //                var selected = self.$Grid.getSelectedData().map(function (entry) {
+        //                    return entry.id;
+        //                });
+        //
+        //                Users.deleteUsers(selected).then(function () {
+        //                    Win.close();
+        //                    self.refresh();
+        //                });
+        //            }
+        //        }
+        //    }).open();
+        //},
 
         //region filter
 
