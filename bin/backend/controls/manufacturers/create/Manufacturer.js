@@ -43,11 +43,12 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
         initialize: function (options) {
             this.parent(options);
 
-            this.$Container   = null;
-            this.$List        = null;
-            this.$Form        = null;
-            this.$GroupList   = null;
-            this.$groupInputs = null;
+            this.$Container     = null;
+            this.$List          = null;
+            this.$Form          = null;
+            this.$GroupList     = null;
+            this.$groupInputs   = null;
+            this.$UsernameInput = null;
 
             this.addEvents({
                 onInject: this.$onInject
@@ -89,8 +90,9 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
                 nextButton    : QUILocale.get(lg, lgPrefix + 'nextButton')
             }));
 
-            this.$Form      = this.$Elm.getElement('form');
-            this.$GroupList = this.$Elm.getElement('.quiqqer-erp-manufacturers-create-manufacturerGroups-list');
+            this.$Form          = this.$Elm.getElement('form');
+            this.$GroupList     = this.$Elm.getElement('.quiqqer-erp-manufacturers-create-manufacturerGroups-list');
+            this.$UsernameInput = this.$Elm.getElement('input[name="manufacturerId"]');
 
             // key events
             var self           = this;
@@ -242,6 +244,10 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
          * Show next step
          */
         next: function () {
+            if (!this.$isValid()) {
+                return Promise.resolve();
+            }
+
             if (this.$Next.get('data-last')) {
                 return this.createManufacturer();
             }
@@ -308,6 +314,31 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
         },
 
         /**
+         * Validate manufacturer data
+         *
+         * @return {Boolean}
+         */
+        $isValid: function () {
+            var self = this;
+
+            // Validate username
+            if (this.$UsernameInput.value === '') {
+                QUI.getMessageHandler().then(function(MH) {
+                    MH.addAttention(
+                        QUILocale.get(lg, 'controls.manufacturers.create.Manufacturer.username_required'),
+                        self.$UsernameInput
+                    );
+                });
+
+                this.$UsernameInput.focus();
+
+                return false;
+            }
+
+            return true;
+        },
+
+        /**
          *
          * @param currentPos
          * @return {number}
@@ -339,16 +370,8 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufactur
          * Show the manufacturer number step
          */
         showManufacturerNumber: function () {
-            var self = this;
-
-            this.$getNextManufacturerNo().then(function (manufacturerNo) {
-                var Input = self.$Elm.getElement('input');
-
-                Input.value = manufacturerNo;
-                Input.focus();
-
-                self.fireEvent('load', [self]);
-            });
+            this.$UsernameInput.focus();
+            this.fireEvent('load', [this]);
         },
 
         /**

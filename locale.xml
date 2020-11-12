@@ -828,8 +828,10 @@
             <en><![CDATA[Create new manufacturer]]></en>
         </locale>
         <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerNoText" html="true">
-            <de><![CDATA[Bitte legen Sie eine Herstellernummer bzw. -bezeichner fest.<br/>Diese Angabe kann später jederzeit geändert werden.]]></de>
-            <en><![CDATA[Please define a unique manufacturer number / identifier.<br/>This number can be changed later at any time.]]></en>
+            <de><![CDATA[Bitte legen Sie eine Herstellernummer bzw. -bezeichner fest. Hierbei handelt es sich um einen internen Wert zur eindeutigen Identifizierung des Herstellers.<br/>Diese Angabe kann später jederzeit geändert werden.<br/><br/>
+Erlaubte Zeichen: Buchstaben, Zahlen sowie _ ä ö ü ß]]></de>
+            <en><![CDATA[Please define a unique manufacturer number / identifier. This is an internal value for identification of the manufacturer.<br/>This number can be changed later at any time.<br/><br/>
+Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
         </locale>
         <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerNoInputHeader">
             <de><![CDATA[Herstellernummer / -bezeichner]]></de>
@@ -866,6 +868,10 @@
         <locale name="controls.manufacturers.create.ManufacturerWindow.title">
             <de><![CDATA[Neuer Hersteller]]></de>
             <en><![CDATA[New manufacturer]]></en>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.username_required">
+            <de><![CDATA[Bitte geben Sie eine Herstellernummer / -bezeichner an]]></de>
+            <en><![CDATA[Please provide a manufacturer number / identifier]]></en>
         </locale>
 
     </groups>

@@ -111,7 +111,7 @@ class Manufacturers
             $Address->setAttribute('country', $address['country']);
 
             // E-Mail
-            if (!empty($address['email'])) {
+            if (!empty($address['email']) && Orthos::checkMailSyntax($address['email'])) {
                 $User->setAttribute('email', $address['email']);
                 $Address->addMail($address['email']);
             }
@@ -139,6 +139,10 @@ class Manufacturers
         }
 
         $User->save($SystemUser);
+
+        // Set random password and activate
+        $User->setPassword(QUI\Security\Password::generateRandom(), $SystemUser);
+        $User->activate(false, $SystemUser);
 
         return $User;
     }
