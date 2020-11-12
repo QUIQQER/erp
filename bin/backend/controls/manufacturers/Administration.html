@@ -1,0 +1,92 @@
+<div class="quiqqer-erp-manufacturers-administration-filter">
+</div>
+<div class="quiqqer-erp-manufacturers-administration-search">
+    <form name="customer-search">
+        <label style="display: inline-block; float: left;">
+            <input type="text"
+                   name="search"
+                   placeholder="{{searchPlaceholder}}"
+            />
+            <input type="submit"
+                   name="submit"
+                   value="Search"
+                   class="qui-button"
+            />
+        </label>
+
+        <button class="qui-button" name="filter">
+            <span class="fa fa-filter"></span>
+        </button>
+
+        <div class="quiqqer-erp-manufacturers-administration-search-filter" style="display: none">
+            <section class="quiqqer-erp-manufacturers-administration-search-filter-checks">
+                <span class="title">
+                    {{filterTitle}}
+                </span>
+
+                <label>
+                    <input type="checkbox" name="userId"/>
+                    <span>
+                        {{filterUserId}}
+                    </span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="username"/>
+                    <span>
+                        {{filterUsername}}
+                    </span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="firstname"/>
+                    <span>
+                        {{filterFirstname}}
+                    </span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="lastname"/>
+                    <span>
+                        {{filterLastname}}
+                    </span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="email"/>
+                    <span>
+                        {{filterEmail}}
+                    </span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="company"/>
+                    <span>
+                        {{filterCompany}}
+                    </span>
+                </label>
+            </section>
+
+            <section class="quiqqer-erp-manufacturers-administration-search-filter-specs">
+                <span class="title">
+                    {{dateFilterTitle}}
+                </span>
+
+                <label>
+                    <span>
+                        {{dateFilterFrom}}
+                    </span>
+                    <input type="date" name="registration-from"/>
+                </label>
+
+                <label>
+                    <span>
+                        {{dateFilterTo}}
+                    </span>
+                    <input type="date" name="registration-to"/>
+                </label>
+            </section>
+        </div>
+    </form>
+</div>
+<div class="quiqqer-erp-manufacturers-administration-grid"></div>

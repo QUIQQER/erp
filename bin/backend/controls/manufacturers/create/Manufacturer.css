@@ -1,0 +1,86 @@
+.quiqqer-erp-manufacturers-create {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.quiqqer-erp-manufacturers-create-container {
+    flex-grow: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.quiqqer-erp-manufacturers-create-button {
+    background: #dddddd;
+    clear: both;
+    height: 50px;
+    padding: 10px;
+}
+
+.quiqqer-erp-manufacturers-create-button [name="next"] {
+    float: right;
+}
+
+.quiqqer-erp-manufacturers-create ul {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    width: 100%;
+}
+
+.quiqqer-erp-manufacturers-create li {
+    clear: both;
+    height: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 20px;
+    width: 100%;
+}
+
+.quiqqer-erp-manufacturers-create section {
+    height: 100%;
+    overflow: auto;
+}
+
+.quiqqer-erp-manufacturers-create-manufacturerNo {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.quiqqer-erp-manufacturers-create-manufacturerNo label {
+    clear: both;
+    display: block;
+    margin: 20px auto;
+    text-align: left;
+    width: 300px;
+}
+
+.quiqqer-erp-manufacturers-create-manufacturerNo input {
+    clear: both;
+    font-size: 16px;
+    margin-top: 10px;
+    padding: 10px;
+    width: 100%;
+}
+
+.quiqqer-erp-manufacturers-create-manufacturerGroups-container table,
+.quiqqer-erp-manufacturers-create-manufacturerData-container table {
+    margin-top: 20px;
+}
+
+.quiqqer-erp-manufacturers-create-manufacturerGroups-list {
+    margin-top: 10px !important;
+}
+
+.quiqqer-erp-manufacturers-create-manufacturerGroups-list li {
+    padding: 5px 0;
+}
+
+.quiqqer-erp-manufacturers-create-manufacturerGroups-list input {
+    margin: 0 5px 0 0;
+}
