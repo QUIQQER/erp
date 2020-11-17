@@ -51,7 +51,7 @@ define('package/quiqqer/erp/bin/backend/controls/settings/CustomerRequestWindowS
 
             var Container = new Element('div', {
                 styles: {
-                    width: '100%'
+                    width: 200
                 }
             }).inject(this.$Elm);
 
@@ -126,6 +126,12 @@ define('package/quiqqer/erp/bin/backend/controls/settings/CustomerRequestWindowS
                         self.$Grid.setData(areas);
                     }).then(function () {
                         self.$Grid.enable();
+
+                        // resize
+                        var FieldCell = self.$Grid.getElm().getParent('.field-container-field');
+
+                        self.$Grid.setWidth(FieldCell.getSize().x);
+
                         resolve();
                     });
                 });
