@@ -121,15 +121,22 @@ class OutputTemplate
      */
     public function getHTML($preview = false)
     {
+        $Locale = $this->OutputProvider::getLocale($this->entityId);
+        QUI::getLocale()->setTemporaryCurrent($Locale->getCurrent());
+
         $templateData                    = $this->OutputProvider::getTemplateData($this->entityId);
         $templateData['erpOutputEntity'] = $this->Entity;
 
         $this->Engine->assign($templateData);
         $this->preview = $preview;
 
-        return $this->getHTMLHeader().
-               $this->getHTMLBody().
-               $this->getHTMLFooter();
+        $html = $this->getHTMLHeader().
+                $this->getHTMLBody().
+                $this->getHTMLFooter();
+
+        QUI::getLocale()->resetCurrent();
+
+        return $html;
     }
 
     /**
@@ -142,6 +149,7 @@ class OutputTemplate
     public function getPDFDocument()
     {
         $Locale = $this->OutputProvider::getLocale($this->entityId);
+        QUI::getLocale()->setTemporaryCurrent($Locale->getCurrent());
 
         $Document = new QUI\HtmlToPdf\Document([
             'marginTop'         => 30, // dies ist variabel durch quiqqerInvoicePdfCreate
@@ -165,6 +173,8 @@ class OutputTemplate
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
+
+        QUI::getLocale()->resetCurrent();
 
         return $Document;
     }
