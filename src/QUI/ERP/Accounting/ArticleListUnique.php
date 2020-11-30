@@ -340,7 +340,7 @@ class ArticleListUnique implements \IteratorAggregate
     public function toHTMLWithCSS()
     {
         $style = '<style>';
-        $style .= \file_get_contents(\dirname(__FILE__).'/ArticleList.Mail.css');
+        $style .= \file_get_contents(\dirname(__FILE__).'/ArticleList.css');
         $style .= '</style>';
 
         return $style.$this->toHTML();
