@@ -358,12 +358,19 @@ class Calc
                 $diff = $priceFactorBruttoSum - \round($bruttoSum, $precision);
 
                 // if we have a diff, we change the first vat price factor
+                $added = false;
+
                 foreach ($priceFactors as $Factor) {
                     if ($Factor instanceof QUI\ERP\Products\Interfaces\PriceFactorWithVatInterface) {
                         $Factor->setSum(\round($Factor->getSum() - $diff, $precision));
                         $bruttoSum = \round($bruttoSum, $precision);
+                        $added     = true;
                         break;
                     }
+                }
+
+                if ($added === false) {
+                    $bruttoSum = $bruttoSum + $diff;
                 }
             }
         }
