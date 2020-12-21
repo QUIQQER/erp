@@ -3,13 +3,13 @@
 
     <groups name="quiqqer/erp" datatype="php,js">
         <locale name="package.title">
-            <de><![CDATA[QUIQQER - Shop - ERP]]></de>
-            <en><![CDATA[QUIQQER - Shop - ERP]]></en>
+            <de><![CDATA[E-Coyn - E-Commerce You Need]]></de>
+            <en><![CDATA[E-Coyn - E-Commerce You Need]]></en>
         </locale>
 
         <locale name="window.erp.title">
-            <de><![CDATA[E-Commerce]]></de>
-            <en><![CDATA[E-commerce]]></en>
+            <de><![CDATA[E-Coyn - E-Commerce You Need]]></de>
+            <en><![CDATA[E-Coyn - E-Commerce You Need]]></en>
         </locale>
 
         <locale name="menu.erp.company.title">
@@ -116,8 +116,8 @@
             <en><![CDATA[Settings]]></en>
         </locale>
         <locale name="erp.panel.title">
-            <de><![CDATA[E-Commerce]]></de>
-            <en><![CDATA[E-commerce]]></en>
+            <de><![CDATA[E-Coyn - E-Commerce You Need]]></de>
+            <en><![CDATA[E-Coyn - E-Commerce You Need]]></en>
         </locale>
         <locale name="user.settings.euVatId">
             <de><![CDATA[Umsatzsteuer-ID]]></de>
@@ -203,7 +203,7 @@
             <de><![CDATA[Artikel ersetzen]]></de>
             <en><![CDATA[Replace article]]></en>
         </locale>
-        
+
         <!-- Permissions -->
         <locale name="permission.quiqqer.erp_manufacturers._header">
             <de><![CDATA[Shop - Hersteller]]></de>
@@ -231,7 +231,7 @@
             <de><![CDATA[Hersteller <b>[manufacturerId]</b> wurde erfolgreich erstellt.]]></de>
             <en><![CDATA[Manufacturer <b>[manufacturerId]</b> was created successfully.]]></en>
         </locale>
-        
+
         <locale name="exception.ajax.output.sendMail.error">
             <de>
                 <![CDATA[Leider ist beim E-Mail-Verand ein unerwarteter Fehler aufgetreten. Bitte wiederholen Sie den Vorgang, prüfen Sie die Fehler-Logs oder kontaktieren Sie einen Administator.]]></de>
@@ -239,12 +239,16 @@
                 <![CDATA[Unfortunately, an unexpected error has occurred when sending the e-mail. Please repeat the process, check the error logs or contact an administrator.]]></en>
         </locale>
         <locale name="exception.Manufacturers.createManufacturer.id_already_exists">
-            <de><![CDATA[Die eingegebene Herstellernummer ist bereits vergeben. Bitte wählen Sie eine andere Herstellernummer.]]></de>
-            <en><![CDATA[The entered manufacturer number is already assigned. Please select a different manufacturer number.]]></en>
+            <de>
+                <![CDATA[Die eingegebene Herstellernummer ist bereits vergeben. Bitte wählen Sie eine andere Herstellernummer.]]></de>
+            <en>
+                <![CDATA[The entered manufacturer number is already assigned. Please select a different manufacturer number.]]></en>
         </locale>
         <locale name="exception.ajax.manufacturers.create.newManufacturer.error">
-            <de><![CDATA[Bei Erstellung des Herstellers ist ein unerwarteter Fehler aufgetreten. Bitte wiederholen Sie den Vorgang oder kontaktieren Sie einen Administrator.]]></de>
-            <en><![CDATA[An unexpected error occurred when creating the manufacturer. Please repeat the process or contact an administrator.]]></en>
+            <de>
+                <![CDATA[Bei Erstellung des Herstellers ist ein unerwarteter Fehler aufgetreten. Bitte wiederholen Sie den Vorgang oder kontaktieren Sie einen Administrator.]]></de>
+            <en>
+                <![CDATA[An unexpected error occurred when creating the manufacturer. Please repeat the process or contact an administrator.]]></en>
         </locale>
         <locale name="user.settings.title">
             <de><![CDATA[Rechnungsdaten]]></de>
@@ -751,8 +755,10 @@
         </locale>
 
         <locale name="controls.manufacturers.Administration.no_group.information">
-            <de><![CDATA[Es können aktuell keine Hersteller gelistet werden, da im Produktfeld "Hersteller" noch keine Gruppen zugewiesen sind. Bitte öffnen Sie die Produktfeld-Verwaltung unter <b>Verwaltung -> Shop -> Produktfelder</b> und editieren das Feld "Hersteller" (ID 8). Dort weisen Sie in den Feld-Optionen mindestens eine Gruppe zu.]]></de>
-            <en><![CDATA[Currently no manufacturers can be listed because no groups have been assigned in the product field "Manufacturer" yet. Please open the product field administration under <b>Administration -> Shop -> Product fields</b> and edit the field "Manufacturer" (ID 8). There you assign at least one group in the field options.]]></en>
+            <de>
+                <![CDATA[Es können aktuell keine Hersteller gelistet werden, da im Produktfeld "Hersteller" noch keine Gruppen zugewiesen sind. Bitte öffnen Sie die Produktfeld-Verwaltung unter <b>Verwaltung -> Shop -> Produktfelder</b> und editieren das Feld "Hersteller" (ID 8). Dort weisen Sie in den Feld-Optionen mindestens eine Gruppe zu.]]></de>
+            <en>
+                <![CDATA[Currently no manufacturers can be listed because no groups have been assigned in the product field "Manufacturer" yet. Please open the product field administration under <b>Administration -> Shop -> Product fields</b> and edit the field "Manufacturer" (ID 8). There you assign at least one group in the field options.]]></en>
         </locale>
         <locale name="controls.manufacturers.Administration.no_group.title">
             <de><![CDATA[Hersteller können nicht gelistet werden]]></de>
@@ -842,7 +848,8 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <en><![CDATA[Manufacturer data]]></en>
         </locale>
         <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerDataText">
-            <de><![CDATA[Legen Sie hier die grundlegenden Herstellerdaten fest. Diese Daten können später noch geändert werden.]]></de>
+            <de>
+                <![CDATA[Legen Sie hier die grundlegenden Herstellerdaten fest. Diese Daten können später noch geändert werden.]]></de>
             <en><![CDATA[Define the basic manufacturer data here. These data can be changed later.]]></en>
         </locale>
         <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerGroupsHeader">
@@ -850,8 +857,10 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <en><![CDATA[Manufacturer groups]]></en>
         </locale>
         <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerGroupsText">
-            <de><![CDATA[Bitte wählen Sie mindestens eine Hersteller-Gruppe aus, zu der der neue Hersteller zugewiesen wird.]]></de>
-            <en><![CDATA[Please select at least one manufacturer group to which the new manufacturer will be assigned.]]></en>
+            <de>
+                <![CDATA[Bitte wählen Sie mindestens eine Hersteller-Gruppe aus, zu der der neue Hersteller zugewiesen wird.]]></de>
+            <en>
+                <![CDATA[Please select at least one manufacturer group to which the new manufacturer will be assigned.]]></en>
         </locale>
         <locale name="controls.manufacturers.create.Manufacturer.tpl.previousButton">
             <de><![CDATA[Zurück]]></de>
