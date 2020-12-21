@@ -3,13 +3,13 @@
 
     <groups name="quiqqer/erp" datatype="php,js">
         <locale name="package.title">
-            <de><![CDATA[E-Coyn - E-Commerce You Need]]></de>
-            <en><![CDATA[E-Coyn - E-Commerce You Need]]></en>
+            <de><![CDATA[E-COYN - E-Commerce You Need]]></de>
+            <en><![CDATA[E-COYN - E-Commerce You Need]]></en>
         </locale>
 
         <locale name="window.erp.title">
-            <de><![CDATA[E-Coyn - E-Commerce You Need]]></de>
-            <en><![CDATA[E-Coyn - E-Commerce You Need]]></en>
+            <de><![CDATA[E-COYN - E-Commerce You Need]]></de>
+            <en><![CDATA[E-COYN - E-Commerce You Need]]></en>
         </locale>
 
         <locale name="menu.erp.company.title">
@@ -116,8 +116,8 @@
             <en><![CDATA[Settings]]></en>
         </locale>
         <locale name="erp.panel.title">
-            <de><![CDATA[E-Coyn - E-Commerce You Need]]></de>
-            <en><![CDATA[E-Coyn - E-Commerce You Need]]></en>
+            <de><![CDATA[E-COYN - Shop-Administration]]></de>
+            <en><![CDATA[E-COYN - Shop administration]]></en>
         </locale>
         <locale name="user.settings.euVatId">
             <de><![CDATA[Umsatzsteuer-ID]]></de>
@@ -220,8 +220,8 @@
 
         <!-- Menu -->
         <locale name="menu.erp.title">
-            <de><![CDATA[Shop]]></de>
-            <en><![CDATA[Shop]]></en>
+            <de><![CDATA[E-COYN]]></de>
+            <en><![CDATA[E-COYN]]></en>
         </locale>
     </groups>
 
