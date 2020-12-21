@@ -130,9 +130,27 @@ class OutputTemplate
         $this->Engine->assign($templateData);
         $this->preview = $preview;
 
-        $html = $this->getHTMLHeader().
-                $this->getHTMLBody().
-                $this->getHTMLFooter();
+        $html = '<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        height: 100%;
+    }
+    
+    .quiqqer-erp-output-html-footer {
+        position: relative;
+        margin-top: auto;
+    }
+    
+    .quiqqer-erp-output-footer {
+        position: static !important;
+    }
+</style>';
+
+        $html .= '<div class="quiqqer-erp-output-html-header">'.$this->getHTMLHeader().'</div>';
+        $html .= '<div class="quiqqer-erp-output-html-body">'.$this->getHTMLBody().'</div>';
+        $html .= '<div class="quiqqer-erp-output-html-footer">'.$this->getHTMLFooter().'</div>';
 
         QUI::getLocale()->resetCurrent();
 
