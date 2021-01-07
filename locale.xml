@@ -549,6 +549,14 @@
                 <![CDATA[The document cannot be sent by e-mail because the recipient e-mail address is invalid.]]></en>
         </locale>
 
+        <locale name="user.category.title">
+            <de><![CDATA[Kundendaten]]></de>
+            <en><![CDATA[Customer data]]></en>
+        </locale>
+        <locale name="user.settings.customer.button">
+            <de><![CDATA[Kundendaten öffnen]]></de>
+            <en><![CDATA[Open customer panel]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">

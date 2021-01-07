@@ -12,7 +12,9 @@
 
     <window>
         <tab name="ERP">
-            <text>Shop</text>
+            <text>
+                <locale group="quiqqer/erp" var="user.category.title"/>
+            </text>
             <image>fa fa-shopping-bag</image>
             <template>OPT_DIR/quiqqer/erp/template/user/erpSettings.html</template>
         </tab>
