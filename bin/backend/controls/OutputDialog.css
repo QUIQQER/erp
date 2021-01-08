@@ -30,7 +30,6 @@
     float: left;
     height: 100%;
     overflow: auto;
-    padding: 20px;
     width: calc(100% - 400px);
 }
 

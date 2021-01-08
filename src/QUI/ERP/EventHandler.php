@@ -150,6 +150,10 @@ class EventHandler
             return;
         }
 
+        if (QUI::isBackend()) {
+            return;
+        }
+
         $Request = QUI::getRequest()->request;
         $data    = $Request->all();
 

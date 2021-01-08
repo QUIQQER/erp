@@ -14,6 +14,10 @@ QUI::$Ajax->registerFunction(
         $entity   = Orthos::clearArray(\json_decode($entity, true));
         $template = Orthos::clearArray(\json_decode($template, true));
 
+        if (!isset($template['provider'])) {
+            return '';
+        }
+
         try {
             return ERPOutput::getDocumentHtml(
                 $entity['id'],
@@ -25,6 +29,7 @@ QUI::$Ajax->registerFunction(
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
+
             return '';
         }
     },

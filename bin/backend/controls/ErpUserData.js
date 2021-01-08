@@ -5,7 +5,9 @@
 define('package/quiqqer/erp/bin/backend/controls/ErpUserData', [
 
     'qui/QUI',
-    'qui/controls/Control'
+    'qui/controls/Control',
+
+    'css!package/quiqqer/erp/bin/backend/controls/ErpUserData.css'
 
 ], function (QUI, QUIControl) {
     "use strict";
@@ -15,16 +17,8 @@ define('package/quiqqer/erp/bin/backend/controls/ErpUserData', [
         Extends: QUIControl,
         Type   : 'package/quiqqer/erp/bin/backend/controls/ErpUserData',
 
-        Binds: [
-            'checkAddressVatField'
-        ],
-
         initialize: function (options) {
             this.parent(options);
-
-            this.$AddressSelect = null;
-            this.$ChUID         = null;
-            this.$EuVatId       = null;
 
             this.addEvents({
                 onImport: this.$onImport
@@ -35,50 +29,27 @@ define('package/quiqqer/erp/bin/backend/controls/ErpUserData', [
          * @event: on import
          */
         $onImport: function () {
-            var self = this;
+            var self  = this;
+            var Panel = QUI.Controls.getById(
+                self.getElm().getParent('.qui-panel').get('data-quiid')
+            );
 
-            this.$AddressSelect = this.getElm().getElement('[name="quiqqer.erp.address"]');
-            this.$ChUID         = this.getElm().getElement('[name="quiqqer.erp.chUID"]');
-            this.$EuVatId       = this.getElm().getElement('[name="quiqqer.erp.euVatId"]');
+            this.getElm().addEvent('click', function (e) {
+                e.stop();
 
-            this.$AddressSelect.addEvent('change', this.checkAddressVatField);
-            this.$AddressSelect.addEvent('load', function () {
-                var Instance = QUI.Controls.getById(self.$AddressSelect.get('data-quiid'));
-                Instance.addEvent('load', self.checkAddressVatField);
+                require([
+                    'package/quiqqer/customer/bin/backend/controls/customer/Panel',
+                    'utils/Panels'
+                ], function (CustomerPanel, Utils) {
+                    Utils.openPanelInTasks(
+                        new CustomerPanel({
+                            userId: Panel.getUser().getId()
+                        })
+                    );
+                });
             });
 
-            this.checkAddressVatField();
-        },
-
-        /**
-         * which vat field should be shown
-         */
-        checkAddressVatField: function () {
-            var value  = this.$AddressSelect.value;
-            var Option = this.$AddressSelect.getElement('[value="' + value + '"]');
-
-            this.$EuVatId.getParent('tr').setStyle('display', '');
-            this.$ChUID.getParent('tr').setStyle('display', 'none');
-            
-            if (!Option) {
-                return;
-            }
-
-            var address = Option.innerText;
-            address     = address.trim();
-            address     = address.split(',');
-
-            var country = address.pop();
-            country     = country.trim();
-
-            if (country === 'CH') {
-                this.$EuVatId.getParent('tr').setStyle('display', 'none');
-                this.$ChUID.getParent('tr').setStyle('display', '');
-            } else {
-                this.$EuVatId.getParent('tr').setStyle('display', '');
-                this.$ChUID.getParent('tr').setStyle('display', 'none');
-            }
+            this.getElm().set('disabled', false);
         }
-
     });
 });

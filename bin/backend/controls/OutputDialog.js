@@ -129,8 +129,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     labelTemplate       : QUILocale.get(lg, 'controls.OutputDialog.labelTemplate'),
                     labelOutputType     : QUILocale.get(lg, 'controls.OutputDialog.labelOutputType'),
                     labelEmail          : QUILocale.get('quiqqer/quiqqer', 'recipient'),
-                    showMarkAsSentOption: this.getAttribute('showMarkAsSentOption') ? true : false,
-                    mailEditor          : this.getAttribute('mailEditor') ? true : false,
+                    showMarkAsSentOption: !!this.getAttribute('showMarkAsSentOption'),
+                    mailEditor          : !!this.getAttribute('mailEditor'),
                     labelOpenMailEditor : QUILocale.get(lg, 'controls.OutputDialog.labelOpenMailEditor'),
                     labelMarkAsSent     : QUILocale.get(lg, 'controls.OutputDialog.labelMarkAsSent'),
                     descMarkAsSent      : QUILocale.get(lg, 'controls.OutputDialog.descMarkAsSent')
@@ -246,7 +246,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     self.$Template = {
                         id      : event.target.value,
                         provider: event.target.getElement('option[value="' + event.target.value + '"]')
-                            .get('data-provider')
+                                       .get('data-provider')
                     };
 
                     self.$renderPreview();
@@ -285,7 +285,10 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
                 new Element('div', {
                     'class': 'quiqqer-erp-outputDialog-nopreview',
-                    html   : QUILocale.get(lg, 'controls.OutputDialog.preview_error')
+                    html   : QUILocale.get(lg, 'controls.OutputDialog.preview_error'),
+                    styles : {
+                        padding: 20
+                    }
                 }).inject(PreviewContent);
             };
 
@@ -302,9 +305,9 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 new QUISandbox({
                     content: previewHtml,
                     styles : {
-                        height : 1240,
+                        height : '100%',
                         padding: 20,
-                        width  : 874
+                        width  : '100%'
                     },
                     events : {
                         onLoad: function (Box) {
@@ -350,7 +353,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 ]);
 
                 self.Loader.hide();
-            }, function() {
+            }, function () {
                 self.Loader.hide();
             });
         },
