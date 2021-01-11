@@ -256,8 +256,8 @@ class User extends QUI\QDOM implements UserInterface
     {
         $Address = $this->getAddress();
 
-        $saluation = $Address->getAttribute('salutation');
-        $firstName = $Address->getAttribute('firstname');
+        $salutation = $Address->getAttribute('salutation');
+        $firstName  = $Address->getAttribute('firstname');
 
         if (empty($firstName)) {
             $firstName = $this->firstName;
@@ -271,11 +271,11 @@ class User extends QUI\QDOM implements UserInterface
 
         $name = $firstName.' '.$lastName;
 
-        if (!empty($saluation)) {
-            $name = $saluation.' '.$name;
+        if (!empty($salutation)) {
+            $name = $salutation.' '.$name;
         }
 
-        return $name;
+        return \trim($name);
     }
 
     /**
