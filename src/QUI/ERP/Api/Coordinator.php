@@ -21,9 +21,9 @@ class Coordinator extends QUI\Utils\Singleton
     /**
      * Return the ERP Api Provider from other packages
      *
-     * @return array
+     * @return AbstractErpProvider[]
      */
-    public function getErpApiProvider()
+    public function getErpApiProvider(): array
     {
         $cache    = 'erp/provider/collection';
         $provider = [];
@@ -79,7 +79,7 @@ class Coordinator extends QUI\Utils\Singleton
      *
      * @return array
      */
-    public function getMenuItems()
+    public function getMenuItems(): array
     {
         $cache  = 'erp/provider/menuItems';
         $Map    = new QUI\Controls\Sitemap\Map();
@@ -90,7 +90,6 @@ class Coordinator extends QUI\Utils\Singleton
         } catch (QUI\Cache\Exception $Exception) {
             $provider = $this->getErpApiProvider();
 
-            /* @var $Provider AbstractErpProvider */
             foreach ($provider as $Provider) {
                 $Provider->addMenuItems($Map);
             }
@@ -145,12 +144,11 @@ class Coordinator extends QUI\Utils\Singleton
      *
      * @return array
      */
-    public function getNumberRanges()
+    public function getNumberRanges(): array
     {
         $ranges   = [];
         $provider = $this->getErpApiProvider();
 
-        /* @var $Provider AbstractErpProvider */
         foreach ($provider as $Provider) {
             $ranges = \array_merge($Provider->getNumberRanges(), $ranges);
         }
@@ -158,5 +156,22 @@ class Coordinator extends QUI\Utils\Singleton
         // @todo filter, only NumberRangeInterface are allowed
 
         return $ranges;
+    }
+
+    //region mail settings
+
+    /**
+     * @return array
+     */
+    public function getMailTextsList(): array
+    {
+        $provider   = $this->getErpApiProvider();
+        $mailLocale = [];
+
+        foreach ($provider as $Provider) {
+            $mailLocale = \array_merge($mailLocale, $Provider->getMailLocale());
+        }
+
+        return $mailLocale;
     }
 }
