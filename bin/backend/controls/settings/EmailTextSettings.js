@@ -13,6 +13,7 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
     'package/quiqqer/translator/bin/controls/UpdateContent',
     'Locale',
 
+    'package/quiqqer/tooltips/bin/html5tooltips',
     'css!package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings.css'
 
 ], function (QUI, QUIControls, QUIAjax, TranslateUpdate, ContentMultiLang,
@@ -41,6 +42,7 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
             this.$Panel   = null;
 
             this.$mailList = [];
+            this.$tips     = {};
 
             this.$ContainerSubject = null;
 
@@ -135,6 +137,15 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
          * select change
          */
         $onChange: function () {
+            // reset tips. if exists
+            for (var i in this.$tips) {
+                if (this.$tips.hasOwnProperty(i)) {
+                    this.$tips[i].destroy();
+                }
+            }
+
+            this.$tips = {};
+
             if (!this.$mailList.length) {
                 return;
             }
@@ -159,9 +170,31 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
             this.$ContainerSubject.set('html', '');
             this.$ContainerSubject.setStyle('display', null);
 
+            var SubjectHelp = new Element('div', {
+                'class': 'quiqqer-erp-email-text-settings-locale-container--help tooltip--help',
+                html   : '?',
+                styles : {
+                    cursor    : 'default',
+                    float     : 'right',
+                    lineHeight: 30,
+                    textAlign : 'center',
+                    width     : 50
+                },
+                events : {
+                    mouseenter: function (e) {
+                        self.$getTooltipByNode(e).show();
+                    },
+
+                    mouseleave: function (e) {
+                        self.$getTooltipByNode(e).hide();
+                    }
+                }
+            }).inject(this.$ContainerSubject);
+
             var self  = this,
                 value = this.$Select.value,
                 entry = this.$mailList[value];
+            console.log(entry);
 
             this.$Subject = new TranslateUpdate({
                 'group'  : entry.subject[0],
@@ -181,6 +214,27 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
                 height : height
             });
 
+            var ContentHelp = new Element('div', {
+                'class': 'quiqqer-erp-email-text-settings-locale-container--help tooltip--help',
+                html   : '?',
+                styles : {
+                    cursor    : 'default',
+                    float     : 'right',
+                    lineHeight: 30,
+                    textAlign : 'center',
+                    width     : 50
+                },
+                events : {
+                    mouseenter: function (e) {
+                        self.$getTooltipByNode(e).show();
+                    },
+
+                    mouseleave: function (e) {
+                        self.$getTooltipByNode(e).hide();
+                    }
+                }
+            }).inject(this.$ContainerContent);
+
             this.$Content = new TranslateContent({
                 'group'  : entry.content[0],
                 'var'    : entry.content[1],
@@ -199,7 +253,85 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
                 }
             }).inject(this.$ContainerContent);
 
+
+            // tooltips
+            var options = {
+                maxWidth       : "300px",
+                animateFunction: "scalein",
+                color          : "#daeefc",
+                stickTo        : "left"
+            };
+
+
+            var Tip = new window.HTML5TooltipUIComponent(),
+                id  = String.uniqueID();
+
+            SubjectHelp.set('data-has-tooltip', 1);
+            SubjectHelp.set('data-tooltip', id);
+
+            options.target      = SubjectHelp;
+            options.contentText = QUILocale.get(
+                entry['subject.description'][0],
+                entry['subject.description'][1]
+            );
+
+            Tip.set(options);
+            Tip.mount();
+
+            this.$tips[id] = Tip;
+
+
+            Tip = new window.HTML5TooltipUIComponent();
+            id  = String.uniqueID();
+
+            ContentHelp.set('data-has-tooltip', 1);
+            ContentHelp.set('data-tooltip', id);
+
+            options.target      = ContentHelp;
+            options.contentText = QUILocale.get(
+                entry['content.description'][0],
+                entry['content.description'][1]
+            );
+
+            Tip.set(options);
+            Tip.mount();
+
+            this.$tips[id] = Tip;
+
+
             this.$Panel.Loader.hide();
+        },
+
+        /**
+         * Return the tooltip if exists
+         *
+         * @param event
+         * @return {{hide: function(), show: function()}|*}
+         */
+        $getTooltipByNode: function (event) {
+            var Target = event.target;
+            var faker  = {
+                show: function () {
+                },
+                hide: function () {
+                }
+            };
+
+            if (!Target.hasClass('tooltip--help')) {
+                Target = Target.getParent('.tooltip--help');
+            }
+
+            if (!Target) {
+                return faker;
+            }
+
+            var id = Target.get('data-tooltip');
+
+            if (typeof this.$tips[id] !== 'undefined') {
+                return this.$tips[id];
+            }
+
+            return faker;
         }
     });
 });
