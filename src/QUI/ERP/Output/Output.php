@@ -3,8 +3,6 @@
 namespace QUI\ERP\Output;
 
 use QUI;
-use QUI\ERP\Accounting\Invoice\Settings;
-use QUI\ERP\Accounting\Invoice\Utils\Invoice as InvoiceUtils;
 
 /**
  * Class Output
@@ -57,7 +55,7 @@ class Output
      * @param string $entityType
      * @param OutputProviderInterface $OutputProvider (optional)
      * @param OutputTemplateProviderInterface $TemplateProvider (optional)
-     * @param string $template (optional)
+     * @param string|null $template (optional)
      * @param bool $preview (optional) - Get preview HTML
      *
      * @return string
@@ -71,7 +69,7 @@ class Output
         $TemplateProvider = null,
         string $template = null,
         bool $preview = false
-    ) {
+    ): string {
         if (empty($OutputProvider)) {
             $OutputProvider = self::getOutputProviderByEntityType($entityType);
         }
@@ -106,7 +104,7 @@ class Output
      * @param string $entityType
      * @param OutputProviderInterface $OutputProvider (optional)
      * @param OutputTemplateProviderInterface $TemplateProvider (optional)
-     * @param string $template (optional)
+     * @param string|null $template (optional)
      *
      * @return QUI\HtmlToPdf\Document
      *
@@ -118,7 +116,7 @@ class Output
         $OutputProvider = null,
         $TemplateProvider = null,
         string $template = null
-    ) {
+    ): QUI\HtmlToPdf\Document {
         if (empty($OutputProvider)) {
             $OutputProvider = self::getOutputProviderByEntityType($entityType);
         }
@@ -146,10 +144,8 @@ class Output
      *
      * @return string
      */
-    public static function getDocumentPdfDownloadUrl(
-        $entityId,
-        string $entityType
-    ) {
+    public static function getDocumentPdfDownloadUrl($entityId, string $entityType): string
+    {
         $url = URL_OPT_DIR.'quiqqer/erp/bin/output/frontend/download.php?';
         $url .= \http_build_query([
             'id' => $entityId,
@@ -166,10 +162,10 @@ class Output
      * @param string $entityType
      * @param OutputProviderInterface $OutputProvider (optional)
      * @param OutputTemplateProviderInterface $TemplateProvider (optional)
-     * @param string $template (optional)
-     * @param string $recipientEmail (optional)
-     * @param string $mailSubject (optional)
-     * @param string $mailContent (optional)
+     * @param string|null $template (optional)
+     * @param string|null $recipientEmail (optional)
+     * @param string|null $mailSubject (optional)
+     * @param string|null $mailContent (optional)
      *
      * @return void
      *
@@ -244,7 +240,8 @@ class Output
             $Mailer->setBody($OutputProvider::getMailBody($entityId));
         }
 
-        QUI::getEvents()->fireEvent('quiqqerErpOutputSendMailBefore', [$entityId, $entityType, $recipientEmail, $Mailer]);
+        QUI::getEvents()->fireEvent('quiqqerErpOutputSendMailBefore',
+            [$entityId, $entityType, $recipientEmail, $Mailer]);
 
         $Mailer->send();
 
@@ -261,7 +258,6 @@ class Output
      *
      * @param string $package
      * @return OutputTemplateProviderInterface|false - OutputProvider class (static) or false if
-     * @throws QUI\Exception
      */
     public static function getOutputTemplateProviderByPackage(string $package)
     {
@@ -277,10 +273,10 @@ class Output
     /**
      * Get available templates for $entityType (e.g. "Invoice", "InvoiceTemporary" etc.)
      *
-     * @param string $entityType (optional) - Restrict to templates of $entityType [default: fetch templates for all entity types]
+     * @param string|null $entityType (optional) - Restrict to templates of $entityType [default: fetch templates for all entity types]
      * @return array
      */
-    public static function getTemplates(string $entityType = null)
+    public static function getTemplates(string $entityType = null): array
     {
         $templates       = [];
         $outputProviders = [];
@@ -312,7 +308,8 @@ class Output
                         $templateTitle .= ' '.QUI::getLocale()->get('quiqqer/erp', 'output.default_template.suffix');
                     }
 
-                    $isDefault = $defaultOutputTemplate['provider'] === $provider['package'] &&
+                    $isDefault = isset($defaultOutputTemplate['provider']) &&
+                                 $defaultOutputTemplate['provider'] === $provider['package'] &&
                                  $defaultOutputTemplate['id'] === $providerTemplateId;
 
                     $providerTemplate = [
@@ -350,9 +347,9 @@ class Output
      * Return default template id for a specific entity type
      *
      * @param string $entityType
-     * @return array - Containting template ID and template provider package
+     * @return array - Containing template ID and template provider package
      */
-    public static function getDefaultOutputTemplateForEntityType(string $entityType)
+    public static function getDefaultOutputTemplateForEntityType(string $entityType): array
     {
         $fallBackTemplate = [
             'id'                => 'system_default',
@@ -377,6 +374,7 @@ class Output
             return $defaultTemplates[$entityType];
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
+
             return $fallBackTemplate;
         }
     }
@@ -416,7 +414,7 @@ class Output
      *
      * @return array - Provider classes
      */
-    protected static function getAllOutputProviders()
+    protected static function getAllOutputProviders(): array
     {
         $packages        = QUI::getPackageManager()->getInstalled();
         $providerClasses = [];
@@ -459,7 +457,7 @@ class Output
      *
      * @return array - Provider classes
      */
-    protected static function getAllOutputTemplateProviders()
+    protected static function getAllOutputTemplateProviders(): array
     {
         $packages        = QUI::getPackageManager()->getInstalled();
         $providerClasses = [];

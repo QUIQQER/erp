@@ -391,6 +391,22 @@
                         </input>
                     </settings>
                 </category>
+
+                <category name="mails" index="100">
+                    <text>
+                        <locale group="quiqqer/erp" var="menu.erp.mails.title"/>
+                    </text>
+                    <icon>fa fa-envelope-o</icon>
+
+                    <settings title="mails" name="mails">
+                        <title>
+                            <locale group="quiqqer/erp" var="menu.erp.general.mails.title"/>
+                        </title>
+                        <input type="hidden"
+                               data-qui="package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings"
+                               label="false"/>
+                    </settings>
+                </category>
             </categories>
 
         </window>

@@ -2,7 +2,6 @@
 
 namespace QUI\ERP\Output;
 
-use QUI\HtmlToPdf\Document;
 use QUI\Interfaces\Template\EngineInterface;
 use QUI\Locale;
 

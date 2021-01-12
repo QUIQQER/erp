@@ -60,6 +60,14 @@
             <de><![CDATA[Hersteller]]></de>
             <en><![CDATA[Manufacturers]]></en>
         </locale>
+        <locale name="menu.erp.mails.title">
+            <de><![CDATA[E-Mail Texte]]></de>
+            <en><![CDATA[E-mail texts]]></en>
+        </locale>
+        <locale name="menu.erp.general.mails.title">
+            <de><![CDATA[E-Mail Texte]]></de>
+            <en><![CDATA[E-mail texts]]></en>
+        </locale>
 
         <locale name="price.starting.from">
             <de><![CDATA[ab]]></de>

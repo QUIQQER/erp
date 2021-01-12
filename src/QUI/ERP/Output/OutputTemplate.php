@@ -3,12 +3,6 @@
 namespace QUI\ERP\Output;
 
 use QUI;
-use QUI\Package\Package;
-
-use QUI\ERP\Accounting\Invoice\Exception;
-use QUI\ERP\Accounting\Invoice\Handler;
-use QUI\ERP\Accounting\Invoice\Invoice;
-use QUI\ERP\Accounting\Invoice\InvoiceTemporary;
 
 /**
  * Class OutputTemplate
@@ -64,13 +58,13 @@ class OutputTemplate
      * @param OutputProviderInterface $OutputProvider - Output provider class
      * @param string|int $entityId
      * @param string $entityType
-     * @param string $template (optional) - Template identifier (from template provider)
+     * @param string|null $template (optional) - Template identifier (from template provider)
      *
      * @throws QUI\Exception
      */
     public function __construct(
-        $TemplateProvider,
-        $OutputProvider,
+        OutputTemplateProviderInterface $TemplateProvider,
+        OutputProviderInterface $OutputProvider,
         $entityId,
         string $entityType,
         string $template = null
@@ -119,7 +113,7 @@ class OutputTemplate
      * @param bool $preview (optional) -
      * @return string - HTML content
      */
-    public function getHTML($preview = false)
+    public function getHTML($preview = false): string
     {
         $Locale = $this->OutputProvider::getLocale($this->entityId);
         QUI::getLocale()->setTemporaryCurrent($Locale->getCurrent());
@@ -164,7 +158,7 @@ class OutputTemplate
      * @throws QUI\Exception
      * @throws QUI\ExceptionStack
      */
-    public function getPDFDocument()
+    public function getPDFDocument(): QUI\HtmlToPdf\Document
     {
         $Locale = $this->OutputProvider::getLocale($this->entityId);
         QUI::getLocale()->setTemporaryCurrent($Locale->getCurrent());
@@ -188,7 +182,7 @@ class OutputTemplate
             $Document->setHeaderHTML($this->getHTMLHeader());
             $Document->setContentHTML($this->getHTMLBody());
             $Document->setFooterHTML($this->getHTMLFooter());
-        } catch (QUI\Exception $Exception) {
+        } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
 
@@ -200,7 +194,7 @@ class OutputTemplate
     /**
      * @return QUI\Interfaces\Template\EngineInterface
      */
-    public function getEngine()
+    public function getEngine(): QUI\Interfaces\Template\EngineInterface
     {
         return $this->Engine;
     }
@@ -212,7 +206,7 @@ class OutputTemplate
      *
      * @return string
      */
-    public function getHTMLHeader()
+    public function getHTMLHeader(): string
     {
         return $this->TemplateProvider::getHeaderHtml($this->template, $this->entityType, $this->Engine, $this->Entity);
     }
@@ -222,7 +216,7 @@ class OutputTemplate
      *
      * @return string
      */
-    public function getHTMLBody()
+    public function getHTMLBody(): string
     {
         $Output = new QUI\Output();
         $Output->setSetting('use-system-image-paths', true);
@@ -242,7 +236,7 @@ class OutputTemplate
      *
      * @return string
      */
-    public function getHTMLFooter()
+    public function getHTMLFooter(): string
     {
         $footerHtml = '<div class="quiqqer-erp-output-footer">';
 

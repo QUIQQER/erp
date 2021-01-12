@@ -31,4 +31,27 @@ abstract class AbstractErpProvider
     {
         return [];
     }
+
+    //region mail text settings
+
+    /**
+     * Return the mail locale text, if available
+     *
+     * return [
+     *      [
+     *          'title'       => 'Title of theses mail texts',
+     *          'description' => 'What are these mail texts for?',
+     *          'subject'     => ['locale group', 'locale var'],
+     *          'content'     => ['locale group', 'locale var']
+     *      ]
+     * ]
+     *
+     * @return array
+     */
+    public static function getMailLocale(): array
+    {
+        return [];
+    }
+
+    //end region
 }

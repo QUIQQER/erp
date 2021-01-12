@@ -1,0 +1,27 @@
+.quiqqer-erp-email-text-settings {
+    border: none;
+    padding: 0;
+}
+
+.quiqqer-erp-email-text-settings-locale-container {
+    background: #f4f2f0;
+    border: 1px solid #dcdcdc;
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px;
+    width: 100%;
+}
+
+.quiqqer-erp-email-text-settings-locale-container .quiqqer-translator-entry {
+    overflow: visible;
+    width: calc(100% - 40px);
+}
+
+.quiqqer-erp-email-text-settings-locale-container .quiqqer-translator-entry > input {
+    width: calc(100% - 30px);
+}
+
+.quiqqer-erp-email-text-settings-locale-container .quiqqer-lang-contentmultilang {
+    border: none;
+    padding: 0;
+}
