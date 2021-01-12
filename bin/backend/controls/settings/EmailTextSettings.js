@@ -111,12 +111,6 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
                     self.$Select.set('disabled', false);
                 }
             });
-            /*
-            this.$Subject = '';
-            this.$Text    = '';
-            */
-
-            console.log(this.$Elm);
         },
 
         /**
@@ -194,7 +188,6 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
             var self  = this,
                 value = this.$Select.value,
                 entry = this.$mailList[value];
-            console.log(entry);
 
             this.$Subject = new TranslateUpdate({
                 'group'  : entry.subject[0],
