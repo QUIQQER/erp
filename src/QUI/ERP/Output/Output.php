@@ -67,7 +67,7 @@ class Output
         string $entityType,
         $OutputProvider = null,
         $TemplateProvider = null,
-        string $template = null,
+        $template = null,
         bool $preview = false
     ): string {
         if (empty($OutputProvider)) {
@@ -115,7 +115,7 @@ class Output
         string $entityType,
         $OutputProvider = null,
         $TemplateProvider = null,
-        string $template = null
+        $template = null
     ): QUI\HtmlToPdf\Document {
         if (empty($OutputProvider)) {
             $OutputProvider = self::getOutputProviderByEntityType($entityType);
@@ -176,10 +176,10 @@ class Output
         string $entityType,
         $OutputProvider = null,
         $TemplateProvider = null,
-        string $template = null,
-        string $recipientEmail = null,
-        string $mailSubject = null,
-        string $mailContent = null
+        $template = null,
+        $recipientEmail = null,
+        $mailSubject = null,
+        $mailContent = null
     ) {
         if (empty($OutputProvider)) {
             $OutputProvider = self::getOutputProviderByEntityType($entityType);
