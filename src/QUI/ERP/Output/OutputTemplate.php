@@ -67,7 +67,7 @@ class OutputTemplate
         OutputProviderInterface $OutputProvider,
         $entityId,
         string $entityType,
-        string $template = null
+        $template = null
     ) {
         $this->Engine           = QUI::getTemplateManager()->getEngine();
         $this->TemplateProvider = $TemplateProvider;
