@@ -36,6 +36,11 @@
     width: 50px;
 }
 
+.quiqqer-erp-email-text-settings-locale-container--label {
+    margin-bottom: 10px;
+    display: block;
+}
+
 .html5tooltip-box {
     box-shadow: 1px 1px 10px -2px rgba(0, 0, 0, 0.75);
     color: #24587e !important;
