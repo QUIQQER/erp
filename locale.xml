@@ -898,6 +898,5 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <de><![CDATA[Bitte geben Sie eine Herstellernummer / -bezeichner an]]></de>
             <en><![CDATA[Please provide a manufacturer number / identifier]]></en>
         </locale>
-
     </groups>
 </locales>

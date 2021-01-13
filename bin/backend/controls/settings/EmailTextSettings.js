@@ -61,6 +61,8 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
                 this.getElm().getParent('.qui-panel').get('data-quiid')
             );
 
+            this.getElm().getParent('table').setStyle('margin-bottom', 0);
+
             this.$Elm = new Element('div', {
                 'class'     : 'field-container-field quiqqer-erp-email-text-settings',
                 'data-quiid': this.getId(),
