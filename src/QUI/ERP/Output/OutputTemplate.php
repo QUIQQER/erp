@@ -54,8 +54,8 @@ class OutputTemplate
     /**
      * Template constructor.
      *
-     * @param OutputTemplateProviderInterface $TemplateProvider - Template provider class
-     * @param OutputProviderInterface $OutputProvider - Output provider class
+     * @param string|OutputTemplateProviderInterface $TemplateProvider - Template provider class
+     * @param string|OutputProviderInterface $OutputProvider - Output provider class
      * @param string|int $entityId
      * @param string $entityType
      * @param string|null $template (optional) - Template identifier (from template provider)
@@ -63,8 +63,8 @@ class OutputTemplate
      * @throws QUI\Exception
      */
     public function __construct(
-        OutputTemplateProviderInterface $TemplateProvider,
-        OutputProviderInterface $OutputProvider,
+        $TemplateProvider,
+        $OutputProvider,
         $entityId,
         string $entityType,
         $template = null
