@@ -164,7 +164,34 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
             this.$Panel.Loader.show();
 
             this.$ContainerSubject.set('html', '');
+            this.$ContainerSubject.setStyle('opacity', 0);
             this.$ContainerSubject.setStyle('display', null);
+
+            this.$ContainerContent.set('html', '');
+            this.$ContainerContent.setStyle('opacity', 0);
+            this.$ContainerContent.setStyle('display', null);
+
+            var self          = this,
+                subjectLoaded = false,
+                contentLoaded = false;
+
+            var loaded = function () {
+                if (!subjectLoaded && !contentLoaded) {
+                    return;
+                }
+                
+                moofx([
+                    self.$ContainerSubject,
+                    self.$ContainerContent
+                ]).animate({
+                    opacity: 1
+                });
+            };
+
+            new Element('span', {
+                html   : 'Betreff',
+                'class': 'quiqqer-erp-email-text-settings-locale-container--label'
+            }).inject(this.$ContainerSubject);
 
             var SubjectHelp = new Element('div', {
                 'class': 'quiqqer-erp-email-text-settings-locale-container--help tooltip--help',
@@ -187,27 +214,34 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
                 }
             }).inject(this.$ContainerSubject);
 
-            var self  = this,
-                value = this.$Select.value,
+            var value = this.$Select.value,
                 entry = this.$mailList[value];
 
             this.$Subject = new TranslateUpdate({
                 'group'  : entry.subject[0],
                 'var'    : entry.subject[1],
-                'package': entry.package || ''
+                'package': entry.package || '',
+                events   : {
+                    onLoad: function () {
+                        subjectLoaded = true;
+                        loaded();
+                    }
+                }
             }).inject(this.$ContainerSubject);
 
             // content
             var Parent = this.getElm().getParent('.qui-panel-content');
             var pSize  = Parent.getSize();
-            var height = pSize.y - 220;
+            var height = pSize.y - 240;
 
-
-            this.$ContainerContent.set('html', '');
             this.$ContainerContent.setStyles({
-                display: null,
-                height : height
+                height: height
             });
+
+            new Element('span', {
+                html   : 'Inhalt',
+                'class': 'quiqqer-erp-email-text-settings-locale-container--label'
+            }).inject(this.$ContainerContent);
 
             var ContentHelp = new Element('div', {
                 'class': 'quiqqer-erp-email-text-settings-locale-container--help tooltip--help',
@@ -235,7 +269,7 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
                 'var'    : entry.content[1],
                 'package': entry.package || '',
                 styles   : {
-                    height: height - 20
+                    height: height - 60
                 },
                 events   : {
                     onSaveBegin: function () {
@@ -244,6 +278,11 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
 
                     onSaveEnd: function () {
                         self.$Panel.Loader.hide();
+                    },
+
+                    onLoad: function () {
+                        contentLoaded = true;
+                        loaded();
                     }
                 }
             }).inject(this.$ContainerContent);
@@ -292,7 +331,6 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
             Tip.mount();
 
             this.$tips[id] = Tip;
-
 
             this.$Panel.Loader.hide();
         },

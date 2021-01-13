@@ -172,6 +172,10 @@ class Coordinator extends QUI\Utils\Singleton
             $mailLocale = \array_merge($mailLocale, $Provider->getMailLocale());
         }
 
+        \usort($mailLocale, function ($a, $b) {
+            return \strcmp($a['title'], $b['title']);
+        });
+
         return $mailLocale;
     }
 }
