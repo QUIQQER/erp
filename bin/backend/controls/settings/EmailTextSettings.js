@@ -179,7 +179,7 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
                 if (!subjectLoaded && !contentLoaded) {
                     return;
                 }
-                
+
                 moofx([
                     self.$ContainerSubject,
                     self.$ContainerContent
@@ -191,27 +191,6 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
             new Element('span', {
                 html   : 'Betreff',
                 'class': 'quiqqer-erp-email-text-settings-locale-container--label'
-            }).inject(this.$ContainerSubject);
-
-            var SubjectHelp = new Element('div', {
-                'class': 'quiqqer-erp-email-text-settings-locale-container--help tooltip--help',
-                html   : '?',
-                styles : {
-                    cursor    : 'default',
-                    float     : 'right',
-                    lineHeight: 30,
-                    textAlign : 'center',
-                    width     : 50
-                },
-                events : {
-                    mouseenter: function (e) {
-                        self.$getTooltipByNode(e).show();
-                    },
-
-                    mouseleave: function (e) {
-                        self.$getTooltipByNode(e).hide();
-                    }
-                }
             }).inject(this.$ContainerSubject);
 
             var value = this.$Select.value,
@@ -229,39 +208,23 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
                 }
             }).inject(this.$ContainerSubject);
 
+            new Element('div', {
+                'class': 'quiqqer-erp-email-text-settings-locale-container--help field-container-item-desc',
+                html   : QUILocale.get(
+                    entry['subject.description'][0],
+                    entry['subject.description'][1]
+                )
+            }).inject(this.$ContainerSubject);
+
+
             // content
             var Parent = this.getElm().getParent('.qui-panel-content');
             var pSize  = Parent.getSize();
             var height = pSize.y - 240;
 
-            this.$ContainerContent.setStyles({
-                height: height
-            });
-
             new Element('span', {
                 html   : 'Inhalt',
                 'class': 'quiqqer-erp-email-text-settings-locale-container--label'
-            }).inject(this.$ContainerContent);
-
-            var ContentHelp = new Element('div', {
-                'class': 'quiqqer-erp-email-text-settings-locale-container--help tooltip--help',
-                html   : '?',
-                styles : {
-                    cursor    : 'default',
-                    float     : 'right',
-                    lineHeight: 30,
-                    textAlign : 'center',
-                    width     : 50
-                },
-                events : {
-                    mouseenter: function (e) {
-                        self.$getTooltipByNode(e).show();
-                    },
-
-                    mouseleave: function (e) {
-                        self.$getTooltipByNode(e).hide();
-                    }
-                }
             }).inject(this.$ContainerContent);
 
             this.$Content = new TranslateContent({
@@ -287,50 +250,13 @@ define('package/quiqqer/erp/bin/backend/controls/settings/EmailTextSettings', [
                 }
             }).inject(this.$ContainerContent);
 
-
-            // tooltips
-            var options = {
-                maxWidth       : "300px",
-                animateFunction: "scalein",
-                color          : "#daeefc",
-                stickTo        : "left"
-            };
-
-
-            var Tip = new window.HTML5TooltipUIComponent(),
-                id  = String.uniqueID();
-
-            SubjectHelp.set('data-has-tooltip', 1);
-            SubjectHelp.set('data-tooltip', id);
-
-            options.target      = SubjectHelp;
-            options.contentText = QUILocale.get(
-                entry['subject.description'][0],
-                entry['subject.description'][1]
-            );
-
-            Tip.set(options);
-            Tip.mount();
-
-            this.$tips[id] = Tip;
-
-
-            Tip = new window.HTML5TooltipUIComponent();
-            id  = String.uniqueID();
-
-            ContentHelp.set('data-has-tooltip', 1);
-            ContentHelp.set('data-tooltip', id);
-
-            options.target      = ContentHelp;
-            options.contentText = QUILocale.get(
-                entry['content.description'][0],
-                entry['content.description'][1]
-            );
-
-            Tip.set(options);
-            Tip.mount();
-
-            this.$tips[id] = Tip;
+            new Element('div', {
+                'class': 'quiqqer-erp-email-text-settings-locale-container--help field-container-item-desc',
+                html   : QUILocale.get(
+                    entry['content.description'][0],
+                    entry['content.description'][1]
+                )
+            }).inject(this.$ContainerContent);
 
             this.$Panel.Loader.hide();
         },
