@@ -10,7 +10,7 @@
     margin-top: 10px;
     padding: 10px;
     position: relative;
-    width: calc(100% - 50px);
+    width: 100%;
 }
 
 .quiqqer-erp-email-text-settings-locale-container .quiqqer-translator-entry {
@@ -28,26 +28,17 @@
 }
 
 .quiqqer-erp-email-text-settings-locale-container--help {
-    line-height: 50px !important;
-    position: absolute;
-    right: -50px;
-    text-align: center;
-    top: 0;
-    width: 50px;
+    display: inline-block;
+    margin-top: 10px;
+    padding-left: 10px;
+    width: 100%;
+}
+
+.quiqqer-erp-email-text-settings-locale-container--help ul {
+    padding-left: 20px;
 }
 
 .quiqqer-erp-email-text-settings-locale-container--label {
     margin-bottom: 10px;
     display: block;
 }
-
-.html5tooltip-box {
-    box-shadow: 1px 1px 10px -2px rgba(0, 0, 0, 0.75);
-    color: #24587e !important;
-    text-align: left !important;
-}
-
-.html5tooltip-text ul {
-    padding-left: 15px;
-}
-
