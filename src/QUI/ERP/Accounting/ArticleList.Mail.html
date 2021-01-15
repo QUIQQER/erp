@@ -60,10 +60,14 @@
     {foreach $priceFactors as $priceFactor}
     <tr>
         <td class="articles-sum-row-firstCell">
-            {$priceFactor.title} {if !empty($priceFactor.valueText)}({$priceFactor.valueText}){/if}
+            <span class="articles-sum-row-firstCell-text">
+                {$priceFactor.title} {if !empty($priceFactor.valueText)}({$priceFactor.valueText}){/if}
+            </span>
         </td>
         <td class="articles-sum-row-sndCell">
-            {$priceFactor.sumFormatted}
+            <span class="articles-sum-row-firstCell-value">
+                {$priceFactor.sumFormatted}
+            </span>
         </td>
     </tr>
     {/foreach}
@@ -77,10 +81,14 @@
     {foreach $vatArray as $vat}
     <tr>
         <td>
-            {$vat.text}
+            <span class="articles-sum-vat-text">
+                {$vat.text}
+            </span>
         </td>
         <td>
-            {$vat.sum}
+            <span class="articles-sum-vat-value">
+                {$vat.sum}
+            </span>
         </td>
     </tr>
     {/foreach}
