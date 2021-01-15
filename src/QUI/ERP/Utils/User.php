@@ -307,6 +307,7 @@ class User
             'regdate',
             'lastvisit',
             'lastedit',
+            'address',
 
             'firstname',
             'lastname',

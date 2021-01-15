@@ -183,6 +183,14 @@ class User extends QUI\QDOM implements UserInterface
             $country = $Country->getCode();
         }
 
+        $address = false;
+
+        if (!QUI::getUsers()->isNobodyUser($User) && !QUI::getUsers()->isSystemUser($User)) {
+            /* @var $Address QUI\Users\Address */
+            $Address = $User->getStandardAddress();
+            $address = $Address->getAttributes();
+        }
+
         return new self([
             'id'        => $User->getId(),
             'country'   => $country,
@@ -193,6 +201,7 @@ class User extends QUI\QDOM implements UserInterface
             'isCompany' => $User->isCompany(),
             'isNetto'   => $User->getAttribute('quiqqer.erp.isNettoUser'),
             'data'      => $User->getAttributes(),
+            'address'   => $address,
 
             'quiqqer.erp.euVatId' => $User->getAttribute('quiqqer.erp.euVatId'),
             'quiqqer.erp.taxId'   => $User->getAttribute('quiqqer.erp.taxId')
@@ -330,20 +339,15 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function getAttributes()
     {
-        $attributes = parent::getAttributes();
-
-        try {
-            $attributes['country'] = $this->getCountry();
-        } catch (QUI\Exception $Exception) {
-            $attributes['country'] = '';
-        }
-
+        $attributes              = parent::getAttributes();
+        $attributes['country']   = $this->getCountry();
         $attributes['id']        = $this->getId();
         $attributes['lang']      = $this->getLang();
         $attributes['isCompany'] = $this->isCompany();
         $attributes['firstname'] = $this->getAttribute('firstname');
         $attributes['lastname']  = $this->getAttribute('lastname');
         $attributes['username']  = $this->getAttribute('username');
+        $attributes['address']   = $this->getAddress()->getAttributes();
 
         if ($this->getAttribute('quiqqer.erp.euVatId')) {
             $attributes['quiqqer.erp.euVatId'] = $this->getAttribute('quiqqer.erp.euVatId');
