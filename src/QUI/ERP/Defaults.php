@@ -36,7 +36,7 @@ class Defaults
      * @return QUI\ERP\Areas\Area
      * @throws QUI\Exception
      */
-    public static function getArea()
+    public static function getArea(): Areas\Area
     {
         $Areas        = new QUI\ERP\Areas\Handler();
         $Package      = QUI::getPackage('quiqqer/tax');
@@ -54,7 +54,7 @@ class Defaults
      *
      * @return QUI\Countries\Country
      */
-    public static function getCountry()
+    public static function getCountry(): QUI\Countries\Country
     {
         return QUI\Countries\Manager::getDefaultCountry();
     }
@@ -64,7 +64,7 @@ class Defaults
      *
      * @return Currency\Currency
      */
-    public static function getCurrency()
+    public static function getCurrency(): Currency\Currency
     {
         return QUI\ERP\Currency\Handler::getDefaultCurrency();
     }
@@ -75,7 +75,7 @@ class Defaults
      * @param QUI\Interfaces\Users\User $User
      * @return Currency\Currency|null
      */
-    public static function getUserCurrency($User = null)
+    public static function getUserCurrency($User = null): ?Currency\Currency
     {
         if (self::$userRelatedCurrency !== null) {
             if (self::$userRelatedCurrency) {
@@ -105,7 +105,7 @@ class Defaults
      *
      * @return int
      */
-    public static function getBruttoNettoStatus()
+    public static function getBruttoNettoStatus(): int
     {
         try {
             $Package = QUI::getPackage('quiqqer/tax');
@@ -190,9 +190,9 @@ class Defaults
      * Return the main date format
      *
      * @param bool|string $lang
-     * @return mixed
+     * @return string
      */
-    public static function getDateFormat($lang = false)
+    public static function getDateFormat($lang = false): string
     {
         if ($lang === false) {
             $lang = QUI::getLocale()->getCurrent();
@@ -220,5 +220,26 @@ class Defaults
         }
 
         return self::$dateFormat[$lang];
+    }
+
+    /**
+     * Return the ERP logo
+     * - if no logo is set, the default logo of the default project will be used
+     *
+     * @return false|QUI\Projects\Media\Image|string
+     */
+    public static function getLogo()
+    {
+        try {
+            $Config = QUI::getPackage('quiqqer/erp')->getConfig();
+            $logo   = $Config->get('general', 'logo');
+
+            if (!empty($logo)) {
+                return QUI\Projects\Media\Utils::getImageByUrl($logo);
+            }
+        } catch (QUI\Exception $Exception) {
+        }
+
+        return QUI::getProjectManager()->getStandard()->getMedia()->getLogoImage();
     }
 }

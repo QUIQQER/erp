@@ -19,6 +19,9 @@
                 <conf name="customerRequestWindow">
                     <type>string</type>
                 </conf>
+                <conf name="logo">
+                    <type>string</type>
+                </conf>
             </section>
 
             <section name="company">
@@ -157,6 +160,18 @@
                             </text>
                             <description>
                                 <locale group="quiqqer/erp" var="shop.settings.general.precision.description"/>
+                            </description>
+                        </input>
+
+                        <input type="hidden"
+                               conf="general.logo"
+                               data-qui="controls/projects/project/media/Input"
+                        >
+                            <text>
+                                <locale group="quiqqer/erp" var="shop.settings.logo"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/erp" var="shop.settings.logo.description"/>
                             </description>
                         </input>
                     </settings>

@@ -505,6 +505,22 @@
             <de><![CDATA[B2C und B2B]]></de>
             <en><![CDATA[B2C and B2B]]></en>
         </locale>
+        <locale name="shop.settings.logo">
+            <de><![CDATA[E-COYN Logo]]></de>
+            <en><![CDATA[E-COYN Logo]]></en>
+        </locale>
+        <locale name="shop.settings.logo.description">
+            <de><![CDATA[
+            Das E-COYN Logo wird für verschiedene Shop Aufgaben verwendet.
+            Wie unter anderem für E-Mails von Bestellungen, Rechnungen und weiteren ERP Modulen.
+            Wenn kein E-COYN Logo verwendet wird, wird das standard Logo des standard Projektes verwendet.
+            ]]></de>
+            <en><![CDATA[
+            The E-COYN logo is used for various shop tasks.
+            Among other things, for e-mails of orders, invoices and other ERP modules.
+            If no E-COYN logo is used, the standard logo of the standard project is used.
+            ]]></en>
+        </locale>
 
         <locale name="control.profile.CustomerData.businessType">
             <de><![CDATA[Konto-Typ]]></de>
