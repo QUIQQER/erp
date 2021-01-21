@@ -896,13 +896,14 @@ class Calc
                 $invVatPaid = 0;
             }
 
-            $invNettoToPay = $invNettoTotal - $invVatPaid;
+            $invNettoPaid  = $invPaid - $invVatPaid;
+            $invNettoToPay = $invNettoTotal - $invVatPaid - $invNettoPaid;
 
             // complete + addition
             $vatPaid     = $vatPaid + $invVatPaid;
             $bruttoTotal = $bruttoTotal + $invBruttoSum;
             $bruttoPaid  = $bruttoPaid + $invPaid;
-            $bruttoToPay = $bruttoToPay + $invToPay;
+            //$bruttoToPay = $bruttoToPay + $invToPay;
             $nettoToPay  = $nettoToPay + $invNettoToPay;
             $vatTotal    = $vatTotal + $invVatSum;
 
@@ -911,10 +912,11 @@ class Calc
 
 
         // netto calculation
-        $nettoPaid = $nettoTotal - $nettoToPay;
+        $nettoPaid = $bruttoPaid - $vatPaid;
 
         // vat calculation
-        $vatToPay = $vatTotal - $vatPaid;
+        $vatToPay    = $vatTotal - $vatPaid;
+        $bruttoToPay = $bruttoTotal - $bruttoPaid;
 
         return [
             'netto_toPay'         => $nettoToPay,
