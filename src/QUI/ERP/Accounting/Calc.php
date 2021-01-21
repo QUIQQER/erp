@@ -829,7 +829,7 @@ class Calc
      * @param QUI\ERP\Currency\Currency|null $Currency
      * @return array
      */
-    public static function calculateTotal(array $invoiceList, $Currency = null)
+    public static function calculateTotal(array $invoiceList, $Currency = null): array
     {
         if ($Currency === null) {
             try {
@@ -873,6 +873,8 @@ class Calc
         $bruttoToPay = 0;
         $bruttoPaid  = 0;
         $bruttoTotal = 0;
+        $vatPaid     = 0;
+        $nettoToPay  = 0;
 
         foreach ($invoiceList as $invoice) {
             if (isset($invoice['type']) && (int)$invoice['type'] === Handler::TYPE_INVOICE_CANCEL ||
@@ -881,24 +883,38 @@ class Calc
                 continue;
             }
 
-            $nettoTotal = $nettoTotal + $invoice['calculated_nettosum'];
-            $vatTotal   = $vatTotal + $invoice['calculated_vatsum'];
+            $invBruttoSum  = floatval($invoice['calculated_sum']);
+            $invVatSum     = floatval($invoice['calculated_vatsum']);
+            $invPaid       = floatval($invoice['calculated_paid']);
+            $invToPay      = floatval($invoice['calculated_toPay']);
+            $invNettoTotal = floatval($invoice['calculated_nettosum']);
+            $invVatSumPC   = QUI\Utils\Math::percent($invVatSum, $invBruttoSum);
 
-            $bruttoTotal = $bruttoTotal + $invoice['calculated_sum'];
-            $bruttoPaid  = $bruttoPaid + $invoice['calculated_paid'];
-            $bruttoToPay = $bruttoToPay + $invoice['calculated_toPay'];
+            if ($invVatSumPC) {
+                $invVatPaid = $invPaid * $invVatSumPC / 100;
+            } else {
+                $invVatPaid = 0;
+            }
+
+            $invNettoToPay = $invNettoTotal - $invVatPaid;
+
+            // complete + addition
+            $vatPaid     = $vatPaid + $invVatPaid;
+            $bruttoTotal = $bruttoTotal + $invBruttoSum;
+            $bruttoPaid  = $bruttoPaid + $invPaid;
+            $bruttoToPay = $bruttoToPay + $invToPay;
+            $nettoToPay  = $nettoToPay + $invNettoToPay;
+            $vatTotal    = $vatTotal + $invVatSum;
+
+            $nettoTotal = $nettoTotal + $invNettoTotal;
         }
 
-        $openPercent = QUI\Utils\Math::percent($bruttoToPay, $bruttoTotal);
-        $paidPercent = QUI\Utils\Math::percent($bruttoPaid, $bruttoTotal);
 
         // netto calculation
-        $nettoToPay = $nettoTotal * $openPercent / 100;
-        $nettoPaid  = $nettoTotal * $paidPercent / 100;
+        $nettoPaid = $nettoTotal - $nettoToPay;
 
         // vat calculation
-        $vatToPay = $bruttoToPay - $nettoToPay;
-        $vatPaid  = $bruttoPaid - $nettoPaid;
+        $vatToPay = $vatTotal - $vatPaid;
 
         return [
             'netto_toPay'         => $nettoToPay,
@@ -908,7 +924,7 @@ class Calc
             'display_netto_paid'  => $Currency->format($nettoPaid),
             'display_netto_total' => $Currency->format($nettoTotal),
 
-            'vat_toPay'         => $vatToPay,
+            'vat_toPay'         => $nettoPaid,
             'vat_paid'          => $vatPaid,
             'vat_total'         => $vatTotal,
             'display_vat_toPay' => $Currency->format($vatToPay),
