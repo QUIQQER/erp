@@ -16,6 +16,10 @@
     overflow: hidden;
 }
 
+.quiqqer-erp-outputDialog-options input:focus {
+    z-index: 10;
+}
+
 .quiqqer-erp-outputDialog form table {
     border: none;
     padding: 0;
