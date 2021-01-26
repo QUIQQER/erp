@@ -606,7 +606,7 @@ class Calc
     /**
      * Calculates the individual amounts paid of an invoice / order
      *
-     * @param InvoiceTemporary|Invoice|QUI\ERP\Order\AbstractOrder $ToCalculate
+     * @param InvoiceTemporary|Invoice|QUI\ERP\Order\AbstractOrder|QUI\ERP\Purchasing\Processes\PurchasingProcess $ToCalculate
      * @return array
      *
      * @throws QUI\ERP\Exception
@@ -769,6 +769,7 @@ class Calc
             // Leave everything as it is because a subscription plan order can never be set to "paid"
         } elseif ($ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::TYPE_INVOICE_REVERSAL
                   || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::TYPE_INVOICE_CANCEL
+                  || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
         ) {
             // Leave everything as it is
         } elseif ((float)$ToCalculate->getAttribute('toPay') == 0) {
@@ -816,6 +817,10 @@ class Calc
         }
 
         if ($ToCalculate instanceof QUI\ERP\Order\AbstractOrder) {
+            return true;
+        }
+
+        if ($ToCalculate instanceof QUI\ERP\Purchasing\Processes\PurchasingProcess) {
             return true;
         }
 
