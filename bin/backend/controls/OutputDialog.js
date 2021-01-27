@@ -11,17 +11,18 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
     'qui/controls/buttons/Select',
     'qui/controls/elements/Sandbox',
 
+    'package/quiqqer/erp/bin/backend/controls/Comments',
+
     'qui/utils/Form',
 
     'Ajax',
     'Locale',
     'Mustache',
-    'Users',
 
     'text!package/quiqqer/erp/bin/backend/controls/OutputDialog.html',
     'css!package/quiqqer/erp/bin/backend/controls/OutputDialog.css'
 
-], function (QUI, QUIConfirm, QUISelect, QUISandbox, QUIFormUtils, QUIAjax, QUILocale, Mustache, Users, template) {
+], function (QUI, QUIConfirm, QUISelect, QUISandbox, ERPComments, QUIFormUtils, QUIAjax, QUILocale, Mustache, template) {
     "use strict";
 
     var lg = 'quiqqer/erp';
@@ -38,12 +39,16 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             '$getPreview',
             '$onChangeToEmail',
             '$onChangeToPDF',
-            '$onChangeToPrint'
+            '$onChangeToPrint',
+            '$resizeCommentsBox',
+            '$onChangeMailRecipient'
         ],
 
         options: {
             entityId  : false,  // Clean entity ID WITHOUT prefix and suffix
             entityType: false,  // Entity type (e.g. "Invoice")
+
+            comments: false,    // Comments as array [must be readble by package/quiqqer/erp/bin/backend/controls/Comments]
 
             showMarkAsSentOption: false,    // show checkbox for "Mark as sent"
             mailEditor          : true,     // shows editable subject and body for mail output
@@ -69,6 +74,12 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             this.$Preview      = null;
             this.$customerMail = null;
             this.$Template     = null;
+
+            this.$CommentsBox = null;
+            this.$Form        = null;
+            this.$MessagesBox = null;
+
+            this.$mailSent = false;
 
             this.$Mail = {
                 subject: false,
@@ -138,6 +149,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             });
 
             Content.addClass('quiqqer-erp-outputDialog');
+
+            self.$MessagesBox = Content.getElement('.quiqqer-erp-outputDialog-messages');
 
             // "To mail editor" button
             if (this.getAttribute('mailEditor')) {
@@ -246,7 +259,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     self.$Template = {
                         id      : event.target.value,
                         provider: event.target.getElement('option[value="' + event.target.value + '"]')
-                                       .get('data-provider')
+                            .get('data-provider')
                     };
 
                     self.$renderPreview();
@@ -266,6 +279,18 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 self.$onOutputChange();
 
                 self.Loader.hide();
+
+                // Load comments
+                self.$CommentsBox = Content.getElement('.quiqqer-erp-outputDialog-comments');
+                self.$Form        = Form;
+
+                if (self.getAttribute('comments')) {
+                    new ERPComments({
+                        comments: self.getAttribute('comments')
+                    }).inject(self.$CommentsBox);
+
+                    self.$resizeCommentsBox();
+                }
             }).catch(function (e) {
                 onError(e);
             });
@@ -330,7 +355,9 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
             this.Loader.show();
 
-            switch (this.$Output.getValue()) {
+            var action = this.$Output.getValue();
+
+            switch (action) {
                 case 'print':
                     Run = this.print();
                     break;
@@ -352,10 +379,46 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     self
                 ]);
 
+                var Submit = self.getButton('submit');
+
+                switch (action) {
+                    case 'print':
+                        self.$addMessage(QUILocale.get(lg, 'controls.OutputDialog.msg.output_print'));
+                        break;
+
+                    case 'pdf':
+                        self.$addMessage(QUILocale.get(lg, 'controls.OutputDialog.msg.output_pdf'));
+                        break;
+
+                    case 'email':
+                        self.$mailSent = true;
+                        Submit.disable();
+
+                        self.$addMessage(QUILocale.get(lg, 'controls.OutputDialog.msg.mail_sent', {
+                            recipient: Form.elements.recipient.value
+                        }));
+                        break;
+                }
+
+                self.$resizeCommentsBox();
                 self.Loader.hide();
             }, function () {
                 self.Loader.hide();
             });
+        },
+
+        /**
+         * Add message to log
+         *
+         * @param {String} msg
+         */
+        $addMessage: function (msg) {
+            var Now = new Date();
+
+            new Element('div', {
+                'class': 'quiqqer-erp-outputDialog-messages-entry box message-success',
+                html   : '<b>' + Now.format('%H:%M:%S') + '</b>  ' + msg
+            }).inject(this.$MessagesBox, 'top');
         },
 
         /**
@@ -479,6 +542,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     this.$onChangeToEmail();
                     break;
             }
+
+            this.$resizeCommentsBox();
         },
 
         /**
@@ -517,7 +582,26 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 Recipient.value = this.$customerMail;
             }
 
+            Recipient.removeEvent('change', this.$onChangeMailRecipient);
+            Recipient.addEvent('change', this.$onChangeMailRecipient);
+
             Recipient.focus();
+
+            if (this.$mailSent) {
+                Submit.disable();
+            }
+        },
+
+        /**
+         * If e-mail recipient changes
+         *
+         * @param {DocumentEvent} event
+         */
+        $onChangeMailRecipient: function (event) {
+            var Submit = this.getButton('submit');
+
+            Submit.enable();
+            this.$mailSent = false;
         },
 
         /**
@@ -534,7 +618,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     entityId  : self.getAttribute('entityId'),
                     entityType: self.getAttribute('entityType'),
                     onError   : reject
-                })
+                });
             });
         },
 
@@ -551,7 +635,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     'package' : 'quiqqer/erp',
                     entityType: self.getAttribute('entityType'),
                     onError   : reject
-                })
+                });
             });
         },
 
@@ -572,7 +656,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     }),
                     template : JSON.encode(self.$Template),
                     onError  : reject
-                })
+                });
             });
         },
 
@@ -596,8 +680,20 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     mailContent     : self.$Mail.content,
                     mailRecipient   : Form.elements.recipient.value,
                     onError         : reject
-                })
+                });
             });
+        },
+
+        /**
+         * Resize the erp entity comments container
+         */
+        $resizeCommentsBox: function () {
+            if (!this.$Form || !this.$CommentsBox || !this.$MessagesBox) {
+                return;
+            }
+
+            var height = this.$Form.getSize().y + this.$MessagesBox.getSize().y;
+            this.$CommentsBox.setStyle('height', (685 - height));
         }
     });
 });

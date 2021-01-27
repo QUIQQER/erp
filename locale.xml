@@ -676,6 +676,18 @@
             <de><![CDATA[Markiert den Beleg als versandt, sofern noch kein Versanddatum gesetzt ist.]]></de>
             <en><![CDATA[Marks the document as sent, provided that no shipping date has been set.]]></en>
         </locale>
+        <locale name="controls.OutputDialog.msg.mail_sent">
+            <de><![CDATA[Per E-Mail versandt an: [recipient]]]></de>
+            <en><![CDATA[Sent via email to: [recipient]]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.msg.output_print">
+            <de><![CDATA[Beleg gedruckt]]></de>
+            <en><![CDATA[Document printed]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.msg.output_pdf">
+            <de><![CDATA[Beleg PDF heruntergeladen]]></de>
+            <en><![CDATA[Document PDF downloaded]]></en>
+        </locale>
 
         <locale name="controls.OutputMailEditor.title">
             <de><![CDATA[E-Mail für Beleg bearbeiten]]></de>
