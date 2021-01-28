@@ -284,13 +284,18 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 self.$CommentsBox = Content.getElement('.quiqqer-erp-outputDialog-comments');
                 self.$Form        = Form;
 
-                if (self.getAttribute('comments')) {
-                    new ERPComments({
-                        comments: self.getAttribute('comments')
-                    }).inject(self.$CommentsBox);
+                if (!self.getAttribute('comments') || !self.getAttribute('comments').length) {
+                    self.$CommentsBox.destroy();
+                    self.$CommentsBox = null;
 
-                    self.$resizeCommentsBox();
+                    return;
                 }
+
+                new ERPComments({
+                    comments: self.getAttribute('comments')
+                }).inject(self.$CommentsBox);
+
+                self.$resizeCommentsBox();
             }).catch(function (e) {
                 onError(e);
             });
