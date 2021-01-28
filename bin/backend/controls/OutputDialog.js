@@ -473,7 +473,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
             (function () {
                 document.getElements('#print-document-' + id).destroy();
-                this.close();
+                this.Loader.hide();
             }).delay(1000, this);
         },
 
@@ -692,8 +692,10 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 return;
             }
 
+            var maxHeight = 685 - (710 - this.getContent().getSize().y);
+
             var height = this.$Form.getSize().y + this.$MessagesBox.getSize().y;
-            this.$CommentsBox.setStyle('height', (685 - height));
+            this.$CommentsBox.setStyle('height', (maxHeight - height));
         }
     });
 });
