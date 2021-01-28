@@ -59,6 +59,7 @@
 }
 
 .quiqqer-erp-outputDialog-comments {
+    border-top: 1px dotted rgb(165, 165, 165);
     float: left;
     height: 523px;
     overflow: auto;
