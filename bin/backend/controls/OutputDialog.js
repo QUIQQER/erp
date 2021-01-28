@@ -549,6 +549,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             }
 
             this.$resizeCommentsBox();
+            this.getButton('submit').enable()
         },
 
         /**
@@ -587,8 +588,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 Recipient.value = this.$customerMail;
             }
 
-            Recipient.removeEvent('change', this.$onChangeMailRecipient);
-            Recipient.addEvent('change', this.$onChangeMailRecipient);
+            Recipient.removeEvent('keyup', this.$onChangeMailRecipient);
+            Recipient.addEvent('keyup', this.$onChangeMailRecipient);
 
             Recipient.focus();
 
