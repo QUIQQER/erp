@@ -1,0 +1,34 @@
+<i>ERP ADDRESS</i><br /><br />
+
+<address class="vcard">
+    <div class="adr">
+        {if $Address->getAttribute('company')}
+        <div class="company">
+            {$Address->getAttribute('company')}
+        </div>
+        {/if}
+
+        <div class="salutation">{$salutation} {$firstname} {$lastname}</div>
+
+        <div class="street-address">{$street_no}</div>
+        {if !empty($country)}
+        <div class="locality">
+            <span class="postal-country">{$country}-</span>
+            <span class="postal-code">{$zip}</span>
+            <span class="postal-city">{$city}</span>
+        </div>
+        {else}
+        <div class="locality">
+            <span class="postal-code">{$zip}</span>
+            <span class="postal-city">{$city}</span>
+        </div>
+        {/if}
+
+        {if $Address->getAttribute('company') && $Countries->existsCountryCode($Address->getAttribute('company'))}
+        {assign var=Country value=$Address->getCountry()}
+        {if $Country->getCountry()}
+        <div class="country-name">{$Country->getName()}</div>
+        {/if}
+        {/if}
+    </div>
+</address>
