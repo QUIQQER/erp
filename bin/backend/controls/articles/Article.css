@@ -34,7 +34,7 @@
 }
 
 .quiqqer-erp-backend-erpArticle-text {
-    width: calc(100% - 800px);
+    width: calc(100% - 900px);
 }
 
 .quiqqer-erp-backend-erpArticle-text-title {
@@ -69,6 +69,11 @@
 
 .quiqqer-erp-backend-erpArticle-quantity {
     text-align: right;
+    width: 100px;
+}
+
+.quiqqer-erp-backend-erpArticle-quantityUnit {
+    text-align: left;
     width: 100px;
 }
 

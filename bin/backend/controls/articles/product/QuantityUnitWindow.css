@@ -1,0 +1,15 @@
+.quiqqer-erp-quantity-unit-entry {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: inline-block;
+    padding: 10px;
+    width: 100%;
+}
+
+.quiqqer-erp-quantity-unit-entry:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.quiqqer-erp-quantity-unit-entry--active {
+    background: rgba(0, 0, 0, 0.1);
+}

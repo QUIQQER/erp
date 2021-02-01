@@ -142,7 +142,8 @@ class Article implements ArticleInterface
             'description',
             'unitPrice',
             'control',
-            'quantity'
+            'quantity',
+            'quantityUnit'
         ];
 
         foreach ($defaults as $key) {
@@ -585,6 +586,14 @@ class Article implements ArticleInterface
             $class = $this->attributes['control'];
         }
 
+
+        $quantityUnit = '';
+
+        if (isset($this->attributes['quantityUnit'])) {
+            $quantityUnit = $this->attributes['quantityUnit'];
+        }
+
+
         return [
             // article data
             'id'           => $this->getId(),
@@ -594,6 +603,7 @@ class Article implements ArticleInterface
             'unitPrice'    => $this->getUnitPrice()->value(),
             'displayPrice' => $this->displayPrice(),
             'quantity'     => $this->getQuantity(),
+            'quantityUnit' => $quantityUnit,
             'sum'          => $this->getSum()->value(),
             'vat'          => $vat,
             'discount'     => $discount,
