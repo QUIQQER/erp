@@ -21,14 +21,55 @@ $template         = Orthos::clear($Request->query->get('tpl'));
 $templateProvider = Orthos::clear($Request->query->get('tplpr'));
 $quiId            = Orthos::clear($Request->query->get('oid'));
 
-$streamFile = URL_OPT_DIR.'quiqqer/erp/bin/output/backend/printStream.php?';
-$streamFile .= \http_build_query([
-    'id'    => $entityId,
-    't'     => $entityType,
-    'tpl'   => $template,
-    'tplpr' => $templateProvider,
-    'oid'   => $quiId
-]);
+$requestHash = \hash('sha256', \implode('', [$entityId, $entityType, $template, $templateProvider]));
+$cacheName   = 'quiqqer/erp/print/'.$requestHash;
+
+try {
+    $HtmlPdfDocument = Output::getDocumentPdf(
+        $entityId,
+        $entityType,
+        null,
+        Output::getOutputTemplateProviderByPackage($templateProvider),
+        $template ?: null
+    );
+
+    $imageFiles = $HtmlPdfDocument->createImage(
+        true,
+        [
+            '-transparent-color',
+            '-background white',
+            '-alpha remove',
+            '-alpha off',
+            '-bordercolor white',
+            '-border 10'
+        ]
+    );
+
+    if (!\is_array($imageFiles)) {
+        $imageFiles = [$imageFiles];
+    }
+} catch (\Exception $Exception) {
+    QUI\System\Log::writeException($Exception);
+    exit;
+}
+
+QUI::getSession()->set($cacheName, \json_encode($imageFiles));
+
+$baseUrl     = URL_OPT_DIR.'quiqqer/erp/bin/output/backend/printStream.php?';
+$queryParams = [
+    'hash'  => $cacheName,
+    'index' => 0
+];
+
+// Retrieve all print images
+$printImageSources = [];
+
+foreach ($imageFiles as $imageFile) {
+    $streamFile          = $baseUrl.\http_build_query($queryParams);
+    $printImageSources[] = $streamFile;
+
+    $queryParams['index']++;
+}
 
 echo '
 <html>
@@ -42,23 +83,19 @@ echo '
         @page {
             margin: 0 !important;
         }
-        
-        .container {
-            padding: 2.5em;
-            width: calc(100% - 5em);
-        }
     </style>
 </head>
-<body>
-    <div class="container">
-        <img 
-            id="pdfDocument" 
-            src="'.$streamFile.'"  
-            style="max-width: 100%;"
-           
-        />
-    </div>
-    <script>
+<body>';
+
+foreach ($printImageSources as $imgContent) {
+    echo '<img 
+            class="pdfDocument" 
+            src="'.$imgContent.'"
+            style="width: 100%; width: 21cm; height: 29.7cm; padding: 1cm;"
+        />';
+}
+
+echo '<script>
         var i, len, parts;
         
         var search = {};

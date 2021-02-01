@@ -5,7 +5,6 @@ define('QUIQQER_AJAX', true);
 
 require_once dirname(__FILE__, 6).'/header.php';
 
-use QUI\ERP\Output\Output;
 use QUI\Utils\Security\Orthos;
 
 $User = QUI::getUserBySession();
@@ -14,38 +13,31 @@ if (!$User->canUseBackend()) {
     exit;
 }
 
-$Request          = QUI::getRequest();
-$entityId         = Orthos::clear($Request->query->get('id'));
-$entityType       = Orthos::clear($Request->query->get('t'));
-$template         = Orthos::clear($Request->query->get('tpl'));
-$templateProvider = Orthos::clear($Request->query->get('tplpr'));
-$quiId            = Orthos::clear($Request->query->get('oid'));
+$Request = QUI::getRequest();
+$hash    = Orthos::clear($Request->query->get('hash'));
+$index   = (int)$Request->query->get('index');
 
-try {
-    $HtmlPdfDocument = Output::getDocumentPdf(
-        $entityId,
-        $entityType,
-        null,
-        Output::getOutputTemplateProviderByPackage($templateProvider),
-        $template ?: null
-    );
-
-    $imageFile = $HtmlPdfDocument->createImage(
-        true,
-        [
-            '-flatten'  // removes background
-        ]
-    );
-} catch (\Exception $Exception) {
-    QUI\System\Log::writeException($Exception);
+if (empty($hash)) {
     exit;
 }
 
+$imageFiles = QUI::getSession()->get($hash);
+
+if (empty($imageFiles)) {
+    exit;
+}
+
+$imageFiles = \json_decode($imageFiles, true);
+
+if (empty($imageFiles[$index]) || !\file_exists($imageFiles[$index])) {
+    exit;
+}
+
+$image = $imageFiles[$index];
+
 $Response = QUI::getGlobalResponse();
 $Response->headers->set('Content-Type', 'image/jpg');
-$Response->setContent(file_get_contents($imageFile));
+$Response->setContent(\file_get_contents($image));
 $Response->send();
 
-if (\file_exists($imageFile)) {
-    \unlink($imageFile);
-}
+\unlink($image);
