@@ -225,6 +225,10 @@
             <de><![CDATA[Darf die Hersteller-Verwaltung ansehen]]></de>
             <en><![CDATA[Is allowed to view the manufacturer management]]></en>
         </locale>
+        <locale name="attention.abbreviation">
+            <de><![CDATA[z. Hd.]]></de>
+            <en><![CDATA[attn.]]></en>
+        </locale>
 
         <!-- Menu -->
         <locale name="menu.erp.title">
@@ -520,6 +524,14 @@
             Among other things, for e-mails of orders, invoices and other ERP modules.
             If no E-COYN logo is used, the standard logo of the standard project is used.
             ]]></en>
+        </locale>
+        <locale name="shop.settings.contactPersonOnAddress">
+            <de><![CDATA[Kontaktperson in Addresse anzeigen]]></de>
+            <en><![CDATA[Show contact person in address]]></en>
+        </locale>
+        <locale name="shop.settings.contactPersonOnAddress.description">
+            <de><![CDATA[Bei Rechnungen und Bestellungen wird die Kontaktperson zusätzlich in der Addresse angezeigt. ]]></de>
+            <en><![CDATA[For invoices and orders, the contact person is also displayed in the address.]]></en>
         </locale>
 
         <locale name="control.profile.CustomerData.businessType">

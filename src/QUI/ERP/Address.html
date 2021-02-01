@@ -2,13 +2,34 @@
 
 <address class="vcard">
     <div class="adr">
-        {if $Address->getAttribute('company')}
-        <div class="company">
-            {$Address->getAttribute('company')}
-        </div>
-        {/if}
 
-        <div class="salutation">{$salutation} {$firstname} {$lastname}</div>
+        {if $Address->getAttribute('company')}
+            <div class="company">
+                {$Address->getAttribute('company')}
+            </div>
+
+            {if !empty($suffix)}
+            <div class="suffix">
+                {$suffix}
+            </div>
+            {/if}
+
+            {if !empty($contactPerson)}
+            <div class="contact-person">
+                {locale group="quiqqer/erp" var="attention.abbreviation"} {$contactPerson}
+            </div>
+            {/if}
+
+            <div class="salutation">{$salutation} {$firstname} {$lastname}</div>
+        {else}
+            <div class="salutation">{$salutation} {$firstname} {$lastname}</div>
+
+            {if !empty($suffix)}
+            <div class="suffix">
+                {$suffix}
+            </div>
+            {/if}
+        {/if}
 
         <div class="street-address">{$street_no}</div>
         {if !empty($country)}

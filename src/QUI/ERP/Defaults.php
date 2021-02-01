@@ -31,6 +31,24 @@ class Defaults
     protected static $dateFormat = [];
 
     /**
+     * @param string $section
+     * @param string $key
+     * @return mixed|bool|string
+     */
+    public static function conf(string $section, string $key)
+    {
+        try {
+            $Package = QUI::getPackage('quiqqer/erp');
+            $Config  = $Package->getConfig();
+
+            return $Config->get($section, $key);
+        } catch (QUI\Exception $Exception) {
+        }
+
+        return false;
+    }
+
+    /**
      * Return the default area for the ERP system
      *
      * @return QUI\ERP\Areas\Area
