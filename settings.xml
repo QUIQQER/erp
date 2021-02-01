@@ -6,21 +6,25 @@
             <section name="general">
                 <conf name="businessType">
                     <type>string</type>
-                    <defaultValue>B2C</defaultValue>
+                    <defaultvalue>B2C</defaultvalue>
                 </conf>
                 <conf name="precision">
                     <type>integer</type>
-                    <defaultValue>3</defaultValue>
+                    <defaultvalue>3</defaultvalue>
                 </conf>
                 <conf name="userRelatedCurrency">
                     <type>integer</type>
-                    <defaultValue>1</defaultValue>
+                    <defaultvalue>1</defaultvalue>
                 </conf>
                 <conf name="customerRequestWindow">
                     <type>string</type>
                 </conf>
                 <conf name="logo">
                     <type>string</type>
+                </conf>
+                <conf name="contactPersonOnAddress">
+                    <type>integer</type>
+                    <defaultvalue>1</defaultvalue>
                 </conf>
             </section>
 
@@ -172,6 +176,16 @@
                             </text>
                             <description>
                                 <locale group="quiqqer/erp" var="shop.settings.logo.description"/>
+                            </description>
+                        </input>
+
+                        <input type="checkbox"
+                               conf="general.contactPersonOnAddress">
+                            <text>
+                                <locale group="quiqqer/erp" var="shop.settings.contactPersonOnAddress"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/erp" var="shop.settings.contactPersonOnAddress.description"/>
                             </description>
                         </input>
                     </settings>

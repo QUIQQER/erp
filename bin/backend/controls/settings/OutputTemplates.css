@@ -12,6 +12,15 @@
     width: 100% !important;
 }
 
+.quiqqer-erp-settings-output-templates-hide-system-default > input {
+    float: left;
+    margin-right: 7px;
+    margin-top: 7px;
+}
+
 .quiqqer-erp-settings-output-templates-hide-system-default > label {
+    display: inline-block;
     float: none !important;
+    padding-top: 5px;
+    width: calc(100% - 30px) !important;
 }

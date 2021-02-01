@@ -47,10 +47,23 @@ class Address extends QUI\Users\Address
             return '';
         }
 
-        $isCompany = false;
+        $contactPerson = '';
+        $isCompany     = false;
 
-        if ($this->User->isCompany()) {
+        if ($this->User && $this->User->isCompany()) {
             $isCompany = $this->User->isCompany();
+        }
+
+        if (!empty($this->getAttribute('contactPerson'))) {
+            $contactPerson = $this->getAttribute('contactPerson');
+        }
+
+        if ((bool)Defaults::conf('general', 'contactPersonOnAddress') === false) {
+            $contactPerson = '';
+        }
+
+        if (\is_numeric($contactPerson)) {
+            $contactPerson = '';
         }
 
         $salutation = $this->emptyStringCheck($this->getAttribute('salutation'));
@@ -58,6 +71,7 @@ class Address extends QUI\Users\Address
         $zip        = $this->emptyStringCheck($this->getAttribute('zip'));
         $city       = $this->emptyStringCheck($this->getAttribute('city'));
         $country    = $this->emptyStringCheck($this->getAttribute('country'));
+        $suffix     = $this->emptyStringCheck($this->getAttribute('suffix'));
 
         $firstname = $this->getAttribute('firstname');
         $lastname  = $this->getAttribute('lastname');
@@ -77,14 +91,16 @@ class Address extends QUI\Users\Address
             'Countries' => new QUI\Countries\Manager(),
             'options'   => $options,
 
-            'isCompany'  => $isCompany,
-            'salutation' => $salutation,
-            'firstname'  => $this->emptyStringCheck($firstname),
-            'lastname'   => $this->emptyStringCheck($lastname),
-            'street_no'  => $street_no,
-            'zip'        => $zip,
-            'city'       => $city,
-            'country'    => $country,
+            'isCompany'     => $isCompany,
+            'salutation'    => $salutation,
+            'firstname'     => $this->emptyStringCheck($firstname),
+            'lastname'      => $this->emptyStringCheck($lastname),
+            'street_no'     => $street_no,
+            'zip'           => $zip,
+            'city'          => $city,
+            'country'       => $country,
+            'contactPerson' => $this->emptyStringCheck($contactPerson),
+            'suffix'        => $suffix
         ]);
 
         return $Engine->fetch(\dirname(__FILE__).'/Address.html');
