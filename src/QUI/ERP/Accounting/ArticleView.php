@@ -143,6 +143,11 @@ class ArticleView extends QUI\QDOM
         $article      = $this->Article->toArray();
         $calc         = $article['calculated'];
 
+        // quantity unit
+        if (isset($article['quantityUnit']) && \is_array($article['quantityUnit'])) {
+            $article['quantityUnit'] = $article['quantityUnit']['title'];
+        }
+
         $this->setAttributes($article);
 
         $Engine->assign([

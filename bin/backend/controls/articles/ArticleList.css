@@ -5,8 +5,12 @@
     width: 100%;
 }
 
+.quiqqer-erp-backend-erpItems::-webkit-scrollbar {
+    height: 10px;
+}
+
 .quiqqer-erp-backend-erpItems-container {
-    min-width: 1000px;
+    min-width: 1100px;
 }
 
 .quiqqer-erp-backend-erpItems-header {
@@ -34,11 +38,16 @@
 }
 
 .quiqqer-erp-backend-erpItems-header-description {
-    width: calc(100% - 800px);
+    width: calc(100% - 900px);
 }
 
 .quiqqer-erp-backend-erpItems-header-quantity {
     text-align: right;
+    width: 100px;
+}
+
+.quiqqer-erp-backend-erpItems-header-quantity-unit {
+    text-align: left;
     width: 100px;
 }
 

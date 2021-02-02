@@ -53,6 +53,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             '$onEditTitle',
             '$onEditDescription',
             '$onEditQuantity',
+            '$onEditQuantityUnit',
             '$onEditArticleNo',
             '$onEditUnitPriceQuantity',
             '$onEditVat',
@@ -65,18 +66,19 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         ],
 
         options: {
-            articleNo  : '',
-            description: '---',
-            discount   : '-',
-            position   : 0,
-            price      : 0,
-            quantity   : 1,
-            title      : '---',
-            unitPrice  : 0,
-            vat        : '',
-            'class'    : 'QUI\\ERP\\Accounting\\Invoice\\Articles\\Article',
-            params     : false, // mixed value for API Articles
-            currency   : false
+            articleNo   : '',
+            description : '---',
+            discount    : '-',
+            position    : 0,
+            price       : 0,
+            quantity    : 1,
+            quantityUnit: '',
+            title       : '---',
+            unitPrice   : 0,
+            vat         : '',
+            'class'     : 'QUI\\ERP\\Accounting\\Invoice\\Articles\\Article',
+            params      : false, // mixed value for API Articles
+            currency    : false
         },
 
         initialize: function (options) {
@@ -132,22 +134,24 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 }
             });
 
-            this.$Position  = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-pos');
-            this.$ArticleNo = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-articleNo');
-            this.$Text      = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-text');
-            this.$Quantity  = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-quantity');
-            this.$UnitPrice = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-unitPrice');
-            this.$Price     = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-price');
-            this.$VAT       = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-vat');
-            this.$Discount  = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-discount');
-            this.$Total     = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-total');
-            this.$Buttons   = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-buttons');
+            this.$Position     = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-pos');
+            this.$ArticleNo    = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-articleNo');
+            this.$Text         = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-text');
+            this.$Quantity     = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-quantity');
+            this.$QuantityUnit = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-quantityUnit');
+            this.$UnitPrice    = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-unitPrice');
+            this.$Price        = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-price');
+            this.$VAT          = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-vat');
+            this.$Discount     = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-discount');
+            this.$Total        = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-total');
+            this.$Buttons      = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-buttons');
 
             this.$ArticleNo.addEvent('click', this.$onEditArticleNo);
             this.$Quantity.addEvent('click', this.$onEditQuantity);
             this.$UnitPrice.addEvent('click', this.$onEditUnitPriceQuantity);
             this.$VAT.addEvent('click', this.$onEditVat);
             this.$Discount.addEvent('click', this.$onEditDiscount);
+            this.$QuantityUnit.addEvent('click', this.$onEditQuantityUnit);
 
             this.$Elm.getElements('.cell-editable').set('tabindex', -1);
 
@@ -207,6 +211,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.setQuantity(this.getAttribute('quantity'));
             this.setUnitPrice(this.getAttribute('unitPrice'));
             this.setDiscount(this.getAttribute('discount'));
+            this.setQuantityUnit(this.getAttribute('quantityUnit'));
 
             // edit buttons
             new QUIButton({
@@ -501,7 +506,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @return {Promise}
          */
         setQuantity: function (quantity) {
-            this.setAttribute('quantity', parseInt(quantity));
+            this.setAttribute('quantity', parseFloat(quantity));
 
             if (this.$Quantity) {
                 this.$Quantity.set('html', this.getAttribute('quantity'));
@@ -510,6 +515,25 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.fireEvent('setQuantity', [this]);
 
             return this.calc();
+        },
+
+        /**
+         * Set the unit of the quantity
+         *
+         * @param {Object} quantityUnit - {id:'piece', title:''}
+         */
+        setQuantityUnit: function (quantityUnit) {
+            if (typeof quantityUnit.id === 'undefined') {
+                return;
+            }
+
+            this.setAttribute('quantityUnit', quantityUnit);
+
+            if (this.$QuantityUnit) {
+                this.$QuantityUnit.set('html', this.getAttribute('quantityUnit').title);
+            }
+
+            this.fireEvent('setQuantityUnit', [this, quantityUnit]);
         },
 
         /**
@@ -832,6 +856,28 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         },
 
         /**
+         * Edit quantity unit
+         */
+        $onEditQuantityUnit: function () {
+            var self = this;
+
+            require([
+                'package/quiqqer/erp/bin/backend/controls/articles/product/QuantityUnitWindow'
+            ], function (QuantityUnitWindow) {
+                new QuantityUnitWindow({
+                    events: {
+                        onSubmit: function (Win, value, title) {
+                            self.setQuantityUnit({
+                                id   : value,
+                                title: title
+                            });
+                        }
+                    }
+                }).open();
+            });
+        },
+
+        /**
          * event : on quantity edit
          */
         $onEditUnitPriceQuantity: function () {
@@ -905,7 +951,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                         border    : 0,
                         left      : 0,
                         lineHeight: 20,
-                        //height    : '100%',
                         textAlign : 'right',
                         padding   : 10,
                         position  : 'absolute',
@@ -913,6 +958,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                         width     : '100%'
                     }
                 }).inject(Container);
+
+                if (type === 'number') {
+                    Edit.set('step', 'any');
+                }
 
                 if (typeof inputAttributes !== 'undefined') {
                     Edit.set(inputAttributes);

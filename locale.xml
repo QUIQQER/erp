@@ -179,6 +179,10 @@
             <de><![CDATA[Menge]]></de>
             <en><![CDATA[Quantity]]></en>
         </locale>
+        <locale name="products.quantityUnit">
+            <de><![CDATA[ME]]></de>
+            <en><![CDATA[Un]]></en>
+        </locale>
         <locale name="products.unitPrice">
             <de><![CDATA[Einzelpreis]]></de>
             <en><![CDATA[Unit price]]></en>
@@ -530,7 +534,8 @@
             <en><![CDATA[Show contact person in address]]></en>
         </locale>
         <locale name="shop.settings.contactPersonOnAddress.description">
-            <de><![CDATA[Bei Rechnungen und Bestellungen wird die Kontaktperson zusätzlich in der Addresse angezeigt. ]]></de>
+            <de>
+                <![CDATA[Bei Rechnungen und Bestellungen wird die Kontaktperson zusätzlich in der Addresse angezeigt. ]]></de>
             <en><![CDATA[For invoices and orders, the contact person is also displayed in the address.]]></en>
         </locale>
 

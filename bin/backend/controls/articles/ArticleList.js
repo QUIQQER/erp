@@ -89,14 +89,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             this.$Elm.set({
                 html: Mustache.render(template, {
-                    titleArticleNo  : QUILocale.get(lg, 'products.articleNo'),
-                    titleDescription: QUILocale.get(lg, 'products.description'),
-                    titleQuantity   : QUILocale.get(lg, 'products.quantity'),
-                    titleUnitPrice  : QUILocale.get(lg, 'products.unitPrice'),
-                    titlePrice      : QUILocale.get(lg, 'products.price'),
-                    titleVAT        : QUILocale.get(lg, 'products.table.vat'),
-                    titleDiscount   : QUILocale.get(lg, 'products.discount'),
-                    titleSum        : QUILocale.get(lg, 'products.sum')
+                    titleArticleNo   : QUILocale.get(lg, 'products.articleNo'),
+                    titleDescription : QUILocale.get(lg, 'products.description'),
+                    titleQuantity    : QUILocale.get(lg, 'products.quantity'),
+                    titleQuantityUnit: QUILocale.get(lg, 'products.quantityUnit'),
+                    titleUnitPrice   : QUILocale.get(lg, 'products.unitPrice'),
+                    titlePrice       : QUILocale.get(lg, 'products.price'),
+                    titleVAT         : QUILocale.get(lg, 'products.table.vat'),
+                    titleDiscount    : QUILocale.get(lg, 'products.discount'),
+                    titleSum         : QUILocale.get(lg, 'products.sum')
                 })
             });
 

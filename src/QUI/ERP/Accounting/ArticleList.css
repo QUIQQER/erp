@@ -46,6 +46,15 @@ table.articles-article {
     vertical-align: top;
 }
 
+.articles-article-quantity {
+    text-align: right;
+}
+
+.articles-article-quantityUnit {
+    text-align: left;
+    width: 35px;
+}
+
 .articles-article-information-title {
     font-size: 14px;
     font-weight: bold;
