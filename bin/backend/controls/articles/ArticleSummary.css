@@ -28,6 +28,9 @@
 .quiqqer-erp-backend-temporaryErp-summary-total-netto,
 .quiqqer-erp-backend-temporaryErp-summary-total-brutto {
     float: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     width: 200px;
 }
 
