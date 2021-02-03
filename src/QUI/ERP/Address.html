@@ -12,15 +12,15 @@
             </div>
             {/if}
 
+            <div class="name">{$salutation} {$firstname} {$lastname}</div>
+
             {if !empty($contactPerson)}
             <div class="contact-person">
                 {locale group="quiqqer/erp" var="attention.abbreviation"} {$contactPerson}
             </div>
             {/if}
-
-            <div class="salutation">{$salutation} {$firstname} {$lastname}</div>
         {else}
-            <div class="salutation">{$salutation} {$firstname} {$lastname}</div>
+            <div class="name">{$salutation} {$firstname} {$lastname}</div>
 
             {if !empty($suffix)}
             <div class="suffix">
