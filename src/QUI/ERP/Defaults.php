@@ -216,7 +216,7 @@ class Defaults
             $lang = QUI::getLocale()->getCurrent();
         }
 
-        if (!isset(self::$dateFormat[$lang])) {
+        if (isset(self::$dateFormat[$lang])) {
             return self::$dateFormat[$lang];
         }
 
