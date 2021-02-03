@@ -197,7 +197,7 @@ class Defaults
 
         $value = $Config->get('timestampFormat', $lang);
 
-        if ($value !== false) {
+        if (!empty($value)) {
             self::$timestampFormat[$lang] = $value;
         }
 
@@ -233,7 +233,7 @@ class Defaults
 
         $value = $Config->get('dateFormat', $lang);
 
-        if ($value !== false) {
+        if (!empty($value)) {
             self::$dateFormat[$lang] = $value;
         }
 
