@@ -180,7 +180,7 @@ class Defaults
             $lang = QUI::getLocale()->getCurrent();
         }
 
-        if (!isset(self::$timestampFormat[$lang])) {
+        if (isset(self::$timestampFormat[$lang])) {
             return self::$timestampFormat[$lang];
         }
 
