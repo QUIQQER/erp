@@ -180,7 +180,7 @@ class Defaults
             $lang = QUI::getLocale()->getCurrent();
         }
 
-        if (!isset(self::$timestampFormat[$lang])) {
+        if (isset(self::$timestampFormat[$lang])) {
             return self::$timestampFormat[$lang];
         }
 
@@ -197,7 +197,7 @@ class Defaults
 
         $value = $Config->get('timestampFormat', $lang);
 
-        if ($value !== false) {
+        if (!empty($value)) {
             self::$timestampFormat[$lang] = $value;
         }
 
@@ -216,7 +216,7 @@ class Defaults
             $lang = QUI::getLocale()->getCurrent();
         }
 
-        if (!isset(self::$dateFormat[$lang])) {
+        if (isset(self::$dateFormat[$lang])) {
             return self::$dateFormat[$lang];
         }
 
@@ -233,7 +233,7 @@ class Defaults
 
         $value = $Config->get('dateFormat', $lang);
 
-        if ($value !== false) {
+        if (!empty($value)) {
             self::$dateFormat[$lang] = $value;
         }
 

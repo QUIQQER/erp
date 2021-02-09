@@ -449,9 +449,18 @@ class Calc
         $bruttoPrice = $this->round($nettoPrice + $vatSum);
 
         // sum
-        $nettoSum  = $this->round($nettoPrice * $Article->getQuantity());
-        $vatSum    = $nettoSum * ($vat / 100);
-        $bruttoSum = $this->round($nettoSum + $vatSum);
+        $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
+        $vatSum   = $nettoSum * ($vat / 100);
+
+        if (!$isNetto && $Article->getQuantity() > 1) {
+            // if the user is brutto
+            // and we have a quantity
+            // we need to calc first the brutto product price of one product
+            // -> because of 1 cent rounding error
+            $bruttoSum = $bruttoPrice * $Article->getQuantity();
+        } else {
+            $bruttoSum = $this->round($nettoSum + $vatSum);
+        }
 
         $price      = $isNetto ? $nettoPrice : $bruttoPrice;
         $sum        = $isNetto ? $nettoSum : $bruttoSum;
@@ -909,8 +918,8 @@ class Calc
             $bruttoTotal = $bruttoTotal + $invBruttoSum;
             $bruttoPaid  = $bruttoPaid + $invPaid;
             //$bruttoToPay = $bruttoToPay + $invToPay;
-            $nettoToPay  = $nettoToPay + $invNettoToPay;
-            $vatTotal    = $vatTotal + $invVatSum;
+            $nettoToPay = $nettoToPay + $invNettoToPay;
+            $vatTotal   = $vatTotal + $invVatSum;
 
             $nettoTotal = $nettoTotal + $invNettoTotal;
         }

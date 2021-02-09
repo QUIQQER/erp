@@ -40,6 +40,7 @@ table.articles-article {
 
 .articles-article-pos,
 .articles-article-quantity,
+.articles-article-quantityUnit,
 .articles-article-articleNo,
 .articles-article-vat {
     text-align: center;
@@ -73,6 +74,12 @@ table.articles-article {
 .articles-article-unitprice {
     text-align: right;
     vertical-align: top;
+}
+
+.articles-article-unitprice-discount {
+    clear: both;
+    display: block;
+    font-size: 10px;
 }
 
 .articles-article-price {

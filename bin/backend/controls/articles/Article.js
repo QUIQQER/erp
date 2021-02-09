@@ -213,6 +213,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.setDiscount(this.getAttribute('discount'));
             this.setQuantityUnit(this.getAttribute('quantityUnit'));
 
+            if (!this.getAttribute('quantityUnit')) {
+                this.$loadDefaultQuantityUnit().catch(function (err) {
+                    console.error(err);
+                });
+            }
+
             // edit buttons
             new QUIButton({
                 title : QUILocale.get(lg, 'erp.articleList.article.button.replace'),
@@ -1059,6 +1065,49 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                 QUIElements.simulateEvent(Next, 'click');
             }
+        },
+
+        /**
+         *
+         * @return {Promise}
+         */
+        $loadDefaultQuantityUnit: function () {
+            var self = this;
+
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_erp_ajax_products_getQuantityUnitList', function (unitList) {
+                    var i, title, entry;
+                    var current = QUILocale.getCurrent();
+
+                    for (i in unitList) {
+                        if (!unitList.hasOwnProperty(i)) {
+                            continue;
+                        }
+
+                        if (unitList[i].default) {
+                            break;
+                        }
+                    }
+
+                    entry = unitList[i];
+
+                    if (typeof entry.title[current] !== 'undefined') {
+                        title = entry.title[current];
+                    } else {
+                        title = entry.title[Object.keys(entry.title)[0]];
+                    }
+
+                    var result = {
+                        id   : i,
+                        title: title
+                    };
+
+                    self.setQuantityUnit(result);
+                    resolve(result);
+                }, {
+                    'package': 'quiqqer/erp'
+                });
+            });
         }
     });
 });
