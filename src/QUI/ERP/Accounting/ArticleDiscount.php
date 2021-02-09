@@ -44,7 +44,7 @@ class ArticleDiscount
      * @param int $discount
      * @param int $type
      */
-    public function __construct($discount, $type)
+    public function __construct(int $discount, int $type)
     {
         switch ($type) {
             case Calc::CALCULATION_PERCENTAGE:
@@ -71,7 +71,7 @@ class ArticleDiscount
      * @param string $string
      * @return null|ArticleDiscount
      */
-    public static function unserialize($string)
+    public static function unserialize(string $string): ?ArticleDiscount
     {
         $data = [];
 
@@ -101,7 +101,7 @@ class ArticleDiscount
             return null;
         }
 
-        $Discount = new self($data['value'], $data['type']);
+        $Discount = new self($data['value'], (int)$data['type']);
 
         // discount
         if (isset($data['currency']) && isset($data['currency']['code'])) {
@@ -124,7 +124,7 @@ class ArticleDiscount
      *
      * @return int
      */
-    public function getDiscountType()
+    public function getDiscountType(): int
     {
         return $this->type;
     }
@@ -135,7 +135,7 @@ class ArticleDiscount
      *
      * @return int
      */
-    public function getCalculation()
+    public function getCalculation(): int
     {
         return $this->getDiscountType();
     }
@@ -145,7 +145,7 @@ class ArticleDiscount
      *
      * @return int
      */
-    public function getValue()
+    public function getValue(): int
     {
         return $this->value;
     }
@@ -155,7 +155,7 @@ class ArticleDiscount
      *
      * @return Currency
      */
-    public function getCurrency()
+    public function getCurrency(): ?Currency
     {
         if ($this->Currency === null) {
             return QUI\ERP\Defaults::getCurrency();
@@ -179,7 +179,7 @@ class ArticleDiscount
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'value'    => $this->value,
@@ -193,8 +193,26 @@ class ArticleDiscount
      *
      * @return string
      */
-    public function toJSON()
+    public function toJSON(): string
     {
         return \json_encode($this->toArray());
+    }
+
+    /**
+     * Return the Discount formatted as string
+     *
+     * @return string
+     */
+    public function formatted(): string
+    {
+        if (!$this->value) {
+            return '';
+        }
+
+        if ($this->type === Calc::CALCULATION_COMPLEMENT) {
+            return $this->getCurrency()->format($this->value);
+        }
+
+        return $this->value.'%';
     }
 }

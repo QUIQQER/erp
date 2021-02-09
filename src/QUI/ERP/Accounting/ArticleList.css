@@ -75,6 +75,12 @@ table.articles-article {
     vertical-align: top;
 }
 
+.articles-article-unitprice-discount {
+    clear: both;
+    display: block;
+    font-size: 10px;
+}
+
 .articles-article-price {
     /*color: #e91d2c;*/
     text-align: right;

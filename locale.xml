@@ -598,6 +598,11 @@
             <de><![CDATA[Kundendaten öffnen]]></de>
             <en><![CDATA[Open customer panel]]></en>
         </locale>
+
+        <locale name="article.list.discount.text">
+            <de><![CDATA[[discount] Rabatt]]></de>
+            <en><![CDATA[[discount] discount]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">

@@ -150,6 +150,17 @@ class ArticleView extends QUI\QDOM
 
         $this->setAttributes($article);
 
+        // discount
+        $Discount = $this->Article->getDiscount();
+
+        if ($Discount->getValue()) {
+            $Discount->toArray();
+
+            $Engine->assign([
+                'Discount' => $Discount
+            ]);
+        }
+
         $Engine->assign([
             'this'                  => $this,
             'position'              => $this->position,
