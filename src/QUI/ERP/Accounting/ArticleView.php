@@ -154,8 +154,6 @@ class ArticleView extends QUI\QDOM
         $Discount = $this->Article->getDiscount();
 
         if ($Discount->getValue()) {
-            $Discount->toArray();
-
             $Engine->assign([
                 'Discount' => $Discount
             ]);
