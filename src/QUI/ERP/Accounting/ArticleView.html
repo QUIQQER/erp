@@ -47,7 +47,7 @@
     <td class="articles-article-unitprice"
         data-label="{locale group='quiqqer/erp' var='article.list.articles.header.unitprice'}"
     >
-        {if $Discount}
+        {if isset($Discount)}
         <span class="articles-article-unitprice-price">{$calculated_basisPrice}</span>
         <span class="articles-article-unitprice-discount">
             {locale group='quiqqer/erp' var='article.list.discount.text' discount=$Discount->formatted()}
