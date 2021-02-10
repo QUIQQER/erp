@@ -4,7 +4,9 @@
     >
         {$position}
     </td>
-    <td class="articles-article-articleNo">
+    <td class="articles-article-articleNo"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.articleNo'}"
+    >
         {$this->getAttribute('articleNo')}
     </td>
     <td class="articles-article-information"
@@ -28,7 +30,9 @@
             {/foreach}
         </ul>
     </td>
-    <td class="articles-article-vat">
+    <td class="articles-article-vat"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.vat'}"
+    >
         {$this->getAttribute('vat')}%
     </td>
 
