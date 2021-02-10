@@ -446,7 +446,7 @@ class Calc
         }
 
         $vatSum      = $nettoPrice * ($vat / 100);
-        $bruttoPrice = $this->round($nettoPrice + $vatSum);
+        $bruttoPrice = \round($nettoPrice + $vatSum, $this->getCurrency()->getPrecision());
 
         // sum
         $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
