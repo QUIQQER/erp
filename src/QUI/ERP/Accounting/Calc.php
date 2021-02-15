@@ -7,6 +7,7 @@
 namespace QUI\ERP\Accounting;
 
 use QUI;
+use QUI\ERP\Accounting\Calc as ErpCalc;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
 use QUI\ERP\Accounting\Invoice\Invoice;
@@ -273,6 +274,9 @@ class Calc
 
                 if ($isNetto) {
                     $PriceFactor->setSum($PriceFactor->getNettoSum());
+                } elseif ($PriceFactor->getCalculationBasis() === ErpCalc::CALCULATION_BASIS_VAT_BRUTTO) {
+                    $PriceFactor->setNettoSum($PriceFactor->getNettoSum() - $vatSum);
+                    $PriceFactor->setSum($vatSum + $PriceFactor->getNettoSum());
                 } else {
                     $PriceFactor->setSum($vatSum + $PriceFactor->getNettoSum());
                 }
