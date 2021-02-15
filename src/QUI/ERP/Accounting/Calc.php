@@ -275,7 +275,8 @@ class Calc
                 if ($isNetto) {
                     $PriceFactor->setSum($PriceFactor->getNettoSum());
                 } elseif ($PriceFactor->getCalculationBasis() === ErpCalc::CALCULATION_BASIS_VAT_BRUTTO) {
-                    $PriceFactor->setSum($PriceFactor->getNettoSum());
+                    $PriceFactor->setNettoSum($PriceFactor->getNettoSum() - $vatSum);
+                    $PriceFactor->setSum($vatSum + $PriceFactor->getNettoSum());
                 } else {
                     $PriceFactor->setSum($vatSum + $PriceFactor->getNettoSum());
                 }
