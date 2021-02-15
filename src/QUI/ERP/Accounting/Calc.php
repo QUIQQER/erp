@@ -915,7 +915,7 @@ class Calc
             }
 
             $invNettoPaid  = $invPaid - $invVatPaid;
-            $invNettoToPay = $invNettoTotal - $invVatPaid - $invNettoPaid;
+            $invNettoToPay = $invNettoTotal - $invNettoPaid;
 
             // complete + addition
             $vatPaid     = $vatPaid + $invVatPaid;
