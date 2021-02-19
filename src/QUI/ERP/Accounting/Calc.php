@@ -454,31 +454,35 @@ class Calc
         $vatSum      = $nettoPrice * ($vat / 100);
         $bruttoPrice = \round($nettoPrice + $vatSum, $Currency->getPrecision());
 
-        // korrektur rechnung / 1 cent problem
-        $nettoPriceNotRounded = $Article->getUnitPriceUnRounded()->getValue();
-        $checkBrutto          = $nettoPriceNotRounded * ($vat / 100 + 1);
-        $checkBrutto          = \round($checkBrutto, $Currency->getPrecision());
+        if (!$isNetto) {
+            // korrektur rechnung / 1 cent problem
+            $nettoPriceNotRounded = $Article->getUnitPriceUnRounded()->getValue();
+            $checkBrutto          = $nettoPriceNotRounded * ($vat / 100 + 1);
+            $checkBrutto          = \round($checkBrutto, $Currency->getPrecision());
 
-        $checkVat = $checkBrutto - $nettoPriceNotRounded;
-        $checkVat = \round($checkVat, $Currency->getPrecision());
+            $checkVat = $checkBrutto - $nettoPriceNotRounded;
+            $checkVat = \round($checkVat * $Article->getQuantity(), $Currency->getPrecision());
 
-        // sum
-        $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
-        $vatSum   = $nettoSum * ($vat / 100);
+            // sum
+            $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
+            $vatSum   = $nettoSum * ($vat / 100);
 
-        // korrektur rechnung / 1 cent problem
-        if ($checkBrutto !== $bruttoPrice) {
-            $bruttoPrice = $checkBrutto;
-            $vatSum      = $checkVat;
-        }
+            // korrektur rechnung / 1 cent problem
+            if ($checkBrutto !== $bruttoPrice) {
+                $bruttoPrice = $checkBrutto;
+                $vatSum      = $checkVat;
+            }
 
-        if (!$isNetto && $Article->getQuantity() > 1) {
             // if the user is brutto
             // and we have a quantity
             // we need to calc first the brutto product price of one product
             // -> because of 1 cent rounding error
             $bruttoSum = $bruttoPrice * $Article->getQuantity();
         } else {
+            // sum
+            $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
+            $vatSum   = $nettoSum * ($vat / 100);
+
             $bruttoSum = $this->round($nettoSum + $vatSum);
         }
 
