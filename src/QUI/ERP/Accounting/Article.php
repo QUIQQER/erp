@@ -67,7 +67,7 @@ class Article implements ArticleInterface
     /**
      * @var float|int
      */
-    protected $basisPriceNotRounded;
+    protected $nettoPriceNotRounded = null;
 
     /**
      * @var float|int
@@ -136,7 +136,7 @@ class Article implements ArticleInterface
     /**
      * Article constructor.
      *
-     * @param array $attributes - (id, articleNo, title, description, unitPrice, unitPriceNotRounded, quantity, discount, customData)
+     * @param array $attributes - (id, articleNo, title, description, unitPrice, nettoPriceNotRounded, quantity, discount, customData)
      */
     public function __construct($attributes = [])
     {
@@ -146,7 +146,7 @@ class Article implements ArticleInterface
             'title',
             'description',
             'unitPrice',
-            'unitPriceNotRounded',
+            'nettoPriceNotRounded', // optional
             'control',
             'quantity',
             'quantityUnit'
@@ -172,14 +172,13 @@ class Article implements ArticleInterface
         if (isset($attributes['calculated'])) {
             $calc = $attributes['calculated'];
 
-            if (!isset($calc['basisPriceNotRounded'])) {
-                $calc['basisPriceNotRounded'] = $calc['basisPrice'];
+            if (isset($calc['nettoPriceNotRounded'])) {
+                $this->nettoPriceNotRounded = $calc['nettoPriceNotRounded'];
             }
 
-            $this->price                = $calc['price'];
-            $this->basisPrice           = $calc['basisPrice'];
-            $this->basisPriceNotRounded = $calc['basisPriceNotRounded'];
-            $this->sum                  = $calc['sum'];
+            $this->price      = $calc['price'];
+            $this->basisPrice = $calc['basisPrice'];
+            $this->sum        = $calc['sum'];
 
             $this->nettoPrice      = $calc['nettoPrice'];
             $this->nettoBasisPrice = $calc['nettoBasisPrice'];
@@ -349,10 +348,14 @@ class Article implements ArticleInterface
      *
      * @return QUI\ERP\Money\Price
      */
-    public function getUnitPriceUnRounded()
+    public function getUnitPriceUnRounded(): Price
     {
-        if (isset($this->attributes['unitPriceNotRounded'])) {
-            return new Price($this->attributes['unitPriceNotRounded'], $this->Currency);
+        if (isset($this->attributes['nettoPriceNotRounded'])) {
+            return new Price($this->attributes['nettoPriceNotRounded'], $this->Currency);
+        }
+
+        if ($this->nettoPriceNotRounded !== null) {
+            return new Price($this->nettoPriceNotRounded, $this->Currency);
         }
 
         return $this->getUnitPrice();
@@ -571,12 +574,11 @@ class Article implements ArticleInterface
             $self->price = $data['price'];
             $self->sum   = $data['sum'];
 
-            if (!isset($data['basisPriceNotRounded'])) {
-                $data['basisPriceNotRounded'] = $data['basisPrice'];
+            if (isset($data['nettoPriceNotRounded'])) {
+                $self->nettoPriceNotRounded = $data['nettoPriceNotRounded'];
             }
 
-            $self->basisPrice           = $data['basisPrice'];
-            $self->basisPriceNotRounded = $data['basisPriceNotRounded'];
+            $self->basisPrice = $data['basisPrice'];
 
             $self->nettoPrice      = $data['nettoPrice'];
             $self->nettoBasisPrice = $data['nettoBasisPrice'];
@@ -647,7 +649,7 @@ class Article implements ArticleInterface
             'calculated'   => [
                 'price'                => $this->price,
                 'basisPrice'           => $this->basisPrice,
-                'basisPriceNotRounded' => $this->basisPriceNotRounded,
+                'nettoPriceNotRounded' => $this->nettoPriceNotRounded,
                 'sum'                  => $this->sum,
                 'nettoPrice'           => $this->nettoPrice,
                 'nettoBasisPrice'      => $this->nettoBasisPrice,
