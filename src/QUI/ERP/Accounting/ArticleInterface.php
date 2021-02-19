@@ -47,6 +47,11 @@ interface ArticleInterface
     /**
      * @return integer|float
      */
+    public function getUnitPriceUnRounded();
+
+    /**
+     * @return integer|float
+     */
     public function getSum();
 
     /**

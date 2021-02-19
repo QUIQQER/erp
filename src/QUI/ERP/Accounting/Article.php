@@ -67,6 +67,11 @@ class Article implements ArticleInterface
     /**
      * @var float|int
      */
+    protected $basisPriceNotRounded;
+
+    /**
+     * @var float|int
+     */
     protected $sum;
 
     /**
@@ -131,7 +136,7 @@ class Article implements ArticleInterface
     /**
      * Article constructor.
      *
-     * @param array $attributes - (id, articleNo, title, description, unitPrice, quantity, discount, customData)
+     * @param array $attributes - (id, articleNo, title, description, unitPrice, unitPriceNotRounded, quantity, discount, customData)
      */
     public function __construct($attributes = [])
     {
@@ -141,6 +146,7 @@ class Article implements ArticleInterface
             'title',
             'description',
             'unitPrice',
+            'unitPriceNotRounded',
             'control',
             'quantity',
             'quantityUnit'
@@ -166,9 +172,14 @@ class Article implements ArticleInterface
         if (isset($attributes['calculated'])) {
             $calc = $attributes['calculated'];
 
-            $this->price      = $calc['price'];
-            $this->basisPrice = $calc['basisPrice'];
-            $this->sum        = $calc['sum'];
+            if (!isset($calc['basisPriceNotRounded'])) {
+                $calc['basisPriceNotRounded'] = $calc['basisPrice'];
+            }
+
+            $this->price                = $calc['price'];
+            $this->basisPrice           = $calc['basisPrice'];
+            $this->basisPriceNotRounded = $calc['basisPriceNotRounded'];
+            $this->sum                  = $calc['sum'];
 
             $this->nettoPrice      = $calc['nettoPrice'];
             $this->nettoBasisPrice = $calc['nettoBasisPrice'];
@@ -331,6 +342,20 @@ class Article implements ArticleInterface
         }
 
         return new Price($unitPrice, $this->Currency);
+    }
+
+    /**
+     * Returns the article unit price
+     *
+     * @return QUI\ERP\Money\Price
+     */
+    public function getUnitPriceUnRounded()
+    {
+        if (isset($this->attributes['unitPriceNotRounded'])) {
+            return new Price($this->attributes['unitPriceNotRounded'], $this->Currency);
+        }
+
+        return $this->getUnitPrice();
     }
 
     /**
@@ -543,9 +568,15 @@ class Article implements ArticleInterface
         }
 
         $Calc->calcArticlePrice($this, function ($data) use ($self) {
-            $self->price      = $data['price'];
-            $self->basisPrice = $data['basisPrice'];
-            $self->sum        = $data['sum'];
+            $self->price = $data['price'];
+            $self->sum   = $data['sum'];
+
+            if (!isset($data['basisPriceNotRounded'])) {
+                $data['basisPriceNotRounded'] = $data['basisPrice'];
+            }
+
+            $self->basisPrice           = $data['basisPrice'];
+            $self->basisPriceNotRounded = $data['basisPriceNotRounded'];
 
             $self->nettoPrice      = $data['nettoPrice'];
             $self->nettoBasisPrice = $data['nettoBasisPrice'];
@@ -614,16 +645,17 @@ class Article implements ArticleInterface
 
             // calculated data
             'calculated'   => [
-                'price'           => $this->price,
-                'basisPrice'      => $this->basisPrice,
-                'sum'             => $this->sum,
-                'nettoPrice'      => $this->nettoPrice,
-                'nettoBasisPrice' => $this->nettoBasisPrice,
-                'nettoSubSum'     => $this->nettoSubSum,
-                'nettoSum'        => $this->nettoSum,
-                'vatArray'        => $this->vatArray,
-                'isEuVat'         => $this->isEuVat,
-                'isNetto'         => $this->isNetto
+                'price'                => $this->price,
+                'basisPrice'           => $this->basisPrice,
+                'basisPriceNotRounded' => $this->basisPriceNotRounded,
+                'sum'                  => $this->sum,
+                'nettoPrice'           => $this->nettoPrice,
+                'nettoBasisPrice'      => $this->nettoBasisPrice,
+                'nettoSubSum'          => $this->nettoSubSum,
+                'nettoSum'             => $this->nettoSum,
+                'vatArray'             => $this->vatArray,
+                'isEuVat'              => $this->isEuVat,
+                'isNetto'              => $this->isNetto
             ]
         ];
     }

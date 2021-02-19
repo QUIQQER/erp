@@ -422,6 +422,8 @@ class Calc
         $isNetto     = QUI\ERP\Utils\User::isNettoUser($this->getUser());
         $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($this->getUser());
 
+        $Currency = $this->getCurrency();
+
         $nettoPrice      = $Article->getUnitPrice()->value();
         $vat             = $Article->getVat();
         $basisNettoPrice = $nettoPrice;
@@ -450,11 +452,25 @@ class Calc
         }
 
         $vatSum      = $nettoPrice * ($vat / 100);
-        $bruttoPrice = \round($nettoPrice + $vatSum, $this->getCurrency()->getPrecision());
+        $bruttoPrice = \round($nettoPrice + $vatSum, $Currency->getPrecision());
+
+        // korrektur rechnung / 1 cent problem
+        $nettoPriceNotRounded = $Article->getUnitPriceUnRounded()->getValue();
+        $checkBrutto          = $nettoPriceNotRounded * ($vat / 100 + 1);
+        $checkBrutto          = \round($checkBrutto, $Currency->getPrecision());
+
+        $checkVat = $checkBrutto - $nettoPriceNotRounded;
+        $checkVat = \round($checkVat, $Currency->getPrecision());
 
         // sum
         $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
         $vatSum   = $nettoSum * ($vat / 100);
+
+        // korrektur rechnung / 1 cent problem
+        if ($checkBrutto !== $bruttoPrice) {
+            $bruttoPrice = $checkBrutto;
+            $vatSum      = $checkVat;
+        }
 
         if (!$isNetto && $Article->getQuantity() > 1) {
             // if the user is brutto
@@ -472,7 +488,7 @@ class Calc
 
         $vatArray = [
             'vat'  => $vat,
-            'sum'  => $this->round($nettoSum * ($vat / 100)),
+            'sum'  => $vatSum,
             'text' => $this->getVatText($vat, $this->getUser())
         ];
 
