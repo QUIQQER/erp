@@ -67,6 +67,11 @@ class Article implements ArticleInterface
     /**
      * @var float|int
      */
+    protected $nettoPriceNotRounded = null;
+
+    /**
+     * @var float|int
+     */
     protected $sum;
 
     /**
@@ -131,7 +136,7 @@ class Article implements ArticleInterface
     /**
      * Article constructor.
      *
-     * @param array $attributes - (id, articleNo, title, description, unitPrice, quantity, discount, customData)
+     * @param array $attributes - (id, articleNo, title, description, unitPrice, nettoPriceNotRounded, quantity, discount, customData)
      */
     public function __construct($attributes = [])
     {
@@ -141,6 +146,7 @@ class Article implements ArticleInterface
             'title',
             'description',
             'unitPrice',
+            'nettoPriceNotRounded', // optional
             'control',
             'quantity',
             'quantityUnit'
@@ -165,6 +171,10 @@ class Article implements ArticleInterface
 
         if (isset($attributes['calculated'])) {
             $calc = $attributes['calculated'];
+
+            if (isset($calc['nettoPriceNotRounded'])) {
+                $this->nettoPriceNotRounded = $calc['nettoPriceNotRounded'];
+            }
 
             $this->price      = $calc['price'];
             $this->basisPrice = $calc['basisPrice'];
@@ -331,6 +341,24 @@ class Article implements ArticleInterface
         }
 
         return new Price($unitPrice, $this->Currency);
+    }
+
+    /**
+     * Returns the article unit price
+     *
+     * @return QUI\ERP\Money\Price
+     */
+    public function getUnitPriceUnRounded(): Price
+    {
+        if (isset($this->attributes['nettoPriceNotRounded'])) {
+            return new Price($this->attributes['nettoPriceNotRounded'], $this->Currency);
+        }
+
+        if ($this->nettoPriceNotRounded !== null) {
+            return new Price($this->nettoPriceNotRounded, $this->Currency);
+        }
+
+        return $this->getUnitPrice();
     }
 
     /**
@@ -543,9 +571,14 @@ class Article implements ArticleInterface
         }
 
         $Calc->calcArticlePrice($this, function ($data) use ($self) {
-            $self->price      = $data['price'];
+            $self->price = $data['price'];
+            $self->sum   = $data['sum'];
+
+            if (isset($data['nettoPriceNotRounded'])) {
+                $self->nettoPriceNotRounded = $data['nettoPriceNotRounded'];
+            }
+
             $self->basisPrice = $data['basisPrice'];
-            $self->sum        = $data['sum'];
 
             $self->nettoPrice      = $data['nettoPrice'];
             $self->nettoBasisPrice = $data['nettoBasisPrice'];
@@ -614,16 +647,17 @@ class Article implements ArticleInterface
 
             // calculated data
             'calculated'   => [
-                'price'           => $this->price,
-                'basisPrice'      => $this->basisPrice,
-                'sum'             => $this->sum,
-                'nettoPrice'      => $this->nettoPrice,
-                'nettoBasisPrice' => $this->nettoBasisPrice,
-                'nettoSubSum'     => $this->nettoSubSum,
-                'nettoSum'        => $this->nettoSum,
-                'vatArray'        => $this->vatArray,
-                'isEuVat'         => $this->isEuVat,
-                'isNetto'         => $this->isNetto
+                'price'                => $this->price,
+                'basisPrice'           => $this->basisPrice,
+                'nettoPriceNotRounded' => $this->nettoPriceNotRounded,
+                'sum'                  => $this->sum,
+                'nettoPrice'           => $this->nettoPrice,
+                'nettoBasisPrice'      => $this->nettoBasisPrice,
+                'nettoSubSum'          => $this->nettoSubSum,
+                'nettoSum'             => $this->nettoSum,
+                'vatArray'             => $this->vatArray,
+                'isEuVat'              => $this->isEuVat,
+                'isNetto'              => $this->isNetto
             ]
         ];
     }

@@ -422,6 +422,8 @@ class Calc
         $isNetto     = QUI\ERP\Utils\User::isNettoUser($this->getUser());
         $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($this->getUser());
 
+        $Currency = $this->getCurrency();
+
         $nettoPrice      = $Article->getUnitPrice()->value();
         $vat             = $Article->getVat();
         $basisNettoPrice = $nettoPrice;
@@ -450,19 +452,37 @@ class Calc
         }
 
         $vatSum      = $nettoPrice * ($vat / 100);
-        $bruttoPrice = \round($nettoPrice + $vatSum, $this->getCurrency()->getPrecision());
+        $bruttoPrice = \round($nettoPrice + $vatSum, $Currency->getPrecision());
 
-        // sum
-        $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
-        $vatSum   = $nettoSum * ($vat / 100);
+        if (!$isNetto) {
+            // korrektur rechnung / 1 cent problem
+            $nettoPriceNotRounded = $Article->getUnitPriceUnRounded()->getValue();
+            $checkBrutto          = $nettoPriceNotRounded * ($vat / 100 + 1);
+            $checkBrutto          = \round($checkBrutto, $Currency->getPrecision());
 
-        if (!$isNetto && $Article->getQuantity() > 1) {
+            $checkVat = $checkBrutto - $nettoPriceNotRounded;
+            $checkVat = \round($checkVat * $Article->getQuantity(), $Currency->getPrecision());
+
+            // sum
+            $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
+            $vatSum   = $nettoSum * ($vat / 100);
+
+            // korrektur rechnung / 1 cent problem
+            if ($checkBrutto !== $bruttoPrice) {
+                $bruttoPrice = $checkBrutto;
+                $vatSum      = $checkVat;
+            }
+
             // if the user is brutto
             // and we have a quantity
             // we need to calc first the brutto product price of one product
             // -> because of 1 cent rounding error
             $bruttoSum = $bruttoPrice * $Article->getQuantity();
         } else {
+            // sum
+            $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
+            $vatSum   = $nettoSum * ($vat / 100);
+
             $bruttoSum = $this->round($nettoSum + $vatSum);
         }
 
@@ -472,7 +492,7 @@ class Calc
 
         $vatArray = [
             'vat'  => $vat,
-            'sum'  => $this->round($nettoSum * ($vat / 100)),
+            'sum'  => $vatSum,
             'text' => $this->getVatText($vat, $this->getUser())
         ];
 
