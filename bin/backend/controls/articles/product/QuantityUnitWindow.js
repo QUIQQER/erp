@@ -15,12 +15,17 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/QuantityUnitWi
 ], function (QUI, QUIControl, QUIConfirm, QUIAjax, QUILocale) {
     "use strict";
 
+    var lg = 'quiqqer/erp';
+
     return new Class({
 
         Extends: QUIConfirm,
-        Type   : 'package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWindow',
+        Type   : 'package/quiqqer/erp/bin/backend/controls/articles/product/QuantityUnitWindow',
 
-        options: {},
+        options: {
+            title: QUILocale.get(lg, 'controls.QuantityUnitWindow.title'),
+            icon : 'fa fa-balance-scale'
+        },
 
         Binds: [
             '$onOpen',
@@ -80,6 +85,40 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/QuantityUnitWi
                     }
                 }
 
+                Content.set('tabindex', -1);
+
+                Content.addEvents({
+                    keydown: function (event) {
+                        var ActiveNode = Content.getElement('.quiqqer-erp-quantity-unit-entry--active');
+
+                        if (event.key === 'up') {
+                            var PreviousNode = ActiveNode.getPrevious('.quiqqer-erp-quantity-unit-entry');
+
+                            if (PreviousNode) {
+                                PreviousNode.click();
+                            }
+
+                            return;
+                        }
+
+                        if (event.key === 'down') {
+                            var NextNode = ActiveNode.getNext('.quiqqer-erp-quantity-unit-entry');
+
+                            if (NextNode) {
+                                NextNode.click();
+                            }
+
+                            return;
+                        }
+
+                        if (event.key === 'enter') {
+                            self.submit();
+                        }
+                    },
+                });
+
+                Content.focus();
+
                 self.Loader.hide();
             }, {
                 'package': 'quiqqer/erp'
@@ -96,7 +135,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/QuantityUnitWi
             var Content = this.getContent();
 
             Content.getElements('.quiqqer-erp-quantity-unit-entry--active')
-                   .removeClass('quiqqer-erp-quantity-unit-entry--active');
+                .removeClass('quiqqer-erp-quantity-unit-entry--active');
 
 
             if (!Target.hasClass('quiqqer-erp-quantity-unit-entry')) {

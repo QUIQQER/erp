@@ -741,6 +741,10 @@
             <de><![CDATA[Artikel ersetzen]]></de>
             <en><![CDATA[Replace article]]></en>
         </locale>
+        <locale name="erp.articleList.article.button.editor">
+            <de><![CDATA[Titel und Beschreibung im HTML-Editor bearbeiten]]></de>
+            <en><![CDATA[Edit title and description in HTML editor]]></en>
+        </locale>
 
         <locale name="journal.timeFilter.month">
             <de><![CDATA[Monat]]></de>
