@@ -485,13 +485,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 this.$Description.addClass('quiqqer-erp-backend-erpArticle__cell_hidden');
             } else {
                 this.$Description.removeClass('quiqqer-erp-backend-erpArticle__cell_hidden');
+
+                // If title / description were edited via WYSIWYG editor -> open editor on click
+                this.$Title.removeEvent('click', this.$onEditTitle);
+                this.$Title.addEvent('click', this.$onEditDescription);
+
+                this.$Text.removeClass('quiqqer-erp-backend-erpArticle__cell_nopadding');
             }
-
-            // If title / description were edited via WYSIWYG editor -> open editor on click
-            this.$Title.removeEvent('click', this.$onEditTitle);
-            this.$Title.addEvent('click', this.$onEditDescription);
-
-            this.$Text.removeClass('quiqqer-erp-backend-erpArticle__cell_nopadding');
 
             this.fireEvent('setDescription', [this]);
         },
