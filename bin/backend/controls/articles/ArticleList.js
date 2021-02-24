@@ -40,7 +40,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             '$onArticleReplace',
             '$onArticleCalc',
             '$calc',
-            '$onInject'
+            '$onInject',
+            '$executeCalculation'
         ],
 
         options: {
@@ -250,11 +251,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             Child.setAttribute('List', this);
 
             Child.addEvents({
-                onDelete     : this.$onArticleDelete,
-                onSelect     : this.$onArticleSelect,
-                onUnSelect   : this.$onArticleUnSelect,
-                onReplace    : this.$onArticleReplace,
-                onArticleCalc: this.$onArticleCalc
+                onDelete  : this.$onArticleDelete,
+                onSelect  : this.$onArticleSelect,
+                onUnSelect: this.$onArticleUnSelect,
+                onReplace : this.$onArticleReplace,
+                onCalc    : this.$executeCalculation
             });
 
             if (this.$Container) {
@@ -551,8 +552,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         $onArticleSetPosition: function (Article) {
             Article.getElm()
-                   .getElement('.quiqqer-erp-backend-erpArticlePlaceholder-pos')
-                   .set('html', Article.getAttribute('position'));
+                .getElement('.quiqqer-erp-backend-erpArticlePlaceholder-pos')
+                .set('html', Article.getAttribute('position'));
         },
 
         /**
@@ -645,16 +646,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         $onArticleReplace: function (Article) {
             this.fireEvent('articleReplaceClick', [this, Article]);
-        },
-
-        /**
-         * event: on article calculation
-         *
-         * @param Article
-         * @param calculation
-         */
-        $onArticleCalc: function (Article, calculation) {
-            this.$calculations = calculation;
         },
 
         /**
