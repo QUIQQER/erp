@@ -18,6 +18,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 ], function (QUI, QUIControl, Article, Mustache, QUILocale, template) {
     "use strict";
 
+    var lg = 'quiqqer/erp';
+
     return new Class({
 
         Extends: QUIControl,
@@ -41,12 +43,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             this.$NettoSum  = null;
             this.$BruttoSum = null;
 
-            this.$Formatter = QUILocale.getNumberFormatter({
-                style                : 'currency',
-                currency             : this.getAttribute('currency'),
-                minimumFractionDigits: 2
-            });
-
             this.addEvents({
                 onInject: this.$onInject
             });
@@ -60,7 +56,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         create: function () {
             this.$Elm = new Element('div', {
                 'class': 'quiqqer-erp-backend-temporaryErp-summary',
-                html   : Mustache.render(template)
+                html   : Mustache.render(template, {
+                    labelPosInfo: QUILocale.get(lg, 'article.summary.tpl.labelPosInfo'),
+                    labelNet    : QUILocale.get(lg, 'article.summary.tpl.labelNet'),
+                    labelGross  : QUILocale.get(lg, 'article.summary.tpl.labelGross'),
+                    labelSums   : QUILocale.get(lg, 'article.summary.tpl.labelSums'),
+                    labelVat    : QUILocale.get(lg, 'article.summary.tpl.labelVat'),
+                })
             });
 
             this.$Elm.addEvent('click', this.openSummary);
@@ -88,6 +90,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             if (this.getAttribute('styles')) {
                 this.setStyles(this.getAttribute('styles'));
             }
+
+            this.$Formatter = QUILocale.getNumberFormatter({
+                style                : 'currency',
+                currency             : this.getAttribute('currency'),
+                minimumFractionDigits: 2
+            });
 
             return this.$Elm;
         },
@@ -163,9 +171,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                     }));
 
                     var Total = Content.getElement('.quiqqer-erp-backend-temporaryErp-summaryWin-total');
+                    var calc  = calculations.calculations;
 
-                    Total.getElement('.netto-value').set('html', calculations.nettoSum);
-                    Total.getElement('.brutto-value').set('html', calculations.sum);
+                    Total.getElement('.netto-value').set('html', self.$Formatter.format(calc.nettoSum));
+                    Total.getElement('.brutto-value').set('html', self.$Formatter.format(calc.sum));
 
                     Content.getElements(
                         '.quiqqer-erp-backend-temporaryErp-summaryWin-priceFactors'
@@ -195,6 +204,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             }
 
             var calc = calculated.calculations;
+
+            if (!(ArticleInstance instanceof Article)) {
+                ArticleInstance = List.getSelectedArticle();
+            }
 
             if (ArticleInstance instanceof Article) {
                 var articleCalc = ArticleInstance.getCalculations();
