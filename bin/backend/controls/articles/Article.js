@@ -19,6 +19,7 @@
  * @event onSetQuantity [self]
  * @event onSetUnitPrice [self]
  * @event onSetVat [self]
+ * @event onSetDiscount [self]
  * @event onEditKeyDown [self, event]
  */
 define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
@@ -67,16 +68,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
         options: {
             articleNo   : '',
-            description : '---',
+            description : '',
             discount    : '-',
             position    : 0,
             price       : 0,
             quantity    : 1,
             quantityUnit: '',
-            title       : '---',
+            title       : '',
             unitPrice   : 0,
             vat         : '',
-            'class'     : 'QUI\\ERP\\Accounting\\Invoice\\Articles\\Article',
+            'class'     : 'QUI\\ERP\\Accounting\\Article',
             params      : false, // mixed value for API Articles
             currency    : false
         },
@@ -99,6 +100,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.$Title       = null;
             this.$Description = null;
             this.$Editor      = null;
+            this.$textIsHtml  = false;
 
             this.$Loader  = null;
             this.$created = false;
@@ -146,14 +148,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.$Total        = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-total');
             this.$Buttons      = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-buttons');
 
+            this.$Text.addClass('quiqqer-erp-backend-erpArticle__cell_nopadding');
+
             this.$ArticleNo.addEvent('click', this.$onEditArticleNo);
             this.$Quantity.addEvent('click', this.$onEditQuantity);
             this.$UnitPrice.addEvent('click', this.$onEditUnitPriceQuantity);
             this.$VAT.addEvent('click', this.$onEditVat);
             this.$Discount.addEvent('click', this.$onEditDiscount);
             this.$QuantityUnit.addEvent('click', this.$onEditQuantityUnit);
-
-            this.$Elm.getElements('.cell-editable').set('tabindex', -1);
 
             this.$Loader = new Element('div', {
                 html  : '<span class="fa fa-spinner fa-spin"></span>',
@@ -179,12 +181,24 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 'class': 'quiqqer-erp-backend-erpArticle-text-title cell-editable'
             }).inject(this.$Text);
 
-            this.$Description = new Element('div', {
-                'class': 'quiqqer-erp-backend-erpArticle-text-description cell-editable'
+            this.$Title.addEvent('click', this.$onEditTitle);
+
+            new QUIButton({
+                'class': 'quiqqer-erp-backend-erpArticle-text-btn-editor',
+                title  : QUILocale.get(lg, 'erp.articleList.article.button.editor'),
+                icon   : 'fa fa-edit',
+                events : {
+                    onClick: this.$onEditDescription
+                }
             }).inject(this.$Text);
 
-            this.$Title.addEvent('click', this.$onEditDescription);
+            this.$Description = new Element('div', {
+                'class': 'quiqqer-erp-backend-erpArticle-text-description cell-editable quiqqer-erp-backend-erpArticle__cell_hidden'
+            }).inject(this.$Text);
+
             this.$Description.addEvent('click', this.$onEditDescription);
+
+            this.$Elm.getElements('.cell-editable').set('tabindex', -1);
 
             this.$VAT.addEvent('keydown', function (event) {
                 if (event.key === 'tab') {
@@ -468,7 +482,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.$Description.set('html', description);
 
             if (description === '') {
-                this.$Description.set('html', '&nbsp;');
+                this.$Description.addClass('quiqqer-erp-backend-erpArticle__cell_hidden');
+            } else {
+                this.$Description.removeClass('quiqqer-erp-backend-erpArticle__cell_hidden');
+
+                // If title / description were edited via WYSIWYG editor -> open editor on click
+                this.$Title.removeEvent('click', this.$onEditTitle);
+                this.$Title.addEvent('click', this.$onEditDescription);
+
+                this.$Text.removeClass('quiqqer-erp-backend-erpArticle__cell_nopadding');
             }
 
             this.fireEvent('setDescription', [this]);
@@ -632,6 +654,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     value = '-';
                 }
 
+                self.fireEvent('setDiscount', [self]);
+
                 self.setAttribute('discount', discount);
                 self.$Discount.set('html', value);
             }).then(this.calc.bind(this));
@@ -707,8 +731,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
         /**
          * event : on title edit
-         *
-         * @deprecated
          */
         $onEditTitle: function () {
             this.$createEditField(
@@ -825,7 +847,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     onSubmit: function (Win) {
                         self.setDescription(self.$Editor.getContent());
                         self.setTitle(Win.getContent().getElement('[name="title"]').value);
-                        self.$editNext(event);
+
+                        QUIElements.simulateEvent(self.$Text.getNext('.cell-editable'), 'click');
                     },
 
                     onClose: function () {
@@ -877,6 +900,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                                 id   : value,
                                 title: title
                             });
+
+                            QUIElements.simulateEvent(
+                                self.$Elm.getElement('.quiqqer-erp-backend-erpArticle-quantityUnit').getNext('.cell-editable'),
+                                'click'
+                            );
                         }
                     }
                 }).open();
@@ -909,6 +937,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     events: {
                         onSubmit: function (Win, value) {
                             self.setVat(value);
+
+                            QUIElements.simulateEvent(
+                                self.$Elm.getElement('.quiqqer-erp-backend-erpArticle-vat').getNext('.cell-editable'),
+                                'click'
+                            );
                         }
                     }
                 }).open();
@@ -958,10 +991,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                         left      : 0,
                         lineHeight: 20,
                         textAlign : 'right',
-                        padding   : 10,
+                        padding   : 5,
+                        margin    : 5,
                         position  : 'absolute',
                         top       : 0,
-                        width     : '100%'
+                        width     : 'calc(100% - 10px)'
                     }
                 }).inject(Container);
 
@@ -1032,13 +1066,17 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!PreviousArticle) {
                         PreviousArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                                              .getLast('.article');
+                            .getLast('.article');
                     }
 
                     Next = PreviousArticle.getLast('.cell-editable');
                 }
             } else {
-                Next = Cell.getNext('.cell-editable');
+                if (Cell.hasClass('quiqqer-erp-backend-erpArticle-articleNo')) {
+                    Next = Cell.getParent().getElement('.quiqqer-erp-backend-erpArticle-text-title');
+                } else {
+                    Next = Cell.getNext('.cell-editable');
+                }
 
                 if (!Next) {
                     // next row
@@ -1047,7 +1085,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!NextArticle) {
                         NextArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                                          .getElement('.article');
+                            .getElement('.article');
                     }
 
                     Next = NextArticle.getElement('.cell-editable');
@@ -1062,7 +1100,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
             if (Next) {
                 event.stop();
-
                 QUIElements.simulateEvent(Next, 'click');
             }
         },

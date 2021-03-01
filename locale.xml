@@ -606,6 +606,28 @@
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">
+        
+        <locale name="article.summary.tpl.labelPosInfo">
+            <de><![CDATA[Pos.-Info]]></de>
+            <en><![CDATA[Pos. info]]></en>
+        </locale>
+        <locale name="article.summary.tpl.labelNet">
+            <de><![CDATA[Netto]]></de>
+            <en><![CDATA[Net]]></en>
+        </locale>
+        <locale name="article.summary.tpl.labelGross">
+            <de><![CDATA[Brutto]]></de>
+            <en><![CDATA[Gross]]></en>
+        </locale>
+        <locale name="article.summary.tpl.labelVat">
+            <de><![CDATA[MwSt.]]></de>
+            <en><![CDATA[VAT]]></en>
+        </locale>
+        <locale name="article.summary.tpl.labelSums">
+            <de><![CDATA[Summen]]></de>
+            <en><![CDATA[Sums]]></en>
+        </locale>
+        
         <locale name="comments.message.no.comments">
             <de><![CDATA[Keine Daten vorhanden]]></de>
             <en><![CDATA[No data available]]></en>
@@ -740,6 +762,10 @@
         <locale name="erp.articleList.article.button.replace">
             <de><![CDATA[Artikel ersetzen]]></de>
             <en><![CDATA[Replace article]]></en>
+        </locale>
+        <locale name="erp.articleList.article.button.editor">
+            <de><![CDATA[Titel und Beschreibung im HTML-Editor bearbeiten]]></de>
+            <en><![CDATA[Edit title and description in HTML editor]]></en>
         </locale>
 
         <locale name="journal.timeFilter.month">
