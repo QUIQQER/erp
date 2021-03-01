@@ -10,12 +10,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
     'qui/utils/Form',
     'package/quiqqer/productsearch/bin/controls/products/search/Window',
     'Ajax',
+    'Locale',
     'Mustache',
 
     'text!package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWindow.ProductSettings.html',
     'css!package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWindow.css'
 
-], function (QUI, QUIControl, QUIConfirm, QUIFormUtils, ProductSearch, QUIAjax, Mustache,
+], function (QUI, QUIControl, QUIConfirm, QUIFormUtils, ProductSearch, QUIAjax, QUILocale, Mustache,
              templateProductSettings) {
     "use strict";
 
@@ -82,7 +83,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
 
             return new Promise(function (resolve) {
                 new QUIConfirm({
-                    title    : 'Produkt Eigenschaften', // #locale
+                    title    : QUILocale.get('quiqqer/erp', 'window.products.add.title'),
                     icon     : 'fa fa-shopping-bag',
                     maxHeight: 500,
                     maxWidth : 500,
@@ -94,7 +95,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                             Content.set('html', Mustache.render(templateProductSettings));
                             Content.addClass('quiqqer-erp-addProductWin');
 
-                            var Form  = Content.getElement('form');
+                            var Form = Content.getElement('form');
+                            
+                            Form.setStyles({
+                                'float': 'left',
+                                width  : '100%'
+                            });
+
                             var Table = Form.getElement('table tbody');
 
                             var Row = new Element('tr', {
