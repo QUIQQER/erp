@@ -20,7 +20,7 @@ QUI::$Ajax->registerFunction(
             'Product' => $Product
         ]);
 
-        $css  = ''; //QUI\Control\Manager::getCSS();
+        $css  = QUI\Control\Manager::getCSS();
         $html = $Control->create();
 
         return $css.$html;

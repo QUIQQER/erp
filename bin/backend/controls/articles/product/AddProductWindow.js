@@ -107,11 +107,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                 });
 
                                 var Header = Ghost.getElement('header');
+                                var styles = Ghost.getElements('style');
 
                                 if (Header) {
                                     Header.getElements('.quiqqer-products-productEdit-header-image').destroy();
                                     Header.inject(Form, 'top');
                                 }
+
+                                styles.inject(Form);
 
                                 Ghost.getElements('.quiqqer-product-field').each(function (Field) {
                                     var RowClone = Row.clone();
