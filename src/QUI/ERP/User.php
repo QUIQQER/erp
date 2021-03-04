@@ -8,6 +8,7 @@ namespace QUI\ERP;
 
 use QUI;
 use QUI\Interfaces\Users\User as UserInterface;
+use QUI\ERP\Customer\NumberRange as CustomerNumberRange;
 
 /**
  * Class User
@@ -671,4 +672,42 @@ class User extends QUI\QDOM implements UserInterface
     public function refresh()
     {
     }
+
+    // region Special ERP User API
+
+    /**
+     * Get customer no. of this ERP User.
+     *
+     * @return string
+     */
+    public function getCustomerNo(): string
+    {
+        $customerId = $this->getAttribute('customerId');
+
+        if (empty($customerId)) {
+            return '';
+        }
+
+        $NumberRange = new CustomerNumberRange();
+
+        return $NumberRange->getCustomerNoPrefix().$customerId;
+    }
+
+    /**
+     * Get supplier no. of this ERP User.
+     *
+     * @return string
+     */
+    public function getSupplierNo()
+    {
+        $supplierNo = $this->getAttribute('supplierId');
+
+        if (empty($supplierNo)) {
+            return '';
+        }
+
+        return $supplierNo;
+    }
+
+    // endregion
 }
