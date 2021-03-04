@@ -606,7 +606,7 @@
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">
-        
+
         <locale name="article.summary.tpl.labelPosInfo">
             <de><![CDATA[Pos.-Info]]></de>
             <en><![CDATA[Pos. info]]></en>
@@ -627,7 +627,7 @@
             <de><![CDATA[Summen]]></de>
             <en><![CDATA[Sums]]></en>
         </locale>
-        
+
         <locale name="comments.message.no.comments">
             <de><![CDATA[Keine Daten vorhanden]]></de>
             <en><![CDATA[No data available]]></en>
@@ -973,6 +973,11 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
         <locale name="controls.manufacturers.create.Manufacturer.username_required">
             <de><![CDATA[Bitte geben Sie eine Herstellernummer / -bezeichner an]]></de>
             <en><![CDATA[Please provide a manufacturer number / identifier]]></en>
+        </locale>
+
+        <locale name="window.products.add.title">
+            <de><![CDATA[Produkt Eigenschaften]]></de>
+            <en><![CDATA[Product attributes]]></en>
         </locale>
     </groups>
 </locales>
