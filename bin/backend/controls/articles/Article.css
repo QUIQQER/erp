@@ -111,8 +111,11 @@
     white-space: nowrap;
 }
 
-.quiqqer-erp-backend-erpArticle-articleNo {
-    text-align: left;
+.quiqqer-erp-backend-erpArticle-articleNo,
+.quiqqer-erp-backend-erpArticle-text,
+.quiqqer-erp-backend-erpArticle-articleNo input,
+.quiqqer-erp-backend-erpArticle-text input {
+    text-align: left !important;
 }
 
 .quiqqer-erp-backend-erpArticle-total {
