@@ -200,6 +200,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
             this.$Elm.getElements('.cell-editable').set('tabindex', -1);
 
+            // Special VAT cell events
             this.$VAT.addEvent('keydown', function (event) {
                 if (event.key === 'tab') {
                     this.$editNext(event);
@@ -212,6 +213,24 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             }.bind(this));
 
             this.$VAT.addEvent('blur', function (event) {
+                if (event.key === 'tab') {
+                    this.$editNext(event);
+                }
+            }.bind(this));
+
+            // Special quantity unit cell events
+            this.$QuantityUnit.addEvent('keydown', function (event) {
+                if (event.key === 'tab') {
+                    this.$editNext(event);
+                    return;
+                }
+
+                if (event.key === 'enter') {
+                    QUIElements.simulateEvent(event.target, 'click');
+                }
+            }.bind(this));
+
+            this.$QuantityUnit.addEvent('blur', function (event) {
                 if (event.key === 'tab') {
                     this.$editNext(event);
                 }
@@ -1092,7 +1111,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 }
             }
 
-            if (Next.hasClass('quiqqer-erp-backend-erpArticle-vat')) {
+            if (Next.hasClass('quiqqer-erp-backend-erpArticle-vat') ||
+                Next.hasClass('quiqqer-erp-backend-erpArticle-quantityUnit')) {
                 event.stop();
                 Next.focus();
                 return;
