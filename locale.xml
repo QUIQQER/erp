@@ -229,6 +229,14 @@
             <de><![CDATA[Darf die Hersteller-Verwaltung ansehen]]></de>
             <en><![CDATA[Is allowed to view the manufacturer management]]></en>
         </locale>
+        <locale name="permission.quiqqer.erp._header">
+            <de><![CDATA[E-COYN]]></de>
+            <en><![CDATA[E-COYN]]></en>
+        </locale>
+        <locale name="permission.quiqqer.erp.mail_editor_attach_files">
+            <de><![CDATA[Darf Datei-Anhänge an per E-Mail versendete Dokumente anhängen]]></de>
+            <en><![CDATA[May attach files to documents sent by email]]></en>
+        </locale>
         <locale name="attention.abbreviation">
             <de><![CDATA[z. Hd.]]></de>
             <en><![CDATA[attn.]]></en>
@@ -756,6 +764,10 @@
         <locale name="controls.OutputMailEditor.btn.attachments">
             <de><![CDATA[Weitere Datei-Anhänge]]></de>
             <en><![CDATA[Additional file attachments]]></en>
+        </locale>
+        <locale name="controls.OutputMailEditor.btn.attachments_no_permission">
+            <de><![CDATA[Sie haben nicht die nötige Berechtigung, um weitere Datei-Anhänge hinzuzufügen]]></de>
+            <en><![CDATA[You do not have the necessary permission to add more file attachments]]></en>
         </locale>
 
         <locale name="controls.settings.OutputTemplates.tpl.labelHideSystemDefault">

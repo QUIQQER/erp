@@ -2,6 +2,7 @@
 
 use QUI\ERP\Output\Output as ERPOutput;
 use QUI\Utils\Security\Orthos;
+use QUI\Permissions\Permission;
 
 /**
  * Returns e-mail data for an output document
@@ -41,7 +42,8 @@ QUI::$Ajax->registerFunction(
 
             $attachedMediaFiles = [];
 
-            if (!empty($mailAttachmentMediaFileIds)) {
+            if (!empty($mailAttachmentMediaFileIds) &&
+                Permission::hasPermission(ERPOutput::PERMISSION_ATTACH_EMAIL_FILES)) {
                 $Media                      = QUI::getRewrite()->getProject()->getMedia();
                 $mailAttachmentMediaFileIds = \json_decode($mailAttachmentMediaFileIds, true);
 

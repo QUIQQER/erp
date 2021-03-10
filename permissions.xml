@@ -7,5 +7,8 @@
     <permission name="quiqqer.erp_manufacturers.create" type="bool">
         <defaultvalue>0</defaultvalue>
     </permission>
+    <permission name="quiqqer.erp.mail_editor_attach_files" type="bool">
+        <defaultvalue>0</defaultvalue>
+    </permission>
 
 </permissions>
