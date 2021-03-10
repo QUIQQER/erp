@@ -1,3 +1,11 @@
+.quiqqer-erp-outputMailEditor {
+    display: flex;
+}
+
+.quiqqer-erp-outputMailEditor-mailEditor {
+    flex-grow: 1;
+}
+
 .quiqqer-erp-outputMailEditor-mailEditor > label {
     display: block;
     margin: 10px 0;
@@ -16,4 +24,9 @@
 
 .quiqqer-erp-outputMailEditor-mailEditor-content {
     height: 550px;
+}
+
+.quiqqer-erp-outputMailEditor-attachments {
+    display: none;
+    padding: 10px 0 0 10px;
 }

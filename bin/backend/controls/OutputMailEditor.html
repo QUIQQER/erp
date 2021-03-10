@@ -1,13 +1,25 @@
-<div class="quiqqer-erp-outputMailEditor-mailEditor">
-    <label>
-        <span>{{labelMailSubject}}</span>
-        <input class="quiqqer-erp-outputMailEditor-mailEditor-subject" type="text"/>
-    </label>
-    <label>
-        <span>{{labelMailContent}}</span>
-        <div class="quiqqer-erp-outputMailEditor-mailEditor-content"></div>
-    </label>
+<div class="quiqqer-erp-outputMailEditor">
+    <div class="quiqqer-erp-outputMailEditor-mailEditor">
+        <label>
+            <span>{{labelMailSubject}}</span>
+            <input class="quiqqer-erp-outputMailEditor-mailEditor-subject" type="text"/>
+        </label>
+        <label>
+            <span>{{labelMailContent}}</span>
+            <div class="quiqqer-erp-outputMailEditor-mailEditor-content"></div>
+        </label>
+    </div>
+    <div class="quiqqer-erp-outputMailEditor-attachments">
+        {{{attachmentInfo}}}
+        <input type="text"
+               name="attachments"
+               data-qui="controls/projects/project/media/Select"
+        />
+    </div>
 </div>
 <div class="quiqqer-erp-outputMailEditor-info">
     {{{info}}}
+</div>
+<div class="quiqqer-erp-outputMailEditor-btn-attachments">
+
 </div>

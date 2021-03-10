@@ -749,6 +749,14 @@
             <de><![CDATA[<b>Hinweis:</b> Der Beleg wird als PDF-Datei im Anhang der E-Mail mitgesendet.]]></de>
             <en><![CDATA[<b>Hint:</b> The document is sent as a PDF file attached to the e-mail.]]></en>
         </locale>
+        <locale name="controls.OutputMailEditor.attachmentInfo">
+            <de><![CDATA[Weitere Datei-Anhänge]]></de>
+            <en><![CDATA[Additional file attachments]]></en>
+        </locale>
+        <locale name="controls.OutputMailEditor.btn.attachments">
+            <de><![CDATA[Weitere Datei-Anhänge]]></de>
+            <en><![CDATA[Additional file attachments]]></en>
+        </locale>
 
         <locale name="controls.settings.OutputTemplates.tpl.labelHideSystemDefault">
             <de><![CDATA[System-Standard Template im Ausgabe-Dialog nicht zur Auswahl anbieten]]></de>

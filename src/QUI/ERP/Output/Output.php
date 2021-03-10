@@ -166,6 +166,7 @@ class Output
      * @param string|null $recipientEmail (optional)
      * @param string|null $mailSubject (optional)
      * @param string|null $mailContent (optional)
+     * @param <QUI\Projects\Media\File|QUI\Projects\Media\Image>[] $attachedMediaFiles (optional)
      *
      * @return void
      *
@@ -179,7 +180,8 @@ class Output
         $template = null,
         $recipientEmail = null,
         $mailSubject = null,
-        $mailContent = null
+        $mailContent = null,
+        $attachedMediaFiles = []
     ) {
         if (empty($OutputProvider)) {
             $OutputProvider = self::getOutputProviderByEntityType($entityType);
@@ -227,6 +229,16 @@ class Output
 
         $Mailer->addRecipient($recipientEmail);
         $Mailer->addAttachment($mailFile);
+
+        // Additional attachments
+        foreach ($attachedMediaFiles as $MediaFile) {
+            if (!($MediaFile instanceof QUI\Projects\Media\File) &&
+                !($MediaFile instanceof QUI\Projects\Media\Image)) {
+                continue;
+            }
+
+            $Mailer->addAttachment($MediaFile->getFullPath());
+        }
 
         if (!empty($mailSubject)) {
             $Mailer->setSubject($mailSubject);

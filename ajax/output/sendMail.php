@@ -13,12 +13,22 @@ use QUI\Utils\Security\Orthos;
  * @param string $mailRecipient
  * @param string $mailSubject (optional)
  * @param string $mailContent (optional)
+ * @param array $mailAttachmentMediaFileIds (optional)
  *
  * @return void
  */
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_output_sendMail',
-    function ($entityId, $entityType, $template, $templateProvider, $mailRecipient, $mailSubject, $mailContent) {
+    function (
+        $entityId,
+        $entityType,
+        $template,
+        $templateProvider,
+        $mailRecipient,
+        $mailSubject,
+        $mailContent,
+        $mailAttachmentMediaFileIds
+    ) {
         try {
             $entityType = Orthos::clear($entityType);
 
@@ -29,6 +39,25 @@ QUI::$Ajax->registerFunction(
                 $TemplateProvider = ERPOutput::getDefaultOutputTemplateProviderForEntityType($entityType);
             }
 
+            $attachedMediaFiles = [];
+
+            if (!empty($mailAttachmentMediaFileIds)) {
+                $Media                      = QUI::getRewrite()->getProject()->getMedia();
+                $mailAttachmentMediaFileIds = \json_decode($mailAttachmentMediaFileIds, true);
+
+                foreach ($mailAttachmentMediaFileIds as $fileId) {
+                    if (empty($fileId)) {
+                        continue;
+                    }
+
+                    try {
+                        $attachedMediaFiles[] = $Media->get((int)$fileId);
+                    } catch (\Exception $Exception) {
+                        QUI\System\Log::writeException($Exception);
+                    }
+                }
+            }
+
             ERPOutput::sendPdfViaMail(
                 $entityId,
                 $entityType,
@@ -37,7 +66,8 @@ QUI::$Ajax->registerFunction(
                 Orthos::clear($template),
                 Orthos::clear($mailRecipient),
                 $mailSubject,
-                $mailContent
+                $mailContent,
+                $attachedMediaFiles
             );
         } catch (QUI\ERP\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
@@ -55,6 +85,15 @@ QUI::$Ajax->registerFunction(
             QUI::getLocale()->get('quiqqer/erp', 'Output.send.success')
         );
     },
-    ['entityId', 'entityType', 'template', 'templateProvider', 'mailRecipient', 'mailSubject', 'mailContent'],
+    [
+        'entityId',
+        'entityType',
+        'template',
+        'templateProvider',
+        'mailRecipient',
+        'mailSubject',
+        'mailContent',
+        'mailAttachmentMediaFileIds'
+    ],
     'Permission::checkAdminUser'
 );
