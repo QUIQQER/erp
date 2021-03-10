@@ -82,8 +82,9 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             this.$mailSent = false;
 
             this.$Mail = {
-                subject: false,
-                content: false
+                subject             : false,
+                content             : false,
+                attachedMediaFileIds: []
             };
 
             this.addEvents({
@@ -160,8 +161,9 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                             entityId  : self.getAttribute('entityId'),
                             entityType: self.getAttribute('entityType'),
 
-                            mailSubject: self.$Mail.subject,
-                            mailContent: self.$Mail.content,
+                            mailSubject         : self.$Mail.subject,
+                            mailContent         : self.$Mail.content,
+                            attachedMediaFileIds: self.$Mail.attachedMediaFileIds,
 
                             events: {
                                 onMailSubmit: function (MailData) {
@@ -676,16 +678,17 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 Form = this.getContent().getElement('form');
 
             return new Promise(function (resolve, reject) {
-                QUIAjax.get('package_quiqqer_erp_ajax_output_sendMail', resolve, {
-                    'package'       : 'quiqqer/erp',
-                    entityId        : self.getAttribute('entityId'),
-                    entityType      : self.getAttribute('entityType'),
-                    template        : self.$Template.id,
-                    templateProvider: self.$Template.provider,
-                    mailSubject     : self.$Mail.subject,
-                    mailContent     : self.$Mail.content,
-                    mailRecipient   : Form.elements.recipient.value,
-                    onError         : reject
+                QUIAjax.post('package_quiqqer_erp_ajax_output_sendMail', resolve, {
+                    'package'                 : 'quiqqer/erp',
+                    entityId                  : self.getAttribute('entityId'),
+                    entityType                : self.getAttribute('entityType'),
+                    template                  : self.$Template.id,
+                    templateProvider          : self.$Template.provider,
+                    mailSubject               : self.$Mail.subject,
+                    mailContent               : self.$Mail.content,
+                    mailAttachmentMediaFileIds: JSON.encode(self.$Mail.attachedMediaFileIds),
+                    mailRecipient             : Form.elements.recipient.value,
+                    onError                   : reject
                 });
             });
         },
