@@ -11,19 +11,16 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
     'qui/QUI',
     'qui/controls/windows/Confirm',
     'qui/controls/buttons/Button',
-    'qui/controls/elements/Sandbox',
 
-    'qui/utils/Form',
-
+    'Permissions',
     'Ajax',
     'Locale',
     'Mustache',
-    'Users',
 
     'text!package/quiqqer/erp/bin/backend/controls/OutputMailEditor.html',
     'css!package/quiqqer/erp/bin/backend/controls/OutputMailEditor.css'
 
-], function (QUI, QUIConfirm, QUIButton, QUISandbox, QUIFormUtils, QUIAjax, QUILocale, Mustache, Users, template) {
+], function (QUI, QUIConfirm, QUIButton, Permissions, QUIAjax, QUILocale, Mustache, template) {
     "use strict";
 
     var lg = 'quiqqer/erp';
@@ -112,6 +109,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
                 text     : QUILocale.get(lg, 'controls.OutputMailEditor.btn.attachments'),
                 title    : QUILocale.get(lg, 'controls.OutputMailEditor.btn.attachments'),
                 textimage: 'fa fa-paperclip',
+                disabled : true,
                 styles   : {
                     float: 'right'
                 },
@@ -130,7 +128,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
 
             Promise.all([
                 QUI.parse(Content),
-                this.$getMailData()
+                this.$getMailData(),
+                Permissions.hasPermission('quiqqer.erp.mail_editor_attach_files')
             ]).then(function (result) {
                 var MailData = result[1];
 
@@ -139,6 +138,17 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
                 );
 
                 self.$Attachments.getElm().setStyle('height', 610);
+
+                // Check if user has permission to attach files
+                var hasAttachmentPermission = result[2];
+
+                if (hasAttachmentPermission) {
+                    AttachmentBtn.enable();
+                } else {
+                    AttachmentBtn.setAttribute(
+                        'title', QUILocale.get(lg, 'controls.OutputMailEditor.btn.attachments_no_permission')
+                    );
+                }
 
                 require(['Editors'], function (Editors) {
                     Editors.getEditor().then(function (Editor) {
@@ -149,7 +159,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
                             Editor.resize();
 
                             // Add previously selected media items
-                            if (self.getAttribute('attachedMediaFileIds')) {
+                            if (self.getAttribute('attachedMediaFileIds') && hasAttachmentPermission) {
                                 var mediaIds = self.getAttribute('attachedMediaFileIds');
 
                                 if (mediaIds.length) {

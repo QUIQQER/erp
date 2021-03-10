@@ -12,6 +12,11 @@ use QUI;
 class Output
 {
     /**
+     * Permissions
+     */
+    const PERMISSION_ATTACH_EMAIL_FILES = 'quiqqer.erp.mail_editor_attach_files';
+
+    /**
      * Get the ERP Output Provider for a specific package
      *
      * @param string $package
