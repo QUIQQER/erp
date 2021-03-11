@@ -49,6 +49,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
             new ProductSearch({
                 autoclose: false,
                 events   : {
+                    onOpen: function (Win) {
+                        self.fireEvent('open', [self, Win]);
+                    },
+
+                    onLoad: function (Win) {
+                        self.fireEvent('load', [self, Win]);
+                    },
+
                     onSubmit: function (Win, products) {
                         var productId = products[0];
 
