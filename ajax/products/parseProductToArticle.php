@@ -12,8 +12,9 @@ use QUI\ERP\Products\Handler\Products;
  */
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_parseProductToArticle',
-    function ($productId, $attributes, $user) {
+    function ($productId, $attributes, $user, $fields) {
         $user       = \json_decode($user, true);
+        $fields     = \json_decode($fields, true);
         $attributes = \json_decode($attributes, true);
         $User       = null;
         $Locale     = QUI::getLocale();
@@ -69,14 +70,32 @@ QUI::$Ajax->registerFunction(
             }
 
             $Unique->calc();
+            $result = $Unique->toArticle($Locale)->toArray();
 
-            return $Unique->toArticle($Locale)->toArray();
+            if (empty($fields)) {
+                return $result;
+            }
+
+            $fieldResult = [];
+
+            foreach ($fields as $fieldId) {
+                try {
+                    $Field = $Product->getField($fieldId);
+
+                    $fieldResult[$Field->getId()] = $Field->getValue();
+                } catch (QUI\Exception $Exception) {
+                }
+            }
+
+            $result['fields'] = $fieldResult;
+
+            return $result;
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::write($Exception->getMessage());
         }
 
         return [];
     },
-    ['productId', 'attributes', 'user'],
+    ['productId', 'attributes', 'user', 'fields'],
     'Permission::checkAdminUser'
 );

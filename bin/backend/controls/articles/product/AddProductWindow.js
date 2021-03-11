@@ -26,7 +26,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
         Type   : 'package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWindow',
 
         options: {
-            user: false
+            user  : false,
+            fields: false // field ids that should be delivered additionally (onSubmit)
         },
 
         initialize: function (options) {
@@ -96,7 +97,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                             Content.addClass('quiqqer-erp-addProductWin');
 
                             var Form = Content.getElement('form');
-                            
+
                             Form.setStyles({
                                 'float': 'left',
                                 width  : '100%'
@@ -196,6 +197,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                     productId : productId,
                     attributes: JSON.encode(attributes),
                     user      : JSON.encode(self.getUserData()),
+                    fields    : JSON.encode(self.getAttribute('fields')),
                     onError   : reject
                 });
             });
