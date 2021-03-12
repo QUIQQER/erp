@@ -13,6 +13,25 @@
     min-width: 1100px;
 }
 
+.quiqqer-erp-backend-erpItems-container-switch {
+    background: #FAF6D4;
+    color: #ab8327;
+    height: 40px;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-erpItems-container-switch-btn {
+    display: inline-block;
+    float: left;
+    padding: 10px 10px 0 10px;
+}
+
+.quiqqer-erp-backend-erpItems-container-switch-desc {
+    cursor: pointer;
+    float: left;
+    line-height: 40px;
+}
+
 .quiqqer-erp-backend-erpItems-header {
     background: #DEDEDE;
     float: left;

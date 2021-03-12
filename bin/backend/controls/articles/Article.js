@@ -934,13 +934,37 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * event : on quantity edit
          */
         $onEditUnitPriceQuantity: function () {
+            var self  = this;
+            var List  = this.getAttribute('List');
+            var netto = List.getAttribute('nettoinput');
+
+            if (netto === false) {
+                // open brutto window
+                require([
+                    'package/quiqqer/erp/bin/backend/controls/articles/windows/PriceBrutto'
+                ], function (PriceBrutto) {
+                    new PriceBrutto({
+                        vat: self.getAttribute('vat'),
+                        //  value : self.getAttribute('unitPrice'), // needs to be brutto
+                        events: {
+                            onSubmit: function (Instance, value) {
+                                if (value) {
+                                    self.setUnitPrice(value);
+                                }
+                            }
+                        }
+                    }).open();
+                });
+                return;
+            }
+
             this.$createEditField(
                 this.$UnitPrice,
                 this.getAttribute('unitPrice'),
                 'number'
             ).then(function (value) {
-                this.setUnitPrice(value);
-            }.bind(this));
+                self.setUnitPrice(value);
+            });
         },
 
         /**
@@ -1085,7 +1109,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!PreviousArticle) {
                         PreviousArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                            .getLast('.article');
+                                              .getLast('.article');
                     }
 
                     Next = PreviousArticle.getLast('.cell-editable');
@@ -1104,7 +1128,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!NextArticle) {
                         NextArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                            .getElement('.article');
+                                          .getElement('.article');
                     }
 
                     Next = NextArticle.getElement('.cell-editable');

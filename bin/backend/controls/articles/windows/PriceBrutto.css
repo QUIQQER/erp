@@ -1,0 +1,16 @@
+.erp-price-brutto-window label {
+    display: block;
+    margin: 20px auto 0;
+    max-width: 400px;
+    width: 100%;
+}
+
+.erp-price-brutto-window label span {
+    display: inline-block;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.erp-price-brutto-window label input {
+    width: 100%;
+}
