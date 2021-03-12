@@ -667,10 +667,10 @@
         </locale>
         <locale name="control.articleList.brutto.message" html="true">
             <de><![CDATA[
-            Achtung: Die Eingabe der Preise ist zur Zeit in <b>brutto</b>, die Anzeige der Preise in <b>netto</b>.
+            Achtung: Die Eingabe der Preise ist zur Zeit in <b>brutto</b> und die Anzeige der Preise in <b>netto</b>.
             ]]></de>
             <en><![CDATA[
-            Attention: The input of prices is currently in <b>gross</b>, but the display of prices is in <b>net</b>.
+            Attention: The input of prices is currently in <b>gross</b> and the display of prices is in <b>net</b>.
             ]]></en>
         </locale>
 

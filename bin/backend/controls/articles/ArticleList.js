@@ -690,8 +690,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             if (this.getAttribute('nettoinput')) {
                 SwitchDesc.set('html', QUILocale.get(lg, 'control.articleList.netto.message'));
+                this.$Switch.setSilentOn();
             } else {
                 SwitchDesc.set('html', QUILocale.get(lg, 'control.articleList.brutto.message'));
+                this.$Switch.setSilentOff();
             }
         }
     });
