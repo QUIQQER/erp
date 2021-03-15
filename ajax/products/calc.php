@@ -9,6 +9,9 @@
  *
  * @return string
  */
+
+use QUI\ERP\Accounting\ArticleDiscount;
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_calc',
     function ($articles, $user) {
@@ -30,11 +33,63 @@ QUI::$Ajax->registerFunction(
             $Calc = QUI\ERP\Accounting\Calc::getInstance();
         }
 
+        $User = $Calc->getUser();
+
         $Articles = new QUI\ERP\Accounting\ArticleList($articles);
-        $Articles->setUser($Calc->getUser());
+        $Articles->setUser($User);
         $Articles->calc($Calc);
 
         $result = $Articles->toArray();
+
+        // brutto stuff (for display)
+        $User->setAttribute('RUNTIME_NETTO_BRUTTO_STATUS', QUI\ERP\Utils\User::IS_BRUTTO_USER);
+        $Calc->setUser($User);
+        $Articles->setUser($User);
+        $Articles->recalculate($Calc);
+
+        $brutto = $Articles->toArray();
+
+        // discount
+        foreach ($brutto['articles'] as $k => $article) {
+            if (empty($article['discount'])) {
+                continue;
+            }
+
+            $Discount = ArticleDiscount::unserialize($article['discount']);
+            $Currency = $Discount->getCurrency();
+            $vat      = $article['vat'] / 100 + 1;
+
+            $nettoSum = $result['articles'][$k]['sum'];
+
+            $brutto['articles'][$k]['display_quantity_sum'] = $brutto['articles'][$k]['display_sum'];
+            $brutto['articles'][$k]['quantity_sum']         = $brutto['articles'][$k]['sum'];
+
+            $unitPrice = $brutto['articles'][$k]['quantity_sum'] / $brutto['articles'][$k]['quantity'];
+            $unitPrice = \round($unitPrice, $Currency->getPrecision());
+
+            $brutto['articles'][$k]['unitPrice']         = $unitPrice;
+            $brutto['articles'][$k]['display_unitPrice'] = $Currency->format($unitPrice);
+
+            if ($Discount->getCalculation() !== QUI\ERP\Accounting\Calc::CALCULATION_COMPLEMENT) {
+                $bruttoSum = $nettoSum * $vat;
+
+                $brutto['articles'][$k]['discount']         = $Discount->getValue().'%';
+                $brutto['articles'][$k]['display_discount'] = $Discount->getValue().'%';
+                $brutto['articles'][$k]['display_sum']      = $Currency->format($bruttoSum);
+                $brutto['articles'][$k]['sum']              = \round($bruttoSum, $Currency->getPrecision());
+                continue;
+            }
+
+            $discount  = $Discount->getValue() * $vat;
+            $bruttoSum = $nettoSum * $vat;
+
+            $brutto['articles'][$k]['discount']         = $discount;
+            $brutto['articles'][$k]['display_discount'] = $Currency->format($discount);
+            $brutto['articles'][$k]['display_sum']      = $Currency->format($bruttoSum);
+            $brutto['articles'][$k]['sum']              = \round($bruttoSum, $Currency->getPrecision());
+        }
+
+        $result['brutto'] = $brutto;
 
         return $result;
     },

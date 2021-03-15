@@ -42,8 +42,12 @@ class User
      * @param UserInterface $User
      * @return integer
      */
-    public static function getBruttoNettoUserStatus(UserInterface $User)
+    public static function getBruttoNettoUserStatus(UserInterface $User): int
     {
+        if ($User->getAttribute('RUNTIME_NETTO_BRUTTO_STATUS')) {
+            return $User->getAttribute('RUNTIME_NETTO_BRUTTO_STATUS');
+        }
+
         if ($User instanceof QUI\Users\Nobody) {
             $status = QUI::getSession()->get('quiqqer.erp.b2b.status');
 
@@ -186,7 +190,7 @@ class User
      * @param UserInterface $User
      * @return bool
      */
-    public static function isNettoUser(UserInterface $User)
+    public static function isNettoUser(UserInterface $User): bool
     {
         return self::getBruttoNettoUserStatus($User) === self::IS_NETTO_USER;
     }
@@ -278,7 +282,7 @@ class User
      * @throws QUI\Exception
      * @deprecated use QUI\ERP\Defaults::getShopArea()
      */
-    public static function getShopArea()
+    public static function getShopArea(): QUI\ERP\Areas\Area
     {
         return QUI\ERP\Defaults::getArea();
     }
@@ -290,7 +294,7 @@ class User
      * @param array $attributes
      * @return array
      */
-    public static function filterCustomerAttributes($attributes = [])
+    public static function filterCustomerAttributes($attributes = []): array
     {
         if (!\is_array($attributes)) {
             return [];

@@ -22,7 +22,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     protected $calculated = false;
 
     /**
-     * @var int|float|double
+     * @var int|float
      */
     protected $sum;
 
@@ -42,17 +42,17 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     protected $Currency = null;
 
     /**
-     * @var int|float|double
+     * @var int|float
      */
     protected $subSum;
 
     /**
-     * @var int|float|double
+     * @var int|float
      */
     protected $nettoSum;
 
     /**
-     * @var int|float|double
+     * @var int|float
      */
     protected $nettoSubSum;
 
@@ -134,7 +134,6 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
         $this->User       = $User;
 
         foreach ($this->articles as $Article) {
-            /* @var $Article Article */
             $Article->setUser($User);
         }
 
@@ -156,7 +155,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      *
      * @return QUI\ERP\Currency\Currency
      */
-    public function getCurrency()
+    public function getCurrency(): ?QUI\ERP\Currency\Currency
     {
         if (!\is_null($this->Currency)) {
             return $this->Currency;
@@ -216,7 +215,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $data = parent::toArray();
 
@@ -273,7 +272,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      * @throws QUI\ERP\Exception
      * @throws QUI\Exception
      */
-    public function toUniqueList()
+    public function toUniqueList(): ArticleListUnique
     {
         $this->calc();
 
@@ -286,6 +285,11 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     public function recalculate($Calc = null)
     {
         $this->calculated = false;
+
+        foreach ($this->articles as $Article) {
+            $Article->setUser($this->User);
+        }
+
         $this->calc($Calc);
     }
 
@@ -293,7 +297,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      * @param null|Calc $Calc
      * @return $this
      */
-    public function calc($Calc = null)
+    public function calc($Calc = null): ArticleList
     {
         if ($this->calculated) {
             return $this;
@@ -365,7 +369,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      *
      * @param integer $index
      */
-    public function removeArticle($index)
+    public function removeArticle(int $index)
     {
         if (isset($this->articles[$index])) {
             unset($this->articles[$index]);
@@ -376,7 +380,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      * @param $pos
      * @return Article|null
      */
-    public function getArticle($pos)
+    public function getArticle($pos): ?Article
     {
         if (isset($this->articles[$pos])) {
             return $this->articles[$pos];
@@ -391,7 +395,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      * @param Article $Article
      * @param integer $index
      */
-    public function replaceArticle(Article $Article, $index)
+    public function replaceArticle(Article $Article, int $index)
     {
         $this->articles[$index] = $Article;
     }
@@ -409,7 +413,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return \count($this->articles);
     }
@@ -443,7 +447,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     /**
      * @return QUI\ERP\Order\AbstractOrder|null
      */
-    public function getOrder()
+    public function getOrder(): ?QUI\ERP\Order\AbstractOrder
     {
         return $this->Order;
     }

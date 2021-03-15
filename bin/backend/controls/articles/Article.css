@@ -103,7 +103,11 @@
 .quiqqer-erp-backend-erpArticle-price,
 .quiqqer-erp-backend-erpArticle-vat,
 .quiqqer-erp-backend-erpArticle-discount,
-.quiqqer-erp-backend-erpArticle-total {
+.quiqqer-erp-backend-erpArticle-total,
+.quiqqer-erp-backend-erpArticle-unitPrice-brutto,
+.quiqqer-erp-backend-erpArticle-price-brutto,
+.quiqqer-erp-backend-erpArticle-discount-brutto,
+.quiqqer-erp-backend-erpArticle-total-brutto {
     overflow: hidden;
     text-align: right;
     text-overflow: ellipsis;
@@ -118,6 +122,7 @@
     text-align: left !important;
 }
 
+.quiqqer-erp-backend-erpArticle-total-brutto,
 .quiqqer-erp-backend-erpArticle-total {
     width: 150px;
 }
@@ -149,4 +154,36 @@
 .quiqqer-erp-dialog-edit-article-description input {
     margin-bottom: 10px;
     width: 100%;
+}
+
+/** display views
+ ======================================== */
+
+.brutto-view .quiqqer-erp-backend-erpArticle-unitPrice-brutto,
+.brutto-view .quiqqer-erp-backend-erpArticle-price-brutto,
+.brutto-view .quiqqer-erp-backend-erpArticle-discount-brutto,
+.brutto-view .quiqqer-erp-backend-erpArticle-total-brutto {
+    display: block;
+}
+
+.brutto-view .quiqqer-erp-backend-erpArticle-unitPrice,
+.brutto-view .quiqqer-erp-backend-erpArticle-price,
+.brutto-view .quiqqer-erp-backend-erpArticle-discount,
+.brutto-view .quiqqer-erp-backend-erpArticle-total {
+    display: none;
+}
+
+
+.netto-view .quiqqer-erp-backend-erpArticle-unitPrice-brutto,
+.netto-view .quiqqer-erp-backend-erpArticle-price-brutto,
+.netto-view .quiqqer-erp-backend-erpArticle-discount-brutto,
+.netto-view .quiqqer-erp-backend-erpArticle-total-brutto {
+    display: none;
+}
+
+.netto-view .quiqqer-erp-backend-erpArticle-unitPrice,
+.netto-view .quiqqer-erp-backend-erpArticle-price,
+.netto-view .quiqqer-erp-backend-erpArticle-discount,
+.netto-view .quiqqer-erp-backend-erpArticle-total {
+    display: block;
 }

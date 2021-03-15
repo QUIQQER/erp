@@ -226,7 +226,6 @@ class ArticleListUnique implements \IteratorAggregate
         $this->calc();
 
         $articles = \array_map(function ($Article) {
-            /* @var $Article Article */
             return $Article->toArray();
         }, $this->articles);
 

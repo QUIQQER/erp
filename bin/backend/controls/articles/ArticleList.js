@@ -685,15 +685,22 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             return this.$selectedArticle;
         },
 
+        /**
+         * refresh the brutto / netto switch display
+         */
         $refreshNettoBruttoDisplay: function () {
             var SwitchDesc = this.$Elm.getElement('.quiqqer-erp-backend-erpItems-container-switch-desc');
 
             if (this.getAttribute('nettoinput')) {
                 SwitchDesc.set('html', QUILocale.get(lg, 'control.articleList.netto.message'));
                 this.$Switch.setSilentOn();
+                this.$Elm.addClass('netto-view');
+                this.$Elm.removeClass('brutto-view');
             } else {
                 SwitchDesc.set('html', QUILocale.get(lg, 'control.articleList.brutto.message'));
                 this.$Switch.setSilentOff();
+                this.$Elm.addClass('brutto-view');
+                this.$Elm.removeClass('netto-view');
             }
         }
     });

@@ -41,10 +41,10 @@ class ArticleDiscount
     /**
      * ArticleDiscount constructor.
      *
-     * @param int $discount
+     * @param float $discount
      * @param int $type
      */
-    public function __construct(int $discount, int $type)
+    public function __construct(float $discount, int $type)
     {
         switch ($type) {
             case Calc::CALCULATION_PERCENTAGE:
@@ -89,7 +89,7 @@ class ArticleDiscount
         } else {
             // is normal string 5% or 5.99 €
             if (\strpos($string, '%') !== false) {
-                $data['value'] = (int)\str_replace('%', '', $string);
+                $data['value'] = \floatval(\str_replace('%', '', $string));
                 $data['type']  = Calc::CALCULATION_PERCENTAGE;
             } else {
                 $data['value'] = QUI\ERP\Money\Price::validatePrice($string);
@@ -143,9 +143,9 @@ class ArticleDiscount
     /**
      * Return the discount value
      *
-     * @return int
+     * @return float
      */
-    public function getValue(): int
+    public function getValue(): float
     {
         return $this->value;
     }

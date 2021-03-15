@@ -96,7 +96,7 @@ class Calc
      * @param UserInterface|null $User - optional
      * @return Calc
      */
-    public static function getInstance($User = null)
+    public static function getInstance($User = null): Calc
     {
         if (!$User && QUI::isBackend()) {
             $User = QUI::getUsers()->getSystemUser();
@@ -135,7 +135,7 @@ class Calc
      *
      * @return QUI\ERP\Currency\Currency
      */
-    public function getCurrency()
+    public function getCurrency(): ?QUI\ERP\Currency\Currency
     {
         if (\is_null($this->Currency)) {
             $this->Currency = QUI\ERP\Currency\Handler::getDefaultCurrency();
@@ -151,7 +151,7 @@ class Calc
      * @param callable|boolean $callback - optional, callback function for the data array
      * @return ArticleList
      */
-    public function calcArticleList(ArticleList $List, $callback = false)
+    public function calcArticleList(ArticleList $List, $callback = false): ArticleList
     {
         // calc data
         if (!\is_callable($callback)) {
@@ -528,10 +528,10 @@ class Calc
     /**
      * Rounds the value via shop config
      *
-     * @param string $value
+     * @param string|int|float $value
      * @return float|mixed
      */
-    public function round($value)
+    public function round($value): float
     {
         $decimalSeparator  = $this->getUser()->getLocale()->getDecimalSeparator();
         $groupingSeparator = $this->getUser()->getLocale()->getGroupingSeparator();
@@ -644,7 +644,7 @@ class Calc
      *
      * @throws QUI\ERP\Exception
      */
-    public static function calculatePayments($ToCalculate)
+    public static function calculatePayments($ToCalculate): array
     {
         if (self::isAllowedForCalculation($ToCalculate) === false) {
             QUI\ERP\Debug::getInstance()->log(
