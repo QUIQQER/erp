@@ -54,8 +54,8 @@ QUI::$Ajax->registerFunction(
 
         foreach ($brutto['articles'] as $k => $article) {
             $vat       = $article['vat'] / 100 + 1;
-            $bruttoSum = $result['articles'][$k]['sum'];
-            $quantity  = $brutto['articles'][$k]['quantity'];
+            $bruttoSum = $article['sum'];
+            $quantity  = $article['quantity'];
 
             $unitPrice = $bruttoSum / $quantity;
             $unitPrice = \round($unitPrice, $Currency->getPrecision());

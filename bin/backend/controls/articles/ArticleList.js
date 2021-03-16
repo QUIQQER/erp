@@ -387,7 +387,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             this.$calculationRunning = true;
 
-            return new Promise(function (resolve) {
+            return new Promise(function (resolve, reject) {
                 var articles = self.$articles.map(function (Article) {
                     return Article.getAttributes();
                 });
@@ -400,7 +400,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 }, {
                     'package': 'quiqqer/erp',
                     articles : JSON.encode({articles: articles}),
-                    user     : JSON.encode(self.$user)
+                    user     : JSON.encode(self.$user),
+                    onError  : function (err) {
+                        console.error(err);
+                        reject();
+                    }
                 });
             });
         },

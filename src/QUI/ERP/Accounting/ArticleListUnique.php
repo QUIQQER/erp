@@ -144,9 +144,9 @@ class ArticleListUnique implements \IteratorAggregate
      * calc makes the unique article list compatible to the article list
      *
      * @param $Calc
-     * @return $this
+     * @return ArticleListUnique
      */
-    public function calc($Calc = null): ArticleListUnique
+    public function calc($Calc = null)
     {
         // placeholder. unique list cant be calc
         return $this;

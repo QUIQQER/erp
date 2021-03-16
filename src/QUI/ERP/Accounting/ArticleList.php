@@ -295,9 +295,9 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
 
     /**
      * @param null|Calc $Calc
-     * @return $this
+     * @return ArticleList|ArticleListUnique
      */
-    public function calc($Calc = null): ArticleList
+    public function calc($Calc = null)
     {
         if ($this->calculated) {
             return $this;
