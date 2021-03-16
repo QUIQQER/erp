@@ -276,7 +276,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     {
         $this->calc();
 
-        return new ArticleListUnique($this->toArray());
+        return new ArticleListUnique($this->toArray(), $this->getUser());
     }
 
     /**

@@ -63,7 +63,7 @@ class ArticleView extends QUI\QDOM
     /**
      * @return QUI\ERP\Currency\Currency
      */
-    public function getCurrency()
+    public function getCurrency(): QUI\ERP\Currency\Currency
     {
         if ($this->Currency !== null) {
             return $this->Currency;
@@ -75,7 +75,7 @@ class ArticleView extends QUI\QDOM
     /**
      * @return array
      */
-    public function getCustomFields()
+    public function getCustomFields(): array
     {
         $customFields = [];
         $article      = $this->Article->toArray();
@@ -111,7 +111,7 @@ class ArticleView extends QUI\QDOM
     /**
      * @return bool
      */
-    public function displayPrice()
+    public function displayPrice(): bool
     {
         return $this->Article->displayPrice();
     }
@@ -119,7 +119,7 @@ class ArticleView extends QUI\QDOM
     /**
      * @return string
      */
-    public function getPrice()
+    public function getPrice(): string
     {
         $Currency = $this->getCurrency();
         $calc     = $this->getAttribute('calculated');
@@ -134,7 +134,7 @@ class ArticleView extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function toHTML()
+    public function toHTML(): string
     {
         $Engine   = QUI::getTemplateManager()->getEngine();
         $Currency = $this->getCurrency();

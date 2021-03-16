@@ -39,6 +39,11 @@ class ArticleDiscount
     protected $Currency = null;
 
     /**
+     * @var null|ArticleInterface
+     */
+    protected $Article = null;
+
+    /**
      * ArticleDiscount constructor.
      *
      * @param float $discount
@@ -205,14 +210,33 @@ class ArticleDiscount
      */
     public function formatted(): string
     {
-        if (!$this->value) {
+        $value = $this->value;
+
+        if (!$value) {
             return '';
         }
 
         if ($this->type === Calc::CALCULATION_COMPLEMENT) {
-            return $this->getCurrency()->format($this->value);
+            if ($this->Article && $this->Article->getUser()) {
+                $User    = $this->Article->getUser();
+                $isNetto = QUI\ERP\Utils\User::isNettoUser($User);
+
+                if (!$isNetto) {
+                    $value = $value * ($this->Article->getVat() / 100 + 1);
+                }
+            }
+
+            return $this->getCurrency()->format($value);
         }
 
-        return $this->value.'%';
+        return $value.'%';
+    }
+
+    /**
+     * @param ArticleInterface $Article
+     */
+    public function setArticle(ArticleInterface $Article)
+    {
+        $this->Article = $Article;
     }
 }

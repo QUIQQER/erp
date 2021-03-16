@@ -45,12 +45,18 @@ class ArticleListUnique implements \IteratorAggregate
     protected $Locale = null;
 
     /**
+     * @var QUI\Interfaces\Users\User
+     */
+    protected $User = null;
+
+    /**
      * ArticleList constructor.
      *
      * @param array $attributes
+     * @param null|QUI\Interfaces\Users\User|QUI\Users\User $User
      * @throws QUI\ERP\Exception
      */
-    public function __construct($attributes = [])
+    public function __construct($attributes = [], $User = null)
     {
         $this->Locale = QUI::getLocale();
 
@@ -94,6 +100,14 @@ class ArticleListUnique implements \IteratorAggregate
             $this->articles[] = new Article($article);
         }
 
+        if ($User) {
+            $this->User = $User;
+
+            foreach ($this->articles as $Article) {
+                $Article->setUser($this->User);
+            }
+        }
+
         $this->calculations = $attributes['calculations'];
         $this->showHeader   = isset($attributes['showHeader']) ? $attributes['showHeader'] : true;
 
@@ -132,7 +146,7 @@ class ArticleListUnique implements \IteratorAggregate
      * @param $Calc
      * @return $this
      */
-    public function calc($Calc = null)
+    public function calc($Calc = null): ArticleListUnique
     {
         // placeholder. unique list cant be calc
         return $this;
@@ -156,7 +170,7 @@ class ArticleListUnique implements \IteratorAggregate
      *
      * @throws QUI\Exception
      */
-    public static function unserialize($data)
+    public static function unserialize(string $data): ArticleListUnique
     {
         if (\is_string($data)) {
             $data = \json_decode($data, true);
@@ -170,7 +184,7 @@ class ArticleListUnique implements \IteratorAggregate
      *
      * @return string
      */
-    public function serialize()
+    public function serialize(): string
     {
         return \json_encode($this->toArray());
     }
@@ -180,7 +194,7 @@ class ArticleListUnique implements \IteratorAggregate
      *
      * @return array
      */
-    public function getCalculations()
+    public function getCalculations(): array
     {
         return $this->calculations;
     }
@@ -190,7 +204,7 @@ class ArticleListUnique implements \IteratorAggregate
      *
      * @return Article[]
      */
-    public function getArticles()
+    public function getArticles(): array
     {
         return $this->articles;
     }
@@ -200,7 +214,7 @@ class ArticleListUnique implements \IteratorAggregate
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return \count($this->articles);
     }
@@ -211,7 +225,7 @@ class ArticleListUnique implements \IteratorAggregate
      *
      * @return string
      */
-    public function toJSON()
+    public function toJSON(): string
     {
         return $this->serialize();
     }
@@ -221,7 +235,7 @@ class ArticleListUnique implements \IteratorAggregate
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $this->calc();
 
@@ -262,7 +276,7 @@ class ArticleListUnique implements \IteratorAggregate
      *
      * @throws QUI\Exception
      */
-    public function toHTML($template = false)
+    public function toHTML($template = false): string
     {
         $Engine   = QUI::getTemplateManager()->getEngine();
         $vatArray = [];
@@ -292,7 +306,6 @@ class ArticleListUnique implements \IteratorAggregate
         $pos = 1;
 
         $articles = \array_map(function ($Article) use ($Currency, &$pos) {
-            /* @var $Article Article */
             $View = $Article->getView();
             $View->setCurrency($Currency);
             $View->setPosition($pos);
@@ -324,7 +337,7 @@ class ArticleListUnique implements \IteratorAggregate
      * @return string
      * @throws QUI\Exception
      */
-    public function toMailHTML()
+    public function toMailHTML(): string
     {
         return $this->toHTML(\dirname(__FILE__).'/ArticleList.Mail.html');
     }
@@ -336,7 +349,7 @@ class ArticleListUnique implements \IteratorAggregate
      *
      * @throws QUI\Exception
      */
-    public function toHTMLWithCSS()
+    public function toHTMLWithCSS(): string
     {
         $style = '<style>';
         $style .= \file_get_contents(\dirname(__FILE__).'/ArticleList.css');
@@ -364,7 +377,7 @@ class ArticleListUnique implements \IteratorAggregate
      *
      * @throws QUI\Exception
      */
-    public function renderForMail()
+    public function renderForMail(): string
     {
         $style = '<style>';
         $style .= \file_get_contents(\dirname(__FILE__).'/ArticleList.Mail.css');
