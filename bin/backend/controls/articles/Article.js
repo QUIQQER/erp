@@ -403,6 +403,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     typeof self.$bruttoCalc.display_discount !== 'undefined') {
                     self.$DiscountBrutto.set('html', self.$bruttoCalc.display_discount);
                     self.$DiscountBrutto.set('data-value', self.$bruttoCalc.discount);
+                } else {
+                    self.$DiscountBrutto.set('html', '-');
+                    self.$DiscountBrutto.set('data-value', '-');
                 }
 
                 if (typeof self.$bruttoCalc !== 'undefined' &&
@@ -416,9 +419,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     self.$UnitPriceBrutto.set('html', self.$bruttoCalc.display_unitPrice);
                     self.$UnitPriceBrutto.set('data-value', self.$bruttoCalc.unitPrice);
                 }
-
-                console.log('***', self.$bruttoCalc);
-
 
                 self.hideLoader();
                 self.fireEvent('calc', [self]);
@@ -649,19 +649,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @return {Promise}
          */
         setUnitPrice: function (price) {
-            var self = this;
-
             this.setAttribute('unitPrice', parseFloat(price));
 
             if (this.$UnitPrice) {
                 this.$UnitPrice.set('html', this.getAttribute('unitPrice'));
             }
-            //console.log('###', this.$bruttoCalc);
-            // if (this.$UnitPriceBrutto) {
-            //     this.getBruttoPrice(price, true).then(function (brutto) {
-            //         self.$UnitPriceBrutto.set('html', brutto);
-            //     });
-            // }
 
             this.fireEvent('setUnitPrice', [this]);
 
@@ -1094,6 +1086,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     return self.setDiscount(value);
                 }
 
+                if (parseFloat(value) === 0) {
+                    return self.setDiscount(0);
+                }
+
                 return self.getNettoPrice(value).then(function (value) {
                     self.setDiscount(value);
                 });
@@ -1191,6 +1187,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             if (event.shift) {
                 Next = Cell.getPrevious('.cell-editable');
 
+                if (Next && Next.getStyle('display') === 'none') {
+                    event.target = Next;
+                    this.$editNext(event);
+                    return;
+                }
+
                 if (!Next) {
                     // previous row
                     Article         = Cell.getParent('.article');
@@ -1208,6 +1210,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     Next = Cell.getParent().getElement('.quiqqer-erp-backend-erpArticle-text-title');
                 } else {
                     Next = Cell.getNext('.cell-editable');
+                }
+
+                if (Next && Next.getStyle('display') === 'none') {
+                    event.target = Next;
+                    this.$editNext(event);
+                    return;
                 }
 
                 if (!Next) {
