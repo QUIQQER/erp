@@ -434,19 +434,22 @@ class Calc
         }
 
         // discounts
-        $Discount = $Article->getDiscount();
+        $Discount             = $Article->getDiscount();
+        $nettoPriceNotRounded = $Article->getUnitPriceUnRounded()->getValue();
 
         if ($Discount) {
             switch ($Discount->getCalculation()) {
                 // einfache Zahl, Währung --- kein Prozent
                 case Calc::CALCULATION_COMPLEMENT:
-                    $nettoPrice = $nettoPrice - ($Discount->getValue() / $Article->getQuantity());
+                    $nettoPrice           = $nettoPrice - ($Discount->getValue() / $Article->getQuantity());
+                    $nettoPriceNotRounded = $nettoPriceNotRounded - ($Discount->getValue() / $Article->getQuantity());
                     break;
 
                 // Prozent Angabe
                 case Calc::CALCULATION_PERCENTAGE:
-                    $percentage = $Discount->getValue() / 100 * $nettoPrice;
-                    $nettoPrice = $nettoPrice - $percentage;
+                    $percentage           = $Discount->getValue() / 100 * $nettoPrice;
+                    $nettoPrice           = $nettoPrice - $percentage;
+                    $nettoPriceNotRounded = $nettoPriceNotRounded - $percentage;
                     break;
             }
         }
@@ -456,7 +459,6 @@ class Calc
 
         if (!$isNetto) {
             // korrektur rechnung / 1 cent problem
-            $nettoPriceNotRounded = $Article->getUnitPriceUnRounded()->getValue();
             $checkBrutto          = $nettoPriceNotRounded * ($vat / 100 + 1);
             $checkBrutto          = \round($checkBrutto, $Currency->getPrecision());
 

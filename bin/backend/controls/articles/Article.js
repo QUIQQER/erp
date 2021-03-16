@@ -394,12 +394,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 setElement(self.$VAT, product.vat + '%');
 
                 if (typeof self.$bruttoCalc !== 'undefined' &&
-                    typeof self.$bruttoCalc.display_quantity_sum !== 'undefined') {
-                    self.$PriceBrutto.set('html', self.$bruttoCalc.display_quantity_sum);
-                    self.$PriceBrutto.set('data-value', self.$bruttoCalc.quantity_sum);
-                }
-
-                if (typeof self.$bruttoCalc !== 'undefined' &&
                     typeof self.$bruttoCalc.display_discount !== 'undefined') {
                     self.$DiscountBrutto.set('html', self.$bruttoCalc.display_discount);
                     self.$DiscountBrutto.set('data-value', self.$bruttoCalc.discount);
@@ -418,6 +412,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     typeof self.$bruttoCalc.display_unitPrice !== 'undefined') {
                     self.$UnitPriceBrutto.set('html', self.$bruttoCalc.display_unitPrice);
                     self.$UnitPriceBrutto.set('data-value', self.$bruttoCalc.unitPrice);
+                }
+
+                if (typeof self.$bruttoCalc !== 'undefined' &&
+                    typeof self.$bruttoCalc.display_quantity_sum !== 'undefined') {
+                    self.$PriceBrutto.set('html', self.$bruttoCalc.display_quantity_sum);
+                    self.$PriceBrutto.set('data-value', self.$bruttoCalc.quantity_sum);
                 }
 
                 self.hideLoader();
