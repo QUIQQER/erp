@@ -29,4 +29,5 @@
 .quiqqer-erp-outputMailEditor-attachments {
     display: none;
     padding: 10px 0 0 10px;
+    width: 300px;
 }

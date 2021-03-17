@@ -204,11 +204,19 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
                 mediaIds = this.$Attachments.getValue().split(',');
             }
 
+            var uniqueMediaIds = [];
+
+            for (var i = 0, len = mediaIds.length; i < len; i++) {
+                if (!uniqueMediaIds.contains(mediaIds[i])) {
+                    uniqueMediaIds.push(mediaIds[i]);
+                }
+            }
+
             this.fireEvent('mailSubmit', [
                 {
                     subject             : this.$MailSubjectInput.value,
                     content             : this.$MailContentEditor.getContent(),
-                    attachedMediaFileIds: mediaIds
+                    attachedMediaFileIds: uniqueMediaIds
                 },
                 this
             ]);
