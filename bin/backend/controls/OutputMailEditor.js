@@ -150,6 +150,29 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
                     );
                 }
 
+                var mediaFilesAdded = false;
+
+                var addMediaFiles = function () {
+                    if (mediaFilesAdded) {
+                        return;
+                    }
+
+                    mediaFilesAdded = true;
+
+                    // Add previously selected media items
+                    if (self.getAttribute('attachedMediaFileIds') && hasAttachmentPermission) {
+                        var mediaIds = self.getAttribute('attachedMediaFileIds');
+
+                        if (mediaIds.length) {
+                            for (var i = 0, len = mediaIds.length; i < len; i++) {
+                                self.$Attachments.addItem(mediaIds[i]);
+                            }
+
+                            AttachmentBtn.click();
+                        }
+                    }
+                };
+
                 require(['Editors'], function (Editors) {
                     Editors.getEditor().then(function (Editor) {
                         Editor.addEvent('onLoaded', function () {
@@ -158,18 +181,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
 
                             Editor.resize();
 
-                            // Add previously selected media items
-                            if (self.getAttribute('attachedMediaFileIds') && hasAttachmentPermission) {
-                                var mediaIds = self.getAttribute('attachedMediaFileIds');
-
-                                if (mediaIds.length) {
-                                    for (var i = 0, len = mediaIds.length; i < len; i++) {
-                                        self.$Attachments.addItem(mediaIds[i]);
-                                    }
-
-                                    AttachmentBtn.click();
-                                }
-                            }
+                            addMediaFiles();
                         });
 
                         Editor.inject(
