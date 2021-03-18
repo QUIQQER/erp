@@ -96,8 +96,6 @@ QUI::$Ajax->registerFunction(
             $brutto['articles'][$k]['unitPrice']            = \round($unitPrice, $Currency->getPrecision());
             $brutto['articles'][$k]['display_quantity_sum'] = $Currency->format($unitPrice * $quantity);
             $brutto['articles'][$k]['quantity_sum']         = $unitPrice * $quantity;
-
-            // display_quantity_sum;
         }
 
         $result['brutto'] = $brutto;

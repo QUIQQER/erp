@@ -49,6 +49,8 @@ QUI::$Ajax->registerFunction(
             return QUI\ERP\Defaults::getCurrency()->format($price);
         }
 
+        $price = \round($price, QUI\ERP\Defaults::getPrecision());
+
         return $price;
     },
     ['price', 'formatted', 'vat']
