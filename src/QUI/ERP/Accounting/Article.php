@@ -166,6 +166,10 @@ class Article implements ArticleInterface
 
         if (isset($attributes['discount'])) {
             $this->Discount = ArticleDiscount::unserialize($attributes['discount']);
+
+            if ($this->Discount) {
+                $this->Discount->setArticle($this);
+            }
         }
 
 
@@ -376,12 +380,12 @@ class Article implements ArticleInterface
     /**
      * Return the VAT for the article
      *
-     * @return int
+     * @return float
      */
     public function getVat()
     {
         if (isset($this->attributes['vat']) && $this->attributes['vat'] !== '') {
-            return (int)$this->attributes['vat'];
+            return (float)$this->attributes['vat'];
         }
 
         // check if product exists and has a vat
@@ -531,6 +535,10 @@ class Article implements ArticleInterface
      */
     public function getDiscount()
     {
+        if ($this->Discount) {
+            $this->Discount->setArticle($this);
+        }
+
         return $this->Discount;
     }
 

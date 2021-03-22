@@ -39,12 +39,17 @@ class ArticleDiscount
     protected $Currency = null;
 
     /**
+     * @var null|ArticleInterface
+     */
+    protected $Article = null;
+
+    /**
      * ArticleDiscount constructor.
      *
-     * @param int $discount
+     * @param float $discount
      * @param int $type
      */
-    public function __construct(int $discount, int $type)
+    public function __construct(float $discount, int $type)
     {
         switch ($type) {
             case Calc::CALCULATION_PERCENTAGE:
@@ -89,7 +94,7 @@ class ArticleDiscount
         } else {
             // is normal string 5% or 5.99 €
             if (\strpos($string, '%') !== false) {
-                $data['value'] = (int)\str_replace('%', '', $string);
+                $data['value'] = \floatval(\str_replace('%', '', $string));
                 $data['type']  = Calc::CALCULATION_PERCENTAGE;
             } else {
                 $data['value'] = QUI\ERP\Money\Price::validatePrice($string);
@@ -143,9 +148,9 @@ class ArticleDiscount
     /**
      * Return the discount value
      *
-     * @return int
+     * @return float
      */
-    public function getValue(): int
+    public function getValue(): float
     {
         return $this->value;
     }
@@ -205,14 +210,33 @@ class ArticleDiscount
      */
     public function formatted(): string
     {
-        if (!$this->value) {
+        $value = $this->value;
+
+        if (!$value) {
             return '';
         }
 
         if ($this->type === Calc::CALCULATION_COMPLEMENT) {
-            return $this->getCurrency()->format($this->value);
+            if ($this->Article && $this->Article->getUser()) {
+                $User    = $this->Article->getUser();
+                $isNetto = QUI\ERP\Utils\User::isNettoUser($User);
+
+                if (!$isNetto) {
+                    $value = $value * ($this->Article->getVat() / 100 + 1);
+                }
+            }
+
+            return $this->getCurrency()->format($value);
         }
 
-        return $this->value.'%';
+        return $value.'%';
+    }
+
+    /**
+     * @param ArticleInterface $Article
+     */
+    public function setArticle(ArticleInterface $Article)
+    {
+        $this->Article = $Article;
     }
 }

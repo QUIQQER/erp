@@ -57,8 +57,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             '$onEditQuantityUnit',
             '$onEditArticleNo',
             '$onEditUnitPriceQuantity',
+            '$onEditBruttoPrice',
             '$onEditVat',
             '$onEditDiscount',
+            '$onEditBruttoDiscount',
             'openDeleteDialog',
             '$onReplaceClick',
             '$editNext',
@@ -88,6 +90,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
             this.$user         = {};
             this.$calculations = {};
+            this.$bruttoCalc   = {};
 
             this.$Position  = null;
             this.$Quantity  = null;
@@ -156,6 +159,30 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.$VAT.addEvent('click', this.$onEditVat);
             this.$Discount.addEvent('click', this.$onEditDiscount);
             this.$QuantityUnit.addEvent('click', this.$onEditQuantityUnit);
+
+            // brutto stuff
+            this.$UnitPriceBrutto = new Element('div', {
+                'class': 'quiqqer-erp-backend-erpArticle-unitPrice-brutto cell cell-editable',
+                events : {
+                    click: this.$onEditBruttoPrice
+                }
+            }).inject(this.$UnitPrice, 'after');
+
+            this.$PriceBrutto = new Element('div', {
+                'class': 'quiqqer-erp-backend-erpArticle-price-brutto cell'
+            }).inject(this.$Price, 'after');
+
+            this.$DiscountBrutto = new Element('div', {
+                'class': 'quiqqer-erp-backend-erpArticle-discount-brutto cell cell-editable',
+                events : {
+                    click: this.$onEditBruttoDiscount
+                }
+            }).inject(this.$Discount, 'after');
+
+            this.$TotalBrutto = new Element('div', {
+                'class': 'quiqqer-erp-backend-erpArticle-total-brutto cell'
+            }).inject(this.$Total, 'after');
+
 
             this.$Loader = new Element('div', {
                 html  : '<span class="fa fa-spinner fa-spin"></span>',
@@ -366,6 +393,33 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 setElement(self.$Price, price);
                 setElement(self.$VAT, product.vat + '%');
 
+                if (typeof self.$bruttoCalc !== 'undefined' &&
+                    typeof self.$bruttoCalc.display_discount !== 'undefined') {
+                    self.$DiscountBrutto.set('html', self.$bruttoCalc.display_discount);
+                    self.$DiscountBrutto.set('data-value', self.$bruttoCalc.discount);
+                } else {
+                    self.$DiscountBrutto.set('html', '-');
+                    self.$DiscountBrutto.set('data-value', '-');
+                }
+
+                if (typeof self.$bruttoCalc !== 'undefined' &&
+                    typeof self.$bruttoCalc.display_sum !== 'undefined') {
+                    self.$TotalBrutto.set('html', self.$bruttoCalc.display_sum);
+                    self.$TotalBrutto.set('data-value', self.$bruttoCalc.sum);
+                }
+
+                if (typeof self.$bruttoCalc !== 'undefined' &&
+                    typeof self.$bruttoCalc.display_unitPrice !== 'undefined') {
+                    self.$UnitPriceBrutto.set('html', self.$bruttoCalc.display_unitPrice);
+                    self.$UnitPriceBrutto.set('data-value', self.$bruttoCalc.unitPrice);
+                }
+
+                if (typeof self.$bruttoCalc !== 'undefined' &&
+                    typeof self.$bruttoCalc.display_quantity_sum !== 'undefined') {
+                    self.$PriceBrutto.set('html', self.$bruttoCalc.display_quantity_sum);
+                    self.$PriceBrutto.set('data-value', self.$bruttoCalc.quantity_sum);
+                }
+
                 self.hideLoader();
                 self.fireEvent('calc', [self]);
 
@@ -406,7 +460,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     return parseInt(article.position) === pos;
                 })[0];
 
+                var brutto = result.brutto.articles.filter(function (article) {
+                    return parseInt(article.position) === pos;
+                })[0];
+
                 self.$calculations = article;
+                self.$bruttoCalc   = brutto;
                 self.fireEvent('calc', [self, result, article]);
 
                 return article;
@@ -763,7 +822,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * event : on description edit
          */
-        $onEditDescription: function (event) {
+        $onEditDescription: function () {
             if (this.$Editor) {
                 return;
             }
@@ -934,13 +993,32 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * event : on quantity edit
          */
         $onEditUnitPriceQuantity: function () {
+            var self = this;
+
             this.$createEditField(
                 this.$UnitPrice,
                 this.getAttribute('unitPrice'),
                 'number'
             ).then(function (value) {
-                this.setUnitPrice(value);
-            }.bind(this));
+                self.setUnitPrice(value);
+            });
+        },
+
+        /**
+         * event : on brutto price edit
+         */
+        $onEditBruttoPrice: function () {
+            var self = this;
+
+            this.$createEditField(
+                this.$UnitPriceBrutto,
+                this.$UnitPriceBrutto.get('data-value'),
+                'number'
+            ).then(function (value) {
+                return self.getNettoPrice(value, false);
+            }).then(function (value) {
+                self.setUnitPrice(value);
+            });
         },
 
         /**
@@ -985,6 +1063,37 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             ).then(function (value) {
                 this.setDiscount(value);
             }.bind(this));
+        },
+
+        /**
+         * event: on brutto edit discount
+         */
+        $onEditBruttoDiscount: function () {
+            var self     = this,
+                discount = this.$DiscountBrutto.get('data-value');
+
+            if (discount === '-' || discount === false || !discount) {
+                discount = '';
+            } else if (!discount.toString().match('%')) {
+                discount = parseFloat(discount);
+            }
+
+            this.$createEditField(
+                this.$DiscountBrutto,
+                discount
+            ).then(function (value) {
+                if (value.match('%')) {
+                    return self.setDiscount(value);
+                }
+
+                if (parseFloat(value) === 0) {
+                    return self.setDiscount(0);
+                }
+
+                return self.getNettoPrice(value).then(function (value) {
+                    self.setDiscount(value);
+                });
+            });
         },
 
         /**
@@ -1078,6 +1187,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             if (event.shift) {
                 Next = Cell.getPrevious('.cell-editable');
 
+                if (Next && Next.getStyle('display') === 'none') {
+                    event.target = Next;
+                    this.$editNext(event);
+                    return;
+                }
+
                 if (!Next) {
                     // previous row
                     Article         = Cell.getParent('.article');
@@ -1085,7 +1200,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!PreviousArticle) {
                         PreviousArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                            .getLast('.article');
+                                              .getLast('.article');
                     }
 
                     Next = PreviousArticle.getLast('.cell-editable');
@@ -1097,6 +1212,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     Next = Cell.getNext('.cell-editable');
                 }
 
+                if (Next && Next.getStyle('display') === 'none') {
+                    event.target = Next;
+                    this.$editNext(event);
+                    return;
+                }
+
                 if (!Next) {
                     // next row
                     Article     = Cell.getParent('.article');
@@ -1104,7 +1225,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!NextArticle) {
                         NextArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                            .getElement('.article');
+                                          .getElement('.article');
                     }
 
                     Next = NextArticle.getElement('.cell-editable');
@@ -1163,6 +1284,46 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     resolve(result);
                 }, {
                     'package': 'quiqqer/erp'
+                });
+            });
+        },
+
+        /**
+         * Get netto price
+         *
+         * @param value
+         * @param formatted
+         * @return {Promise}
+         */
+        getNettoPrice: function (value, formatted) {
+            var self = this;
+
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_erp_ajax_calcNettoPrice', resolve, {
+                    'package': 'quiqqer/erp',
+                    price    : value,
+                    vat      : self.getAttribute('vat'),
+                    formatted: formatted ? 1 : 0
+                });
+            });
+        },
+
+        /**
+         * Get brutto price
+         *
+         * @param value
+         * @param formatted
+         * @return {Promise}
+         */
+        getBruttoPrice: function (value, formatted) {
+            var self = this;
+
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_erp_ajax_calcBruttoPrice', resolve, {
+                    'package': 'quiqqer/erp',
+                    price    : value,
+                    vat      : self.getAttribute('vat'),
+                    formatted: formatted ? 1 : 0
                 });
             });
         }

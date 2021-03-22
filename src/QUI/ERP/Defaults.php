@@ -61,7 +61,17 @@ class Defaults
         $Config       = $Package->getConfig();
         $standardArea = $Config->getValue('shop', 'area');
 
-        $Area = $Areas->getChild($standardArea);
+        try {
+            $Area = $Areas->getChild($standardArea);
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addError(
+                'The ecoyn default area was not found. Please check your ecoyn area settings.'
+            );
+
+            // use area from default country
+            $Country = self::getCountry();
+            $Area    = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+        }
 
         /* @var $Area QUI\ERP\Areas\Area */
         return $Area;

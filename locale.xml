@@ -661,6 +661,36 @@
             <en><![CDATA[Article overview calculation]]></en>
         </locale>
 
+        <locale name="control.articleList.netto.message" html="true">
+            <de><![CDATA[Die Eingabe und Anzeige der Preise ist zur Zeit in <b>netto</b>.]]></de>
+            <en><![CDATA[The input and display of the prices is currently in <b>net</b>.]]></en>
+        </locale>
+        <locale name="control.articleList.brutto.message" html="true">
+            <de><![CDATA[
+            Achtung: Die Eingabe und Anzeige der Preise ist zur Zeit in <b>brutto</b>.
+            ]]></de>
+            <en><![CDATA[
+            Attention: The input and display of the prices is currently in <b>brutto</b>.
+            ]]></en>
+        </locale>
+
+        <locale name="control.window.price.brutto.title">
+            <de><![CDATA[Brutto Preiseingabe]]></de>
+            <en><![CDATA[Gross price input]]></en>
+        </locale>
+        <locale name="control.window.price.brutto.label">
+            <de><![CDATA[Preiseingabe]]></de>
+            <en><![CDATA[Gross price]]></en>
+        </locale>
+        <locale name="control.window.price.brutto.description" html="true">
+            <de><![CDATA[
+            <p>Bitte gebe dein Bruttopreis ein, dieser Preis wird automatisch als Nettopreis umgewandelt und eingefügt.</p>
+            ]]></de>
+            <en><![CDATA[
+            <p>Please enter your gross price, this price will automatically be converted and inserted as price.</p>
+            ]]></en>
+        </locale>
+
         <!-- Controls -->
         <locale name="controls.OutputDialog.labelEntityId">
             <de><![CDATA[Beleg-Nr.]]></de>
@@ -998,6 +1028,11 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
         <locale name="window.products.add.title">
             <de><![CDATA[Produkt Eigenschaften]]></de>
             <en><![CDATA[Product attributes]]></en>
+        </locale>
+
+        <locale name="controls.QuantityUnitWindow.title">
+            <de><![CDATA[Mengeneinheit]]></de>
+            <en><![CDATA[Quantity unit]]></en>
         </locale>
     </groups>
 </locales>
