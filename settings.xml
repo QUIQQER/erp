@@ -114,6 +114,12 @@
             <section name="paymentsChangeable"/>
             <section name="timestampFormat"/>
             <section name="dateFormat"/>
+
+            <section name="manufacturers">
+                <conf name="groupId">
+                    <type><![CDATA[integer]]></type>
+                </conf>
+            </section>
         </config>
 
         <window name="ERP">
@@ -399,6 +405,24 @@
                             </text>
                         </input>
                     </settings>
+
+                    <settings title="manufacturers" name="manufacturers">
+                        <title>
+                            <locale group="quiqqer/erp" var="settings.manufacturers.title"/>
+                        </title>
+
+                        <input conf="manufacturers.groupId"
+                               data-qui="controls/groups/Select"
+                               data-qui-options-max="1"
+                        >
+                            <text>
+                                <locale group="quiqqer/erp" var="settings.manufacturers.groupId"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/erp" var="settings.manufacturers.groupId.description"/>
+                            </description>
+                        </input>
+                    </settings>
                 </category>
 
                 <category name="currencies" index="1">
@@ -436,6 +460,7 @@
                                label="false"/>
                     </settings>
                 </category>
+
             </categories>
 
         </window>
