@@ -20,25 +20,45 @@ class Manufacturers
      */
     public static function getManufacturerGroupIds()
     {
+        $groupIds = [];
+
+        try {
+            $Conf           = QUI::getPackage('quiqqer/erp')->getConfig();
+            $defaultGroupId = $Conf->get('manufacturers', 'groupId');
+
+            if (!empty($defaultGroupId)) {
+                $groupIds[] = (int)$defaultGroupId;
+            }
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/products')) {
+            return $groupIds;
+        }
+
+        // If quiqqer/products is installed also check groups of default product field "Manufacturer"
         /** @var QUI\ERP\Products\Field\Types\GroupList $ManufacturerField */
         try {
             $ManufacturerField = Fields::getField(Fields::FIELD_MANUFACTURER);
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
-            return [];
+            return $groupIds;
         }
 
-        $groupIds = $ManufacturerField->getOption('groupIds');
+        $fieldGroupIds = $ManufacturerField->getOption('groupIds');
 
-        if (empty($groupIds) || !\is_array($groupIds)) {
-            return [];
+        if (empty($fieldGroupIds) || !\is_array($fieldGroupIds)) {
+            return $groupIds;
         }
 
-        \array_walk($groupIds, function (&$groupId) {
+        \array_walk($fieldGroupIds, function (&$groupId) {
             $groupId = (int)$groupId;
         });
 
-        return $groupIds;
+        $groupIds = \array_merge($groupIds, $fieldGroupIds);
+
+        return \array_values(\array_unique($groupIds));
     }
 
     /**
