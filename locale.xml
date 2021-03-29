@@ -628,6 +628,11 @@
             <de><![CDATA[[discount] Rabatt]]></de>
             <en><![CDATA[[discount] discount]]></en>
         </locale>
+
+        <locale name="dashboard.title">
+            <de><![CDATA[ecoyn Dashboard]]></de>
+            <en><![CDATA[ecoyn dashboard]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">
