@@ -32,6 +32,7 @@
         <provider>
             <erp src="\QUI\ERP\Provider\Erp"/>
             <requirements src="\QUI\ERP\Provider\Requirements"/>
+<!--            <dashboard src="\QUI\ERP\Dashboard\DashboardProvider"/>-->
         </provider>
     </package>
 </quiqqer>
