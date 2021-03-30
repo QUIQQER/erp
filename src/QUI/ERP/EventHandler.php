@@ -7,6 +7,7 @@
 namespace QUI\ERP;
 
 use QUI;
+use QUI\ERP\Products\Handler\Fields as ProductFields;
 use QUI\Package\Package;
 use Quiqqer\Engine\Collector;
 
@@ -44,6 +45,58 @@ class EventHandler
     {
         if ($Package->getName() !== 'quiqqer/erp') {
             return;
+        }
+
+        self::createDefaultManufacturerGroup();
+    }
+
+    /**
+     * Create a default manufacturer group if none exists yet.
+     *
+     * @return void
+     */
+    public static function createDefaultManufacturerGroup()
+    {
+        try {
+            $Conf           = QUI::getPackage('quiqqer/erp')->getConfig();
+            $defaultGroupId = $Conf->get('manufacturers', 'groupId');
+
+            if (!empty($defaultGroupId)) {
+                return;
+            }
+
+            $Root = QUI::getGroups()->firstChild();
+
+            $Manufacturers = $Root->createChild(
+                QUI::getLocale()->get('quiqqer/erp', 'manufacturers.default_group_name'),
+                QUI::getUsers()->getSystemUser()
+            );
+
+            $Conf->setValue('manufacturers', 'groupId', $Manufacturers->getId());
+            $Conf->save();
+
+            $Manufacturers->activate();
+
+            // Add manufacturer group Id to product manufacturer field
+            if (QUI::getPackageManager()->isInstalled('quiqqer/products')) {
+                try {
+                    /** @var QUI\ERP\Products\Field\Types\GroupList $ProductField */
+                    $ProductField = ProductFields::getField(ProductFields::FIELD_MANUFACTURER);
+                    $groupIds     = $ProductField->getOption('groupIds');
+
+                    if (empty($groupIds)) {
+                        $groupIds = [];
+                    }
+
+                    $groupIds[] = $Manufacturers->getId();
+                    $ProductField->setOption('groupIds', $groupIds);
+                    $ProductField->save();
+                } catch (\Exception $Exception) {
+                    QUI\System\Log::writeDebugException($Exception);
+                }
+            }
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
         }
     }
 

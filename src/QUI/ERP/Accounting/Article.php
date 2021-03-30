@@ -225,7 +225,7 @@ class Article implements ArticleInterface
      *
      * @return ArticleView
      */
-    public function getView()
+    public function getView(): ArticleView
     {
         return new ArticleView($this);
     }
@@ -233,7 +233,7 @@ class Article implements ArticleInterface
     /**
      * Return the Article ID
      *
-     * @return mixed|string
+     * @return string|int
      */
     public function getId()
     {
@@ -247,7 +247,7 @@ class Article implements ArticleInterface
     /**
      * Return the Article Number
      *
-     * @return mixed|string
+     * @return int|string
      */
     public function getArticleNo()
     {
@@ -263,7 +263,7 @@ class Article implements ArticleInterface
      *
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         if (isset($this->attributes['title'])) {
             return $this->attributes['title'];
@@ -277,7 +277,7 @@ class Article implements ArticleInterface
      *
      * @return null|QUI\Projects\Media\Image
      */
-    public function getImage()
+    public function getImage(): ?QUI\Projects\Media\Image
     {
         if (isset($this->attributes['image'])) {
             try {
@@ -322,7 +322,7 @@ class Article implements ArticleInterface
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         if (isset($this->attributes['description'])) {
             return $this->attributes['description'];
@@ -336,7 +336,7 @@ class Article implements ArticleInterface
      *
      * @return QUI\ERP\Money\Price
      */
-    public function getUnitPrice()
+    public function getUnitPrice(): Price
     {
         $unitPrice = 0;
 
@@ -370,7 +370,7 @@ class Article implements ArticleInterface
      *
      * @return QUI\ERP\Money\Price
      */
-    public function getSum()
+    public function getSum(): Price
     {
         $this->calc();
 
@@ -434,7 +434,7 @@ class Article implements ArticleInterface
     /**
      * @return null|QUI\Interfaces\Users\User
      */
-    public function getUser()
+    public function getUser(): ?QUI\Interfaces\Users\User
     {
         return $this->User;
     }
@@ -455,7 +455,7 @@ class Article implements ArticleInterface
      *
      * @return QUI\ERP\Currency\Currency|null
      */
-    public function getCurrency()
+    public function getCurrency(): ?QUI\ERP\Currency\Currency
     {
         return $this->Currency;
     }
@@ -489,7 +489,7 @@ class Article implements ArticleInterface
      *
      * @return Price
      */
-    public function getPrice()
+    public function getPrice(): Price
     {
         $this->calc();
 
@@ -499,7 +499,7 @@ class Article implements ArticleInterface
     /**
      * @return bool
      */
-    public function displayPrice()
+    public function displayPrice(): bool
     {
         return $this->displayPrice;
     }
@@ -509,7 +509,7 @@ class Article implements ArticleInterface
     /**
      * Set a discount to the article
      *
-     * @param int $discount
+     * @param int|float $discount
      * @param int $discountType - default = complement
      *
      * @todo überdenken, ganzer artikel ist eigentlich nicht änderbar
@@ -533,7 +533,7 @@ class Article implements ArticleInterface
      *
      * @return ArticleDiscount|null
      */
-    public function getDiscount()
+    public function getDiscount(): ?ArticleDiscount
     {
         if ($this->Discount) {
             $this->Discount->setArticle($this);
@@ -547,7 +547,7 @@ class Article implements ArticleInterface
      *
      * @return bool
      */
-    public function hasDiscount()
+    public function hasDiscount(): bool
     {
         return !!$this->getDiscount();
     }
@@ -558,7 +558,7 @@ class Article implements ArticleInterface
      * @param null|Calc|QUI\ERP\User $Instance
      * @return self
      */
-    public function calc($Instance = null)
+    public function calc($Instance = null): Article
     {
         if ($this->calculated) {
             return $this;
@@ -608,7 +608,7 @@ class Article implements ArticleInterface
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $vat      = $this->getVat();
         $discount = '';
@@ -678,7 +678,7 @@ class Article implements ArticleInterface
      * @param string $key
      * @return mixed|null
      */
-    public function getCustomField($key)
+    public function getCustomField(string $key)
     {
         if (isset($this->customFields[$key])) {
             return $this->customFields[$key];
@@ -690,7 +690,7 @@ class Article implements ArticleInterface
     /**
      * @return array
      */
-    public function getCustomFields()
+    public function getCustomFields(): array
     {
         return $this->customFields;
     }
@@ -698,7 +698,7 @@ class Article implements ArticleInterface
     /**
      * @return array
      */
-    public function getCustomData()
+    public function getCustomData(): array
     {
         return $this->customData;
     }

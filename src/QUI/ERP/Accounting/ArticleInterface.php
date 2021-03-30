@@ -27,17 +27,17 @@ interface ArticleInterface
     /**
      * @return ArticleView
      */
-    public function getView();
+    public function getView(): ArticleView;
 
     /**
      * @return string
      */
-    public function getTitle();
+    public function getTitle(): string;
 
     /**
      * @return string
      */
-    public function getDescription();
+    public function getDescription(): string;
 
     /**
      * @return integer|float
@@ -62,11 +62,12 @@ interface ArticleInterface
     /**
      * @return array
      */
-    public function toArray();
+    public function toArray(): array;
 
     /**
      * is the price displayed or not
+     *
      * @return bool
      */
-    public function displayPrice();
+    public function displayPrice(): bool;
 }

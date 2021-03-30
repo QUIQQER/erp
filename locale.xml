@@ -251,6 +251,23 @@
 
     <groups name="quiqqer/erp" datatype="php">
 
+        <locale name="manufacturers.default_group_name">
+            <de><![CDATA[Hersteller]]></de>
+            <en><![CDATA[Manufacturers]]></en>
+        </locale>
+        <locale name="settings.manufacturers.title">
+            <de><![CDATA[Hersteller]]></de>
+            <en><![CDATA[Manufacturers]]></en>
+        </locale>
+        <locale name="settings.manufacturers.groupId">
+            <de><![CDATA[Haupt Hersteller-Gruppe]]></de>
+            <en><![CDATA[Main manufacturer group]]></en>
+        </locale>
+        <locale name="settings.manufacturers.groupId.description">
+            <de><![CDATA[Alle Benutzer in dieser Gruppe werden als Hersteller gelistet. Sofern das E-COYN Produkte-Modul installiert ist, zählen auch alle Gruppen des Produktfelds "Hersteller" dazu.]]></de>
+            <en><![CDATA[All users in this group are listed as manufacturers. If the E-COYN Products module is installed, all groups in the "Manufacturer" product field also count as manufacturers.]]></en>
+        </locale>
+
         <locale name="message.ajax.manufacturers.create.newManufacturer.success" html="true">
             <de><![CDATA[Hersteller <b>[manufacturerId]</b> wurde erfolgreich erstellt.]]></de>
             <en><![CDATA[Manufacturer <b>[manufacturerId]</b> was created successfully.]]></en>
@@ -610,6 +627,11 @@
         <locale name="article.list.discount.text">
             <de><![CDATA[[discount] Rabatt]]></de>
             <en><![CDATA[[discount] discount]]></en>
+        </locale>
+
+        <locale name="dashboard.title">
+            <de><![CDATA[ecoyn Dashboard]]></de>
+            <en><![CDATA[ecoyn dashboard]]></en>
         </locale>
     </groups>
 
