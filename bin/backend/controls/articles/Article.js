@@ -69,6 +69,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         ],
 
         options: {
+            id          : false,
             articleNo   : '',
             description : '',
             discount    : '-',
@@ -1200,7 +1201,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!PreviousArticle) {
                         PreviousArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                                              .getLast('.article');
+                            .getLast('.article');
                     }
 
                     Next = PreviousArticle.getLast('.cell-editable');
@@ -1225,7 +1226,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!NextArticle) {
                         NextArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                                          .getElement('.article');
+                            .getElement('.article');
                     }
 
                     Next = NextArticle.getElement('.cell-editable');
