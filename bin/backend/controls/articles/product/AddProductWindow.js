@@ -139,7 +139,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                     Label.set('html', Field.get('html'));
 
                                     Label.getElement('.quiqqer-product-field-title')
-                                         .addClass('field-container-item');
+                                        .addClass('field-container-item');
 
                                     var Value = Label.getElement('.quiqqer-product-field-value');
                                     var Input = Value.getElement('input,select');
@@ -149,13 +149,18 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                         Input.addClass('field-container-field');
                                     } else {
                                         Label.getElement('.quiqqer-product-field-value')
-                                             .addClass('field-container-field');
+                                            .addClass('field-container-field');
                                     }
 
                                     RowClone.inject(Table);
                                 });
 
                                 QUI.parse(Form).then(function () {
+                                    QUI.fireEvent(
+                                        'quiqqerErpAddProductWindowProductSettingsOpen',
+                                        [productId, Win, self]
+                                    );
+
                                     return Win.Loader.hide();
                                 });
                             }).catch(function (err) {
