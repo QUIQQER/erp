@@ -57,8 +57,12 @@ QUI::$Ajax->registerFunction(
             $bruttoSum = $article['sum'];
             $quantity  = $article['quantity'];
 
-            $unitPrice = $bruttoSum / $quantity;
-            $unitPrice = \round($unitPrice, $Currency->getPrecision());
+            if ($quantity) {
+                $unitPrice = $bruttoSum / $quantity;
+                $unitPrice = \round($unitPrice, $Currency->getPrecision());
+            } else {
+                $unitPrice = $article['unitPrice'] * $vat;
+            }
 
             $brutto['articles'][$k]['unitPrice']            = $unitPrice;
             $brutto['articles'][$k]['display_unitPrice']    = $Currency->format($unitPrice);

@@ -59,7 +59,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             this.$user     = {};
             this.$sorting  = false;
 
-            this.$calculationTimer = null;
+            this.$calculationTimer     = null;
+            this.$isIncalculationFrame = false;
 
             this.$calculations = {
                 currencyData: {},
@@ -374,6 +375,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         $executeCalculation: function () {
             var self = this;
 
+            if (this.$isIncalculationFrame) {
+                self.fireEvent('calc', [self, self.$calculations]);
+
+                return Promise.resolve(self.$calculations);
+            }
+
             if (this.$calculationRunning) {
                 return new Promise(function (resolve) {
                     var trigger = function () {
@@ -393,8 +400,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 });
 
                 QUIAjax.get('package_quiqqer_erp_ajax_products_calc', function (result) {
-                    self.$calculations       = result;
-                    self.$calculationRunning = false;
+                    self.$calculations         = result;
+                    self.$isIncalculationFrame = true;
+                    self.$calculationRunning   = false;
+
+                    // performance double request -> quiqqer/invoice#104
+                    setTimeout(function () {
+                        self.$isIncalculationFrame = false;
+                    }, 100);
+
                     self.fireEvent('calc', [self, result]);
                     resolve(result);
                 }, {
