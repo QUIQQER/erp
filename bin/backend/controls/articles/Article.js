@@ -152,8 +152,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.$Total        = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-total');
             this.$Buttons      = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-buttons');
 
-            this.$Text.addClass('quiqqer-erp-backend-erpArticle__cell_nopadding');
-
             this.$ArticleNo.addEvent('click', this.$onEditArticleNo);
             this.$Quantity.addEvent('click', this.$onEditQuantity);
             this.$UnitPrice.addEvent('click', this.$onEditUnitPriceQuantity);
@@ -568,8 +566,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 // If title / description were edited via WYSIWYG editor -> open editor on click
                 this.$Title.removeEvent('click', this.$onEditTitle);
                 this.$Title.addEvent('click', this.$onEditDescription);
-
-                this.$Text.removeClass('quiqqer-erp-backend-erpArticle__cell_nopadding');
             }
 
             this.fireEvent('setDescription', [this]);
@@ -1127,6 +1123,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                         width     : 'calc(100% - 10px)'
                     }
                 }).inject(Container);
+
+                if (Container === self.$Title) {
+                    Edit.setStyle('top', -10);
+                }
 
                 if (type === 'number') {
                     Edit.set('step', 'any');
