@@ -270,4 +270,23 @@ class Defaults
 
         return QUI::getProjectManager()->getStandard()->getMedia()->getLogoImage();
     }
+
+    /**
+     * Return the Short Shop Address
+     *
+     * @return string
+     */
+    public static function getShortAddress(): string
+    {
+        // ACME gmbH - Pferdweg 12 - 42424 Pfedestadt
+        $fields = [];
+
+        $fields[] = self::conf('company', 'name');
+        $fields[] = self::conf('company', 'street');
+        $fields[] = self::conf('company', 'zipCode').' '.self::conf('company', 'city');
+
+        $fields = \array_values($fields);
+
+        return \implode(' - ', $fields);
+    }
 }
