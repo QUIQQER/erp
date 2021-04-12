@@ -24,8 +24,19 @@ QUI::$Ajax->registerFunction(
         $price = QUI\ERP\Money\Price::validatePrice($price);
 
         if (empty($vat)) {
-            $Area    = QUI\ERP\Defaults::getArea();
-            $TaxType = TaxUtils::getTaxTypeByArea($Area);
+            $Area = QUI\ERP\Defaults::getArea();
+
+            try {
+                $TaxType = TaxUtils::getTaxTypeByArea($Area);
+            } catch (QUI\Exception $Exception) {
+                QUI::getMessagesHandler()->addError($Exception->getMessage());
+
+                if (isset($formatted) && $formatted) {
+                    return QUI\ERP\Defaults::getCurrency()->format($price);
+                }
+
+                return $price;
+            }
 
             if ($TaxType instanceof TaxType) {
                 $TaxEntry = TaxUtils::getTaxEntry($TaxType, $Area);
