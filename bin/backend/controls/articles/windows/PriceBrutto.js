@@ -97,7 +97,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceBrutto', 
             }, {
                 'package': 'quiqqer/erp',
                 price    : this.getContent().getElement('input').value,
-                vat      : this.getAttribute('vat')
+                vat      : this.getAttribute('vat'),
+                onError  : function (err) {
+                    console.error(err);
+
+                    QUI.getMessageHandler().then(function (MH) {
+                        MH.addError(err.getMessage());
+                    });
+
+                    self.close();
+                }
             });
         }
     });
