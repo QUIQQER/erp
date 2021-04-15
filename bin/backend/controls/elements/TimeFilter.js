@@ -101,6 +101,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
             this.$Select.appendChild(QUILocale.get(lg, 'journal.timeFilter.halfYear'), 'half-year');
             this.$Select.appendChild(QUILocale.get(lg, 'journal.timeFilter.year'), 'year');
             this.$Select.appendChild(QUILocale.get(lg, 'journal.timeFilter.period'), 'period');
+            this.$Select.appendChild(QUILocale.get(lg, 'journal.timeFilter.user'), 'user');
 
             this.$Prev.inject(this.$Elm);
             this.$Select.inject(this.$Elm);
@@ -235,6 +236,11 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
         $onChange: function () {
             if (this.$Select.getValue() === 'period') {
                 this.showPeriodSelect();
+                return;
+            }
+
+            if (this.$Select.getValue() === 'user') {
+                this.showUserSelect();
                 return;
             }
 
@@ -692,6 +698,138 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
             } catch (e) {
                 return window.Intl.DateTimeFormat('de-DE', options);
             }
+        },
+
+        showUserSelect: function () {
+            var self        = this,
+                elmPosition = this.getElm().getPosition(),
+                elmSize     = this.getElm().getSize(),
+                left        = elmPosition.x + 32,
+                width       = 440;
+
+            var size = document.body.getSize();
+
+            if (size.y <= left + width) {
+                left = elmSize.x + elmPosition.x - width - 32;
+            }
+
+            this.fireEvent('userSelectOpenBegin', [self]);
+
+            if (!this.$Current) {
+                this.$Current = new window.Date();
+            }
+
+            if (!this.$To) {
+                this.$To = new window.Date();
+            }
+
+            var Container = new Element('div', {
+                tabindex: -1,
+                'class' : 'timefilter-user-select',
+                html    : '' +
+                    '<div class="timefilter-user-select-left">' +
+                    '   <div class="timefilter-user-select-left-select" data-value="today">' +
+                    '       Heute' +
+                    '   </div>' +
+                    '   <div class="timefilter-user-select-left-select" data-value="yesterday">' +
+                    '       Gestern' +
+                    '   </div>' +
+                    '   <div class="timefilter-user-select-left-select" data-value="month">' +
+                    '       Aktueller Monat' +
+                    '   </div>' +
+                    '   <div class="timefilter-user-select-left-select" data-value="lastMonth">' +
+                    '       Letzter Monat' +
+                    '   </div>' +
+                    '</div>' +
+                    '<div class="timefilter-user-select-right"></div>',
+                styles  : {
+                    left : left,
+                    top  : elmPosition.y + 40,
+                    width: width
+                },
+                events  : {
+                    blur: function (event) {
+                        self.fireEvent('userSelectClose', [self]);
+
+                        event.target.setStyle('display', 'none');
+                        event.target.destroy();
+                    }
+                }
+            }).inject(document.body);
+
+            var selects = Container.getElements('.timefilter-user-select-left-select');
+
+            selects.addEvent('click', function (e) {
+                e.stop();
+
+                var Target = e.target;
+
+                if (!Target.hasClass('timefilter-user-select-left-select')) {
+                    Target = Target.getParent('.timefilter-user-select-left-select');
+                }
+
+                selects.removeClass('timefilter-user-select-left-select--active');
+                Target.addClass('timefilter-user-select-left-select--active');
+            });
+
+
+            require(['package/quiqqer/calendar-controls/bin/Scheduler'], function (Scheduler) {
+                Scheduler.loadExtension('minical').then(function () {
+                    var Handler = Scheduler.getScheduler();
+
+                    var Ghost = new Element('div', {
+                        html: '<div class="dhx_cal_navline">' +
+                            '<div class="dhx_cal_date"></div>' +
+                            '<div class="dhx_cal_tab" name="day_tab" style="right:76px;"></div>' +
+                            '</div>' +
+                            '<div class="dhx_cal_header"></div>' +
+                            '<div class="dhx_cal_data"></div>'
+                    });
+
+                    Handler.config.xml_date = "%Y-%m-%d";
+                    Handler.init(Ghost, new window.Date(), "day");
+
+                    var Calendar = Handler.renderCalendar({
+                        container : Container.getElement('.timefilter-user-select-right'),
+                        date      : new window.Date(),
+                        navigation: true,
+                        handler   : function (date) {
+
+                        }
+                    });
+
+                    Container.getElement('[data-value="today"]').addEvent('click', function () {
+                        Handler.updateCalendar(Calendar, new window.Date());
+                        Handler.markCalendar(Calendar, new window.Date(), 'dhx_calendar_click active');
+                    });
+
+                    Container.getElement('[data-value="yesterday"]').addEvent('click', function () {
+                        var D = new window.Date();
+                        D.setDate(D.getDate() - 1);
+
+                        Handler.updateCalendar(Calendar, new window.Date());
+                        Handler.markCalendar(Calendar, D, 'dhx_calendar_click active');
+                    });
+
+                    Container.getElement('[data-value="month"]').addEvent('click', function () {
+                        Handler.updateCalendar(Calendar, new window.Date());
+                        Handler.markCalendar(Calendar, new window.Date(), 'dhx_calendar_click active');
+                    });
+
+                    Container.getElement('[data-value="lastMonth"]').addEvent('click', function () {
+                        var D = new window.Date();
+                        D.setMonth(D.getMonth() - 1);
+
+                        Handler.updateCalendar(Calendar, D);
+                        Handler.markCalendar(Calendar, D, 'dhx_calendar_click active');
+                    });
+
+                });
+            });
+
+            Container.getElement('[data-value="today"]')
+                     .addClass('timefilter-user-select-left-select--active');
+            //Container.focus();
         }
     });
 });

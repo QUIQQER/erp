@@ -264,8 +264,10 @@
             <en><![CDATA[Main manufacturer group]]></en>
         </locale>
         <locale name="settings.manufacturers.groupId.description">
-            <de><![CDATA[Alle Benutzer in dieser Gruppe werden als Hersteller gelistet. Sofern das E-COYN Produkte-Modul installiert ist, zählen auch alle Gruppen des Produktfelds "Hersteller" dazu.]]></de>
-            <en><![CDATA[All users in this group are listed as manufacturers. If the E-COYN Products module is installed, all groups in the "Manufacturer" product field also count as manufacturers.]]></en>
+            <de>
+                <![CDATA[Alle Benutzer in dieser Gruppe werden als Hersteller gelistet. Sofern das E-COYN Produkte-Modul installiert ist, zählen auch alle Gruppen des Produktfelds "Hersteller" dazu.]]></de>
+            <en>
+                <![CDATA[All users in this group are listed as manufacturers. If the E-COYN Products module is installed, all groups in the "Manufacturer" product field also count as manufacturers.]]></en>
         </locale>
 
         <locale name="message.ajax.manufacturers.create.newManufacturer.success" html="true">
@@ -867,6 +869,10 @@
         <locale name="journal.timeFilter.change.year">
             <de><![CDATA[Jahr ändern]]></de>
             <en><![CDATA[Change year]]></en>
+        </locale>
+        <locale name="journal.timeFilter.user">
+            <de><![CDATA[Benutzer definiert]]></de>
+            <en><![CDATA[User defined]]></en>
         </locale>
 
 
