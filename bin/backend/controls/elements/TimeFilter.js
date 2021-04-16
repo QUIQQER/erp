@@ -204,17 +204,56 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
 
         /**
          * Return the selected period / time
+         * possible interval: days, months, years
          *
-         * @return {{from: number, to: number}}
+         * @return {{from: number, to: number, interval: string}}
          */
         getValue: function () {
             if (!this.$To) {
                 this.$To = new window.Date();
             }
 
+            var interval = 'days';
+
+            switch (this.$type) {
+                default:
+                case 'day':
+                case 'month':
+                    interval = 'days';
+                    break;
+
+                case 'quarter':
+                    interval = 'months';
+                    break;
+
+                case 'half-year':
+                    interval = 'months';
+                    break;
+
+                case 'year':
+                    interval = 'years';
+                    break;
+
+                case 'user':
+                case 'period':
+                    var diff = this.$Current.getTime() - this.$To.getTime();
+                    var days = diff / (1000 * 3600 * 24);
+
+                    if (days > 30 && days < 365) {
+                        interval = 'months';
+                    } else if (days >= 365) {
+                        interval = 'years';
+                    } else {
+                        interval = 'days';
+                    }
+
+                    break;
+            }
+
             return {
-                from: Math.floor(this.$Current.getTime() / 1000),
-                to  : Math.floor(this.$To.getTime() / 1000)
+                from    : Math.floor(this.$Current.getTime() / 1000),
+                to      : Math.floor(this.$To.getTime() / 1000),
+                interval: interval
             };
         },
 
