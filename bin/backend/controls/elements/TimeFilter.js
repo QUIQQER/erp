@@ -165,6 +165,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
                     text = text + ' ' + this.$Current.getFullYear();
                     break;
 
+                case 'user':
                 case 'period':
                     this.$Prev.disable();
                     this.$Next.disable();
@@ -700,6 +701,9 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
             }
         },
 
+        /**
+         * Display user select
+         */
         showUserSelect: function () {
             var self        = this,
                 elmPosition = this.getElm().getPosition(),
@@ -729,16 +733,16 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
                 html    : '' +
                     '<div class="timefilter-user-select-left">' +
                     '   <div class="timefilter-user-select-left-select" data-value="today">' +
-                    '       Heute' +
+                    QUILocale.get(lg, 'user.filter.today') +
                     '   </div>' +
                     '   <div class="timefilter-user-select-left-select" data-value="yesterday">' +
-                    '       Gestern' +
+                    QUILocale.get(lg, 'user.filter.yesterday') +
                     '   </div>' +
                     '   <div class="timefilter-user-select-left-select" data-value="month">' +
-                    '       Aktueller Monat' +
+                    QUILocale.get(lg, 'user.filter.month') +
                     '   </div>' +
                     '   <div class="timefilter-user-select-left-select" data-value="lastMonth">' +
-                    '       Letzter Monat' +
+                    QUILocale.get(lg, 'user.filter.lastMonth') +
                     '   </div>' +
                     '</div>' +
                     '<div class="timefilter-user-select-right"></div>',
@@ -777,6 +781,9 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
                 Scheduler.loadExtension('minical').then(function () {
                     var Handler = Scheduler.getScheduler();
 
+                    var CurrentDate = null;
+                    var currentType = 'today';
+
                     var Ghost = new Element('div', {
                         html: '<div class="dhx_cal_navline">' +
                             '<div class="dhx_cal_date"></div>' +
@@ -794,42 +801,99 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
                         date      : new window.Date(),
                         navigation: true,
                         handler   : function (date) {
-
+                            CurrentDate = date;
                         }
                     });
 
                     Container.getElement('[data-value="today"]').addEvent('click', function () {
-                        Handler.updateCalendar(Calendar, new window.Date());
-                        Handler.markCalendar(Calendar, new window.Date(), 'dhx_calendar_click active');
+                        var D = new window.Date();
+
+                        Handler.updateCalendar(Calendar, new Date(D.getTime()));
+                        Handler.markCalendar(Calendar, new Date(D.getTime()), 'dhx_calendar_click active');
+
+                        currentType = 'today';
+                        CurrentDate = D;
                     });
 
                     Container.getElement('[data-value="yesterday"]').addEvent('click', function () {
                         var D = new window.Date();
                         D.setDate(D.getDate() - 1);
 
-                        Handler.updateCalendar(Calendar, new window.Date());
-                        Handler.markCalendar(Calendar, D, 'dhx_calendar_click active');
+                        Handler.updateCalendar(Calendar, new Date(D.getTime()));
+                        Handler.markCalendar(Calendar, new Date(D.getTime()), 'dhx_calendar_click active');
+
+                        currentType = 'yesterday';
+                        CurrentDate = D;
                     });
 
                     Container.getElement('[data-value="month"]').addEvent('click', function () {
-                        Handler.updateCalendar(Calendar, new window.Date());
-                        Handler.markCalendar(Calendar, new window.Date(), 'dhx_calendar_click active');
+                        var D = new window.Date();
+
+                        Handler.updateCalendar(Calendar, new Date(D.getTime()));
+                        Handler.markCalendar(Calendar, new Date(D.getTime()), 'dhx_calendar_click active');
+
+                        currentType = 'month';
+                        CurrentDate = D;
                     });
 
                     Container.getElement('[data-value="lastMonth"]').addEvent('click', function () {
                         var D = new window.Date();
                         D.setMonth(D.getMonth() - 1);
 
-                        Handler.updateCalendar(Calendar, D);
-                        Handler.markCalendar(Calendar, D, 'dhx_calendar_click active');
+                        Handler.updateCalendar(Calendar, new Date(D.getTime()));
+                        Handler.markCalendar(Calendar, new Date(D.getTime()), 'dhx_calendar_click active');
+
+                        currentType = 'lastMonth';
+                        CurrentDate = D;
                     });
 
+                    Container.getElement('[data-value="today"]').click();
+
+
+                    var Accept = new QUIButton({
+                        text  : QUILocale.get('quiqqer/system', 'accept'),
+                        styles: {
+                            'float': 'right',
+                            margin : '10px 10px 0 0'
+                        }
+                    }).inject(Container.getElement('.timefilter-user-select-right'));
+
+                    Accept.getElm().addEvent('mousedown', function (e) {
+                        switch (currentType) {
+                            case 'today':
+                            case 'yesterday':
+                                self.$Current = CurrentDate;
+                                self.$To      = CurrentDate;
+                                break;
+
+                            case 'month':
+                            case 'lastMonth':
+                                var FirstDay = new Date(
+                                    CurrentDate.getFullYear(),
+                                    CurrentDate.getMonth(),
+                                    1
+                                );
+
+                                var LastDay = new Date(
+                                    CurrentDate.getFullYear(),
+                                    CurrentDate.getMonth() + 1,
+                                    0
+                                );
+
+                                self.$Current = FirstDay;
+                                self.$To      = LastDay;
+                                break;
+                        }
+
+                        self.$triggerChange();
+                    });
                 });
             });
 
             Container.getElement('[data-value="today"]')
                      .addClass('timefilter-user-select-left-select--active');
-            //Container.focus();
+
+            Container.focus();
         }
     });
 });

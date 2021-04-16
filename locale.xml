@@ -893,6 +893,23 @@
             <en><![CDATA[4th quarter]]></en>
         </locale>
 
+        <locale name="user.filter.today">
+            <de><![CDATA[Heute]]></de>
+            <en><![CDATA[Today]]></en>
+        </locale>
+        <locale name="user.filter.yesterday">
+            <de><![CDATA[Gestern]]></de>
+            <en><![CDATA[Yesterday]]></en>
+        </locale>
+        <locale name="user.filter.month">
+            <de><![CDATA[Aktueller Monat]]></de>
+            <en><![CDATA[Current month]]></en>
+        </locale>
+        <locale name="user.filter.lastMonth">
+            <de><![CDATA[Letzter Monat]]></de>
+            <en><![CDATA[Last month]]></en>
+        </locale>
+
         <locale name="halfYear.1">
             <de><![CDATA[1 Halbjahr]]></de>
             <en><![CDATA[1 half year]]></en>

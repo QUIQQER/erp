@@ -78,6 +78,7 @@
 }
 
 .timefilter-user-select-right {
+    padding-top: 10px;
     width: calc(100% - 160px);
 }
 
