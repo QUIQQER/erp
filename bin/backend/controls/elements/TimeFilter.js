@@ -101,6 +101,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
             this.$Select.appendChild(QUILocale.get(lg, 'journal.timeFilter.halfYear'), 'half-year');
             this.$Select.appendChild(QUILocale.get(lg, 'journal.timeFilter.year'), 'year');
             this.$Select.appendChild(QUILocale.get(lg, 'journal.timeFilter.period'), 'period');
+            this.$Select.appendChild(QUILocale.get(lg, 'journal.timeFilter.user'), 'user');
 
             this.$Prev.inject(this.$Elm);
             this.$Select.inject(this.$Elm);
@@ -164,6 +165,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
                     text = text + ' ' + this.$Current.getFullYear();
                     break;
 
+                case 'user':
                 case 'period':
                     this.$Prev.disable();
                     this.$Next.disable();
@@ -202,17 +204,56 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
 
         /**
          * Return the selected period / time
+         * possible interval: days, months, years
          *
-         * @return {{from: number, to: number}}
+         * @return {{from: number, to: number, interval: string}}
          */
         getValue: function () {
             if (!this.$To) {
                 this.$To = new window.Date();
             }
 
+            var interval = 'days';
+
+            switch (this.$type) {
+                default:
+                case 'day':
+                case 'month':
+                    interval = 'days';
+                    break;
+
+                case 'quarter':
+                    interval = 'months';
+                    break;
+
+                case 'half-year':
+                    interval = 'months';
+                    break;
+
+                case 'year':
+                    interval = 'years';
+                    break;
+
+                case 'user':
+                case 'period':
+                    var diff = this.$Current.getTime() - this.$To.getTime();
+                    var days = diff / (1000 * 3600 * 24);
+
+                    if (days > 30 && days < 365) {
+                        interval = 'months';
+                    } else if (days >= 365) {
+                        interval = 'years';
+                    } else {
+                        interval = 'days';
+                    }
+
+                    break;
+            }
+
             return {
-                from: Math.floor(this.$Current.getTime() / 1000),
-                to  : Math.floor(this.$To.getTime() / 1000)
+                from    : Math.floor(this.$Current.getTime() / 1000),
+                to      : Math.floor(this.$To.getTime() / 1000),
+                interval: interval
             };
         },
 
@@ -235,6 +276,11 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
         $onChange: function () {
             if (this.$Select.getValue() === 'period') {
                 this.showPeriodSelect();
+                return;
+            }
+
+            if (this.$Select.getValue() === 'user') {
+                this.showUserSelect();
                 return;
             }
 
@@ -692,6 +738,201 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
             } catch (e) {
                 return window.Intl.DateTimeFormat('de-DE', options);
             }
+        },
+
+        /**
+         * Display user select
+         */
+        showUserSelect: function () {
+            var self        = this,
+                elmPosition = this.getElm().getPosition(),
+                elmSize     = this.getElm().getSize(),
+                left        = elmPosition.x + 32,
+                width       = 440;
+
+            var size = document.body.getSize();
+
+            if (size.y <= left + width) {
+                left = elmSize.x + elmPosition.x - width - 32;
+            }
+
+            this.fireEvent('userSelectOpenBegin', [self]);
+
+            if (!this.$Current) {
+                this.$Current = new window.Date();
+            }
+
+            if (!this.$To) {
+                this.$To = new window.Date();
+            }
+
+            var Container = new Element('div', {
+                tabindex: -1,
+                'class' : 'timefilter-user-select',
+                html    : '' +
+                    '<div class="timefilter-user-select-left">' +
+                    '   <div class="timefilter-user-select-left-select" data-value="today">' +
+                    QUILocale.get(lg, 'user.filter.today') +
+                    '   </div>' +
+                    '   <div class="timefilter-user-select-left-select" data-value="yesterday">' +
+                    QUILocale.get(lg, 'user.filter.yesterday') +
+                    '   </div>' +
+                    '   <div class="timefilter-user-select-left-select" data-value="month">' +
+                    QUILocale.get(lg, 'user.filter.month') +
+                    '   </div>' +
+                    '   <div class="timefilter-user-select-left-select" data-value="lastMonth">' +
+                    QUILocale.get(lg, 'user.filter.lastMonth') +
+                    '   </div>' +
+                    '</div>' +
+                    '<div class="timefilter-user-select-right"></div>',
+                styles  : {
+                    left : left,
+                    top  : elmPosition.y + 40,
+                    width: width
+                },
+                events  : {
+                    blur: function (event) {
+                        self.fireEvent('userSelectClose', [self]);
+
+                        event.target.setStyle('display', 'none');
+                        event.target.destroy();
+                    }
+                }
+            }).inject(document.body);
+
+            var selects = Container.getElements('.timefilter-user-select-left-select');
+
+            selects.addEvent('click', function (e) {
+                e.stop();
+
+                var Target = e.target;
+
+                if (!Target.hasClass('timefilter-user-select-left-select')) {
+                    Target = Target.getParent('.timefilter-user-select-left-select');
+                }
+
+                selects.removeClass('timefilter-user-select-left-select--active');
+                Target.addClass('timefilter-user-select-left-select--active');
+            });
+
+
+            require(['package/quiqqer/calendar-controls/bin/Scheduler'], function (Scheduler) {
+                Scheduler.loadExtension('minical').then(function () {
+                    var Handler = Scheduler.getScheduler();
+
+                    var CurrentDate = null;
+                    var currentType = 'today';
+
+                    var Ghost = new Element('div', {
+                        html: '<div class="dhx_cal_navline">' +
+                            '<div class="dhx_cal_date"></div>' +
+                            '<div class="dhx_cal_tab" name="day_tab" style="right:76px;"></div>' +
+                            '</div>' +
+                            '<div class="dhx_cal_header"></div>' +
+                            '<div class="dhx_cal_data"></div>'
+                    });
+
+                    Handler.config.xml_date = "%Y-%m-%d";
+                    Handler.init(Ghost, new window.Date(), "day");
+
+                    var Calendar = Handler.renderCalendar({
+                        container : Container.getElement('.timefilter-user-select-right'),
+                        date      : new window.Date(),
+                        navigation: true,
+                        handler   : function (date) {
+                            CurrentDate = date;
+                        }
+                    });
+
+                    Container.getElement('[data-value="today"]').addEvent('click', function () {
+                        var D = new window.Date();
+
+                        Handler.updateCalendar(Calendar, new Date(D.getTime()));
+                        Handler.markCalendar(Calendar, new Date(D.getTime()), 'dhx_calendar_click active');
+
+                        currentType = 'today';
+                        CurrentDate = D;
+                    });
+
+                    Container.getElement('[data-value="yesterday"]').addEvent('click', function () {
+                        var D = new window.Date();
+                        D.setDate(D.getDate() - 1);
+
+                        Handler.updateCalendar(Calendar, new Date(D.getTime()));
+                        Handler.markCalendar(Calendar, new Date(D.getTime()), 'dhx_calendar_click active');
+
+                        currentType = 'yesterday';
+                        CurrentDate = D;
+                    });
+
+                    Container.getElement('[data-value="month"]').addEvent('click', function () {
+                        var D = new window.Date();
+
+                        Handler.updateCalendar(Calendar, new Date(D.getTime()));
+                        Handler.markCalendar(Calendar, new Date(D.getTime()), 'dhx_calendar_click active');
+
+                        currentType = 'month';
+                        CurrentDate = D;
+                    });
+
+                    Container.getElement('[data-value="lastMonth"]').addEvent('click', function () {
+                        var D = new window.Date();
+                        D.setMonth(D.getMonth() - 1);
+
+                        Handler.updateCalendar(Calendar, new Date(D.getTime()));
+                        Handler.markCalendar(Calendar, new Date(D.getTime()), 'dhx_calendar_click active');
+
+                        currentType = 'lastMonth';
+                        CurrentDate = D;
+                    });
+
+                    Container.getElement('[data-value="today"]').click();
+
+
+                    var Accept = new QUIButton({
+                        text  : QUILocale.get('quiqqer/system', 'accept'),
+                        styles: {
+                            'float': 'right',
+                            margin : '10px 10px 0 0'
+                        }
+                    }).inject(Container.getElement('.timefilter-user-select-right'));
+
+                    Accept.getElm().addEvent('mousedown', function (e) {
+                        switch (currentType) {
+                            case 'today':
+                            case 'yesterday':
+                                self.$Current = CurrentDate;
+                                self.$To      = CurrentDate;
+                                break;
+
+                            case 'month':
+                            case 'lastMonth':
+                                var FirstDay = new Date(
+                                    CurrentDate.getFullYear(),
+                                    CurrentDate.getMonth(),
+                                    1
+                                );
+
+                                var LastDay = new Date(
+                                    CurrentDate.getFullYear(),
+                                    CurrentDate.getMonth() + 1,
+                                    0
+                                );
+
+                                self.$Current = FirstDay;
+                                self.$To      = LastDay;
+                                break;
+                        }
+
+                        self.$triggerChange();
+                    });
+                });
+            });
+
+            Container.getElement('[data-value="today"]')
+                     .addClass('timefilter-user-select-left-select--active');
+
+            Container.focus();
         }
     });
 });
