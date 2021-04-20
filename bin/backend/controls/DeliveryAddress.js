@@ -182,8 +182,8 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
             }
 
             return {
-                uid       : this.$userId,
-                id        : this.$addressId,
+                //uid       : this.$userId,
+                //id        : this.$addressId,
                 company   : this.$Company.value,
                 salutation: this.$Salutation.value,
                 firstname : this.$Firstname.value,
