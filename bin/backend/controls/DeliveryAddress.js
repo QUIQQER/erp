@@ -38,7 +38,9 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
             '$checkBoxChange',
             '$displayAddressData',
             'isLoaded',
-            '$onClickSelectAddress'
+            '$onClickSelectAddress',
+            'clear',
+            'reset'
         ],
 
         initialize: function (options) {
@@ -210,6 +212,15 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
         },
 
         /**
+         * Reset control
+         */
+        reset: function () {
+            this.clear();
+            this.$Checked.checked = false;
+            this.$checkBoxChange();
+        },
+
+        /**
          * Set values
          *
          * @param {Object} value
@@ -295,14 +306,19 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
         $onSetAttribute: function (key, value) {
             if (key === 'userId') {
                 this.$userId = value;
-                this.$AddressSelectBtn.enable();
+
+                if (this.$userId) {
+                    this.$AddressSelectBtn.enable();
+                } else {
+                    this.$AddressSelectBtn.disable();
+                }
             }
         },
 
         /**
          * event if the check box changes
          *
-         * @param event
+         * @param {DocumentEvent} [event]
          */
         $checkBoxChange: function (event) {
             var self      = this,
@@ -329,12 +345,14 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                 if (this.$Customer) {
                     this.$userId = this.$Customer.getValue();
                 }
+            }
 
+            if (!this.$userId) {
                 Checkbox.checked = false;
 
                 QUI.getMessageHandler().then(function (MH) {
                     MH.addInformation(
-                        QUILocale.get('quiqqer/erp', 'message.select.customer'),
+                        QUILocale.get('quiqqer/erp', 'controls.DeliveryAddress.msg.select_customer'),
                         self.$Customer.getElm()
                     );
                 });
