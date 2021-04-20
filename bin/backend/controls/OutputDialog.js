@@ -54,7 +54,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             mailEditor          : true,     // shows editable subject and body for mail output
 
             maxHeight: 800,
-            maxWidth : 1400
+            maxWidth : 1500
         },
 
         initialize: function (options) {
