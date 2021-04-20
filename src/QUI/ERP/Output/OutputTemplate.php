@@ -199,6 +199,18 @@ class OutputTemplate
         return $this->Engine;
     }
 
+    /**
+     * @return OutputTemplateProviderInterface|string
+     */
+    public function getTemplateProvider()
+    {
+        if (\is_string($this->TemplateProvider)) {
+            return $this->TemplateProvider;
+        }
+
+        return \get_class($this->TemplateProvider);
+    }
+
     //region Template Output Helper
 
     /**
