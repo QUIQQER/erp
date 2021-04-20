@@ -13,14 +13,17 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
 
     'qui/QUI',
     'qui/controls/Control',
+    'qui/controls/buttons/Button',
+
     'package/quiqqer/countries/bin/Countries',
     'Users',
     'Locale',
     'Mustache',
 
-    'text!package/quiqqer/erp/bin/backend/controls/DeliveryAddress.html'
+    'text!package/quiqqer/erp/bin/backend/controls/DeliveryAddress.html',
+    'css!package/quiqqer/erp/bin/backend/controls/DeliveryAddress.css'
 
-], function (QUI, QUIControl, Countries, Users, QUILocale, Mustache, template) {
+], function (QUI, QUIControl, QUIButton, Countries, Users, QUILocale, Mustache, template) {
     "use strict";
 
     var lg = 'quiqqer/erp';
@@ -33,9 +36,9 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
         Binds: [
             '$onImport',
             '$checkBoxChange',
-            '$onSelectChange',
+            '$displayAddressData',
             'isLoaded',
-            '$onAddressInputChange'
+            '$onClickSelectAddress'
         ],
 
         initialize: function (options) {
@@ -52,9 +55,10 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
             this.$Firstname  = null;
             this.$Lastname   = null;
 
-            this.checked = false;
-            this.$loaded = false;
-            this.$userId = this.getAttribute('userId');
+            this.checked           = false;
+            this.$loaded           = false;
+            this.$userId           = this.getAttribute('userId');
+            this.$AddressSelectBtn = null;
 
             this.addEvents({
                 onImport      : this.$onImport,
@@ -83,6 +87,19 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                 textLastname                 : QUILocale.get('quiqqer/quiqqer', 'lastname')
             }));
 
+            // Address select
+            this.$AddressSelectBtn = new QUIButton({
+                'class'  : 'quiqqer-erp-delivery-address-select-btn',
+                text     : QUILocale.get(lg, 'controls.DeliveryAddress.btn.select.text'),
+                textimage: 'fa fa-address-book-o',
+                disabled : true,
+                events   : {
+                    onClick: this.$onClickSelectAddress
+                }
+            }).inject(
+                Elm.getElement('.quiqqer-erp-delivery-address-select')
+            );
+
             // changeable
             this.$Checked = Elm.getElement('[name="differentDeliveryAddress"]');
             this.$Checked.addEvent('change', this.$checkBoxChange);
@@ -98,9 +115,6 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
             this.$Salutation = Elm.getElement('[name="delivery-salutation"]');
             this.$Firstname  = Elm.getElement('[name="delivery-firstname"]');
             this.$Lastname   = Elm.getElement('[name="delivery-lastname"]');
-
-            this.$Addresses = Elm.getElement('[name="delivery-addresses"]');
-            this.$Addresses.addEvent('change', this.$onSelectChange);
 
             this.$Company.disabled = false;
             this.$Street.disabled  = false;
@@ -147,9 +161,6 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                 self.$Country.disabled = false;
                 self.$loaded           = true;
 
-                // Add events
-                Elm.getElements('.quiqqer-erp-delivery-address-field').addEvent('change', self.$onAddressInputChange);
-
                 self.fireEvent('loaded', [self]);
             });
         },
@@ -186,8 +197,16 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
          * Clears the selection - no address are selected
          */
         clear: function () {
-            this.$Addresses.value = '';
-            this.$onSelectChange();
+            this.$displayAddressData({
+                company   : '',
+                street_no : '',
+                zip       : '',
+                city      : '',
+                country   : '',
+                salutation: '',
+                firstname : '',
+                lastname  : '',
+            });
         },
 
         /**
@@ -196,8 +215,6 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
          * @param {Object} value
          */
         setValue: function (value) {
-            var self = this;
-
             if (typeOf(value) !== 'object') {
                 return;
             }
@@ -207,55 +224,25 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                 this.$addressId = value.id;
             } else {
                 this.$addressId = false;
-
-                if ("company" in value) {
-                    this.$Company.value = value.company;
-                }
-
-                if ("salutation" in value) {
-                    this.$Salutation.value = value.salutation;
-                }
-
-                if ("firstname" in value) {
-                    this.$Firstname.value = value.firstname;
-                }
-
-                if ("lastname" in value) {
-                    this.$Lastname.value = value.company;
-                }
-
-                if ("street_no" in value) {
-                    this.$Street.value = value.street_no;
-                }
-
-                if ("zip" in value) {
-                    this.$ZIP.value = value.zip;
-                }
-
-                if ("city" in value) {
-                    this.$City.value = value.city;
-                }
-
-                if ("country" in value) {
-                    if (this.$loaded) {
-                        this.$Country.value = value.country;
-                    } else {
-                        this.setAttribute('country', value.country);
-                    }
-                }
             }
 
             if ("uid" in value) {
                 this.$userId = value.uid;
-
-                this.loadAddresses().then(function () {
-                    if (self.$addressId) {
-                        self.$onSelectChange();
-                    }
-                }).catch(function () {
-                    this.$Addresses.disabled = true;
-                }.bind(this));
             }
+
+            var Address = {
+                company   : '',
+                street_no : '',
+                zip       : '',
+                city      : '',
+                country   : '',
+                salutation: '',
+                firstname : '',
+                lastname  : '',
+            };
+
+            Object.merge(Address, value);
+            this.$displayAddressData(Address);
 
             this.$Checked.checked = true;
             this.$checkBoxChange();
@@ -281,116 +268,22 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
         },
 
         /**
-         * Refresh the address list
-         *
-         * @return {Promise}
-         */
-        refresh: function () {
-            var self = this;
-
-            this.$Addresses.set('html', '');
-
-            if (!this.$userId) {
-                this.$Company.value = '';
-                this.$Street.value  = '';
-                this.$ZIP.value     = '';
-                this.$City.value    = '';
-                this.$Country.value = '';
-
-                this.$Salutation.value = '';
-                this.$Firstname.value  = '';
-                this.$Lastname.value   = '';
-
-                return Promise.reject();
-            }
-
-            return this.loadAddresses().then(function () {
-                console.log(111);
-                //self.$onSelectChange();
-            }).catch(function () {
-                self.$Addresses.disabled = true;
-            });
-        },
-
-        /**
-         * Load the addresses
-         */
-        loadAddresses: function () {
-            var self = this;
-
-            this.$Addresses.set('html', '');
-            this.$Addresses.disabled = true;
-
-            if (!this.$userId) {
-                return Promise.reject();
-            }
-
-            return this.getUser().then(function (User) {
-                return User.getAddressList();
-            }).then(function (addresses) {
-                self.$Addresses.set('html', '');
-
-                new Element('option', {
-                    value       : '',
-                    html        : QUILocale.get(lg, 'controls.DeliveryAddress.freeform_input'),
-                    'data-value': ''
-                }).inject(self.$Addresses);
-
-                for (var i = 0, len = addresses.length; i < len; i++) {
-                    new Element('option', {
-                        value       : addresses[i].id,
-                        html        : addresses[i].text,
-                        'data-value': JSON.encode(addresses[i])
-                    }).inject(self.$Addresses);
-                }
-
-                if (self.$addressId) {
-                    self.$Addresses.value = self.$addressId;
-                }
-
-                self.$Addresses.disabled = false;
-            }).catch(function (err) {
-                console.error(err);
-            });
-        },
-
-        /**
          * event : on select change
+         *
+         * @package {Object} Address
          */
-        $onSelectChange: function () {
-            var Select = this.$Addresses;
+        $displayAddressData: function (Address) {
+            this.$Company.value = Address.company;
+            this.$Street.value  = Address.street_no;
+            this.$ZIP.value     = Address.zip;
+            this.$City.value    = Address.city;
 
-            var options = Select.getElements('option').filter(function (Option) {
-                return Option.value === Select.value;
-            });
+            this.$Salutation.value = Address.salutation;
+            this.$Firstname.value  = Address.firstname;
+            this.$Lastname.value   = Address.lastname;
 
-            if (Select.value === '' || !options.length || options[0].get('data-value') === '') {
-                this.$addressId = false;
-
-                //this.$Company.value = '';
-                //this.$Street.value  = '';
-                //this.$ZIP.value     = '';
-                //this.$City.value    = '';
-                //this.$Country.value = '';
-                //
-                //this.$Salutation.value = '';
-                //this.$Firstname.value  = '';
-                //this.$Lastname.value   = '';
-                return;
-            }
-
-            var data = JSON.decode(options[0].get('data-value'));
-
-            this.$addressId     = data.id;
-            this.$Company.value = data.company;
-            this.$Street.value  = data.street_no;
-            this.$ZIP.value     = data.zip;
-            this.$City.value    = data.city;
-            this.$Country.value = data.country;
-
-            this.$Salutation.value = data.salutation;
-            this.$Firstname.value  = data.firstname;
-            this.$Lastname.value   = data.lastname;
+            this.$Country.value = Address.country;
+            this.setAttribute('country', Address.country);
         },
 
         /**
@@ -400,16 +293,9 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
          * @param {String} value
          */
         $onSetAttribute: function (key, value) {
-            var self = this;
-
             if (key === 'userId') {
                 this.$userId = value;
-
-                self.refresh().then(function () {
-                    self.$Addresses.disabled = false;
-                }).catch(function () {
-                    self.$Addresses.disabled = true;
-                });
+                this.$AddressSelectBtn.enable();
             }
         },
 
@@ -443,9 +329,7 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                 if (this.$Customer) {
                     this.$userId = this.$Customer.getValue();
                 }
-            }
 
-            if (!this.$userId) {
                 Checkbox.checked = false;
 
                 QUI.getMessageHandler().then(function (MH) {
@@ -455,25 +339,22 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                     );
                 });
 
+                this.$AddressSelectBtn.disable();
+
                 return;
             }
+
+            this.$AddressSelectBtn.enable();
 
             if (Checkbox.checked) {
                 closables.setStyle('display', null);
-                this.loadAddresses();
                 return;
             }
 
+            this.$AddressSelectBtn.disable();
+
             closables.setStyle('display', 'none');
             this.clear();
-        },
-
-        /**
-         * If an address line is manually changed.
-         */
-        $onAddressInputChange: function () {
-            this.$Addresses.value = '';
-            this.$addressId       = false;
         },
 
         /**
@@ -483,6 +364,49 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
          */
         isLoaded: function () {
             return this.$loaded;
+        },
+
+        /**
+         * Select customer address to pre-fill address fields
+         */
+        $onClickSelectAddress: function () {
+            var self = this;
+
+            if (!this.$userId) {
+                return;
+            }
+
+            require([
+                'package/quiqqer/customer/bin/backend/controls/customer/address/Window'
+            ], function (Win) {
+                new Win({
+                    userId   : self.$userId,
+                    autoclose: false,
+
+                    events: {
+                        onSubmit: function (Win, addressId) {
+                            Win.Loader.show();
+
+                            self.getUser().then(function (User) {
+                                return User.getAddressList();
+                            }).then(function (addresses) {
+                                for (var i = 0, len = addresses.length; i < len; i++) {
+                                    if (addresses[i].id === addressId) {
+                                        self.$displayAddressData(addresses[i]);
+                                        break;
+                                    }
+                                }
+
+                                Win.close();
+                            }).catch(function () {
+                                Win.Loader.hide();
+                            });
+
+                            Win.close();
+                        }
+                    }
+                }).open();
+            });
         }
     });
 });

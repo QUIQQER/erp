@@ -647,6 +647,10 @@
             <de><![CDATA[freie Eingabe]]></de>
             <en><![CDATA[free input]]></en>
         </locale>
+        <locale name="controls.DeliveryAddress.btn.select.text">
+            <de><![CDATA[Kunden-Adresse auswählen]]></de>
+            <en><![CDATA[Select customer address]]></en>
+        </locale>
         
         <locale name="article.summary.tpl.labelPosInfo">
             <de><![CDATA[Pos.-Info]]></de>

@@ -1,21 +1,15 @@
-<table class="data-table data-table-flexbox">
+<table class="data-table data-table-flexbox quiqqer-erp-delivery-address-select-table">
     <tbody>
     <tr>
         <td>
-            <label class="field-container">
-                <input type="checkbox" name="differentDeliveryAddress"/>
-                <span>{{labelDifferentDeliveryAddress}}</span>
-            </label>
-        </td>
-    </tr>
-    <tr class="closable" style="display: none">
-        <td>
-            <label class="field-container">
-                    <span class="field-container-item" title="{{textCustomer}}">
-                        {{textAddresses}}
-                    </span>
-                <select name="delivery-addresses" class="field-container-field" disabled></select>
-            </label>
+            <div class="quiqqer-erp-delivery-address-select-container">
+                <label class="quiqqer-erp-delivery-address-select-label">
+                    <input type="checkbox" name="differentDeliveryAddress"/>
+                    <span>{{labelDifferentDeliveryAddress}}</span>
+                </label>
+            </div>
+
+            <div class="quiqqer-erp-delivery-address-select"></div>
         </td>
     </tr>
     <tr class="closable" style="display: none">
