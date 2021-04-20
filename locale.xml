@@ -651,6 +651,10 @@
             <de><![CDATA[Kunden-Adresse auswählen]]></de>
             <en><![CDATA[Select customer address]]></en>
         </locale>
+        <locale name="controls.DeliveryAddress.msg.select_customer">
+            <de><![CDATA[Bitte wähle zuerst einen Kunden aus]]></de>
+            <en><![CDATA[Please select a customer first]]></en>
+        </locale>
         
         <locale name="article.summary.tpl.labelPosInfo">
             <de><![CDATA[Pos.-Info]]></de>
