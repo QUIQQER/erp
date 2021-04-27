@@ -287,7 +287,9 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
         $this->calculated = false;
 
         foreach ($this->articles as $Article) {
-            $Article->setUser($this->User);
+            if ($this->User) {
+                $Article->setUser($this->User);
+            }
         }
 
         $this->calc($Calc);
