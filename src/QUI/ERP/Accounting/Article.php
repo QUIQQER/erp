@@ -187,7 +187,10 @@ class Article implements ArticleInterface
             $this->nettoPrice      = $calc['nettoPrice'];
             $this->nettoBasisPrice = $calc['nettoBasisPrice'];
             $this->nettoSum        = $calc['nettoSum'];
-            $this->nettoSubSum     = $calc['nettoSubSum'];
+
+            if (isset($calc['nettoSubSum'])) {
+                $this->nettoSubSum = $calc['nettoSubSum'];
+            }
 
             $this->vatArray = $calc['vatArray'];
             $this->isEuVat  = $calc['isEuVat'];
