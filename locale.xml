@@ -378,9 +378,9 @@
             <de><![CDATA[Steuernummer]]></de>
             <en><![CDATA[Tax number]]></en>
         </locale>
-        <locale name="menu.erp.company.hrb">
-            <de><![CDATA[HRB]]></de>
-            <en><![CDATA[HRB number]]></en>
+        <locale name="menu.erp.company.register">
+            <de><![CDATA[Register]]></de>
+            <en><![CDATA[Register]]></en>
         </locale>
         <locale name="menu.erp.company.court">
             <de><![CDATA[Amtsgericht]]></de>

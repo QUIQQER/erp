@@ -65,7 +65,7 @@
                 <conf name="taxNumber">
                     <type>string</type>
                 </conf>
-                <conf name="hrb">
+                <conf name="register">
                     <type>string</type>
                 </conf>
                 <conf name="court">
@@ -264,9 +264,9 @@
                                 <locale group="quiqqer/erp" var="menu.erp.company.taxNumber"/>
                             </text>
                         </input>
-                        <input type="text" conf="company.hrb">
+                        <input type="text" conf="company.register">
                             <text>
-                                <locale group="quiqqer/erp" var="menu.erp.company.hrb"/>
+                                <locale group="quiqqer/erp" var="menu.erp.company.register"/>
                             </text>
                         </input>
                         <input type="text" conf="company.court">
