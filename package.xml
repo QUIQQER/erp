@@ -11,6 +11,10 @@
 
         <image src="URL_OPT_DIR/quiqqer/erp/bin/images/Logo.png"/>
 
+        <erp>
+            <type>application</type> <!-- application, module, plugin -->
+        </erp>
+
         <preview>
             <image src="URL_OPT_DIR/quiqqer/erp/bin/preview-1.png"/>
             <image src="URL_OPT_DIR/quiqqer/erp/bin/preview-2.png"/>
@@ -32,7 +36,7 @@
         <provider>
             <erp src="\QUI\ERP\Provider\Erp"/>
             <requirements src="\QUI\ERP\Provider\Requirements"/>
-<!--            <dashboard src="\QUI\ERP\Dashboard\DashboardProvider"/>-->
+            <!--            <dashboard src="\QUI\ERP\Dashboard\DashboardProvider"/>-->
         </provider>
     </package>
 </quiqqer>

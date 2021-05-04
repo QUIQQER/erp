@@ -28,7 +28,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         options: {
             List    : null,
             styles  : false,
-            currency: 'EUR'
+            currency: 'EUR',
+
+            showPosSummary: true // show summary for selected article
         },
 
         Binds: [
@@ -54,14 +56,17 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
          * @returns {HTMLDivElement}
          */
         create: function () {
+            var showPosSummary = this.getAttribute('showPosSummary');
+
             this.$Elm = new Element('div', {
                 'class': 'quiqqer-erp-backend-temporaryErp-summary',
                 html   : Mustache.render(template, {
-                    labelPosInfo: QUILocale.get(lg, 'article.summary.tpl.labelPosInfo'),
-                    labelNet    : QUILocale.get(lg, 'article.summary.tpl.labelNet'),
-                    labelGross  : QUILocale.get(lg, 'article.summary.tpl.labelGross'),
-                    labelSums   : QUILocale.get(lg, 'article.summary.tpl.labelSums'),
-                    labelVat    : QUILocale.get(lg, 'article.summary.tpl.labelVat'),
+                    showPosSummary: showPosSummary,
+                    labelPosInfo  : QUILocale.get(lg, 'article.summary.tpl.labelPosInfo'),
+                    labelNet      : QUILocale.get(lg, 'article.summary.tpl.labelNet'),
+                    labelGross    : QUILocale.get(lg, 'article.summary.tpl.labelGross'),
+                    labelSums     : QUILocale.get(lg, 'article.summary.tpl.labelSums'),
+                    labelVat      : QUILocale.get(lg, 'article.summary.tpl.labelVat'),
                 })
             });
 
@@ -79,13 +84,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 '.quiqqer-erp-backend-temporaryErp-summary-total-vat .vat-value'
             );
 
-            this.$ArticleNettoSum = this.$Elm.getElement(
-                '.quiqqer-erp-backend-temporaryErp-summary-pos .netto-value'
-            );
+            if (showPosSummary) {
+                this.$ArticleNettoSum = this.$Elm.getElement(
+                    '.quiqqer-erp-backend-temporaryErp-summary-pos .netto-value'
+                );
 
-            this.$ArticleBruttoSum = this.$Elm.getElement(
-                '.quiqqer-erp-backend-temporaryErp-summary-pos .brutto-value'
-            );
+                this.$ArticleBruttoSum = this.$Elm.getElement(
+                    '.quiqqer-erp-backend-temporaryErp-summary-pos .brutto-value'
+                );
+            }
 
             if (this.getAttribute('styles')) {
                 this.setStyles(this.getAttribute('styles'));
@@ -205,23 +212,25 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
             var calc = calculated.calculations;
 
-            if (!(ArticleInstance instanceof Article)) {
-                ArticleInstance = List.getSelectedArticle();
-            }
-
-            if (ArticleInstance instanceof Article) {
-                var articleCalc = ArticleInstance.getCalculations();
-
-                if (articleCalc && typeof articleCalc.nettoSum !== 'undefined') {
-                    this.$ArticleNettoSum.set('html', this.$Formatter.format(articleCalc.nettoSum));
-                } else {
-                    this.$ArticleNettoSum.set('html', '---');
+            if (this.getAttribute('showPosSummary')) {
+                if (!(ArticleInstance instanceof Article)) {
+                    ArticleInstance = List.getSelectedArticle();
                 }
 
-                if (articleCalc && typeof articleCalc.sum !== 'undefined') {
-                    this.$ArticleBruttoSum.set('html', this.$Formatter.format(articleCalc.sum));
-                } else {
-                    this.$ArticleBruttoSum.set('html', '---');
+                if (ArticleInstance instanceof Article) {
+                    var articleCalc = ArticleInstance.getCalculations();
+
+                    if (articleCalc && typeof articleCalc.nettoSum !== 'undefined') {
+                        this.$ArticleNettoSum.set('html', this.$Formatter.format(articleCalc.nettoSum));
+                    } else {
+                        this.$ArticleNettoSum.set('html', '---');
+                    }
+
+                    if (articleCalc && typeof articleCalc.sum !== 'undefined') {
+                        this.$ArticleBruttoSum.set('html', this.$Formatter.format(articleCalc.sum));
+                    } else {
+                        this.$ArticleBruttoSum.set('html', '---');
+                    }
                 }
             }
 
