@@ -933,11 +933,12 @@ class Calc
         $nettoToPay  = 0;
 
         foreach ($invoiceList as $invoice) {
-            if (isset($invoice['type']) && (int)$invoice['type'] === Handler::TYPE_INVOICE_CANCEL ||
-                isset($invoice['type']) && (int)$invoice['type'] === Handler::TYPE_INVOICE_STORNO
-            ) {
-                continue;
-            }
+//            if (isset($invoice['type']) && (int)$invoice['type'] === Handler::TYPE_INVOICE_CANCEL ||
+//                isset($invoice['type']) && (int)$invoice['type'] === Handler::TYPE_INVOICE_STORNO
+//            ) {
+//                continue;
+//            }
+//          soll doch mit berechnet werden
 
             $invBruttoSum  = floatval($invoice['calculated_sum']);
             $invVatSum     = floatval($invoice['calculated_vatsum']);
