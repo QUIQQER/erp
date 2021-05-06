@@ -44,7 +44,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             '$calc',
             '$onInject',
             '$executeCalculation',
-            '$refreshNettoBruttoDisplay'
+            '$refreshNettoBruttoDisplay',
+            '$getArticleDataForCalculation'
         ],
 
         options: {
@@ -157,7 +158,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * @returns {Object}
          */
         serialize: function () {
-            var articles = this.$articles.map(function (Article) {
+            var articles = this.$getArticles().map(function (Article) {
                 var attr     = Article.getAttributes();
                 attr.control = typeOf(Article);
 
@@ -168,6 +169,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 articles    : articles,
                 priceFactors: this.$priceFactors
             };
+        },
+
+        /**
+         * Get internal article list
+         *
+         * @return {[]}
+         */
+        $getArticles: function () {
+            return this.$articles;
         },
 
         /**
@@ -395,9 +405,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             this.$calculationRunning = true;
 
             return new Promise(function (resolve, reject) {
-                var articles = self.$articles.map(function (Article) {
-                    return Article.getAttributes();
-                });
+                var articles = self.$getArticleDataForCalculation();
 
                 QUIAjax.get('package_quiqqer_erp_ajax_products_calc', function (result) {
                     self.$calculations         = result;
@@ -420,6 +428,17 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                         reject();
                     }
                 });
+            });
+        },
+
+        /**
+         * Get article data used for calculation
+         *
+         * @return {Array}
+         */
+        $getArticleDataForCalculation: function () {
+            return this.$articles.map(function (Article) {
+                return Article.getAttributes();
             });
         },
 
@@ -598,8 +617,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         $onArticleSetPosition: function (Article) {
             Article.getElm()
-                   .getElement('.quiqqer-erp-backend-erpArticlePlaceholder-pos')
-                   .set('html', Article.getAttribute('position'));
+                .getElement('.quiqqer-erp-backend-erpArticlePlaceholder-pos')
+                .set('html', Article.getAttribute('position'));
         },
 
         /**
