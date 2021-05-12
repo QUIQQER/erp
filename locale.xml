@@ -8,8 +8,8 @@
         </locale>
 
         <locale name="window.erp.title">
-            <de><![CDATA[E-COYN - E-Commerce You Need]]></de>
-            <en><![CDATA[E-COYN - E-Commerce You Need]]></en>
+            <de><![CDATA[E-COYN]]></de>
+            <en><![CDATA[E-COYN]]></en>
         </locale>
 
         <locale name="menu.erp.company.title">
