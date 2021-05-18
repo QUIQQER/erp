@@ -1,0 +1,29 @@
+<tr>
+    <td class="articles-article-pos"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.pos'}"
+    >
+        {$position}
+    </td>
+    <td class="articles-article-information"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.description'}"
+        colspan="7"
+    >
+        <div class="articles-article-information-title">
+            {$this->getAttribute('title')}
+        </div>
+        <div class="articles-article-information-description">
+            {$this->getAttribute('description')}
+        </div>
+
+        <ul class="quiqqer-order-basket-articles-article-fields">
+            {foreach $customFields as $field}
+            <li class="quiqqer-order-basket-articles-article-fields-field">
+                <span>{$field.title}:</span>
+                {if isset($field.custom_calc) && isset($field.custom_calc.valueText)}
+                <span>{$field.custom_calc.valueText}</span>
+                {/if}
+            </li>
+            {/foreach}
+        </ul>
+    </td>
+</tr>
