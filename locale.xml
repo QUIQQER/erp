@@ -8,8 +8,8 @@
         </locale>
 
         <locale name="window.erp.title">
-            <de><![CDATA[E-COYN - E-Commerce You Need]]></de>
-            <en><![CDATA[E-COYN - E-Commerce You Need]]></en>
+            <de><![CDATA[E-COYN]]></de>
+            <en><![CDATA[E-COYN]]></en>
         </locale>
 
         <locale name="menu.erp.company.title">
@@ -378,9 +378,9 @@
             <de><![CDATA[Steuernummer]]></de>
             <en><![CDATA[Tax number]]></en>
         </locale>
-        <locale name="menu.erp.company.hrb">
-            <de><![CDATA[HRB]]></de>
-            <en><![CDATA[HRB number]]></en>
+        <locale name="menu.erp.company.register">
+            <de><![CDATA[Register]]></de>
+            <en><![CDATA[Register]]></en>
         </locale>
         <locale name="menu.erp.company.court">
             <de><![CDATA[Amtsgericht]]></de>
@@ -639,6 +639,23 @@
 
     <groups name="quiqqer/erp" datatype="js">
 
+        <locale name="control.DeliveryAddress.tpl.labelDifferentDeliveryAddress">
+            <de><![CDATA[Die Lieferadresse weicht von der Kundenadresse ab]]></de>
+            <en><![CDATA[The delivery address is different from the customer address]]></en>
+        </locale>
+        <locale name="controls.DeliveryAddress.freeform_input">
+            <de><![CDATA[freie Eingabe]]></de>
+            <en><![CDATA[free input]]></en>
+        </locale>
+        <locale name="controls.DeliveryAddress.btn.select.text">
+            <de><![CDATA[Kunden-Adresse auswählen]]></de>
+            <en><![CDATA[Select customer address]]></en>
+        </locale>
+        <locale name="controls.DeliveryAddress.msg.select_customer">
+            <de><![CDATA[Bitte wähle zuerst einen Kunden aus]]></de>
+            <en><![CDATA[Please select a customer first]]></en>
+        </locale>
+        
         <locale name="article.summary.tpl.labelPosInfo">
             <de><![CDATA[Pos.-Info]]></de>
             <en><![CDATA[Pos. info]]></en>

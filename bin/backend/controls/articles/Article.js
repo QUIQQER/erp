@@ -82,7 +82,26 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             vat         : '',
             'class'     : 'QUI\\ERP\\Accounting\\Article',
             params      : false, // mixed value for API Articles
-            currency    : false
+            currency    : false,
+
+            showSelectCheckbox: false,  // select this article via checkbox instead of click
+
+            // Determine article fields that can be edited
+            editFields: {
+                articleNo          : true,
+                titleAndDescription: true,
+                quantity           : true,
+                quantityUnit       : true,
+                unitPrice          : true,
+                vat                : true,
+                discount           : true
+            },
+
+            User: false,        // special user object (see this.addUser)
+
+            deletable  : true,   // show "delete" button
+            replaceable: true,   // show "replace" button
+            calcByList : true     // calculate article prices by the associated ArticleList
         },
 
         initialize: function (options) {
@@ -93,18 +112,21 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.$calculations = {};
             this.$bruttoCalc   = {};
 
-            this.$Position  = null;
-            this.$Quantity  = null;
-            this.$UnitPrice = null;
-            this.$Price     = null;
-            this.$VAT       = null;
-            this.$Total     = null;
+            this.$SelectCheckbox = null;
+            this.$Position       = null;
+            this.$Quantity       = null;
+            this.$UnitPrice      = null;
+            this.$Price          = null;
+            this.$VAT            = null;
+            this.$Total          = null;
 
             this.$Text        = null;
             this.$Title       = null;
             this.$Description = null;
             this.$Editor      = null;
             this.$textIsHtml  = false;
+
+            this.$isSelected = false;
 
             this.$Loader  = null;
             this.$created = false;
@@ -126,19 +148,39 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @returns {HTMLDivElement}
          */
         create: function () {
+            var self = this;
+
             this.$Elm = this.parent();
             this.$Elm.addClass('quiqqer-erp-backend-erpArticle');
 
+            var showSelectCheckbox = this.getAttribute('showSelectCheckbox');
+
             this.$Elm.set({
-                html      : Mustache.render(template),
+                html      : Mustache.render(template, {
+                    showSelectCheckbox: showSelectCheckbox
+                }),
                 'tabindex': -1,
                 styles    : {
                     outline: 'none'
-                },
-                events    : {
-                    click: this.select
                 }
             });
+
+            var EditFields = this.getAttribute('editFields');
+
+            if (showSelectCheckbox) {
+                this.$SelectCheckbox = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-selectbox > input');
+                this.$SelectCheckbox.addEvent('change', function (event) {
+                    if (event.target.checked) {
+                        self.select();
+                    } else {
+                        self.unselect();
+                    }
+                });
+            } else {
+                this.$Elm.set('events', {
+                    click: this.select
+                });
+            }
 
             this.$Position     = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-pos');
             this.$ArticleNo    = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-articleNo');
@@ -152,36 +194,106 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.$Total        = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-total');
             this.$Buttons      = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-buttons');
 
-            this.$ArticleNo.addEvent('click', this.$onEditArticleNo);
-            this.$Quantity.addEvent('click', this.$onEditQuantity);
-            this.$UnitPrice.addEvent('click', this.$onEditUnitPriceQuantity);
-            this.$VAT.addEvent('click', this.$onEditVat);
-            this.$Discount.addEvent('click', this.$onEditDiscount);
-            this.$QuantityUnit.addEvent('click', this.$onEditQuantityUnit);
+            if ('articleNo' in EditFields && EditFields.articleNo) {
+                this.$ArticleNo.addEvent('click', this.$onEditArticleNo);
+            } else {
+                this.$ArticleNo.removeClass('cell-editable');
+            }
+
+            if ('quantity' in EditFields && EditFields.quantity) {
+                this.$Quantity.addEvent('click', this.$onEditQuantity);
+            } else {
+                this.$Quantity.removeClass('cell-editable');
+            }
+
+            if ('unitPrice' in EditFields && EditFields.unitPrice) {
+                this.$UnitPrice.addEvent('click', this.$onEditUnitPriceQuantity);
+            } else {
+                this.$UnitPrice.removeClass('cell-editable');
+            }
+
+            if ('vat' in EditFields && EditFields.vat) {
+                this.$VAT.addEvent('click', this.$onEditVat);
+
+                // Special VAT cell events
+                this.$VAT.addEvent('keydown', function (event) {
+                    if (event.key === 'tab') {
+                        this.$editNext(event);
+                        return;
+                    }
+
+                    if (event.key === 'enter') {
+                        QUIElements.simulateEvent(event.target, 'click');
+                    }
+                }.bind(this));
+
+                this.$VAT.addEvent('blur', function (event) {
+                    if (event.key === 'tab') {
+                        this.$editNext(event);
+                    }
+                }.bind(this));
+            } else {
+                this.$VAT.removeClass('cell-editable');
+            }
+
+            if ('discount' in EditFields && EditFields.discount) {
+                this.$Discount.addEvent('click', this.$onEditDiscount);
+            } else {
+                this.$Discount.removeClass('cell-editable');
+            }
+
+            if ('quantityUnit' in EditFields && EditFields.quantityUnit) {
+                this.$QuantityUnit.addEvent('click', this.$onEditQuantityUnit);
+
+                // Special quantity unit cell events
+                this.$QuantityUnit.addEvent('keydown', function (event) {
+                    if (event.key === 'tab') {
+                        this.$editNext(event);
+                        return;
+                    }
+
+                    if (event.key === 'enter') {
+                        QUIElements.simulateEvent(event.target, 'click');
+                    }
+                }.bind(this));
+
+                this.$QuantityUnit.addEvent('blur', function (event) {
+                    if (event.key === 'tab') {
+                        this.$editNext(event);
+                    }
+                }.bind(this));
+            } else {
+                this.$QuantityUnit.removeClass('cell-editable');
+            }
 
             // brutto stuff
             this.$UnitPriceBrutto = new Element('div', {
                 'class': 'quiqqer-erp-backend-erpArticle-unitPrice-brutto cell cell-editable',
-                events : {
-                    click: this.$onEditBruttoPrice
-                }
             }).inject(this.$UnitPrice, 'after');
 
             this.$PriceBrutto = new Element('div', {
                 'class': 'quiqqer-erp-backend-erpArticle-price-brutto cell'
             }).inject(this.$Price, 'after');
 
+            if ('unitPrice' in EditFields && EditFields.unitPrice) {
+                this.$UnitPriceBrutto.addEvent('click', this.$onEditBruttoPrice);
+            } else {
+                this.$UnitPriceBrutto.removeClass('cell-editable');
+            }
+
             this.$DiscountBrutto = new Element('div', {
                 'class': 'quiqqer-erp-backend-erpArticle-discount-brutto cell cell-editable',
-                events : {
-                    click: this.$onEditBruttoDiscount
-                }
             }).inject(this.$Discount, 'after');
+
+            if ('discount' in EditFields && EditFields.discount) {
+                this.$DiscountBrutto.addEvent('click', this.$onEditBruttoDiscount);
+            } else {
+                this.$DiscountBrutto.removeClass('cell-editable');
+            }
 
             this.$TotalBrutto = new Element('div', {
                 'class': 'quiqqer-erp-backend-erpArticle-total-brutto cell'
             }).inject(this.$Total, 'after');
-
 
             this.$Loader = new Element('div', {
                 html  : '<span class="fa fa-spinner fa-spin"></span>',
@@ -202,65 +314,32 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 this.setPosition(this.getAttribute('position'));
             }
 
-
             this.$Title = new Element('div', {
                 'class': 'quiqqer-erp-backend-erpArticle-text-title cell-editable'
-            }).inject(this.$Text);
-
-            this.$Title.addEvent('click', this.$onEditTitle);
-
-            new QUIButton({
-                'class': 'quiqqer-erp-backend-erpArticle-text-btn-editor',
-                title  : QUILocale.get(lg, 'erp.articleList.article.button.editor'),
-                icon   : 'fa fa-edit',
-                events : {
-                    onClick: this.$onEditDescription
-                }
             }).inject(this.$Text);
 
             this.$Description = new Element('div', {
                 'class': 'quiqqer-erp-backend-erpArticle-text-description cell-editable quiqqer-erp-backend-erpArticle__cell_hidden'
             }).inject(this.$Text);
 
-            this.$Description.addEvent('click', this.$onEditDescription);
+            if ('titleAndDescription' in EditFields && EditFields.titleAndDescription) {
+                this.$Title.addEvent('click', this.$onEditTitle);
+                this.$Description.addEvent('click', this.$onEditDescription);
+
+                new QUIButton({
+                    'class': 'quiqqer-erp-backend-erpArticle-text-btn-editor',
+                    title  : QUILocale.get(lg, 'erp.articleList.article.button.editor'),
+                    icon   : 'fa fa-edit',
+                    events : {
+                        onClick: this.$onEditDescription
+                    }
+                }).inject(this.$Text);
+            } else {
+                this.$Title.removeClass('cell-editable');
+                this.$Description.removeClass('cell-editable');
+            }
 
             this.$Elm.getElements('.cell-editable').set('tabindex', -1);
-
-            // Special VAT cell events
-            this.$VAT.addEvent('keydown', function (event) {
-                if (event.key === 'tab') {
-                    this.$editNext(event);
-                    return;
-                }
-
-                if (event.key === 'enter') {
-                    QUIElements.simulateEvent(event.target, 'click');
-                }
-            }.bind(this));
-
-            this.$VAT.addEvent('blur', function (event) {
-                if (event.key === 'tab') {
-                    this.$editNext(event);
-                }
-            }.bind(this));
-
-            // Special quantity unit cell events
-            this.$QuantityUnit.addEvent('keydown', function (event) {
-                if (event.key === 'tab') {
-                    this.$editNext(event);
-                    return;
-                }
-
-                if (event.key === 'enter') {
-                    QUIElements.simulateEvent(event.target, 'click');
-                }
-            }.bind(this));
-
-            this.$QuantityUnit.addEvent('blur', function (event) {
-                if (event.key === 'tab') {
-                    this.$editNext(event);
-                }
-            }.bind(this));
 
             this.setArticleNo(this.getAttribute('articleNo'));
             this.setVat(this.getAttribute('vat'));
@@ -279,29 +358,39 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             }
 
             // edit buttons
-            new QUIButton({
-                title : QUILocale.get(lg, 'erp.articleList.article.button.replace'),
-                icon  : 'fa fa-retweet',
-                styles: {
-                    'float': 'none'
-                },
-                events: {
-                    onClick: this.$onReplaceClick
-                }
-            }).inject(this.$Buttons);
+            if (this.getAttribute('replaceable')) {
+                new QUIButton({
+                    title : QUILocale.get(lg, 'erp.articleList.article.button.replace'),
+                    icon  : 'fa fa-retweet',
+                    styles: {
+                        'float': 'none'
+                    },
+                    events: {
+                        onClick: this.$onReplaceClick
+                    }
+                }).inject(this.$Buttons);
+            }
 
-            new QUIButton({
-                title : QUILocale.get(lg, 'erp.articleList.article.button.delete'),
-                icon  : 'fa fa-trash',
-                styles: {
-                    'float': 'none'
-                },
-                events: {
-                    onClick: this.openDeleteDialog
-                }
-            }).inject(this.$Buttons);
+            if (this.getAttribute('deletable')) {
+                new QUIButton({
+                    title : QUILocale.get(lg, 'erp.articleList.article.button.delete'),
+                    icon  : 'fa fa-trash',
+                    styles: {
+                        'float': 'none'
+                    },
+                    events: {
+                        onClick: this.openDeleteDialog
+                    }
+                }).inject(this.$Buttons);
+            }
 
             this.$created = true;
+
+            // User
+            if (this.getAttribute('User')) {
+                this.$user = this.getAttribute('User');
+            }
+
             this.calc();
 
             this.addEvent('onEditKeyDown', function (me, event) {
@@ -434,18 +523,20 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         $calc: function () {
             var Calc;
 
-            var self = this,
-                attr = self.getAttributes(),
-                pos  = parseInt(attr.position);
+            var self       = this,
+                attr       = self.getAttributes(),
+                pos        = parseInt(attr.position),
+                calcByList = false;
 
-            if (this.getAttribute('List')) {
-                Calc = this.getAttribute('List').$executeCalculation();
+            if (this.getAttribute('calcByList') && this.getAttribute('List')) {
+                Calc       = this.getAttribute('List').$executeCalculation();
+                calcByList = true;
             } else {
                 Calc = new Promise(function (resolve, reject) {
                     QUIAjax.get('package_quiqqer_erp_ajax_products_calc', resolve, {
                         'package': 'quiqqer/erp',
                         onError  : reject,
-                        params   : JSON.encode({
+                        articles : JSON.encode({
                             articles: [attr]
                         }),
                         user     : JSON.encode(self.$user)
@@ -454,14 +545,22 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             }
 
             return Calc.then(function (result) {
+                var article;
+                var brutto;
                 var articles = result.articles;
-                var article  = articles.filter(function (article) {
-                    return parseInt(article.position) === pos;
-                })[0];
 
-                var brutto = result.brutto.articles.filter(function (article) {
-                    return parseInt(article.position) === pos;
-                })[0];
+                if (!calcByList) {
+                    article = articles[0];
+                    brutto  = result.brutto.articles[0];
+                } else {
+                    article = articles.filter(function (article) {
+                        return parseInt(article.position) === pos;
+                    })[0];
+
+                    brutto = result.brutto.articles.filter(function (article) {
+                        return parseInt(article.position) === pos;
+                    })[0];
+                }
 
                 self.$calculations = article;
                 self.$bruttoCalc   = brutto;
@@ -763,6 +862,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             }
 
             this.$Elm.addClass('quiqqer-erp-backend-erpArticle-select');
+
+            if (this.$SelectCheckbox) {
+                this.$SelectCheckbox.checked = true;
+            }
+
+            this.$isSelected = true;
+
             this.fireEvent('select', [this]);
         },
 
@@ -775,7 +881,21 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             }
 
             this.$Elm.removeClass('quiqqer-erp-backend-erpArticle-select');
+
+            if (this.$SelectCheckbox) {
+                this.$SelectCheckbox.checked = false;
+            }
+
+            this.$isSelected = false;
+
             this.fireEvent('unSelect', [this]);
+        },
+
+        /**
+         * @return {boolean}
+         */
+        isSelected: function () {
+            return this.$isSelected;
         },
 
         /**

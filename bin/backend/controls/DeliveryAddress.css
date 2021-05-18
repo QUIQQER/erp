@@ -1,0 +1,20 @@
+.quiqqer-erp-delivery-address-select-table {
+    border: none;
+    margin: 0;
+}
+
+.quiqqer-erp-delivery-address-select {
+    float: right;
+}
+
+.quiqqer-erp-delivery-address-select-container {
+    float: left;
+}
+
+.quiqqer-erp-delivery-address-select-btn {
+    float: none !important;
+}
+
+.quiqqer-erp-delivery-address-select-label {
+    width: initial !important;
+}
