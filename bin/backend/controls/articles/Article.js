@@ -988,6 +988,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                                     [[
                                         {
                                             type  : "button",
+                                            button: "Source"
+                                        },
+                                        {
+                                            type: "separator"
+                                        },
+                                        {
+                                            type  : "button",
                                             button: "Bold"
                                         },
                                         {
@@ -997,6 +1004,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                                         {
                                             type  : "button",
                                             button: "Underline"
+                                        },
+                                        {
+                                            type: "separator"
+                                        },
+                                        {
+                                            type  : "button",
+                                            button: "FontSize"
                                         },
                                         {
                                             type: "separator"
