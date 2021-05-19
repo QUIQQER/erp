@@ -311,9 +311,12 @@ class Article implements ArticleInterface
         }
 
         try {
-            $Project = QUI::getRewrite()->getProject();
+            $Project          = QUI::getRewrite()->getProject();
+            $PlaceholderImage = $Project->getMedia()->getPlaceholderImage();
 
-            return $Project->getMedia()->getPlaceholderImage();
+            if ($PlaceholderImage) {
+                return $PlaceholderImage;
+            }
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
         }
