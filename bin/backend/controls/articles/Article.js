@@ -1043,7 +1043,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                         self.setDescription(self.$Editor.getContent());
                         self.setTitle(Win.getContent().getElement('[name="title"]').value);
 
-                        QUIElements.simulateEvent(self.$Text.getNext('.cell-editable'), 'click');
+                        var NextEditCell = self.$Text.getNext('.cell-editable');
+
+                        if (NextEditCell) {
+                            QUIElements.simulateEvent(self.$Text.getNext('.cell-editable'), 'click');
+                        }
                     },
 
                     onClose: function () {
