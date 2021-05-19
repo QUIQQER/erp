@@ -30,7 +30,7 @@
 }
 
 .quiqqer-erp-backend-erpArticleText-text {
-    width: calc(100% - 250px);
+    width: calc(100% - 120px);
 }
 
 .quiqqer-erp-backend-erpArticleText-text-title {
@@ -72,7 +72,7 @@
     right: 0;
     text-align: right;
     transition: opacity 0.2s;
-    width: 150px;
+    width: 75px;
     z-index: 10;
 }
 
