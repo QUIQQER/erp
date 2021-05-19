@@ -171,6 +171,10 @@ class ArticleView extends QUI\QDOM
             'customFields'          => $customFields
         ]);
 
+        if ($this->Article instanceof QUI\ERP\Accounting\Articles\Text) {
+            return $Engine->fetch(\dirname(__FILE__).'/ArticleViewText.html');
+        }
+
         return $Engine->fetch(\dirname(__FILE__).'/ArticleView.html');
     }
 }
