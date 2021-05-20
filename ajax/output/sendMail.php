@@ -75,12 +75,16 @@ QUI::$Ajax->registerFunction(
             QUI\System\Log::writeDebugException($Exception);
             throw $Exception;
         } catch (\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
+            if ($Exception->getCode() === 403) {
+                throw $Exception;
+            } else {
+                QUI\System\Log::writeException($Exception);
 
-            throw new \QUI\Exception([
-                'quiqqer/erp',
-                'exception.ajax.output.sendMail.error'
-            ]);
+                throw new \QUI\Exception([
+                    'quiqqer/erp',
+                    'exception.ajax.output.sendMail.error'
+                ]);
+            }
         }
 
         QUI::getMessagesHandler()->addSuccess(
