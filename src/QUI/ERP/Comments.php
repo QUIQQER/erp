@@ -206,6 +206,8 @@ class Comments
     // region utils
 
     /**
+     * Get comments by user
+     *
      * @param QUI\Users\User $User
      * @return Comments
      *
@@ -246,6 +248,29 @@ class Comments
 
         QUI::getEvents()->fireEvent(
             'quiqqerErpGetCommentsByUser',
+            [$User, $Comments]
+        );
+
+        $Comments->sort();
+
+        return $Comments;
+    }
+
+    /**
+     * Get history by user
+     *
+     * @param QUI\Users\User $User
+     * @return Comments
+     *
+     * @throws QUI\Exception
+     * @throws QUI\ExceptionStack
+     */
+    public static function getHistoryByUser(QUI\Users\User $User)
+    {
+        $Comments = new self();
+
+        QUI::getEvents()->fireEvent(
+            'quiqqerErpGetHistoryByUser',
             [$User, $Comments]
         );
 
