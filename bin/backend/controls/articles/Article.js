@@ -539,7 +539,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                         articles : JSON.encode({
                             articles: [attr]
                         }),
-                        user     : JSON.encode(self.$user)
+                        user     : JSON.encode(self.$user),
+                        currency : self.getAttribute('currency')
                     });
                 });
             }
@@ -1339,7 +1340,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!PreviousArticle) {
                         PreviousArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                            .getLast('.article');
+                                              .getLast('.article');
                     }
 
                     Next = PreviousArticle.getLast('.cell-editable');
@@ -1364,7 +1365,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!NextArticle) {
                         NextArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                            .getElement('.article');
+                                          .getElement('.article');
                     }
 
                     Next = NextArticle.getElement('.cell-editable');
