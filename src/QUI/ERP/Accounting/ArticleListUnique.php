@@ -328,11 +328,11 @@ class ArticleListUnique implements \IteratorAggregate
             $showExchangeRate = false;
             $exchangeRate     = false;
         } else {
-            $exchangeRate = $ExchangeCurrency->getExchangeRate($Currency);
-            $exchangeRate = $Currency->format($exchangeRate);
+            $exchangeRate = $Currency->getExchangeRate($ExchangeCurrency);
+            $exchangeRate = $ExchangeCurrency->format($exchangeRate);
 
             $exchangeRateText = $this->Locale->get('quiqqer/erp', 'exchangerate.text', [
-                'startCurrency' => $ExchangeCurrency->format(1),
+                'startCurrency' => $Currency->format(1),
                 'rate'          => $exchangeRate
             ]);
         }
