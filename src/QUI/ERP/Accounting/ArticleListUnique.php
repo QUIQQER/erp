@@ -50,6 +50,11 @@ class ArticleListUnique implements \IteratorAggregate
     protected $User = null;
 
     /**
+     * @var bool
+     */
+    protected $showExchangeRate = true;
+
+    /**
      * ArticleList constructor.
      *
      * @param array $attributes
@@ -315,15 +320,35 @@ class ArticleListUnique implements \IteratorAggregate
             return $View;
         }, $this->articles);
 
+        $ExchangeCurrency = QUI\ERP\Currency\Conf::getAccountingCurrency();
+        $showExchangeRate = $this->showExchangeRate;
+        $exchangeRateText = '';
+
+        if ($ExchangeCurrency->getCode() === $Currency->getCode()) {
+            $showExchangeRate = false;
+            $exchangeRate     = false;
+        } else {
+            $exchangeRate = $ExchangeCurrency->getExchangeRate($Currency);
+            $exchangeRate = $Currency->format($exchangeRate);
+
+            $exchangeRateText = $this->Locale->get('quiqqer/erp', 'exchangerate.text', [
+                'startCurrency' => $ExchangeCurrency->format(1),
+                'rate'          => $exchangeRate
+            ]);
+        }
+
         // output
         $Engine->assign([
-            'priceFactors' => $this->PriceFactors->toArray(),
-            'showHeader'   => $this->showHeader,
-            'this'         => $this,
-            'articles'     => $articles,
-            'calculations' => $this->calculations,
-            'vatArray'     => $vatArray,
-            'Locale'       => $this->Locale
+            'priceFactors'     => $this->PriceFactors->toArray(),
+            'showHeader'       => $this->showHeader,
+            'this'             => $this,
+            'articles'         => $articles,
+            'calculations'     => $this->calculations,
+            'vatArray'         => $vatArray,
+            'Locale'           => $this->Locale,
+            'showExchangeRate' => $showExchangeRate,
+            'exchangeRate'     => $exchangeRate,
+            'exchangeRateText' => $exchangeRateText
         ]);
 
         if ($template && \file_exists($template)) {

@@ -635,6 +635,11 @@
             <de><![CDATA[ecoyn Dashboard]]></de>
             <en><![CDATA[ecoyn dashboard]]></en>
         </locale>
+
+        <locale name="exchangerate.text">
+            <de><![CDATA[[startCurrency] = [rate]]]></de>
+            <en><![CDATA[[startCurrency] = [rate]]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">
