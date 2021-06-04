@@ -55,6 +55,16 @@ class ArticleListUnique implements \IteratorAggregate
     protected $showExchangeRate = true;
 
     /**
+     * @var null
+     */
+    protected $ExchangeCurrency = null;
+
+    /**
+     * @var float
+     */
+    protected $exchangeRate = null;
+
+    /**
      * ArticleList constructor.
      *
      * @param array $attributes
@@ -274,6 +284,22 @@ class ArticleListUnique implements \IteratorAggregate
     }
 
     /**
+     * @param QUI\ERP\Currency\Currency $Currency
+     */
+    public function setExchangeCurrency(QUI\ERP\Currency\Currency $Currency)
+    {
+        $this->ExchangeCurrency = $Currency;
+    }
+
+    /**
+     * @param float $rate
+     */
+    public function setExchangeRate(float $rate)
+    {
+        $this->exchangeRate = $rate;
+    }
+
+    /**
      * Return the Article List as HTML, without CSS
      *
      * @param string|bool $template - custom template
@@ -320,14 +346,18 @@ class ArticleListUnique implements \IteratorAggregate
             return $View;
         }, $this->articles);
 
-        $ExchangeCurrency = QUI\ERP\Currency\Conf::getAccountingCurrency();
+        $ExchangeCurrency = $this->ExchangeCurrency;
         $showExchangeRate = $this->showExchangeRate;
         $exchangeRateText = '';
 
-        if ($ExchangeCurrency->getCode() === $Currency->getCode()) {
+        if (!$ExchangeCurrency || $ExchangeCurrency->getCode() === $Currency->getCode()) {
             $showExchangeRate = false;
             $exchangeRate     = false;
         } else {
+            if ($this->exchangeRate) {
+                $Currency->setExchangeRate($this->exchangeRate);
+            }
+
             $exchangeRate = $Currency->getExchangeRate($ExchangeCurrency);
             $exchangeRate = $ExchangeCurrency->format($exchangeRate);
 
