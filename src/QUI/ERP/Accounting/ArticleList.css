@@ -121,3 +121,9 @@ table.articles-article {
 .articles-sum-row-sum-value {
     border-bottom: 3px double #999999;
 }
+
+.articles-sum-exchange-rate {
+    float: left;
+    font-size: 12px;
+    margin-top: 20px;
+}
