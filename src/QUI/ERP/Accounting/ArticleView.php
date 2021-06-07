@@ -41,6 +41,14 @@ class ArticleView extends QUI\QDOM
     }
 
     /**
+     * @return string
+     */
+    public function getQuantityUnit(): string
+    {
+        return $this->Article->getQuantityUnit();
+    }
+
+    /**
      * Set the currency
      *
      * @param QUI\ERP\Currency\Currency $Currency
