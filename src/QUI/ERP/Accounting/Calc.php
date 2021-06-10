@@ -437,8 +437,11 @@ class Calc
 
         $isNetto     = QUI\ERP\Utils\User::isNettoUser($this->getUser());
         $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($this->getUser());
+        $Currency    = $Article->getCurrency();
 
-        $Currency = $this->getCurrency();
+        if (!$Currency) {
+            $Currency = $this->getCurrency();
+        }
 
         $nettoPrice      = $Article->getUnitPrice()->value();
         $vat             = $Article->getVat();
@@ -475,8 +478,8 @@ class Calc
 
         if (!$isNetto) {
             // korrektur rechnung / 1 cent problem
-            $checkBrutto          = $nettoPriceNotRounded * ($vat / 100 + 1);
-            $checkBrutto          = \round($checkBrutto, $Currency->getPrecision());
+            $checkBrutto = $nettoPriceNotRounded * ($vat / 100 + 1);
+            $checkBrutto = \round($checkBrutto, $Currency->getPrecision());
 
             $checkVat = $checkBrutto - $nettoPriceNotRounded;
             $checkVat = \round($checkVat * $Article->getQuantity(), $Currency->getPrecision());

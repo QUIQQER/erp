@@ -47,7 +47,7 @@ class Price
     /**
      * Price constructor.
      *
-     * @param float|int|double|string $price
+     * @param float|int|string $price
      * @param QUI\ERP\Currency\Currency $Currency
      * @param QUI\Users\User|boolean $User - optional, if no user, session user are used
      */
@@ -68,7 +68,7 @@ class Price
      * Return the price as array notation
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'price'          => $this->value(),
@@ -113,7 +113,7 @@ class Price
      *
      * @return string
      */
-    public function getDisplayPrice()
+    public function getDisplayPrice(): string
     {
         return $this->Currency->format($this->getPrice());
     }
@@ -153,7 +153,7 @@ class Price
      *
      * @return array [Discount, Discount, Discount]
      */
-    public function getDiscounts()
+    public function getDiscounts(): array
     {
         return $this->discounts;
     }
@@ -163,7 +163,7 @@ class Price
      *
      * @return QUI\ERP\Currency\Currency
      */
-    public function getCurrency()
+    public function getCurrency(): QUI\ERP\Currency\Currency
     {
         return $this->Currency;
     }
@@ -175,8 +175,8 @@ class Price
     /**
      * Validates a price value
      *
-     * @param number|string $value
-     * @return float|double|int|null
+     * @param int|float|string $value
+     * @return float|int|null
      */
     public static function validatePrice($value)
     {
@@ -237,7 +237,7 @@ class Price
      *
      * @return bool
      */
-    public function isMinimalPrice()
+    public function isMinimalPrice(): bool
     {
         return $this->isMinimalPrice;
     }

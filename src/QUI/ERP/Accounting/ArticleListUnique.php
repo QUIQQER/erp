@@ -50,6 +50,21 @@ class ArticleListUnique implements \IteratorAggregate
     protected $User = null;
 
     /**
+     * @var bool
+     */
+    protected $showExchangeRate = true;
+
+    /**
+     * @var null
+     */
+    protected $ExchangeCurrency = null;
+
+    /**
+     * @var float
+     */
+    protected $exchangeRate = null;
+
+    /**
      * ArticleList constructor.
      *
      * @param array $attributes
@@ -76,8 +91,17 @@ class ArticleListUnique implements \IteratorAggregate
         }
 
         $articles = $attributes['articles'];
+        $currency = QUI\ERP\Currency\Handler::getDefaultCurrency()->getCode();
+
+        if (isset($attributes['calculations']['currencyData']['code'])) {
+            $currency = $attributes['calculations']['currencyData']['code'];
+        }
 
         foreach ($articles as $article) {
+            if (!isset($article['currency'])) {
+                $article['currency'] = $currency;
+            }
+
             if (!isset($article['class'])) {
                 $this->articles[] = new Article($article);
                 continue;
@@ -269,6 +293,22 @@ class ArticleListUnique implements \IteratorAggregate
     }
 
     /**
+     * @param QUI\ERP\Currency\Currency $Currency
+     */
+    public function setExchangeCurrency(QUI\ERP\Currency\Currency $Currency)
+    {
+        $this->ExchangeCurrency = $Currency;
+    }
+
+    /**
+     * @param float $rate
+     */
+    public function setExchangeRate(float $rate)
+    {
+        $this->exchangeRate = $rate;
+    }
+
+    /**
      * Return the Article List as HTML, without CSS
      *
      * @param string|bool $template - custom template
@@ -315,15 +355,39 @@ class ArticleListUnique implements \IteratorAggregate
             return $View;
         }, $this->articles);
 
+        $ExchangeCurrency = $this->ExchangeCurrency;
+        $showExchangeRate = $this->showExchangeRate;
+        $exchangeRateText = '';
+
+        if (!$ExchangeCurrency || $ExchangeCurrency->getCode() === $Currency->getCode()) {
+            $showExchangeRate = false;
+            $exchangeRate     = false;
+        } else {
+            if ($this->exchangeRate) {
+                $Currency->setExchangeRate($this->exchangeRate);
+            }
+
+            $exchangeRate = $Currency->getExchangeRate($ExchangeCurrency);
+            $exchangeRate = $ExchangeCurrency->format($exchangeRate);
+
+            $exchangeRateText = $this->Locale->get('quiqqer/erp', 'exchangerate.text', [
+                'startCurrency' => $Currency->format(1),
+                'rate'          => $exchangeRate
+            ]);
+        }
+
         // output
         $Engine->assign([
-            'priceFactors' => $this->PriceFactors->toArray(),
-            'showHeader'   => $this->showHeader,
-            'this'         => $this,
-            'articles'     => $articles,
-            'calculations' => $this->calculations,
-            'vatArray'     => $vatArray,
-            'Locale'       => $this->Locale
+            'priceFactors'     => $this->PriceFactors->toArray(),
+            'showHeader'       => $this->showHeader,
+            'this'             => $this,
+            'articles'         => $articles,
+            'calculations'     => $this->calculations,
+            'vatArray'         => $vatArray,
+            'Locale'           => $this->Locale,
+            'showExchangeRate' => $showExchangeRate,
+            'exchangeRate'     => $exchangeRate,
+            'exchangeRateText' => $exchangeRateText
         ]);
 
         if ($template && \file_exists($template)) {

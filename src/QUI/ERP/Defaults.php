@@ -154,9 +154,9 @@ class Defaults
     /**
      * Return the system calculation precision
      *
-     * @return array|int|string
+     * @return int
      */
-    public static function getPrecision()
+    public static function getPrecision(): int
     {
         try {
             $Package = QUI::getPackage('quiqqer/erp');
@@ -169,7 +169,7 @@ class Defaults
             $precision = $Config->get('general', 'precision');
 
             if ($precision) {
-                return $precision;
+                return (int)$precision;
             }
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);

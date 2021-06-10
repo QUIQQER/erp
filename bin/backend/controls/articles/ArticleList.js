@@ -423,6 +423,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     'package': 'quiqqer/erp',
                     articles : JSON.encode({articles: articles}),
                     user     : JSON.encode(self.$user),
+                    currency : self.getAttribute('currency'),
                     onError  : function (err) {
                         console.error(err);
                         reject();
@@ -617,8 +618,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         $onArticleSetPosition: function (Article) {
             Article.getElm()
-                .getElement('.quiqqer-erp-backend-erpArticlePlaceholder-pos')
-                .set('html', Article.getAttribute('position'));
+                   .getElement('.quiqqer-erp-backend-erpArticlePlaceholder-pos')
+                   .set('html', Article.getAttribute('position'));
         },
 
         /**

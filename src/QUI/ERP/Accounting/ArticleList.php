@@ -276,7 +276,13 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     {
         $this->calc();
 
-        return new ArticleListUnique($this->toArray(), $this->getUser());
+        $List = new ArticleListUnique($this->toArray(), $this->getUser());
+
+        if ($this->ExchangeCurrency) {
+            $List->setExchangeCurrency($this->ExchangeCurrency);
+        }
+
+        return $List;
     }
 
     /**

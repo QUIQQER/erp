@@ -492,6 +492,38 @@ class Article implements ArticleInterface
     }
 
     /**
+     * Returns the article quantity
+     *
+     * @param null|QUI\Locale $Locale
+     * @return string
+     */
+    public function getQuantityUnit($Locale = null): string
+    {
+        if ($Locale === null) {
+            $Locale = QUI::getLocale();
+        }
+
+        try {
+            // @todo cache unit field entries
+            $current   = $Locale->getCurrent();
+            $unitId    = $this->attributes['quantityUnit']['id'];
+            $UnitField = QUI\ERP\Products\Handler\Fields::getField(QUI\ERP\Products\Handler\Fields::FIELD_UNIT);
+            $options   = $UnitField->getOptions();
+
+            if (isset($options['entries'][$unitId])) {
+                $titles = $options['entries'][$unitId]['title'];
+
+                if ($titles[$current]) {
+                    return $titles[$current];
+                }
+            }
+        } catch (QUI\Exception $Exception) {
+        }
+
+        return $this->attributes['quantityUnit']['title'];
+    }
+
+    /**
      * Return the price from the article
      *
      * @return Price
