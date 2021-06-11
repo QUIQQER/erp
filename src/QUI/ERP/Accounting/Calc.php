@@ -62,9 +62,13 @@ class Calc
     /**
      * Berechnet auf Basis des Preises inklusive Steuern
      * Zum Beispiel MwSt
-     *
      */
     const CALCULATION_BASIS_VAT_BRUTTO = 4;
+
+    /**
+     * Berechnet von Gesamtpreis
+     */
+    const CALCULATION_GRAND_TOTAL = 5;
 
     /**
      * @var UserInterface
@@ -235,6 +239,12 @@ class Calc
 
         /* @var $PriceFactor QUI\ERP\Accounting\PriceFactors\Factor */
         foreach ($priceFactors as $PriceFactor) {
+            if ($PriceFactor->getCalculationBasis() === self::CALCULATION_GRAND_TOTAL) {
+                $PriceFactor->setNettoSum($PriceFactor->getValue());
+                $PriceFactor->setValueText('');
+                continue;
+            }
+
             // percent - Prozent Angabe
             if ($PriceFactor->getCalculation() === self::CALCULATION_PERCENTAGE) {
                 $calcBasis        = $PriceFactor->getCalculationBasis();
@@ -264,6 +274,10 @@ class Calc
                             $percentage = $priceFactorValue / 100 * $subSum;
                         }
                         break;
+
+                    case self::CALCULATION_GRAND_TOTAL:
+                        // starts later
+                        continue 2;
                 }
 
                 $percentage = \round($percentage, $precision);
@@ -274,7 +288,7 @@ class Calc
 
                 if ($isNetto) {
                     $PriceFactor->setSum($PriceFactor->getNettoSum());
-                } elseif ($PriceFactor->getCalculationBasis() === ErpCalc::CALCULATION_BASIS_VAT_BRUTTO) {
+                } elseif ($PriceFactor->getCalculationBasis() === self::CALCULATION_BASIS_VAT_BRUTTO) {
                     $PriceFactor->setNettoSum($PriceFactor->getNettoSum() - $vatSum);
                     $PriceFactor->setSum($vatSum + $PriceFactor->getNettoSum());
                 } else {
@@ -351,8 +365,10 @@ class Calc
             $priceFactorBruttoSums = 0;
 
             foreach ($priceFactors as $Factor) {
-                /* @var $Factor QUI\ERP\Products\Utils\PriceFactor */
-                $priceFactorBruttoSums = $priceFactorBruttoSums + \round($Factor->getSum(), $precision);
+                if ($Factor->getCalculationBasis() !== self::CALCULATION_GRAND_TOTAL) {
+                    /* @var $Factor QUI\ERP\Products\Utils\PriceFactor */
+                    $priceFactorBruttoSums = $priceFactorBruttoSums + \round($Factor->getSum(), $precision);
+                }
             }
 
             $priceFactorBruttoSum = $subSum + $priceFactorBruttoSums;
@@ -365,6 +381,10 @@ class Calc
                 $added = false;
 
                 foreach ($priceFactors as $Factor) {
+                    if ($Factor->getCalculationBasis() === self::CALCULATION_GRAND_TOTAL) {
+                        continue;
+                    }
+
                     if ($Factor instanceof QUI\ERP\Products\Interfaces\PriceFactorWithVatInterface) {
                         $Factor->setSum(\round($Factor->getSum() - $diff, $precision));
                         $bruttoSum = \round($bruttoSum, $precision);
@@ -404,9 +424,24 @@ class Calc
             }
         }
 
+        // look if CALCULATION_GRAND_TOTAL
+        $grandSubSum = $bruttoSum;
+
+        foreach ($priceFactors as $Factor) {
+            if ($Factor->getCalculationBasis() === self::CALCULATION_GRAND_TOTAL) {
+                $value     = $Factor->getValue();
+                $bruttoSum = $bruttoSum + $value;
+
+                if ($bruttoSum < 0) {
+                    $bruttoSum = 0;
+                }
+            }
+        }
+
         $callback([
             'sum'          => $bruttoSum,
             'subSum'       => $subSum,
+            'grandSubSum'  => $grandSubSum,
             'nettoSum'     => $nettoSum,
             'nettoSubSum'  => $nettoSubSum,
             'vatArray'     => $vatArray,

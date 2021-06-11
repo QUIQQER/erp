@@ -106,10 +106,12 @@ table.articles-article {
     text-align: right;
 }
 
+.articles-sum-row-grandSubSum-text,
 .articles-sum-row-subsum-text {
     border-bottom: 1px solid #999999;
 }
 
+.articles-sum-row-grandSubSum-value,
 .articles-sum-row-subsum-value {
     border-bottom: 1px solid #999999;
 }

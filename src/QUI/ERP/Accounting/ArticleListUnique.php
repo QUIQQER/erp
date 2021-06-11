@@ -340,6 +340,7 @@ class ArticleListUnique implements \IteratorAggregate
 
         $this->calculations['sum']         = $Currency->format($this->calculations['sum']);
         $this->calculations['subSum']      = $Currency->format($this->calculations['subSum']);
+        $this->calculations['grandSubSum'] = $Currency->format($this->calculations['grandSubSum']);
         $this->calculations['nettoSum']    = $Currency->format($this->calculations['nettoSum']);
         $this->calculations['nettoSubSum'] = $Currency->format($this->calculations['nettoSubSum']);
 
@@ -376,9 +377,22 @@ class ArticleListUnique implements \IteratorAggregate
             ]);
         }
 
+        $priceFactors = [];
+        $grandTotal   = [];
+
+        foreach ($this->PriceFactors as $Factor) {
+            if ($Factor->getCalculationBasis() === QUI\ERP\Accounting\Calc::CALCULATION_GRAND_TOTAL) {
+                $grandTotal[] = $Factor->toArray();
+                continue;
+            }
+
+            $priceFactors[] = $Factor->toArray();
+        }
+
         // output
         $Engine->assign([
-            'priceFactors'     => $this->PriceFactors->toArray(),
+            'priceFactors'     => $priceFactors,
+            'grandTotal'       => $grandTotal,
             'showHeader'       => $this->showHeader,
             'this'             => $this,
             'articles'         => $articles,

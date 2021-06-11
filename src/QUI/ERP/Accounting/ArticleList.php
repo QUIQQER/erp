@@ -27,6 +27,11 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     protected $sum;
 
     /**
+     * @var int|float
+     */
+    protected $grandSubSum;
+
+    /**
      * @var QUI\Interfaces\Users\User
      */
     protected $User = null;
@@ -254,7 +259,13 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
                 continue;
             }
 
-            $result['attributes'][] = [
+            $key = 'attributes';
+
+            if ($Factor->getCalculationBasis() === QUI\ERP\Accounting\Calc::CALCULATION_GRAND_TOTAL) {
+                $key = 'grandTotalFactors';
+            }
+
+            $data[$key][] = [
                 'title'     => $Factor->getTitle(),
                 'value'     => $Factor->getSumFormatted(),
                 'valueText' => ''
@@ -323,6 +334,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
 
         $Calc->calcArticleList($this, function ($data) use ($self) {
             $self->sum          = $data['sum'];
+            $self->grandSubSum  = $data['grandSubSum'];
             $self->subSum       = $data['subSum'];
             $self->nettoSum     = $data['nettoSum'];
             $self->nettoSubSum  = $data['nettoSubSum'];
@@ -334,6 +346,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
 
             $this->calculations = [
                 'sum'          => $self->sum,
+                'grandSubSum'  => $self->grandSubSum,
                 'subSum'       => $self->subSum,
                 'nettoSum'     => $self->nettoSum,
                 'nettoSubSum'  => $self->nettoSubSum,
