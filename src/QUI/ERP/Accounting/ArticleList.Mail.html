@@ -77,12 +77,6 @@
         </tr>
         {/foreach}
 
-        {if count($priceFactors)}
-        <tr>
-            <td colspan="2"><br/></td>
-        </tr>
-        {/if}
-
         {foreach $vatArray as $vat}
         <tr>
             <td>
@@ -97,6 +91,35 @@
             </td>
         </tr>
         {/foreach}
+
+        {if count($grandTotal)}
+        <tr class="articles-sum-row-grandSubSum">
+            <td class="articles-sum-row-firstCell">
+                <span class="articles-sum-row-grandSubSum-text">
+                    {locale group="quiqqer/erp" var="article.list.articles.grandSubSum" Locale=$Locale}
+                </span>
+            </td>
+            <td style="width: 140px" class="articles-sum-row-sndCell">
+                <span class="articles-sum-row-grandSubSum-value">
+                    {$calculations.grandSubSum}
+                </span>
+            </td>
+        </tr>
+        {foreach $grandTotal as $priceFactor}
+        <tr>
+            <td class="articles-sum-row-firstCell">
+                <span class="articles-sum-row-firstCell-text">
+                    {$priceFactor.title} {if !empty($priceFactor.valueText) && $priceFactor.valueText !== '-'}({$priceFactor.valueText}){/if}
+                </span>
+            </td>
+            <td class="articles-sum-row-sndCell">
+                <span class="articles-sum-row-firstCell-value">
+                    {$priceFactor.sumFormatted}
+                </span>
+            </td>
+        </tr>
+        {/foreach}
+        {/if}
 
         <tr class="articles-sum-row-sum">
             <td class="articles-sum-row-firstCell">

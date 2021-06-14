@@ -111,8 +111,12 @@
             <en><![CDATA[Subtotal:]]></en>
         </locale>
         <locale name="article.list.articles.sumtotal">
-            <de><![CDATA[Summe:]]></de>
-            <en><![CDATA[Sum total:]]></en>
+            <de><![CDATA[Gesamtsumme]]></de>
+            <en><![CDATA[Grand total]]></en>
+        </locale>
+        <locale name="article.list.articles.grandSubSum">
+            <de><![CDATA[Summe]]></de>
+            <en><![CDATA[Total]]></en>
         </locale>
 
         <locale name="erp.panel.extras.text">
@@ -660,7 +664,7 @@
             <de><![CDATA[Bitte wähle zuerst einen Kunden aus]]></de>
             <en><![CDATA[Please select a customer first]]></en>
         </locale>
-        
+
         <locale name="article.summary.tpl.labelPosInfo">
             <de><![CDATA[Pos.-Info]]></de>
             <en><![CDATA[Pos. info]]></en>
