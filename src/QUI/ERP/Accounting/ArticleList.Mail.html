@@ -27,7 +27,11 @@
                 {foreach $Article->getCustomFields() as $field}
                 <li class="articles-body-article-data-fields-field">
                     <span>{$field.title}:</span>
+                    {if isset($field.custom_calc)}
                     <span>{$field.custom_calc.valueText}</span>
+                    {else}
+                    <span>{$field.valueText}</span>
+                    {/if}
                 </li>
                 {/foreach}
             </ul>
