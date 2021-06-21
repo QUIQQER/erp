@@ -25,6 +25,8 @@
                 <span>{$field.title}:</span>
                 {if isset($field.custom_calc) && isset($field.custom_calc.valueText)}
                 <span>{$field.custom_calc.valueText}</span>
+                {elseif isset($field['userInput'])}
+                <span>{$field['userInput']}</span>
                 {/if}
             </li>
             {/foreach}

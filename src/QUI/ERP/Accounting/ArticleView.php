@@ -94,20 +94,14 @@ class ArticleView extends QUI\QDOM
                 continue;
             }
 
-            if (!isset($field['custom_calc']['valueText'])) {
-                continue;
-            }
-
-            if (!isset($field['custom_calc']['value'])) {
-                continue;
-            }
-
-            if (\is_string($field['custom_calc']['valueText'])) {
-                // nothing
-            } elseif (isset($field['custom_calc']['valueText'][$current])) {
-                $field['custom_calc']['valueText'] = $field['custom_calc']['valueText'][$current];
-            } else {
-                $field['custom_calc']['valueText'] = '';
+            if (isset($field['custom_calc']['valueText'])) {
+                if (!\is_string($field['custom_calc']['valueText'])) {
+                    if (isset($field['custom_calc']['valueText'][$current])) {
+                        $field['custom_calc']['valueText'] = $field['custom_calc']['valueText'][$current];
+                    } else {
+                        $field['custom_calc']['valueText'] = '';
+                    }
+                }
             }
 
             $customFields[] = $field;
