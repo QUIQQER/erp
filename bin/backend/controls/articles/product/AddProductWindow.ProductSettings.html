@@ -1,14 +1,18 @@
 <form>
     <table class="data-table data-table-flexbox">
         <tbody>
+        {{#editAmount}}
         <tr>
             <td>
                 <label class="field-container">
-                    <span class="field-container-item">Menge</span>
+                    <span class="field-container-item">
+                        {{labelAmount}}
+                    </span>
                     <input type="number" class="field-container-field" name="quantity" value="1"/>
                 </label>
             </td>
         </tr>
+        {{/editAmount}}
         </tbody>
     </table>
 </form>
