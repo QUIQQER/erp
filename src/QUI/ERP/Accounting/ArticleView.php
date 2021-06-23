@@ -7,6 +7,7 @@
 namespace QUI\ERP\Accounting;
 
 use QUI;
+use QUI\ERP\Accounting\Calc as ErpCalc;
 
 /**
  * Class ArticleView
@@ -101,6 +102,33 @@ class ArticleView extends QUI\QDOM
                     } else {
                         $field['custom_calc']['valueText'] = '';
                     }
+                }
+
+                // Add price addition
+                $sum = (float)$field['custom_calc']['value'];
+
+                if (!empty($field['custom_calc']['displayDiscounts']) &&
+                    (!QUI::isFrontend() || !QUI\ERP\Products\Utils\Package::hidePrice()) &&
+                    $sum > 0) {
+
+                    if ($sum >= 0) {
+                        $priceAddition = '+';
+                    } else {
+                        $priceAddition = '-';
+                    }
+
+                    switch ((int)$field['custom_calc']['calculation']) {
+                        case ErpCalc::CALCULATION_PERCENTAGE:
+                            $priceAddition .= $sum.'%';
+                            break;
+
+                        default:
+                            $priceAddition .= $this->getCurrency()->format($sum);
+                            break;
+                    }
+
+                    // locale values
+                    $field['custom_calc']['valueText'] .= ' ('.$priceAddition.')';
                 }
             }
 
