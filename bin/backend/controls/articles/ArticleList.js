@@ -17,6 +17,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
     'Mustache',
     'Ajax',
     'Locale',
+
+    'package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWindow',
     'package/quiqqer/erp/bin/backend/controls/articles/Article',
     'package/quiqqer/erp/bin/backend/classes/Sortable',
 
@@ -25,7 +27,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
     'css!package/quiqqer/erp/bin/backend/controls/articles/ArticleList.css'
 
 ], function (QUI, QUIControl, QUISwitch, Mustache,
-             QUIAjax, QUILocale, Article, Sortables, template, templateSortablePlaceholder) {
+             QUIAjax, QUILocale, AddProductWindow, Article, Sortables, template, templateSortablePlaceholder) {
     "use strict";
 
     var lg = 'quiqqer/erp';
@@ -45,7 +47,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             '$onInject',
             '$executeCalculation',
             '$refreshNettoBruttoDisplay',
-            '$getArticleDataForCalculation'
+            '$getArticleDataForCalculation',
+            '$onArticleEditCustomFields'
         ],
 
         options: {
@@ -290,11 +293,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             Child.setAttribute('List', this);
 
             Child.addEvents({
-                onDelete  : this.$onArticleDelete,
-                onSelect  : this.$onArticleSelect,
-                onUnSelect: this.$onArticleUnSelect,
-                onReplace : this.$onArticleReplace,
-                onCalc    : this.$executeCalculation
+                onDelete          : this.$onArticleDelete,
+                onSelect          : this.$onArticleSelect,
+                onUnSelect        : this.$onArticleUnSelect,
+                onReplace         : this.$onArticleReplace,
+                onEditCustomFields: this.$onArticleEditCustomFields,
+                onCalc            : this.$executeCalculation
             });
 
             if (this.$Container) {
@@ -618,8 +622,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         $onArticleSetPosition: function (Article) {
             Article.getElm()
-                   .getElement('.quiqqer-erp-backend-erpArticlePlaceholder-pos')
-                   .set('html', Article.getAttribute('position'));
+                .getElement('.quiqqer-erp-backend-erpArticlePlaceholder-pos')
+                .set('html', Article.getAttribute('position'));
         },
 
         /**
@@ -712,6 +716,45 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         $onArticleReplace: function (Article) {
             this.fireEvent('articleReplaceClick', [this, Article]);
+        },
+
+        /**
+         * event: on article edit custom fields clikc
+         *
+         * @param {Object} EditArticle - package/quiqqer/erp/bin/backend/controls/articles/Article
+         */
+        $onArticleEditCustomFields: function (EditArticle) {
+            var ArticleCustomFields = EditArticle.getAttribute('customFields');
+            var FieldValues         = {};
+
+            for (const [fieldId, FieldData] of Object.entries(ArticleCustomFields)) {
+                FieldValues[fieldId] = FieldData.value;
+            }
+
+            var AddProductControl = new AddProductWindow({
+                fieldValues: FieldValues,
+                editAmount : false
+            });
+
+            var productId = EditArticle.getAttribute('id');
+
+            AddProductControl.openProductSettings(productId).then((ArticleData) => {
+                if (!ArticleData) {
+                    return false;
+                }
+
+                return AddProductControl.$parseProductToArticle(productId, ArticleData);
+            }).then((NewArticleData) => {
+                if (!NewArticleData) {
+                    return;
+                }
+
+                EditArticle.setAttribute('customFields', NewArticleData.customFields);
+
+                var NewArticle = new Article(EditArticle.getAttributes());
+
+                this.replaceArticle(NewArticle, EditArticle.getAttribute('position'));
+            });
         },
 
         /**
