@@ -338,8 +338,14 @@ class ArticleListUnique implements \IteratorAggregate
             $vatArray[$key]['sum'] = $Currency->format($vatArray[$key]['sum']);
         }
 
-        $this->calculations['sum']         = $Currency->format($this->calculations['sum']);
-        $this->calculations['subSum']      = $Currency->format($this->calculations['subSum']);
+        $this->calculations['sum']    = $Currency->format($this->calculations['sum']);
+        $this->calculations['subSum'] = $Currency->format($this->calculations['subSum']);
+
+        // Fallback for older unique article lists
+        if (!isset($this->calculations['grandSubSum'])) {
+            $this->calculations['grandSubSum'] = $this->calculations['sum'];
+        }
+
         $this->calculations['grandSubSum'] = $Currency->format($this->calculations['grandSubSum']);
         $this->calculations['nettoSum']    = $Currency->format($this->calculations['nettoSum']);
         $this->calculations['nettoSubSum'] = $Currency->format($this->calculations['nettoSubSum']);
