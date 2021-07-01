@@ -176,12 +176,16 @@ class OutputTemplate
         );
 
         try {
+            \putenv('QUIQQER_CACHE_DISABLE_WEBP=1');
+
             $templateData = $this->OutputProvider::getTemplateData($this->entityId);
             $this->Engine->assign($templateData);
 
             $Document->setHeaderHTML($this->getHTMLHeader());
             $Document->setContentHTML($this->getHTMLBody());
             $Document->setFooterHTML($this->getHTMLFooter());
+
+            \putenv('QUIQQER_CACHE_DISABLE_WEBP');
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
