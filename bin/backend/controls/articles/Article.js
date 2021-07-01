@@ -67,7 +67,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             '$editNext',
             'remove',
             'select',
-            '$onCustomFieldClick'
+            '$onCustomFieldClick',
+            '$sanitizeArticleDescription'
         ],
 
         options: {
@@ -1083,14 +1084,22 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     },
 
                     onSubmit: function (Win) {
-                        self.setDescription(self.$Editor.getContent());
-                        self.setTitle(Win.getContent().getElement('[name="title"]').value);
+                        var description = self.$Editor.getContent();
 
-                        var NextEditCell = self.$Text.getNext('.cell-editable');
+                        Win.Loader.show();
 
-                        if (NextEditCell) {
-                            QUIElements.simulateEvent(self.$Text.getNext('.cell-editable'), 'click');
-                        }
+                        self.$sanitizeArticleDescription(description).then((sanitizedDescription) => {
+                            self.setDescription(sanitizedDescription);
+                            self.setTitle(Win.getContent().getElement('[name="title"]').value);
+
+                            var NextEditCell = self.$Text.getNext('.cell-editable');
+
+                            if (NextEditCell) {
+                                QUIElements.simulateEvent(self.$Text.getNext('.cell-editable'), 'click');
+                            }
+
+                            Win.Loader.hide();
+                        });
                     },
 
                     onClose: function () {
@@ -1499,6 +1508,22 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     price    : value,
                     vat      : self.getAttribute('vat'),
                     formatted: formatted ? 1 : 0
+                });
+            });
+        },
+
+        /**
+         * Filter article description HTML
+         *
+         * @param {String} description
+         * @return {Promise}
+         */
+        $sanitizeArticleDescription: function (description) {
+            return new Promise((resolve, reject) => {
+                QUIAjax.get('package_quiqqer_erp_ajax_utils_sanitizeArticleDescription', resolve, {
+                    'package'  : 'quiqqer/erp',
+                    description: description,
+                    onError    : reject
                 });
             });
         }
