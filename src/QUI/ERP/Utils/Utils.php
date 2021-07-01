@@ -21,7 +21,7 @@ class Utils
         $description = \trim($description);
 
         // Filter tag attributes
-        $description = \preg_filter('#<([a-z][a-z0-9]*)[^>]*?(\/?)>#i', '<$1$2>', $description);
+        $description = \preg_replace('#<([a-z][a-z0-9]*)[^>]*?(\/?)>#i', '<$1$2>', $description);
 
         // Allow specific tags only
         $description = \strip_tags(
