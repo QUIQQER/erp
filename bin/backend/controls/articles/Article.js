@@ -12,6 +12,7 @@
  * @event onDelete [self]
  * @event onRemove [self]
  * @event onDrop [self]
+ * @event onEditCustomFields [self] - Fires if the user clicks a custom field
  *
  * @event onSetTitle [self]
  * @event onSetDescription [self]
@@ -65,7 +66,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             '$onReplaceClick',
             '$editNext',
             'remove',
-            'select'
+            'select',
+            '$onCustomFieldClick',
+            '$sanitizeArticleDescription'
         ],
 
         options: {
@@ -96,6 +99,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 vat                : true,
                 discount           : true
             },
+
+            customFields: {},   // Custom fields (=fields where user can select/input a value)
 
             User: false,        // special user object (see this.addUser)
 
@@ -155,15 +160,39 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
             var showSelectCheckbox = this.getAttribute('showSelectCheckbox');
 
+            var nl2br = (str, is_xhtml) => {
+                var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br ' + '/>' : '<br>'; // Adjust comment to avoid issue on phpjs.org display
+                return str.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/gm, '$1' + breakTag + '$2');
+            };
+
+            var CustomFields      = this.getAttribute('customFields');
+            var CustomFieldValues = {};
+
+            for (var [fieldId, FieldData] of Object.entries(CustomFields)) {
+                var FieldDataClone = Object.clone(FieldData);
+
+                CustomFieldValues[fieldId] = {
+                    title    : FieldDataClone.title,
+                    valueText: nl2br(FieldDataClone.valueText)
+                };
+            }
+
             this.$Elm.set({
                 html      : Mustache.render(template, {
-                    showSelectCheckbox: showSelectCheckbox
+                    showSelectCheckbox: showSelectCheckbox,
+                    customFields      : Object.values(CustomFieldValues)
                 }),
                 'tabindex': -1,
                 styles    : {
                     outline: 'none'
                 }
             });
+
+            // Make custom fields clickable
+            this.$Elm.getElements('.quiqqer-erp-backend-erpArticle-customFields-entry').addEvent(
+                'click',
+                this.$onCustomFieldClick
+            );
 
             var EditFields = this.getAttribute('editFields');
 
@@ -1055,14 +1084,22 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     },
 
                     onSubmit: function (Win) {
-                        self.setDescription(self.$Editor.getContent());
-                        self.setTitle(Win.getContent().getElement('[name="title"]').value);
+                        var description = self.$Editor.getContent();
 
-                        var NextEditCell = self.$Text.getNext('.cell-editable');
+                        Win.Loader.show();
 
-                        if (NextEditCell) {
-                            QUIElements.simulateEvent(self.$Text.getNext('.cell-editable'), 'click');
-                        }
+                        self.$sanitizeArticleDescription(description).then((sanitizedDescription) => {
+                            self.setDescription(sanitizedDescription);
+                            self.setTitle(Win.getContent().getElement('[name="title"]').value);
+
+                            var NextEditCell = self.$Text.getNext('.cell-editable');
+
+                            if (NextEditCell) {
+                                QUIElements.simulateEvent(self.$Text.getNext('.cell-editable'), 'click');
+                            }
+
+                            Win.Loader.hide();
+                        });
                     },
 
                     onClose: function () {
@@ -1233,6 +1270,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         },
 
         /**
+         * Edit custom fields
+         */
+        $onCustomFieldClick: function () {
+            this.fireEvent('editCustomFields', [this]);
+        },
+
+        /**
          * Creates a input field to edt the product field value
          *
          * @param {HTMLDivElement} Container
@@ -1340,7 +1384,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!PreviousArticle) {
                         PreviousArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                                              .getLast('.article');
+                            .getLast('.article');
                     }
 
                     Next = PreviousArticle.getLast('.cell-editable');
@@ -1365,7 +1409,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!NextArticle) {
                         NextArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                                          .getElement('.article');
+                            .getElement('.article');
                     }
 
                     Next = NextArticle.getElement('.cell-editable');
@@ -1464,6 +1508,22 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     price    : value,
                     vat      : self.getAttribute('vat'),
                     formatted: formatted ? 1 : 0
+                });
+            });
+        },
+
+        /**
+         * Filter article description HTML
+         *
+         * @param {String} description
+         * @return {Promise}
+         */
+        $sanitizeArticleDescription: function (description) {
+            return new Promise((resolve, reject) => {
+                QUIAjax.get('package_quiqqer_erp_ajax_utils_sanitizeArticleDescription', resolve, {
+                    'package'  : 'quiqqer/erp',
+                    description: description,
+                    onError    : reject
                 });
             });
         }

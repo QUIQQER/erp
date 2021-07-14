@@ -1,16 +1,25 @@
-{{#showSelectCheckbox}}
-<div class="quiqqer-erp-backend-erpArticle-selectbox cell">
-    <input type="checkbox"/>
+<div class="quiqqer-erp-backend-erpArticle-basicFields">
+    {{#showSelectCheckbox}}
+    <div class="quiqqer-erp-backend-erpArticle-selectbox cell">
+        <input type="checkbox"/>
+    </div>
+    {{/showSelectCheckbox}}
+    <div class="quiqqer-erp-backend-erpArticle-pos cell"></div>
+    <div class="quiqqer-erp-backend-erpArticle-articleNo cell cell-editable"></div>
+    <div class="quiqqer-erp-backend-erpArticle-text cell"></div>
+    <div class="quiqqer-erp-backend-erpArticle-quantity cell cell-editable"></div>
+    <div class="quiqqer-erp-backend-erpArticle-quantityUnit cell cell-editable"></div>
+    <div class="quiqqer-erp-backend-erpArticle-unitPrice cell cell-editable"></div>
+    <div class="quiqqer-erp-backend-erpArticle-price cell"></div>
+    <div class="quiqqer-erp-backend-erpArticle-vat cell cell-editable"></div>
+    <div class="quiqqer-erp-backend-erpArticle-discount cell cell-editable"></div>
+    <div class="quiqqer-erp-backend-erpArticle-total cell"></div>
+    <div class="quiqqer-erp-backend-erpArticle-buttons"></div>
 </div>
-{{/showSelectCheckbox}}
-<div class="quiqqer-erp-backend-erpArticle-pos cell"></div>
-<div class="quiqqer-erp-backend-erpArticle-articleNo cell cell-editable"></div>
-<div class="quiqqer-erp-backend-erpArticle-text cell"></div>
-<div class="quiqqer-erp-backend-erpArticle-quantity cell cell-editable"></div>
-<div class="quiqqer-erp-backend-erpArticle-quantityUnit cell cell-editable"></div>
-<div class="quiqqer-erp-backend-erpArticle-unitPrice cell cell-editable"></div>
-<div class="quiqqer-erp-backend-erpArticle-price cell"></div>
-<div class="quiqqer-erp-backend-erpArticle-vat cell cell-editable"></div>
-<div class="quiqqer-erp-backend-erpArticle-discount cell cell-editable"></div>
-<div class="quiqqer-erp-backend-erpArticle-total cell"></div>
-<div class="quiqqer-erp-backend-erpArticle-buttons"></div>
+<div class="quiqqer-erp-backend-erpArticle-customFields">
+    {{#customFields}}
+    <div class="quiqqer-erp-backend-erpArticle-customFields-entry">
+        <b>{{title}}:</b><br/>{{{valueText}}}
+    </div>
+    {{/customFields}}
+</div>

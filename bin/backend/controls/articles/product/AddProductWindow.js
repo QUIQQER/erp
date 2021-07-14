@@ -20,14 +20,19 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
              templateProductSettings) {
     "use strict";
 
+    var lg = 'quiqqer/erp';
+
     return new Class({
 
         Extends: QUIControl,
         Type   : 'package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWindow',
 
         options: {
-            user  : false,
-            fields: false // field ids that should be delivered additionally (onSubmit)
+            user       : false,
+            fields     : false, // field ids that should be delivered additionally (onSubmit)
+            fieldValues: {},    // field id mapped to a value - the edit form is pre-filled with the given values
+
+            editAmount: true
         },
 
         initialize: function (options) {
@@ -95,13 +100,18 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                     title    : QUILocale.get('quiqqer/erp', 'window.products.add.title'),
                     icon     : 'fa fa-shopping-bag',
                     maxHeight: 500,
-                    maxWidth : 500,
+                    maxWidth : 700,
                     events   : {
                         onOpen: function (Win) {
                             Win.Loader.show();
 
                             var Content = Win.getContent();
-                            Content.set('html', Mustache.render(templateProductSettings));
+
+                            Content.set('html', Mustache.render(templateProductSettings, {
+                                labelAmount: QUILocale.get(lg, 'products.quantity'),
+                                editAmount : self.getAttribute('editAmount')
+                            }));
+
                             Content.addClass('quiqqer-erp-addProductWin');
 
                             var Form = Content.getElement('form');
@@ -114,8 +124,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                             var Table = Form.getElement('table tbody');
 
                             var Row = new Element('tr', {
-                                html: '<td><label class="field-container"></label></td>'
+                                'class': 'quiqqer-erp-addProductWin-row',
+                                html   : '<td><label class="field-container"></label></td>'
                             });
+
+                            var fieldValues = self.getAttribute('fieldValues');
 
                             self.$getProductEdit(productId).then(function (result) {
                                 var Ghost = new Element('div', {
@@ -132,21 +145,28 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
 
                                 styles.inject(Form);
 
-                                Ghost.getElements('.quiqqer-product-field').each(function (Field) {
+                                Ghost.getElements('.quiqqer-products-productEdit-data-field').each(function (Field) {
                                     var RowClone = Row.clone();
                                     var Label    = RowClone.getElement('label');
+                                    var fieldId  = Field.get('data-field-id');
 
-                                    Label.set('html', Field.get('html'));
+                                    RowClone.set('data-field-id', fieldId);
+
+                                    Label.set('html', Field.getElement('.quiqqer-product-field').get('html'));
 
                                     Label.getElement('.quiqqer-product-field-title')
                                         .addClass('field-container-item');
 
                                     var Value = Label.getElement('.quiqqer-product-field-value');
-                                    var Input = Value.getElement('input,select');
+                                    var Input = Value.getElement('input,select,textarea');
 
                                     if (Input) {
                                         Input.replaces(Value);
                                         Input.addClass('field-container-field');
+
+                                        if (fieldId in fieldValues) {
+                                            Input.value = fieldValues[fieldId];
+                                        }
                                     } else {
                                         Label.getElement('.quiqqer-product-field-value')
                                             .addClass('field-container-field');
@@ -161,6 +181,30 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                         [productId, Win, self]
                                     );
 
+                                    // Parse field controls
+                                    var controls = Content.getElements('[data-quiid]');
+
+                                    for (var i = 0, len = controls.length; i < len; i++) {
+                                        var ControlElm = controls[i];
+                                        var Control    = QUI.Controls.getById(ControlElm.get('data-quiid'));
+                                        var fieldName  = ControlElm.get('name');
+                                        var fieldId    = ControlElm
+                                            .getParent('.quiqqer-erp-addProductWin-row')
+                                            .get('data-field-id');
+
+                                        if (!fieldName) {
+                                            continue;
+                                        }
+
+                                        if (!(fieldId in fieldValues)) {
+                                            continue;
+                                        }
+
+                                        if ('setValue' in Control) {
+                                            Control.setValue(fieldValues[fieldId]);
+                                        }
+                                    }
+
                                     return Win.Loader.hide();
                                 });
                             }).catch(function (err) {
@@ -169,8 +213,26 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                         },
 
                         onSubmit: function (Win) {
-                            var Form = Win.getContent().getElement('form');
-                            var data = QUIFormUtils.getFormData(Form);
+                            var Content = Win.getContent();
+                            var Form    = Content.getElement('form');
+                            var data    = QUIFormUtils.getFormData(Form);
+
+                            // Parse field controls
+                            var controls = Content.getElements('[data-quiid]');
+
+                            for (var i = 0, len = controls.length; i < len; i++) {
+                                var ControlElm = controls[i];
+                                var Control    = QUI.Controls.getById(ControlElm.get('data-quiid'));
+                                var fieldId    = ControlElm.get('name');
+
+                                if (!fieldId) {
+                                    continue;
+                                }
+
+                                if ('getValue' in Control) {
+                                    data[fieldId] = Control.getValue();
+                                }
+                            }
 
                             resolve(data);
                         },
