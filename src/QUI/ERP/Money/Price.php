@@ -176,9 +176,10 @@ class Price
      * Validates a price value
      *
      * @param int|float|string $value
+     * @param QUI\Locale|null $Locale - based locale, in which the price is
      * @return float|int|null
      */
-    public static function validatePrice($value)
+    public static function validatePrice($value, $Locale = null)
     {
         if (\is_float($value)) {
             return \round($value, QUI\ERP\Defaults::getPrecision());
@@ -194,14 +195,18 @@ class Price
             return null;
         }
 
+        if ($Locale === null) {
+            $Locale = QUI::getSystemLocale();
+        }
+
         $negativeTurn = 1;
 
         if ($isNegative) {
             $negativeTurn = -1;
         }
 
-        $decimalSeparator  = QUI::getSystemLocale()->getDecimalSeparator();
-        $thousandSeparator = QUI::getSystemLocale()->getGroupingSeparator();
+        $decimalSeparator  = $Locale->getDecimalSeparator();
+        $thousandSeparator = $Locale->getGroupingSeparator();
 
         $decimal   = \mb_strpos($value, $decimalSeparator);
         $thousands = \mb_strpos($value, $thousandSeparator);
