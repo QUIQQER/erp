@@ -125,6 +125,10 @@ class OutputTemplate
         $this->preview = $preview;
 
         $html = '<style>
+    html {
+        max-width: 210mm;
+    }
+    
     body {
         display: flex;
         flex-direction: column;
