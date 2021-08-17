@@ -504,6 +504,10 @@ class Article implements ArticleInterface
         }
 
         try {
+            if (empty($this->attributes['quantityUnit']['id'])) {
+                return '';
+            }
+
             // @todo cache unit field entries
             $current   = $Locale->getCurrent();
             $unitId    = $this->attributes['quantityUnit']['id'];
