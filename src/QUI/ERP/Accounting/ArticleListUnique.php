@@ -329,6 +329,10 @@ class ArticleListUnique implements \IteratorAggregate
             $this->calculations['currencyData']['code']
         );
 
+        if (isset($this->calculations['currencyData']['rate'])) {
+            $Currency->setExchangeRate($this->calculations['currencyData']['rate']);
+        }
+
         if ($this->calculations['vatArray']) {
             $vatArray = $this->calculations['vatArray'];
         }
