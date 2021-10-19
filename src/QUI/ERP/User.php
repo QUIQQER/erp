@@ -577,12 +577,44 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
-     * @param bool $array
-     * @return array
+     * @param bool $asObjects
+     * @return int[]|QUI\Groups\Group[]
      */
-    public function getGroups($array = true)
+    public function getGroups($asObjects = true)
     {
-        return [];
+        $groupIds = $this->getAttribute('usergroup');
+
+        if (empty($groupIds)) {
+            return [];
+        }
+
+        if (!\is_array($groupIds)) {
+            $groupIds = \explode(',', $groupIds);
+        }
+
+        $groupIds = \array_filter($groupIds, function ($groupId) {
+            return !empty($groupId);
+        });
+
+        \array_walk($groupIds, function (&$groupId) {
+            $groupId = (int)$groupId;
+        });
+
+        if (!$asObjects) {
+            return $groupIds;
+        }
+
+        $groups = [];
+
+        foreach ($groupIds as $groupId) {
+            try {
+                $groups[] = QUI::getGroups()->get($groupId);
+            } catch (\Exception $Exception) {
+                QUI\System\Log::writeDebugException($Exception);
+            }
+        }
+
+        return $groups;
     }
 
     /**
