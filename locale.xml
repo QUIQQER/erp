@@ -743,8 +743,8 @@
 
         <!-- Controls -->
         <locale name="controls.OutputDialog.labelEntityId">
-            <de><![CDATA[Beleg-Nr.]]></de>
-            <en><![CDATA[Document no.]]></en>
+            <de><![CDATA[Beleg-Identifikator]]></de>
+            <en><![CDATA[Document identifier]]></en>
         </locale>
         <locale name="controls.OutputDialog.labelTemplate">
             <de><![CDATA[Vorlage (Template)]]></de>
