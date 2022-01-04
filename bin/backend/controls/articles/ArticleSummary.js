@@ -2,7 +2,7 @@
  * @module package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary
  * @author www.pcsg.de (Henning Leutz)
  *
- * Displays a article list
+ * Displays an article list
  */
 define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
@@ -18,7 +18,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 ], function (QUI, QUIControl, Article, Mustache, QUILocale, template) {
     "use strict";
 
-    var lg = 'quiqqer/erp';
+    const lg = 'quiqqer/erp';
 
     return new Class({
 
@@ -42,7 +42,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         initialize: function (options) {
             this.parent(options);
 
-            this.$NettoSum  = null;
+            this.$NettoSum = null;
             this.$BruttoSum = null;
 
             this.addEvents({
@@ -56,7 +56,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
          * @returns {HTMLDivElement}
          */
         create: function () {
-            var showPosSummary = this.getAttribute('showPosSummary');
+            const showPosSummary = this.getAttribute('showPosSummary');
 
             this.$Elm = new Element('div', {
                 'class': 'quiqqer-erp-backend-temporaryErp-summary',
@@ -111,7 +111,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
          * event: on inject
          */
         $onInject: function () {
-            var List = this.getAttribute('List');
+            const List = this.getAttribute('List');
 
             if (!List) {
                 return;
@@ -129,7 +129,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 return;
             }
 
-            var self = this;
+            const self = this;
 
             require(['qui/controls/windows/Popup'], function (Popup) {
                 new Popup({
@@ -151,15 +151,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         },
 
         $refreshSummaryContent: function (Win) {
-            var self = this;
+            const self = this;
 
             return new Promise(function (resolve) {
-                var Content      = Win.getContent();
-                var List         = self.getAttribute('List');
-                var priceFactors = List.getPriceFactors();
-                var calculations = List.getCalculation();
+                const Content = Win.getContent();
+                const List = self.getAttribute('List');
 
-                for (var i = 0, len = priceFactors.length; i < len; i++) {
+                let priceFactors = List.getPriceFactors();
+                let calculations = List.getCalculation();
+
+                for (let i = 0, len = priceFactors.length; i < len; i++) {
                     priceFactors[i].index = i;
                 }
 
@@ -177,8 +178,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                         vatArray    : Object.values(calculations.vatArray)
                     }));
 
-                    var Total = Content.getElement('.quiqqer-erp-backend-temporaryErp-summaryWin-total');
-                    var calc  = calculations.calculations;
+                    const Total = Content.getElement('.quiqqer-erp-backend-temporaryErp-summaryWin-total');
+                    const calc = calculations.calculations;
 
                     Total.getElement('.netto-value').set('html', self.$Formatter.format(calc.nettoSum));
                     Total.getElement('.brutto-value').set('html', self.$Formatter.format(calc.sum));
@@ -186,7 +187,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                     Content.getElements(
                         '.quiqqer-erp-backend-temporaryErp-summaryWin-priceFactors'
                     ).addEvent('click', function (event) {
-                        var index = event.target.getParent('tr').get('data-index');
+                        let index = event.target.getParent('tr').get('data-index');
 
                         List.removePriceFactor(index);
                         self.$refreshSummaryContent(Win);
@@ -204,13 +205,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
          * @param ArticleInstance
          */
         $refreshArticleSelect: function (List, ArticleInstance) {
-            var calculated = List.getCalculation();
+            let calculated = List.getCalculation();
 
             if (typeof calculated.calculations === 'undefined') {
                 return;
             }
 
-            var calc = calculated.calculations;
+            let calc = calculated.calculations;
 
             if (this.getAttribute('showPosSummary')) {
                 if (!(ArticleInstance instanceof Article)) {
@@ -218,7 +219,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 }
 
                 if (ArticleInstance instanceof Article) {
-                    var articleCalc = ArticleInstance.getCalculations();
+                    let articleCalc = ArticleInstance.getCalculations();
+                    let bruttoCalc = ArticleInstance.getBruttoCalc();
 
                     if (articleCalc && typeof articleCalc.nettoSum !== 'undefined') {
                         this.$ArticleNettoSum.set('html', this.$Formatter.format(articleCalc.nettoSum));
@@ -226,8 +228,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                         this.$ArticleNettoSum.set('html', '---');
                     }
 
-                    if (articleCalc && typeof articleCalc.sum !== 'undefined') {
-                        this.$ArticleBruttoSum.set('html', this.$Formatter.format(articleCalc.sum));
+                    if (bruttoCalc && typeof bruttoCalc.sum !== 'undefined') {
+                        this.$ArticleBruttoSum.set('html', this.$Formatter.format(bruttoCalc.sum));
                     } else {
                         this.$ArticleBruttoSum.set('html', '---');
                     }
@@ -241,8 +243,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             if (typeOf(calc.vatArray) === 'array' && !calc.vatArray.length) {
                 this.$VAT.set('html', '---');
             } else {
-                var key, Entry;
-                var vatText = '';
+                let key, Entry;
+                let vatText = '';
 
                 for (key in calc.vatArray) {
                     if (!calc.vatArray.hasOwnProperty(key)) {
@@ -264,7 +266,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                     }
 
                     Entry.sum = parseFloat(Entry.sum);
-                    vatText   = vatText + Entry.text + ' (' + this.$Formatter.format(Entry.sum) + ')<br />';
+                    vatText = vatText + Entry.text + ' (' + this.$Formatter.format(Entry.sum) + ')<br />';
                 }
 
                 this.$VAT.set('html', vatText);
