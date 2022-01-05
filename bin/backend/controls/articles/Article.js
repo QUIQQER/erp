@@ -468,29 +468,28 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @return {Promise}
          */
         calc: function () {
-            var self = this;
-
             if (!this.$created) {
                 return Promise.resolve();
             }
 
             this.showLoader();
 
-            return this.getCurrencyFormatter().then(function (Formatter) {
+            return this.getCurrencyFormatter().then((Formatter) => {
                 return Promise.all([
-                    self.$calc(),
+                    this.$calc(),
                     Formatter
                 ]);
-            }).then(function (result) {
-                var product = result[0];
-                var Formatter = result[1];
+            }).then((result) => {
+                const product = result[0];
+                const Formatter = result[1];
 
-                var unitPrice = Formatter.format(product.unitPrice);
-                var price = Formatter.format(product.calculated.nettoSubSum);
-                var total = Formatter.format(product.calculated.nettoSum);
-
-                var setElement = function (Node, text) {
-                    var isInEditMode = Node.getElement('input');
+                const unitPrice = Formatter.format(product.unitPrice);
+                const price = Formatter.format(product.calculated.nettoSubSum);
+                const total = Formatter.format(product.calculated.nettoSum);
+                console.log('price', price);
+                console.log('total', total);
+                const setElement = function (Node, text) {
+                    const isInEditMode = Node.getElement('input');
 
                     if (isInEditMode) {
                         Node.set({
@@ -505,40 +504,43 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     });
                 };
 
-                setElement(self.$Total, total);
-                setElement(self.$UnitPrice, unitPrice);
-                setElement(self.$Price, price);
-                setElement(self.$VAT, product.vat + '%');
+                setElement(this.$Total, total);
+                setElement(this.$UnitPrice, unitPrice);
+                setElement(this.$Price, price);
+                setElement(this.$VAT, product.vat + '%');
 
-                if (typeof self.$bruttoCalc !== 'undefined' &&
-                    typeof self.$bruttoCalc.display_discount !== 'undefined') {
-                    self.$DiscountBrutto.set('html', self.$bruttoCalc.display_discount);
-                    self.$DiscountBrutto.set('data-value', self.$bruttoCalc.discount);
+                if (typeof this.$bruttoCalc !== 'undefined' &&
+                    typeof this.$bruttoCalc.display_discount !== 'undefined') {
+                    this.$DiscountBrutto.set('html', this.$bruttoCalc.display_discount);
+                    this.$DiscountBrutto.set('data-value', this.$bruttoCalc.discount);
                 } else {
-                    self.$DiscountBrutto.set('html', '-');
-                    self.$DiscountBrutto.set('data-value', '-');
+                    this.$DiscountBrutto.set('html', '-');
+                    this.$DiscountBrutto.set('data-value', '-');
                 }
 
-                if (typeof self.$bruttoCalc !== 'undefined' &&
-                    typeof self.$bruttoCalc.display_sum !== 'undefined') {
-                    self.$TotalBrutto.set('html', self.$bruttoCalc.display_sum);
-                    self.$TotalBrutto.set('data-value', self.$bruttoCalc.sum);
+                if (typeof this.$bruttoCalc !== 'undefined' &&
+                    typeof this.$bruttoCalc.display_sum !== 'undefined') {
+                    this.$TotalBrutto.set('html', this.$bruttoCalc.display_sum);
+                    this.$TotalBrutto.set('data-value', this.$bruttoCalc.sum);
                 }
 
-                if (typeof self.$bruttoCalc !== 'undefined' &&
-                    typeof self.$bruttoCalc.display_unitPrice !== 'undefined') {
-                    self.$UnitPriceBrutto.set('html', self.$bruttoCalc.display_unitPrice);
-                    self.$UnitPriceBrutto.set('data-value', self.$bruttoCalc.unitPrice);
+                if (typeof this.$bruttoCalc !== 'undefined' &&
+                    typeof this.$bruttoCalc.display_unitPrice !== 'undefined') {
+                    console.log('###', this.$bruttoCalc.display_unitPrice);
+
+
+                    this.$UnitPriceBrutto.set('html', this.$bruttoCalc.display_unitPrice);
+                    this.$UnitPriceBrutto.set('data-value', this.$bruttoCalc.unitPrice);
                 }
 
-                if (typeof self.$bruttoCalc !== 'undefined' &&
-                    typeof self.$bruttoCalc.display_quantity_sum !== 'undefined') {
-                    self.$PriceBrutto.set('html', self.$bruttoCalc.display_quantity_sum);
-                    self.$PriceBrutto.set('data-value', self.$bruttoCalc.quantity_sum);
+                if (typeof this.$bruttoCalc !== 'undefined' &&
+                    typeof this.$bruttoCalc.display_quantity_sum !== 'undefined') {
+                    this.$PriceBrutto.set('html', this.$bruttoCalc.display_quantity_sum);
+                    this.$PriceBrutto.set('data-value', this.$bruttoCalc.quantity_sum);
                 }
 
-                self.hideLoader();
-                self.fireEvent('calc', [self]);
+                this.hideLoader();
+                this.fireEvent('calc', [this]);
 
                 return product;
             });
@@ -635,26 +637,21 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             }
 
             // admin format
-            if (this.getAttribute('currency')) {
-                this.$Formatter = QUILocale.getNumberFormatter({
-                    style   : 'currency',
-                    currency: this.getAttribute('currency')
-                });
+            return new Promise((resolve) => {
+                let currency = null;
 
-                return Promise.resolve(this.$Formatter);
-            }
+                if (this.getAttribute('currency')) {
+                    currency = this.getAttribute('currency');
+                }
 
-
-            var self = this;
-
-            return new Promise(function (resolve) {
-                Currency.getCurrency().then(function (currency) {
-                    self.$Formatter = QUILocale.getNumberFormatter({
-                        style   : 'currency',
-                        currency: currency.code
+                Currency.getCurrency(currency).then((currency) => {
+                    this.$Formatter = QUILocale.getNumberFormatter({
+                        style                   : 'currency',
+                        currency                : currency.code,
+                        maximumSignificantDigits: currency.precision
                     });
 
-                    resolve(self.$Formatter);
+                    resolve(this.$Formatter);
                 });
             });
         },
