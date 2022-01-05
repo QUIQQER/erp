@@ -9,13 +9,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
     'qui/QUI',
     'qui/controls/Control',
     'package/quiqqer/erp/bin/backend/controls/articles/Article',
+    'package/quiqqer/currency/bin/Currency',
     'Mustache',
     'Locale',
 
     'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.html',
     'css!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.css'
 
-], function (QUI, QUIControl, Article, Mustache, QUILocale, template) {
+], function (QUI, QUIControl, Article, Currency, Mustache, QUILocale, template) {
     "use strict";
 
     const lg = 'quiqqer/erp';
@@ -98,13 +99,37 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 this.setStyles(this.getAttribute('styles'));
             }
 
-            this.$Formatter = QUILocale.getNumberFormatter({
-                style                : 'currency',
-                currency             : this.getAttribute('currency'),
-                minimumFractionDigits: 2
-            });
-
             return this.$Elm;
+        },
+
+        /**
+         * Return the article currency
+         *
+         * @return {Promise|*}
+         */
+        getCurrencyFormatter: function () {
+            if (this.$Formatter) {
+                return Promise.resolve(this.$Formatter);
+            }
+
+            // admin format
+            return new Promise((resolve) => {
+                let currency = null;
+
+                if (this.getAttribute('currency')) {
+                    currency = this.getAttribute('currency');
+                }
+
+                Currency.getCurrency(currency).then((currency) => {
+                    this.$Formatter = QUILocale.getNumberFormatter({
+                        style                   : 'currency',
+                        currency                : currency.code,
+                        maximumSignificantDigits: currency.precision
+                    });
+
+                    resolve(this.$Formatter);
+                });
+            });
         },
 
         /**
@@ -153,47 +178,49 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         $refreshSummaryContent: function (Win) {
             const self = this;
 
-            return new Promise(function (resolve) {
-                const Content = Win.getContent();
-                const List = self.getAttribute('List');
+            return new Promise((resolve) => {
+                this.getCurrencyFormatter().then(function (Formatter) {
+                    const Content = Win.getContent();
+                    const List = self.getAttribute('List');
 
-                let priceFactors = List.getPriceFactors();
-                let calculations = List.getCalculation();
+                    let priceFactors = List.getPriceFactors();
+                    let calculations = List.getCalculation();
 
-                for (let i = 0, len = priceFactors.length; i < len; i++) {
-                    priceFactors[i].index = i;
-                }
-
-                Content.set('html', '');
-
-                require([
-                    'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.Window.html'
-                ], function (template) {
-                    if (typeof calculations.vatArray === 'undefined') {
-                        calculations.vatArray = {};
+                    for (let i = 0, len = priceFactors.length; i < len; i++) {
+                        priceFactors[i].index = i;
                     }
 
-                    Content.set('html', Mustache.render(template, {
-                        priceFactors: priceFactors,
-                        vatArray    : Object.values(calculations.vatArray)
-                    }));
+                    Content.set('html', '');
 
-                    const Total = Content.getElement('.quiqqer-erp-backend-temporaryErp-summaryWin-total');
-                    const calc = calculations.calculations;
+                    require([
+                        'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.Window.html'
+                    ], (template) => {
+                        if (typeof calculations.vatArray === 'undefined') {
+                            calculations.vatArray = {};
+                        }
 
-                    Total.getElement('.netto-value').set('html', self.$Formatter.format(calc.nettoSum));
-                    Total.getElement('.brutto-value').set('html', self.$Formatter.format(calc.sum));
+                        Content.set('html', Mustache.render(template, {
+                            priceFactors: priceFactors,
+                            vatArray    : Object.values(calculations.vatArray)
+                        }));
 
-                    Content.getElements(
-                        '.quiqqer-erp-backend-temporaryErp-summaryWin-priceFactors'
-                    ).addEvent('click', function (event) {
-                        let index = event.target.getParent('tr').get('data-index');
+                        const Total = Content.getElement('.quiqqer-erp-backend-temporaryErp-summaryWin-total');
+                        const calc = calculations.calculations;
 
-                        List.removePriceFactor(index);
-                        self.$refreshSummaryContent(Win);
+                        Total.getElement('.netto-value').set('html', Formatter.format(calc.nettoSum));
+                        Total.getElement('.brutto-value').set('html', Formatter.format(calc.sum));
+
+                        Content.getElements(
+                            '.quiqqer-erp-backend-temporaryErp-summaryWin-priceFactors'
+                        ).addEvent('click', function (event) {
+                            let index = event.target.getParent('tr').get('data-index');
+
+                            List.removePriceFactor(index);
+                            self.$refreshSummaryContent(Win);
+                        });
+
+                        resolve();
                     });
-
-                    resolve();
                 });
             });
         },
@@ -213,64 +240,67 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
             let calc = calculated.calculations;
 
-            if (this.getAttribute('showPosSummary')) {
-                if (!(ArticleInstance instanceof Article)) {
-                    ArticleInstance = List.getSelectedArticle();
+            this.getCurrencyFormatter().then((Formatter) => {
+
+                if (this.getAttribute('showPosSummary')) {
+                    if (!(ArticleInstance instanceof Article)) {
+                        ArticleInstance = List.getSelectedArticle();
+                    }
+
+                    if (ArticleInstance instanceof Article) {
+                        let articleCalc = ArticleInstance.getCalculations();
+                        let bruttoCalc = ArticleInstance.getBruttoCalc();
+
+                        if (articleCalc && typeof articleCalc.nettoSum !== 'undefined') {
+                            this.$ArticleNettoSum.set('html', Formatter.format(articleCalc.nettoSum));
+                        } else {
+                            this.$ArticleNettoSum.set('html', '---');
+                        }
+
+                        if (bruttoCalc && typeof bruttoCalc.sum !== 'undefined') {
+                            this.$ArticleBruttoSum.set('html', Formatter.format(bruttoCalc.sum));
+                        } else {
+                            this.$ArticleBruttoSum.set('html', '---');
+                        }
+                    }
                 }
 
-                if (ArticleInstance instanceof Article) {
-                    let articleCalc = ArticleInstance.getCalculations();
-                    let bruttoCalc = ArticleInstance.getBruttoCalc();
+                this.$NettoSum.set('html', Formatter.format(calc.nettoSum));
+                this.$BruttoSum.set('html', Formatter.format(calc.sum));
 
-                    if (articleCalc && typeof articleCalc.nettoSum !== 'undefined') {
-                        this.$ArticleNettoSum.set('html', this.$Formatter.format(articleCalc.nettoSum));
-                    } else {
-                        this.$ArticleNettoSum.set('html', '---');
+                // vat display
+                if (typeOf(calc.vatArray) === 'array' && !calc.vatArray.length) {
+                    this.$VAT.set('html', '---');
+                } else {
+                    let key, Entry;
+                    let vatText = '';
+
+                    for (key in calc.vatArray) {
+                        if (!calc.vatArray.hasOwnProperty(key)) {
+                            continue;
+                        }
+
+                        Entry = calc.vatArray[key];
+
+                        if (typeof Entry.sum === 'undefined') {
+                            Entry.sum = 0;
+                        }
+
+                        if (typeof Entry.text === 'undefined') {
+                            Entry.text = '';
+                        }
+
+                        if (Entry.text === '') {
+                            Entry.text = '';
+                        }
+
+                        Entry.sum = parseFloat(Entry.sum);
+                        vatText = vatText + Entry.text + ' (' + Formatter.format(Entry.sum) + ')<br />';
                     }
 
-                    if (bruttoCalc && typeof bruttoCalc.sum !== 'undefined') {
-                        this.$ArticleBruttoSum.set('html', this.$Formatter.format(bruttoCalc.sum));
-                    } else {
-                        this.$ArticleBruttoSum.set('html', '---');
-                    }
+                    this.$VAT.set('html', vatText);
                 }
-            }
-
-            this.$NettoSum.set('html', this.$Formatter.format(calc.nettoSum));
-            this.$BruttoSum.set('html', this.$Formatter.format(calc.sum));
-
-            // vat display
-            if (typeOf(calc.vatArray) === 'array' && !calc.vatArray.length) {
-                this.$VAT.set('html', '---');
-            } else {
-                let key, Entry;
-                let vatText = '';
-
-                for (key in calc.vatArray) {
-                    if (!calc.vatArray.hasOwnProperty(key)) {
-                        continue;
-                    }
-
-                    Entry = calc.vatArray[key];
-
-                    if (typeof Entry.sum === 'undefined') {
-                        Entry.sum = 0;
-                    }
-
-                    if (typeof Entry.text === 'undefined') {
-                        Entry.text = '';
-                    }
-
-                    if (Entry.text === '') {
-                        Entry.text = '';
-                    }
-
-                    Entry.sum = parseFloat(Entry.sum);
-                    vatText = vatText + Entry.text + ' (' + this.$Formatter.format(Entry.sum) + ')<br />';
-                }
-
-                this.$VAT.set('html', vatText);
-            }
+            });
         }
     });
 });
