@@ -486,8 +486,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 const unitPrice = Formatter.format(product.unitPrice);
                 const price = Formatter.format(product.calculated.nettoSubSum);
                 const total = Formatter.format(product.calculated.nettoSum);
-                console.log('price', price);
-                console.log('total', total);
+
                 const setElement = function (Node, text) {
                     const isInEditMode = Node.getElement('input');
 
@@ -526,9 +525,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                 if (typeof this.$bruttoCalc !== 'undefined' &&
                     typeof this.$bruttoCalc.display_unitPrice !== 'undefined') {
-                    console.log('###', this.$bruttoCalc.display_unitPrice);
-
-
                     this.$UnitPriceBrutto.set('html', this.$bruttoCalc.display_unitPrice);
                     this.$UnitPriceBrutto.set('data-value', this.$bruttoCalc.unitPrice);
                 }
