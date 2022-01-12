@@ -12,7 +12,7 @@ use QUI;
  * Class FactorList
  *
  * List with multiple price factors
- * This list cant be edited and is not changeable
+ * This list can't be edited and is not changeable
  *
  * This is list is only a presentation layer
  */
@@ -23,7 +23,7 @@ class FactorList implements \IteratorAggregate, \Countable
      *
      * @var Factor[]
      */
-    protected $list = [];
+    protected array $list = [];
 
     /**
      * FactorList constructor.
