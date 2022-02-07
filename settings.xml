@@ -403,6 +403,9 @@
                             <text>
                                 <locale group="quiqqer/erp" var="menu.erp.b2cb2bFrontendWindow.desc"/>
                             </text>
+                            <description>
+                                <locale group="quiqqer/erp" var="menu.erp.b2cb2bFrontendWindow.desc.long"/>
+                            </description>
                         </input>
                     </settings>
 

@@ -642,9 +642,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                 Currency.getCurrency(currency).then((currency) => {
                     this.$Formatter = QUILocale.getNumberFormatter({
-                        style                   : 'currency',
-                        currency                : currency.code,
-                        maximumSignificantDigits: currency.precision
+                        style                : 'currency',
+                        currency             : currency.code,
+                        minimumFractionDigits: currency.precision,
+                        maximumFractionDigits: currency.precision
                     });
 
                     resolve(this.$Formatter);

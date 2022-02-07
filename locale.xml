@@ -13,8 +13,8 @@
         </locale>
 
         <locale name="menu.erp.company.title">
-            <de><![CDATA[Unternehmensdaten]]></de>
-            <en><![CDATA[Company data]]></en>
+            <de><![CDATA[Betreiberdaten]]></de>
+            <en><![CDATA[Operator data]]></en>
         </locale>
         <locale name="menu.erp.general.title">
             <de><![CDATA[Allgemein]]></de>
@@ -35,6 +35,18 @@
         <locale name="menu.erp.b2cb2bFrontendWindow.desc">
             <de><![CDATA[Für welche Zonen soll eine Geschäftskundenabfrage im Frontend stattfinden]]></de>
             <en><![CDATA[For which zones should a business customer request take place in the frontend]]></en>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.desc.long">
+            <de><![CDATA[
+            <p>Für welche Zonen soll ein Besucher, welcher neu auf die Seite kommt, eine Geschäftskunden Abfrage (Popup),
+            ob er Endkunde oder Geschäftskunde ist, angezeigt bekommen.</p>
+            <p>Hinweis: Hiernach wird entschieden ob Preise dem Besucher inkl. oder zzgl. MwSt angezeigt werden.</p>
+            ]]></de>
+            <en><![CDATA[
+            <p>For which zones should a visitor, which is new to the site, a business customer query (popup),
+            whether he is an end customer or business customer, get displayed.</p>.
+            <p>Note: Hereafter it is decided whether prices are displayed to the visitor incl. or plus VAT.</p>
+            ]]></en>
         </locale>
         <locale name="menu.erp.b2cb2bFrontendWindow.frontend.text">
             <de><![CDATA[Sind Sie Geschäftskunde?]]></de>
@@ -545,19 +557,19 @@
             <en><![CDATA[B2C and B2B]]></en>
         </locale>
         <locale name="shop.settings.logo">
-            <de><![CDATA[E-COYN Logo]]></de>
-            <en><![CDATA[E-COYN Logo]]></en>
+            <de><![CDATA[Betreiberlogo]]></de>
+            <en><![CDATA[Operator logo]]></en>
         </locale>
         <locale name="shop.settings.logo.description">
             <de><![CDATA[
-            Das E-COYN Logo wird für verschiedene Shop Aufgaben verwendet.
+            Das Betreiberlogo Logo wird für verschiedene Shop Aufgaben verwendet.
             Wie unter anderem für E-Mails von Bestellungen, Rechnungen und weiteren ERP Modulen.
-            Wenn kein E-COYN Logo verwendet wird, wird das standard Logo des standard Projektes verwendet.
+            Wenn kein Betreiberlogo Logo verwendet wird, wird das standard Logo des standard Projektes verwendet.
             ]]></de>
             <en><![CDATA[
-            The E-COYN logo is used for various shop tasks.
+            The Operator logo logo is used for various shop tasks.
             Among other things, for e-mails of orders, invoices and other ERP modules.
-            If no E-COYN logo is used, the standard logo of the standard project is used.
+            If no Operator logo logo is used, the standard logo of the standard project is used.
             ]]></en>
         </locale>
         <locale name="shop.settings.contactPersonOnAddress">
