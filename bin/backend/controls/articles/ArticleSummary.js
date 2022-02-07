@@ -212,7 +212,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                         Total.getElement('.brutto-value').set('html', Formatter.format(calc.sum));
 
                         Content.getElements(
-                            '.quiqqer-erp-backend-temporaryErp-summaryWin-priceFactors'
+                            '.quiqqer-invoice-backend-temporaryInvoice-summaryWin-priceFactors button'
                         ).addEvent('click', function (event) {
                             let index = event.target.getParent('tr').get('data-index');
 
