@@ -3,13 +3,15 @@
     {{#priceFactors}}
     <tr data-index="{{index}}">
         <td>
-            <label class="field-container">
-                <span class="field-container-item">{{title}}</span>
-                <span class="field-container-field">{{valueText}}</span>
+            <div class="field-container">
+                <label style="width: 100%; display: flex;">
+                    <span class="field-container-item">{{title}}</span>
+                    <span class="field-container-field">{{valueText}}</span>
+                </label>
                 <button style="width: 50px; cursor: pointer;">
                     <span class="fa fa-close"></span>
                 </button>
-            </label>
+            </div>
         </td>
     </tr>
     {{/priceFactors}}
