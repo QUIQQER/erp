@@ -64,6 +64,7 @@
     height: 523px;
     overflow: auto;
     padding: 10px;
+    width: 100%;
 }
 
 .quiqqer-erp-outputDialog-comments .quiqqer-erp-comments-comment-message {
