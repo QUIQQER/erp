@@ -764,7 +764,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     return;
                 }
 
-                EditArticle.setAttribute('customFields', NewArticleData.customFields);
+                const NewArticleCustomFields = NewArticleData.customFields;
+
+                for (const [fieldId, FieldData] of Object.entries(ArticleCustomFields)) {
+                    if (!(fieldId in NewArticleCustomFields)) {
+                        NewArticleCustomFields[fieldId] = FieldData;
+                    }
+                }
+
+                EditArticle.setAttribute('customFields', NewArticleCustomFields);
 
                 var NewArticle = new Article(EditArticle.getAttributes());
 
