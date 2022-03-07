@@ -130,6 +130,7 @@ class EventHandler
         $bankAccount = BankAccounts::addBankAccount($bankAccountData);
 
         $Conf->setValue('company', 'bankAccountId', $bankAccount['id']);
+        $Conf->setValue('bankAccounts', 'isPatched', true);
         $Conf->save();
     }
 
