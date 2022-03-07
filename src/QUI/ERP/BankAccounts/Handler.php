@@ -45,7 +45,7 @@ class Handler
         $list = self::getList();
 
         do {
-            $id = (int)\uniqid("", true);
+            $id = \mt_rand(10000, 99999);
         } while (!empty($list[$id]));
 
         $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
