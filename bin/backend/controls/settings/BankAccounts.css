@@ -1,0 +1,46 @@
+.quiqqer-erp-settings-bankaccounts {
+    width: 100%;
+}
+
+.quiqqer-erp-settings-bankaccounts ul {
+    list-style-type: none;
+    padding: 0;
+    width: 100%
+}
+
+.quiqqer-erp-settings-bankaccounts ul li:nth-child(2n+1) {
+    background-color: #f7f7f7;
+}
+
+.quiqqer-erp-settings-bankaccounts ul li {
+    padding: 10px;
+}
+
+.quiqqer-erp-settings-bankaccounts-actions button {
+    float: none !important;
+}
+
+.quiqqer-erp-settings-bankaccounts-entry {
+    display: flex;
+    justify-content: space-between;
+}
+
+.quiqqer-erp-settings-bankaccounts-entry-actions {
+    display: flex;
+    font-size: 18px;
+}
+
+.quiqqer-erp-settings-bankaccounts-entry-actions-edit {
+    padding-right: 10px;
+}
+
+.quiqqer-erp-settings-bankaccounts-entry-actions > div:hover {
+    cursor: pointer;
+    color: #dedede;
+}
+.quiqqer-erp-settings-bankaccounts-entry-default {
+    color: #2f8fc6;
+    font-size: 11px;
+    font-style: italic;
+}
+

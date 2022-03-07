@@ -1,0 +1,22 @@
+<div class="quiqqer-erp-settings-bankaccounts-actions"></div>
+
+<ul>
+    {{#bankAccounts}}
+    <li class="quiqqer-erp-settings-bankaccounts-entry">
+        <div class="quiqqer-erp-settings-bankaccounts-entry-descriptor">
+            {{#default}} <span class="quiqqer-erp-settings-bankaccounts-entry-default">{{labelDefaultEntry}}</span><br/>{{/default}}
+            <b>{{title}}</b><br/>
+            {{name}}<br/>
+            {{iban}}
+        </div>
+        <div class="quiqqer-erp-settings-bankaccounts-entry-actions">
+            <div class="quiqqer-erp-settings-bankaccounts-entry-actions-edit" data-id="{{id}}" title="{{titleEdit}}">
+                <span class="fa fa-edit"></span>
+            </div>
+            <div class="quiqqer-erp-settings-bankaccounts-entry-actions-delete" data-id="{{id}}" title="{{titleDelete}}">
+                <span class="fa fa-trash"></span>
+            </div>
+        </div>
+    </li>
+    {{/bankAccounts}}
+</ul>

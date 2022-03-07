@@ -10,6 +10,7 @@ use QUI;
 use QUI\ERP\Products\Handler\Fields as ProductFields;
 use QUI\Package\Package;
 use Quiqqer\Engine\Collector;
+use QUI\ERP\BankAccounts\Handler as BankAccounts;
 
 /**
  * Class EventHandler
@@ -48,6 +49,7 @@ class EventHandler
         }
 
         self::createDefaultManufacturerGroup();
+        self::patchBankAccount();
     }
 
     /**
@@ -98,6 +100,37 @@ class EventHandler
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
+    }
+
+    /**
+     * Patches old bank account data structure to new one.
+     *
+     * @return void
+     * @throws QUI\Exception
+     */
+    public static function patchBankAccount()
+    {
+        $Conf               = QUI::getPackage('quiqqer/erp')->getConfig();
+        $bankAccountPatched = $Conf->getValue('bankAccounts', 'isPatched');
+
+        if (!empty($bankAccountPatched)) {
+            return;
+        }
+
+        // Create new bank account with existing details
+        $bankAccountData = [
+            'name'          => $Conf->get('company', 'bankName') ?: '',
+            'iban'          => $Conf->get('company', 'bankIban') ?: '',
+            'bic'           => $Conf->get('company', 'bankBic') ?: '',
+            'title'         => $Conf->get('company', 'name') ?: '',
+            'accountHolder' => $Conf->get('company', 'name') ?: '',
+            'default'       => true
+        ];
+
+        $bankAccount = BankAccounts::addBankAccount($bankAccountData);
+
+        $Conf->setValue('company', 'bankAccountId', $bankAccount['id']);
+        $Conf->save();
     }
 
     /**

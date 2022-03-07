@@ -1,0 +1,94 @@
+<form>
+    <table class="data-table data-table-flexbox">
+        <tbody>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item" title="{{labelTitle}}">
+                        {{labelTitle}} *
+                    </span>
+                    <input type="text" class="field-container-field" name="title" required/>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item" title="{{labelName}}">
+                        {{labelName}} *
+                    </span>
+                    <input type="text" class="field-container-field" name="name" required/>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item" title="{{labelIban}}">
+                        {{labelIban}} *
+                    </span>
+                    <input type="text" class="field-container-field" name="iban" required/>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item" title="{{labelBic}}">
+                        {{labelBic}} *
+                    </span>
+                    <input type="text" class="field-container-field" name="bic" required/>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item" title="{{labelAccountHolder}}">
+                        {{labelAccountHolder}} *
+                    </span>
+                    <input type="text" class="field-container-field" name="accountHolder" required/>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item" title="{{labelCreditorId}}">
+                        {{labelCreditorId}}
+                    </span>
+                    <input type="text" class="field-container-field" name="creditorId"/>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item" title="{{labelFinancialAccountNo}}">
+                        {{labelFinancialAccountNo}}
+                    </span>
+                    <input type="number" class="field-container-field" name="financialAccountNo"/>
+                </label>
+                <div class="field-container-item-desc">
+                    {{{descFinancialAccountNo}}}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item" title="{{labelDefault}}">
+                        {{labelDefault}}
+                    </span>
+                    <span class="field-container-field">
+                        <input type="checkbox" name="default"/>
+                    </span>
+                </label>
+                <div class="field-container-item-desc">
+                    {{{descDefault}}}
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</form>

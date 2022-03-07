@@ -72,23 +72,8 @@
                     <type>string</type>
                 </conf>
 
-                <conf name="bankName">
-                    <type>string</type>
-                </conf>
-                <conf name="bankCode">
-                    <type>string</type>
-                </conf>
-                <conf name="bankAccountNumber">
-                    <type>string</type>
-                </conf>
-                <conf name="bankBic">
-                    <type>string</type>
-                </conf>
-                <conf name="bankIban">
-                    <type>string</type>
-                </conf>
-                <conf name="bankSwift">
-                    <type>string</type>
+                <conf name="bankAccountId">
+                    <type>integer</type>
                 </conf>
             </section>
 
@@ -118,6 +103,12 @@
             <section name="manufacturers">
                 <conf name="groupId">
                     <type><![CDATA[integer]]></type>
+                </conf>
+            </section>
+
+            <section name="bankAccounts">
+                <conf name="accounts">
+                    <type><![CDATA[string]]></type>
                 </conf>
             </section>
         </config>
@@ -280,34 +271,9 @@
                         <title>
                             <locale group="quiqqer/erp" var="menu.erp.company.bank.title"/>
                         </title>
-                        <input type="text" conf="company.bankName">
+                        <input type="hidden" conf="company.bankAccountId" data-qui="package/quiqqer/erp/bin/backend/controls/bankAccounts/Select">
                             <text>
-                                <locale group="quiqqer/erp" var="menu.erp.company.bankName"/>
-                            </text>
-                        </input>
-                        <input type="text" conf="company.bankCode">
-                            <text>
-                                <locale group="quiqqer/erp" var="menu.erp.company.bankCode"/>
-                            </text>
-                        </input>
-                        <input type="text" conf="company.bankAccountNumber">
-                            <text>
-                                <locale group="quiqqer/erp" var="menu.erp.company.bankAccountNumber"/>
-                            </text>
-                        </input>
-                        <input type="text" conf="company.bankBic">
-                            <text>
-                                <locale group="quiqqer/erp" var="menu.erp.company.bankBic"/>
-                            </text>
-                        </input>
-                        <input type="text" conf="company.bankIban">
-                            <text>
-                                <locale group="quiqqer/erp" var="menu.erp.company.bankIban"/>
-                            </text>
-                        </input>
-                        <input type="text" conf="company.bankSwift">
-                            <text>
-                                <locale group="quiqqer/erp" var="menu.erp.company.bankSwift"/>
+                                <locale group="quiqqer/erp" var="menu.erp.company.bankAccountId"/>
                             </text>
                         </input>
                     </settings>
@@ -445,6 +411,24 @@
                                 />
                             </description>
                         </input>
+                    </settings>
+                </category>
+
+                <category name="bankAccounts" index="99">
+                    <text>
+                        <locale group="quiqqer/erp" var="menu.erp.category.bankAccounts.title"/>
+                    </text>
+                    <icon>fa fa-university</icon>
+
+                    <settings title="bankAccounts" name="bankAccounts">
+                        <title>
+                            <locale group="quiqqer/erp" var="menu.erp.bankAccounts.title"/>
+                        </title>
+
+                        <input type="hidden"
+                               conf="bankAccounts.accounts"
+                               data-qui="package/quiqqer/erp/bin/backend/controls/settings/BankAccounts"
+                               label="false"/>
                     </settings>
                 </category>
 
