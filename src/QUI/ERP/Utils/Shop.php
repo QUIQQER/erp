@@ -135,7 +135,7 @@ class Shop
     public static function isShippingInstalled()
     {
         try {
-            QUI::getPackageManager()->getPackage('quiqqer/shipping');
+            QUI::getPackageManager()->getInstalledPackage('quiqqer/shipping');
         } catch (\Exception $Exception) {
             return false;
         }
