@@ -127,9 +127,13 @@ class EventHandler
             'default'       => true
         ];
 
-        $bankAccount = BankAccounts::addBankAccount($bankAccountData);
+        try {
+            $bankAccount = BankAccounts::addBankAccount($bankAccountData);
+            $Conf->setValue('company', 'bankAccountId', $bankAccount['id']);
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
 
-        $Conf->setValue('company', 'bankAccountId', $bankAccount['id']);
         $Conf->setValue('bankAccounts', 'isPatched', true);
         $Conf->save();
     }
