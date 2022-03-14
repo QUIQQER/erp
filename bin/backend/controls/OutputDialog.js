@@ -25,7 +25,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 ], function (QUI, QUIConfirm, QUISelect, QUISandbox, ERPComments, QUIFormUtils, QUIAjax, QUILocale, Mustache, template) {
     "use strict";
 
-    var lg = 'quiqqer/erp';
+    const lg = 'quiqqer/erp';
 
     return new Class({
 
@@ -91,9 +91,9 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 onOpen     : this.$onOpen,
                 onSubmit   : this.$onSubmit,
                 onOpenBegin: function () {
-                    var winSize = QUI.getWindowSize();
-                    var height = 800;
-                    var width = 1400;
+                    const winSize = QUI.getWindowSize();
+                    let height = 800;
+                    let width = 1400;
 
                     if (winSize.y * 0.9 < height) {
                         height = winSize.y * 0.9;
@@ -113,13 +113,13 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * event: on open
          */
         $onOpen: function () {
-            var self    = this,
-                Content = this.getContent();
+            const self    = this,
+                  Content = this.getContent();
 
             this.Loader.show();
             this.getContent().set('html', '');
 
-            var onError = function (error) {
+            const onError = function (error) {
                 self.close().then(function () {
                     self.destroy();
                 });
@@ -211,11 +211,11 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 this.$getTemplates(),
                 this.$getEntityData()
             ]).then(function (result) {
-                var templates = result[0];
-                var EntityData = result[1];
+                const templates = result[0];
+                const EntityData = result[1];
 
-                var Form     = Content.getElement('form'),
-                    Selected = false;
+                const Form = Content.getElement('form');
+                let Selected = false;
 
                 if (!templates.length) {
                     new Element('option', {
@@ -225,7 +225,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
                     Form.elements.template.disabled = true;
 
-                    var PreviewContent = self.getContent().getElement('.quiqqer-erp-outputDialog-preview');
+                    const PreviewContent = self.getContent().getElement('.quiqqer-erp-outputDialog-preview');
 
                     new Element('div', {
                         'class': 'quiqqer-erp-outputDialog-nopreview',
@@ -239,8 +239,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     return;
                 }
 
-                for (var i = 0, len = templates.length; i < len; i++) {
-                    var Template = templates[i];
+                for (let i = 0, len = templates.length; i < len; i++) {
+                    let Template = templates[i];
 
                     if (Template.isSystemDefault && EntityData.hideSystemDefaultTemplate) {
                         continue;
@@ -309,12 +309,12 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * Render preview with selected template
          */
         $renderPreview: function () {
-            var self = this;
-            var PreviewContent = this.getContent().getElement('.quiqqer-erp-outputDialog-preview');
+            const self = this;
+            const PreviewContent = this.getContent().getElement('.quiqqer-erp-outputDialog-preview');
 
             this.Loader.show();
 
-            var showPreviewError = function () {
+            const showPreviewError = function () {
                 PreviewContent.set('html', '');
 
                 new Element('div', {
@@ -359,12 +359,12 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * event: on submit
          */
         $onSubmit: function () {
-            var self = this,
-                Run  = Promise.resolve();
+            const self = this;
+            let Run = Promise.resolve();
 
             this.Loader.show();
 
-            var action = this.$Output.getValue();
+            const action = this.$Output.getValue();
 
             switch (action) {
                 case 'print':
@@ -381,14 +381,14 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             }
 
             Run.then(function () {
-                var Form = self.getContent().getElement('form');
+                const Form = self.getContent().getElement('form');
 
                 self.fireEvent('output', [
                     QUIFormUtils.getFormData(Form),
                     self
                 ]);
 
-                var Submit = self.getButton('submit');
+                const Submit = self.getButton('submit');
 
                 switch (action) {
                     case 'print':
@@ -436,13 +436,13 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * @return {Promise}
          */
         print: function () {
-            var self     = this,
-                entityId = this.getAttribute('entityId');
+            const self     = this,
+                  entityId = this.getAttribute('entityId');
 
             return new Promise(function (resolve) {
-                var id      = 'print-document-' + entityId,
-                    Content = self.getContent(),
-                    Form    = Content.getElement('form');
+                const id      = 'print-document-' + entityId,
+                      Content = self.getContent(),
+                      Form    = Content.getElement('form');
 
                 self.Loader.show();
 
@@ -495,13 +495,13 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * @return {Promise}
          */
         saveAsPdf: function () {
-            var self     = this,
-                entityId = this.getAttribute('entityId');
+            const self     = this,
+                  entityId = this.getAttribute('entityId');
 
             return new Promise(function (resolve) {
-                var id      = 'download-document-' + entityId,
-                    Content = self.getContent(),
-                    Form    = Content.getElement('form');
+                const id      = 'download-document-' + entityId,
+                      Content = self.getContent(),
+                      Form    = Content.getElement('form');
 
                 new Element('iframe', {
                     src   : URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/download.php?' + Object.toQueryString({
@@ -537,7 +537,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * @return {Promise}
          */
         $onOutputChange: function () {
-            var Recipient = this.getElm().getElement('[name="recipient"]');
+            const Recipient = this.getElm().getElement('[name="recipient"]');
 
             Recipient.getParent('tr').setStyle('display', 'none');
 
@@ -556,14 +556,14 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             }
 
             this.$resizeCommentsBox();
-            this.getButton('submit').enable()
+            this.getButton('submit').enable();
         },
 
         /**
          * event: on output change -> to print
          */
         $onChangeToPrint: function () {
-            var Submit = this.getButton('submit');
+            const Submit = this.getButton('submit');
 
             Submit.setAttribute('text', QUILocale.get(lg, 'controls.OutputDialog.data.output.print.btn'));
             Submit.setAttribute('textimage', 'fa fa-print');
@@ -573,7 +573,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * event: on output change -> to pdf
          */
         $onChangeToPDF: function () {
-            var Submit = this.getButton('submit');
+            const Submit = this.getButton('submit');
 
             Submit.setAttribute('text', QUILocale.get(lg, 'controls.OutputDialog.data.output.pdf.btn'));
             Submit.setAttribute('textimage', 'fa fa-file-pdf-o');
@@ -583,8 +583,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * event: on output change -> to Email
          */
         $onChangeToEmail: function () {
-            var Submit = this.getButton('submit');
-            var Recipient = this.getElm().getElement('[name="recipient"]');
+            const Submit = this.getButton('submit');
+            const Recipient = this.getElm().getElement('[name="recipient"]');
 
             Recipient.getParent('tr').setStyle('display', null);
 
@@ -607,13 +607,9 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
         /**
          * If e-mail recipient changes
-         *
-         * @param {DocumentEvent} event
          */
-        $onChangeMailRecipient: function (event) {
-            var Submit = this.getButton('submit');
-
-            Submit.enable();
+        $onChangeMailRecipient: function () {
+            this.getButton('submit').enable();
             this.$mailSent = false;
         },
 
@@ -623,7 +619,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * @return {Promise}
          */
         $getEntityData: function () {
-            var self = this;
+            const self = this;
 
             return new Promise(function (resolve, reject) {
                 QUIAjax.get('package_quiqqer_erp_ajax_output_getEntityData', resolve, {
@@ -641,7 +637,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * @return {Promise}
          */
         $getTemplates: function () {
-            var self = this;
+            const self = this;
 
             return new Promise(function (resolve, reject) {
                 QUIAjax.get('package_quiqqer_erp_ajax_output_getTemplates', resolve, {
@@ -658,7 +654,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * @return {Promise}
          */
         $getPreview: function () {
-            var self = this;
+            const self = this;
 
             return new Promise(function (resolve, reject) {
                 QUIAjax.get('package_quiqqer_erp_ajax_output_getPreview', resolve, {
@@ -679,8 +675,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * @return {Promise}
          */
         $sendMail: function () {
-            var self = this,
-                Form = this.getContent().getElement('form');
+            const self = this,
+                  Form = this.getContent().getElement('form');
 
             return new Promise(function (resolve, reject) {
                 QUIAjax.post('package_quiqqer_erp_ajax_output_sendMail', resolve, {
@@ -706,9 +702,9 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 return;
             }
 
-            var maxHeight = 685 - (710 - this.getContent().getSize().y);
+            const maxHeight = 685 - (710 - this.getContent().getSize().y);
+            const height = this.$Form.getSize().y + this.$MessagesBox.getSize().y;
 
-            var height = this.$Form.getSize().y + this.$MessagesBox.getSize().y;
             this.$CommentsBox.setStyle('height', (maxHeight - height));
         }
     });
