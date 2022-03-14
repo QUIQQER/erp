@@ -70,13 +70,13 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 }
             });
 
-            this.$Output       = null;
-            this.$Preview      = null;
+            this.$Output = null;
+            this.$Preview = null;
             this.$customerMail = null;
-            this.$Template     = null;
+            this.$Template = null;
 
             this.$CommentsBox = null;
-            this.$Form        = null;
+            this.$Form = null;
             this.$MessagesBox = null;
 
             this.$mailSent = false;
@@ -92,8 +92,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 onSubmit   : this.$onSubmit,
                 onOpenBegin: function () {
                     var winSize = QUI.getWindowSize();
-                    var height  = 800;
-                    var width   = 1400;
+                    var height = 800;
+                    var width = 1400;
 
                     if (winSize.y * 0.9 < height) {
                         height = winSize.y * 0.9;
@@ -211,7 +211,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 this.$getTemplates(),
                 this.$getEntityData()
             ]).then(function (result) {
-                var templates  = result[0];
+                var templates = result[0];
                 var EntityData = result[1];
 
                 var Form     = Content.getElement('form'),
@@ -261,7 +261,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     self.$Template = {
                         id      : event.target.value,
                         provider: event.target.getElement('option[value="' + event.target.value + '"]')
-                            .get('data-provider')
+                                       .get('data-provider')
                     };
 
                     self.$renderPreview();
@@ -269,7 +269,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
                 // Set initial template and render preview
                 Form.elements.template.value = Selected.id;
-                self.$Template               = {
+                self.$Template = {
                     id      : Selected.id,
                     provider: Selected.provider
                 };
@@ -284,12 +284,14 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
                 // Load comments
                 self.$CommentsBox = Content.getElement('.quiqqer-erp-outputDialog-comments');
-                self.$Form        = Form;
+                self.$Form = Form;
 
                 if (!self.getAttribute('comments') || !self.getAttribute('comments').length) {
-                    self.$CommentsBox.destroy();
-                    self.$CommentsBox = null;
+                    if (self.$CommentsBox) {
+                        self.$CommentsBox.destroy();
+                    }
 
+                    self.$CommentsBox = null;
                     return;
                 }
 
@@ -307,7 +309,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * Render preview with selected template
          */
         $renderPreview: function () {
-            var self           = this;
+            var self = this;
             var PreviewContent = this.getContent().getElement('.quiqqer-erp-outputDialog-preview');
 
             this.Loader.show();
@@ -476,7 +478,10 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * @param {String|Number} id
          */
         $onPrintFinish: function (id) {
-            this.fireEvent('printFinish', [this, id]);
+            this.fireEvent('printFinish', [
+                this,
+                id
+            ]);
 
             (function () {
                 document.getElements('#print-document-' + id).destroy();
@@ -578,7 +583,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * event: on output change -> to Email
          */
         $onChangeToEmail: function () {
-            var Submit    = this.getButton('submit');
+            var Submit = this.getButton('submit');
             var Recipient = this.getElm().getElement('[name="recipient"]');
 
             Recipient.getParent('tr').setStyle('display', null);
