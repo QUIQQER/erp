@@ -550,7 +550,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
 
             const User = Users.get(userId);
 
-            if (!User.isLoaded()) {
+            if (User.isLoaded()) {
                 return Promise.resolve(User);
             }
 
