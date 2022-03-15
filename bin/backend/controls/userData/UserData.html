@@ -1,0 +1,140 @@
+<table class="data-table data-table-flexbox quiqqer-erp-userdata--customer">
+    <thead>
+    <tr>
+        <th>{{labelTitle}}</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr>
+        <td>
+            <label class="field-container">
+                <span class="field-container-item" title="{{labelCustomer}}">
+                    {{labelCustomer}}
+                </span>
+                <span class="field-container-field field-container-field-no-padding">
+                    <input type="hidden"
+                           name="customer"
+                           data-qui="{{userSelectWindowControl}}"
+                           data-qui-options-max="1"
+                           data-qui-options-multiple="0"
+                    />
+                </span>
+            </label>
+        </td>
+    </tr>
+    <tr class="address-row" style="display: none;">
+        <td>
+            <label class="field-container">
+                <span class="field-container-item" title="{{labelAddress}}">
+                    {{labelAddress}}
+                </span>
+                <input type="text" class="field-container-field" name="address" disabled/>
+                <button name="select-address"
+                        class="qui-button qui-utils-noselect"
+                        style="width: 50px"
+                >
+                    <span class="fa fa-address-book-o"></span>
+                </button>
+            </label>
+        </td>
+    </tr>
+    <tr class="quiqqer-erp-userdata-row-contactPerson">
+        <td>
+            <label class="field-container">
+                    <span class="field-container-item" title="{{labelContactPerson}}">
+                        {{labelContactPerson}}
+                    </span>
+                <input type="text" class="field-container-field" name="contact_person"/>
+                <button name="select-contact-id-address"
+                        class="qui-button qui-utils-noselect"
+                        style="width: 50px"
+                        disabled
+                >
+                    <span class="fa fa-address-book-o"></span>
+                </button>
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="field-container">
+                    <span class="field-container-item" title="{{labelContactEmail}}">
+                        {{labelContactEmail}}
+                    </span>
+                <input type="email" class="field-container-field" name="contact_email"/>
+                <button name="select-contact-email"
+                        class="qui-button qui-utils-noselect"
+                        style="width: 50px"
+                        disabled
+                >
+                    <span class="fa fa-at"></span>
+                </button>
+            </label>
+        </td>
+    </tr>
+    <tr class="address-row" style="display: none;">
+        <td>
+            <label class="field-container">
+                <span class="field-container-item" title="{{labelContactAddress}}">
+                    {{labelContactAddress}}
+                </span>
+                <select class="field-container-field" name="address_contact">
+                </select>
+            </label>
+        </td>
+    </tr>
+    <tr class="closable" style="display: none;">
+        <td>
+            <label class="field-container">
+                <span class="field-container-item" title="{{labelCompany}}">
+                    {{labelCompany}}
+                </span>
+                <input type="text" class="field-container-field" name="company" disabled/>
+            </label>
+        </td>
+    </tr>
+    <tr class="closable" style="display: none;">
+        <td>
+            <label class="field-container">
+                <span class="field-container-item" title="{{labelStreet}}">
+                    {{labelStreet}}
+                </span>
+                <input type="text" class="field-container-field" name="street_no" disabled/>
+            </label>
+        </td>
+    </tr>
+    <tr class="closable" style="display: none;">
+        <td>
+            <label class="field-container">
+                <span class="field-container-item" title="{{labelZip}}">
+                    {{labelZip}}
+                </span>
+                <input type="text" class="field-container-field" name="zip" disabled/>
+            </label>
+        </td>
+    </tr>
+    <tr class="closable" style="display: none;">
+        <td>
+            <label class="field-container">
+                <span class="field-container-item" title="{{labelCity}}">
+                    {{labelCity}}
+                </span>
+                <input type="text" class="field-container-field" name="city" disabled/>
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td class="quiqqer-erp-userdata-addressExtra">
+            <div class="quiqqer-erp-userdata-address-userEdit">
+                <span class="fa fa-edit"></span> {{labelUserEdit}}
+            </div>
+            <div class="quiqqer-erp-userdata-address-opener"
+                 data-open="0"
+            >
+                <span class="fa fa-chevron-right"></span> {{labelExtra}}
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>

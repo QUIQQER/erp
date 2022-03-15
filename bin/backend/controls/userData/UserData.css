@@ -1,0 +1,26 @@
+.quiqqer-erp-userdata-address-userEdit {
+    background: #dedede;
+    border-radius: 5px 5px 0 0;
+    bottom: 0;
+    cursor: pointer;
+    display: none;
+    float: right;
+    left: 10px;
+    padding: 5px 10px;
+    position: absolute;
+}
+
+.quiqqer-erp-userdata-address-opener {
+    background: #dedede;
+    border-radius: 5px 0 0 0;
+    bottom: 0;
+    cursor: pointer;
+    float: right;
+    padding: 5px 10px;
+    position: absolute;
+    right: 0;
+}
+
+.quiqqer-erp-userdata-addressExtra {
+    height: 30px;
+}

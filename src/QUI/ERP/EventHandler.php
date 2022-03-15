@@ -118,20 +118,45 @@ class EventHandler
         }
 
         // Create new bank account with existing details
+        $bankName    = $Conf->get('company', 'bankName');
+        $bankIban    = $Conf->get('company', 'bankIban');
+        $bankBic     = $Conf->get('company', 'bankBic');
+        $companyName = $Conf->get('company', 'name');
+
+        if (empty($bankIban) || empty($bankBic) || empty($companyName)) {
+            $Conf->setValue('bankAccounts', 'isPatched', true);
+            $Conf->save();
+
+            return;
+        }
+
         $bankAccountData = [
-            'name'          => $Conf->get('company', 'bankName') ?: '',
-            'iban'          => $Conf->get('company', 'bankIban') ?: '',
-            'bic'           => $Conf->get('company', 'bankBic') ?: '',
-            'title'         => $Conf->get('company', 'name') ?: '',
-            'accountHolder' => $Conf->get('company', 'name') ?: '',
+            'name'          => $bankName ?: $bankIban,
+            'iban'          => $bankIban,
+            'bic'           => $bankBic,
+            'title'         => $companyName,
+            'accountHolder' => $companyName,
             'default'       => true
         ];
 
         try {
             $bankAccount = BankAccounts::addBankAccount($bankAccountData);
             $Conf->setValue('company', 'bankAccountId', $bankAccount['id']);
+
+            QUI\System\Log::addInfo(
+                QUI::getLocale()->get(
+                    'quiqqer/erp',
+                    'bankAccounts.patch.bankAccount_created'
+                )
+            );
         } catch (\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
+            QUI\System\Log::writeException(
+                $Exception,
+                QUI\System\Log::LEVEL_ERROR,
+                [
+                    'operation' => 'Creating default bank account based on ecoyn bank / company config.'
+                ]
+            );
         }
 
         $Conf->setValue('bankAccounts', 'isPatched', true);

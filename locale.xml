@@ -263,7 +263,7 @@
             <de><![CDATA[E-COYN]]></de>
             <en><![CDATA[E-COYN]]></en>
         </locale>
-        
+
         <locale name="menu.erp.category.bankAccounts.title">
             <de><![CDATA[Bankverbindungen]]></de>
             <en><![CDATA[Bank accounts]]></en>
@@ -276,6 +276,10 @@
 
     <groups name="quiqqer/erp" datatype="php">
 
+        <locale name="bankAccounts.patch.bankAccount_created">
+            <de><![CDATA[Es wurde automatisch ein Standard-Bankkonto auf Basis der Firmen-Bankdaten in der ecoyn-Konfiguration angelegt.]]></de>
+            <en><![CDATA[A default bank account was automatically created based on the company bank data in the ecoyn configuration.]]></en>
+        </locale>
         <locale name="manufacturers.default_group_name">
             <de><![CDATA[Hersteller]]></de>
             <en><![CDATA[Manufacturers]]></en>
@@ -673,6 +677,39 @@
 
     <groups name="quiqqer/erp" datatype="js">
 
+        <locale name="ContactEmailSelectWindow.title">
+            <de><![CDATA[Kontat E-Mail-Adresse auswählen]]></de>
+            <en><![CDATA[Choose contact email address]]></en>
+        </locale>
+        <locale name="ContactEmailSelectWindow.information">
+            <de><![CDATA[Bitte wähle eine E-Mail-Adresse aus.]]></de>
+            <en><![CDATA[Please choose an email address.]]></en>
+        </locale>
+        <locale name="UserData.tpl.labelCustomer">
+            <de><![CDATA[Kunde]]></de>
+            <en><![CDATA[Customer]]></en>
+        </locale>
+        <locale name="UserData.tpl.labelContactPerson">
+            <de><![CDATA[Ansprechpartner]]></de>
+            <en><![CDATA[Contact person]]></en>
+        </locale>
+        <locale name="UserData.tpl.labelContactEmail">
+            <de><![CDATA[Kontakt E-Mail-Adresse]]></de>
+            <en><![CDATA[Contact email address]]></en>
+        </locale>
+        <locale name="UserData.btn.extra">
+            <de><![CDATA[Erweiterte Ansicht öffnen]]></de>
+            <en><![CDATA[Open extended view]]></en>
+        </locale>
+        <locale name="UserData.btn.extraClose">
+            <de><![CDATA[Erweiterte Ansicht schließen]]></de>
+            <en><![CDATA[Close extended view]]></en>
+        </locale>
+        <locale name="UserData.btn.userEdit">
+            <de><![CDATA[[labelUser] öffnen]]></de>
+            <en><![CDATA[Open [labelUser]]]]></en>
+        </locale>
+
         <locale name="controls.BankAccounts.btn.create">
             <de><![CDATA[Neue Bankverbindung]]></de>
             <en><![CDATA[New bank account]]></en>
@@ -714,7 +751,8 @@
             <en><![CDATA[Default bank account]]></en>
         </locale>
         <locale name="controls.BankAccounts.Entry.tpl.descDefault">
-            <de><![CDATA[Die Standard-Bankverbindung wird automatisch ausgewählt, wenn keine andere Bankverbindung gesetzt ist. Es kann genau eine Verbindung als Standard-Bankverbindung gesetzt werden.]]></de>
+            <de>
+                <![CDATA[Die Standard-Bankverbindung wird automatisch ausgewählt, wenn keine andere Bankverbindung gesetzt ist. Es kann genau eine Verbindung als Standard-Bankverbindung gesetzt werden.]]></de>
             <en><![CDATA[The default bank account is automatically selected if no other bank connection is set. Only one account can be set as the default bank account.]]></en>
         </locale>
         <locale name="controls.BankAccounts.Entry.tpl.titleEdit">
