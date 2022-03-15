@@ -1,10 +1,12 @@
 <address class="vcard">
     <div class="adr">
 
-        {if $Address->getAttribute('company')}
+        {if $isCompany}
+            {if $Address->getAttribute('company')}
             <div class="company">
                 {$Address->getAttribute('company')}
             </div>
+            {/if}
 
             {if !empty($suffix)}
             <div class="suffix">
