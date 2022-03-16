@@ -6,7 +6,16 @@
 
 namespace QUI\ERP\Accounting\PriceFactors;
 
+use ArrayIterator;
+use Countable;
+use IteratorAggregate;
 use QUI;
+use Traversable;
+
+use function array_map;
+use function count;
+use function is_array;
+use function json_encode;
 
 /**
  * Class FactorList
@@ -16,7 +25,7 @@ use QUI;
  *
  * This is list is only a presentation layer
  */
-class FactorList implements \IteratorAggregate, \Countable
+class FactorList implements IteratorAggregate, Countable
 {
     /**
      * internal list of price factors
@@ -32,9 +41,9 @@ class FactorList implements \IteratorAggregate, \Countable
      *
      * @throws QUI\ERP\Exception
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
-        if (!\is_array($data)) {
+        if (!is_array($data)) {
             return;
         }
 
@@ -53,9 +62,9 @@ class FactorList implements \IteratorAggregate, \Countable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
-        return \count($this->list);
+        return count($this->list);
     }
 
     /**
@@ -63,9 +72,9 @@ class FactorList implements \IteratorAggregate, \Countable
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
-        return \array_map(function ($Factor) {
+        return array_map(function ($Factor) {
             /* @var $Factor Factor */
             return $Factor->toArray();
         }, $this->list);
@@ -76,9 +85,9 @@ class FactorList implements \IteratorAggregate, \Countable
      *
      * @return string
      */
-    public function toJSON()
+    public function toJSON(): string
     {
-        return \json_encode($this->toArray());
+        return json_encode($this->toArray());
     }
 
     //region iterator
@@ -86,11 +95,11 @@ class FactorList implements \IteratorAggregate, \Countable
     /**
      * Iterator helper
      *
-     * @return \ArrayIterator|\Traversable
+     * @return ArrayIterator|Traversable
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->list);
+        return new ArrayIterator($this->list);
     }
 
     //endregion

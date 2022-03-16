@@ -122,17 +122,20 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
 
             this.$Elm = new Element('div', {
                 html: Mustache.render(template, {
-                    labelTitle             : labelUser,
-                    labelCustomer          : labelUser,
-                    labelAddress           : QUILocale.get('quiqqer/quiqqer', 'address'),
-                    labelCompany           : QUILocale.get('quiqqer/quiqqer', 'company'),
-                    labelStreet            : QUILocale.get('quiqqer/quiqqer', 'street'),
-                    labelZip               : QUILocale.get('quiqqer/quiqqer', 'zip'),
-                    labelCity              : QUILocale.get('quiqqer/quiqqer', 'city'),
-                    labelExtra             : QUILocale.get(pkg, 'UserData.btn.extra'),
-                    labelUserEdit          : QUILocale.get(pkg, 'UserData.btn.userEdit', {labelUser}),
-                    labelContactPerson     : QUILocale.get(pkg, 'UserData.tpl.labelContactPerson'),
-                    labelContactEmail      : QUILocale.get(pkg, 'UserData.tpl.labelContactEmail'),
+                    labelTitle              : labelUser,
+                    labelCustomer           : labelUser,
+                    labelAddress            : QUILocale.get('quiqqer/quiqqer', 'address'),
+                    labelCompany            : QUILocale.get('quiqqer/quiqqer', 'company'),
+                    labelStreet             : QUILocale.get('quiqqer/quiqqer', 'street'),
+                    labelZip                : QUILocale.get('quiqqer/quiqqer', 'zip'),
+                    labelCity               : QUILocale.get('quiqqer/quiqqer', 'city'),
+                    labelExtra              : QUILocale.get(pkg, 'UserData.btn.extra'),
+                    labelUserEdit           : QUILocale.get(pkg, 'UserData.btn.userEdit', {labelUser}),
+                    labelContactPerson      : QUILocale.get(pkg, 'UserData.tpl.labelContactPerson'),
+                    labelContactEmail       : QUILocale.get(pkg, 'UserData.tpl.labelContactEmail'),
+                    placeholderContactPerson: QUILocale.get(pkg, 'UserData.tpl.placeholderContactPerson'),
+                    placeholderContactEmail : QUILocale.get(pkg, 'UserData.tpl.placeholderContactEmail'),
+
                     userSelectWindowControl: this.getAttribute('userSelectWindowControl'),
                 })
             });
@@ -414,7 +417,6 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                     return;
                 }
 
-                const User      = result[0];
                 const addresses = result[1];
 
                 if (!addresses.length) {
@@ -422,30 +424,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                     return;
                 }
 
-                const contactAddressId = parseInt(User.getAttribute('quiqqer.erp.customer.contact.person'));
-
                 let defaultAddress = addresses[0];
-                let contactAddress = false;
-
-                addresses.forEach((address) => {
-                    if (address.default) {
-                        defaultAddress = address;
-                    }
-
-                    if (address.id === contactAddressId) {
-                        contactAddress = address;
-                    }
-                });
 
                 // Set address data
                 this.$setDataByAddress(defaultAddress);
-
-                // Set contact person data
-                if (contactAddress) {
-                    this.$setContactPersonByAddress(contactAddress);
-                }
-
-                return this.$getContactEmailAddress(userId);
             }).then((contactEmailAddress) => {
                 if (contactEmailAddress && !this.$setValues) {
                     this.$ContactEmail.value = contactEmailAddress;

@@ -32,4 +32,9 @@ class Dashboard implements DashboardInterface
     {
         return [];
     }
+
+    public function getJavaScriptControl(): string
+    {
+        return '';
+    }
 }

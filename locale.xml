@@ -693,6 +693,14 @@
             <de><![CDATA[Ansprechpartner]]></de>
             <en><![CDATA[Contact person]]></en>
         </locale>
+        <locale name="UserData.tpl.placeholderContactPerson">
+            <de><![CDATA[(Standard-Ansprechpartner)]]></de>
+            <en><![CDATA[(Default contact person)]]></en>
+        </locale>
+        <locale name="UserData.tpl.placeholderContactEmail">
+            <de><![CDATA[(Standard Kunden E-Mail-Adresse)]]></de>
+            <en><![CDATA[(Default customer email address)]]></en>
+        </locale>
         <locale name="UserData.tpl.labelContactEmail">
             <de><![CDATA[Kontakt E-Mail-Adresse]]></de>
             <en><![CDATA[Contact email address]]></en>

@@ -6,15 +6,16 @@
 
 namespace QUI\ERP\Provider;
 
+use QUI\Requirements\Api\AbstractRequirementProvider;
+
 /**
  * Class Requirements
  *
  * @package QUI\ERP\Provider
  */
-class Requirements extends \QUI\Requirements\Api\AbstractRequirementProvider
+class Requirements extends AbstractRequirementProvider
 {
     public function __construct()
     {
-
     }
 }

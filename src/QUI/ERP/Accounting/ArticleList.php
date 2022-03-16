@@ -6,20 +6,24 @@
 
 namespace QUI\ERP\Accounting;
 
+use IteratorAggregate;
 use QUI;
+
+use function count;
+use function is_null;
 
 /**
  * Class ArticleList
  *
  * @package QUI\ERP\Accounting
  */
-class ArticleList extends ArticleListUnique implements \IteratorAggregate
+class ArticleList extends ArticleListUnique implements IteratorAggregate
 {
     /**
      * is the article list calculated?
      * @var bool
      */
-    protected $calculated = false;
+    protected bool $calculated = false;
 
     /**
      * @var int|float
@@ -37,14 +41,14 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     protected $User = null;
 
     /**
-     * @var QUI\ERP\Order\AbstractOrder
+     * @var ?QUI\ERP\Order\AbstractOrder
      */
-    protected $Order = null;
+    protected ?QUI\ERP\Order\AbstractOrder $Order = null;
 
     /**
-     * @var QUI\ERP\Currency\Currency
+     * @var ?QUI\ERP\Currency\Currency
      */
-    protected $Currency = null;
+    protected ?QUI\ERP\Currency\Currency $Currency = null;
 
     /**
      * @var int|float
@@ -62,34 +66,39 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     protected $nettoSubSum;
 
     /**
-     * key 19% value[sum] = sum value[text] = text value[display_sum] formatiert
+     * key 19% value[sum] = sum value[text] = text value[display_sum] formatted
+     *
      * @var array
      */
-    protected $vatArray = [];
+    protected array $vatArray = [];
 
     /**
-     * key 19% value[sum] = sum value[text] = text value[display_sum] formatiert
-     * @var array()
+     * key 19% value[sum] = sum value[text] = text value[display_sum] formatted
+     *
+     * @var array
      */
-    protected $vatText;
+    protected array $vatText;
 
     /**
      * Prüfen ob EU Vat für den Benutzer in Frage kommt
+     *
      * @var
      */
-    protected $isEuVat = false;
+    protected bool $isEuVat = false;
 
     /**
      * Wird Brutto oder Netto gerechnet
+     *
      * @var bool
      */
-    protected $isNetto = true;
+    protected bool $isNetto = true;
 
     /**
      * Currency information
+     *
      * @var array
      */
-    protected $currencyData = [
+    protected array $currencyData = [
         'currency_sign' => '',
         'currency_code' => '',
         'user_currency' => '',
@@ -136,7 +145,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
         }
 
         $this->calculated = false;
-        $this->User = $User;
+        $this->User       = $User;
 
         foreach ($this->articles as $Article) {
             $Article->setUser($User);
@@ -148,9 +157,9 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
     /**
      * Return the list user
      *
-     * @return QUI\Interfaces\Users\User|QUI\Users\User
+     * @return QUI\Interfaces\Users\User
      */
-    public function getUser()
+    public function getUser(): ?QUI\Interfaces\Users\User
     {
         return $this->User;
     }
@@ -162,11 +171,11 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      */
     public function getCurrency(): ?QUI\ERP\Currency\Currency
     {
-        if (!\is_null($this->Currency)) {
+        if (!is_null($this->Currency)) {
             return $this->Currency;
         }
 
-        if (\is_array($this->currencyData) && !empty($this->currencyData['currency_code'])) {
+        if (!empty($this->currencyData['currency_code'])) {
             try {
                 $this->Currency = QUI\ERP\Currency\Handler::getCurrency(
                     $this->currencyData['currency_code']
@@ -208,7 +217,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
             ];
         }
 
-        if (\count($this->articles)) {
+        if (count($this->articles)) {
             foreach ($this->articles as $Article) {
                 $Article->setCurrency($Currency);
             }
@@ -218,9 +227,9 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
         $priceFactors = $PriceFactors->toArray();
 
         foreach ($priceFactors as $k => $factor) {
-            $priceFactors[$k]['sumFormatted'] = $Currency->format($factor['sum']);
+            $priceFactors[$k]['sumFormatted']      = $Currency->format($factor['sum']);
             $priceFactors[$k]['nettoSumFormatted'] = $Currency->format($factor['nettoSum']);
-            $priceFactors[$k]['valueText'] = $priceFactors[$k]['sumFormatted'];
+            $priceFactors[$k]['valueText']         = $priceFactors[$k]['sumFormatted'];
 
             if ($factor['sum'] > 0) {
                 $priceFactors[$k]['valueText'] = '+' . $priceFactors[$k]['sumFormatted'];
@@ -246,7 +255,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
         $Currency = $this->getCurrency();
 
         // format
-        $articles = $data['articles'];
+        $articles     = $data['articles'];
         $calculations = $data['calculations'];
 
         $calculations['currencyData'] = $Currency->toArray();
@@ -256,16 +265,16 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
         );
 
         $calculations['display_subSum'] = $Currency->format($calculations['subSum']);
-        $calculations['display_sum'] = $Currency->format($calculations['sum']);
+        $calculations['display_sum']    = $Currency->format($calculations['sum']);
         $calculations['display_vatSum'] = $Currency->format($calculations['vatSum']);
 
         foreach ($articles as $key => $article) {
-            $articles[$key]['position'] = $key + 1;
-            $articles[$key]['display_sum'] = $Currency->format($article['sum']);
+            $articles[$key]['position']          = $key + 1;
+            $articles[$key]['display_sum']       = $Currency->format($article['sum']);
             $articles[$key]['display_unitPrice'] = $Currency->format($article['unitPrice']);
         }
 
-        $data['articles'] = $articles;
+        $data['articles']     = $articles;
         $data['calculations'] = $calculations;
 
         /* @var $Factor PriceFactors\Factor */
@@ -331,7 +340,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      * @param null|Calc $Calc
      * @return ArticleList|ArticleListUnique
      */
-    public function calc($Calc = null)
+    public function calc($Calc = null): ArticleList
     {
         if ($this->calculated) {
             return $this;
@@ -348,15 +357,15 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
         }
 
         $Calc->calcArticleList($this, function ($data) use ($self) {
-            $self->sum = $data['sum'];
-            $self->grandSubSum = $data['grandSubSum'];
-            $self->subSum = $data['subSum'];
-            $self->nettoSum = $data['nettoSum'];
-            $self->nettoSubSum = $data['nettoSubSum'];
-            $self->vatArray = $data['vatArray'];
-            $self->vatText = $data['vatText'];
-            $self->isEuVat = $data['isEuVat'];
-            $self->isNetto = $data['isNetto'];
+            $self->sum          = $data['sum'];
+            $self->grandSubSum  = $data['grandSubSum'];
+            $self->subSum       = $data['subSum'];
+            $self->nettoSum     = $data['nettoSum'];
+            $self->nettoSubSum  = $data['nettoSubSum'];
+            $self->vatArray     = $data['vatArray'];
+            $self->vatText      = $data['vatText'];
+            $self->isEuVat      = $data['isEuVat'];
+            $self->isNetto      = $data['isNetto'];
             $self->currencyData = $data['currencyData'];
 
             $this->calculations = [
@@ -451,7 +460,7 @@ class ArticleList extends ArticleListUnique implements \IteratorAggregate
      */
     public function count(): int
     {
-        return \count($this->articles);
+        return count($this->articles);
     }
 
     //endregion

@@ -6,13 +6,32 @@
 
 namespace QUI\ERP\Accounting;
 
+use DateTime;
+use Exception;
 use QUI;
-use QUI\ERP\Accounting\Calc as ErpCalc;
-use QUI\ERP\Money\Price;
-use QUI\Interfaces\Users\User as UserInterface;
+use QUI\ERP\Accounting\Invoice\Handler;
 use QUI\ERP\Accounting\Invoice\Invoice;
 use QUI\ERP\Accounting\Invoice\InvoiceTemporary;
-use QUI\ERP\Accounting\Invoice\Handler;
+use QUI\ERP\Money\Price;
+use QUI\Interfaces\Users\User as UserInterface;
+
+use function array_map;
+use function array_sum;
+use function count;
+use function floatval;
+use function get_class;
+use function is_array;
+use function is_callable;
+use function is_null;
+use function is_string;
+use function json_decode;
+use function json_encode;
+use function key;
+use function round;
+use function str_replace;
+use function strpos;
+use function strtotime;
+use function time;
 
 /**
  * Class Calc
@@ -78,7 +97,7 @@ class Calc
     /**
      * @var null|QUI\ERP\Currency\Currency
      */
-    protected $Currency = null;
+    protected ?QUI\ERP\Currency\Currency $Currency = null;
 
     /**
      * Calc constructor.
@@ -100,7 +119,7 @@ class Calc
      * @param UserInterface|null $User - optional
      * @return Calc
      */
-    public static function getInstance($User = null): Calc
+    public static function getInstance(UserInterface $User = null): Calc
     {
         if (!$User && QUI::isBackend()) {
             $User = QUI::getUsers()->getSystemUser();
@@ -141,7 +160,7 @@ class Calc
      */
     public function getCurrency(): ?QUI\ERP\Currency\Currency
     {
-        if (\is_null($this->Currency)) {
+        if (is_null($this->Currency)) {
             $this->Currency = QUI\ERP\Currency\Handler::getDefaultCurrency();
         }
 
@@ -158,7 +177,7 @@ class Calc
     public function calcArticleList(ArticleList $List, $callback = false): ArticleList
     {
         // calc data
-        if (!\is_callable($callback)) {
+        if (!is_callable($callback)) {
             return $List->calc();
         }
 
@@ -171,14 +190,14 @@ class Calc
 
         $this->Currency = $List->getCurrency();
 
-        $articles = $List->getArticles();
-        $isNetto = QUI\ERP\Utils\User::isNettoUser($this->getUser());
+        $articles    = $List->getArticles();
+        $isNetto     = QUI\ERP\Utils\User::isNettoUser($this->getUser());
         $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($this->getUser());
 
-        $Currency = $this->getCurrency();
+        $Currency  = $this->getCurrency();
         $precision = $Currency->getPrecision();
 
-        $subSum = 0;
+        $subSum   = 0;
         $nettoSum = 0;
         $vatArray = [];
 
@@ -196,20 +215,20 @@ class Calc
             $this->calcArticlePrice($Article);
 
             $articleAttributes = $Article->toArray();
-            $calculated = $articleAttributes['calculated'];
+            $calculated        = $articleAttributes['calculated'];
 
-            $subSum = $subSum + $calculated['sum'];
+            $subSum   = $subSum + $calculated['sum'];
             $nettoSum = $nettoSum + $calculated['nettoSum'];
 
             $articleVatArray = $calculated['vatArray'];
-            $vat = $articleAttributes['vat'];
+            $vat             = $articleAttributes['vat'];
 
             if ($articleVatArray['text'] === '') {
                 continue;
             }
 
             if (!isset($vatArray[$vat])) {
-                $vatArray[$vat] = $articleVatArray;
+                $vatArray[$vat]        = $articleVatArray;
                 $vatArray[$vat]['sum'] = 0;
             }
 
@@ -231,7 +250,7 @@ class Calc
         /**
          * Calc price factors
          */
-        $priceFactors = $List->getPriceFactors();
+        $priceFactors   = $List->getPriceFactors();
         $priceFactorSum = 0;
 
         // nur wenn wir welche benötigen, für ERP Artikel ist dies im Moment nicht wirklich nötig
@@ -247,9 +266,9 @@ class Calc
 
             // percent - Prozent Angabe
             if ($PriceFactor->getCalculation() === self::CALCULATION_PERCENTAGE) {
-                $calcBasis = $PriceFactor->getCalculationBasis();
+                $calcBasis        = $PriceFactor->getCalculationBasis();
                 $priceFactorValue = $PriceFactor->getValue();
-                $vatValue = $PriceFactor->getVat();
+                $vatValue         = $PriceFactor->getVat();
 
                 if ($vatValue === null) {
                     $vatValue = QUI\ERP\Tax\Utils::getTaxByUser($this->getUser())->getValue();
@@ -269,7 +288,7 @@ class Calc
                     case self::CALCULATION_BASIS_VAT_BRUTTO:
                         if ($isNetto) {
                             $bruttoSubSum = $subSum * ($vatValue / 100 + 1);
-                            $percentage = $priceFactorValue / 100 * $bruttoSubSum;
+                            $percentage   = $priceFactorValue / 100 * $bruttoSubSum;
                         } else {
                             $percentage = $priceFactorValue / 100 * $subSum;
                         }
@@ -280,8 +299,8 @@ class Calc
                         continue 2;
                 }
 
-                $percentage = \round($percentage, $precision);
-                $vatSum = \round($PriceFactor->getVatSum(), $precision);
+                $percentage = round($percentage, $precision);
+                $vatSum     = round($PriceFactor->getVatSum(), $precision);
 
                 // set netto sum
                 $PriceFactor->setNettoSum($percentage);
@@ -300,15 +319,15 @@ class Calc
                 $PriceFactor->setSumFormatted($Currency->format($PriceFactor->getSum()));
             }
 
-            $nettoSum = $nettoSum + $PriceFactor->getNettoSum();
+            $nettoSum       = $nettoSum + $PriceFactor->getNettoSum();
             $priceFactorSum = $priceFactorSum + $PriceFactor->getNettoSum();
 
             if ($isEuVatUser) {
                 $PriceFactor->setEuVatStatus(true);
             }
 
-            $vat = $PriceFactor->getVat();
-            $vatSum = \round($PriceFactor->getVatSum(), $precision);
+            $vat    = $PriceFactor->getVat();
+            $vatSum = round($PriceFactor->getVatSum(), $precision);
 
             if (!isset($vatArray[$vat])) {
                 $vatArray[$vat] = [
@@ -328,23 +347,23 @@ class Calc
 
         // vat text
         $vatLists = [];
-        $vatText = [];
+        $vatText  = [];
 
-        $nettoSum = \round($nettoSum, $precision);
-        $nettoSubSum = \round($nettoSubSum, $precision);
-        $subSum = \round($subSum, $precision);
-        $bruttoSum = $nettoSum;
+        $nettoSum    = round($nettoSum, $precision);
+        $nettoSubSum = round($nettoSubSum, $precision);
+        $subSum      = round($subSum, $precision);
+        $bruttoSum   = $nettoSum;
 
         foreach ($vatArray as $vatEntry) {
             $vat = $vatEntry['vat'];
 
-            $vatLists[$vat] = true; // liste für MWST texte
-            $vatArray[$vat]['sum'] = \round($vatEntry['sum'], $precision);
+            $vatLists[$vat]        = true; // liste für MWST texte
+            $vatArray[$vat]['sum'] = round($vatEntry['sum'], $precision);
 
             $bruttoSum = $bruttoSum + $vatArray[$vat]['sum'];
         }
 
-        $bruttoSum = \round($bruttoSum, $precision);
+        $bruttoSum = round($bruttoSum, $precision);
 
         foreach ($vatLists as $vat => $bool) {
             $vatText[$vat] = self::getVatText($vat, $this->getUser());
@@ -367,15 +386,15 @@ class Calc
             foreach ($priceFactors as $Factor) {
                 if ($Factor->getCalculationBasis() !== self::CALCULATION_GRAND_TOTAL) {
                     /* @var $Factor QUI\ERP\Products\Utils\PriceFactor */
-                    $priceFactorBruttoSums = $priceFactorBruttoSums + \round($Factor->getSum(), $precision);
+                    $priceFactorBruttoSums = $priceFactorBruttoSums + round($Factor->getSum(), $precision);
                 }
             }
 
             $priceFactorBruttoSum = $subSum + $priceFactorBruttoSums;
-            $priceFactorBruttoSum = \round($priceFactorBruttoSum, $precision);
+            $priceFactorBruttoSum = round($priceFactorBruttoSum, $precision);
 
-            if ($priceFactorBruttoSum !== \round($bruttoSum, $precision)) {
-                $diff = $priceFactorBruttoSum - \round($bruttoSum, $precision);
+            if ($priceFactorBruttoSum !== round($bruttoSum, $precision)) {
+                $diff = $priceFactorBruttoSum - round($bruttoSum, $precision);
 
                 // if we have a diff, we change the first vat price factor
                 $added = false;
@@ -386,9 +405,9 @@ class Calc
                     }
 
                     if ($Factor instanceof QUI\ERP\Products\Interfaces\PriceFactorWithVatInterface) {
-                        $Factor->setSum(\round($Factor->getSum() - $diff, $precision));
-                        $bruttoSum = \round($bruttoSum, $precision);
-                        $added = true;
+                        $Factor->setSum(round($Factor->getSum() - $diff, $precision));
+                        $bruttoSum = round($bruttoSum, $precision);
+                        $added     = true;
                         break;
                     }
                 }
@@ -401,13 +420,13 @@ class Calc
 
             // counterbalance - gegenrechnung
             // works only for one vat entry
-            if (\count($vatArray) === 1) {
-                $vat = \key($vatArray);
+            if (count($vatArray) === 1) {
+                $vat   = key($vatArray);
                 $netto = $bruttoSum / ($vat / 100 + 1);
 
                 $vatSum = $bruttoSum - $netto;
-                $vatSum = \round($vatSum, $Currency->getPrecision());
-                $diff = abs($vatArray[$vat]['sum'] - $vatSum);
+                $vatSum = round($vatSum, $Currency->getPrecision());
+                $diff   = abs($vatArray[$vat]['sum'] - $vatSum);
 
                 if ($diff <= 0.019) {
                     $vatArray[$vat]['sum'] = $vatSum;
@@ -417,7 +436,7 @@ class Calc
 
         if ($bruttoSum === 0 || $nettoSum === 0) {
             $bruttoSum = 0;
-            $nettoSum = 0;
+            $nettoSum  = 0;
 
             foreach ($vatArray as $vat => $entry) {
                 $vatArray[$vat]['sum'] = 0;
@@ -429,7 +448,7 @@ class Calc
 
         foreach ($priceFactors as $Factor) {
             if ($Factor->getCalculationBasis() === self::CALCULATION_GRAND_TOTAL) {
-                $value = $Factor->getValue();
+                $value     = $Factor->getValue();
                 $bruttoSum = $bruttoSum + $value;
 
                 if ($bruttoSum < 0) {
@@ -464,69 +483,69 @@ class Calc
     public function calcArticlePrice(Article $Article, $callback = false)
     {
         // calc data
-        if (!\is_callable($callback)) {
+        if (!is_callable($callback)) {
             $Article->calc($this);
 
             return $Article->getPrice();
         }
 
-        $isNetto = QUI\ERP\Utils\User::isNettoUser($this->getUser());
+        $isNetto     = QUI\ERP\Utils\User::isNettoUser($this->getUser());
         $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($this->getUser());
-        $Currency = $Article->getCurrency();
+        $Currency    = $Article->getCurrency();
 
         if (!$Currency) {
             $Currency = $this->getCurrency();
         }
 
-        $nettoPrice = $Article->getUnitPrice()->value();
-        $vat = $Article->getVat();
+        $nettoPrice      = $Article->getUnitPrice()->value();
+        $vat             = $Article->getVat();
         $basisNettoPrice = $nettoPrice;
-        $nettoSubSum = $this->round($nettoPrice * $Article->getQuantity());
+        $nettoSubSum     = $this->round($nettoPrice * $Article->getQuantity());
 
         if ($isEuVatUser) {
             $vat = 0;
         }
 
         // discounts
-        $Discount = $Article->getDiscount();
+        $Discount             = $Article->getDiscount();
         $nettoPriceNotRounded = $Article->getUnitPriceUnRounded()->getValue();
 
         if ($Discount) {
             switch ($Discount->getCalculation()) {
                 // einfache Zahl, Währung --- kein Prozent
                 case Calc::CALCULATION_COMPLEMENT:
-                    $nettoPrice = $nettoPrice - ($Discount->getValue() / $Article->getQuantity());
+                    $nettoPrice           = $nettoPrice - ($Discount->getValue() / $Article->getQuantity());
                     $nettoPriceNotRounded = $nettoPriceNotRounded - ($Discount->getValue() / $Article->getQuantity());
                     break;
 
                 // Prozent Angabe
                 case Calc::CALCULATION_PERCENTAGE:
-                    $percentage = $Discount->getValue() / 100 * $nettoPrice;
-                    $nettoPrice = $nettoPrice - $percentage;
+                    $percentage           = $Discount->getValue() / 100 * $nettoPrice;
+                    $nettoPrice           = $nettoPrice - $percentage;
                     $nettoPriceNotRounded = $nettoPriceNotRounded - $percentage;
                     break;
             }
         }
 
-        $vatSum = $nettoPrice * ($vat / 100);
-        $bruttoPrice = \round($nettoPrice + $vatSum, $Currency->getPrecision());
+        $vatSum      = $nettoPrice * ($vat / 100);
+        $bruttoPrice = round($nettoPrice + $vatSum, $Currency->getPrecision());
 
         if (!$isNetto) {
             // korrektur rechnung / 1 cent problem
             $checkBrutto = $nettoPriceNotRounded * ($vat / 100 + 1);
-            $checkBrutto = \round($checkBrutto, $Currency->getPrecision());
+            $checkBrutto = round($checkBrutto, $Currency->getPrecision());
 
             $checkVat = $checkBrutto - $nettoPriceNotRounded;
-            $checkVat = \round($checkVat * $Article->getQuantity(), $Currency->getPrecision());
+            $checkVat = round($checkVat * $Article->getQuantity(), $Currency->getPrecision());
 
             // sum
             $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
-            $vatSum = $nettoSum * ($vat / 100);
+            $vatSum   = $nettoSum * ($vat / 100);
 
             // korrektur rechnung / 1 cent problem
             if ($checkBrutto !== $bruttoPrice) {
                 $bruttoPrice = $checkBrutto;
-                $vatSum = $checkVat;
+                $vatSum      = $checkVat;
             }
 
             // if the user is brutto
@@ -537,13 +556,13 @@ class Calc
         } else {
             // sum
             $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
-            $vatSum = $nettoSum * ($vat / 100);
+            $vatSum   = $nettoSum * ($vat / 100);
 
             $bruttoSum = $this->round($nettoSum + $vatSum);
         }
 
-        $price = $isNetto ? $nettoPrice : $bruttoPrice;
-        $sum = $isNetto ? $nettoSum : $bruttoSum;
+        $price      = $isNetto ? $nettoPrice : $bruttoPrice;
+        $sum        = $isNetto ? $nettoSum : $bruttoSum;
         $basisPrice = $isNetto ? $basisNettoPrice : $basisNettoPrice + ($basisNettoPrice * $vat / 100);
 
         $vatArray = [
@@ -589,17 +608,17 @@ class Calc
      */
     public function round($value): float
     {
-        $decimalSeparator = $this->getUser()->getLocale()->getDecimalSeparator();
+        $decimalSeparator  = $this->getUser()->getLocale()->getDecimalSeparator();
         $groupingSeparator = $this->getUser()->getLocale()->getGroupingSeparator();
-        $precision = QUI\ERP\Defaults::getPrecision();
+        $precision         = QUI\ERP\Defaults::getPrecision();
 
-        if (\strpos($value, $decimalSeparator) && $decimalSeparator != '.') {
-            $value = \str_replace($groupingSeparator, '', $value);
+        if (strpos($value, $decimalSeparator) && $decimalSeparator != '.') {
+            $value = str_replace($groupingSeparator, '', $value);
         }
 
-        $value = \str_replace(',', '.', $value);
-        $value = \floatval($value);
-        $value = \round($value, $precision);
+        $value = str_replace(',', '.', $value);
+        $value = floatval($value);
+        $value = round($value, $precision);
 
         return $value;
     }
@@ -630,7 +649,7 @@ class Calc
      *
      * @return array|string
      */
-    public static function getVatText($vat, UserInterface $User, $Locale = null)
+    public static function getVatText(int $vat, UserInterface $User, QUI\Locale $Locale = null)
     {
         if ($Locale === null) {
             $Locale = $User->getLocale();
@@ -687,7 +706,7 @@ class Calc
      *
      * @deprecated use calculatePayments
      */
-    public static function calculateInvoicePayments(Invoice $Invoice)
+    public static function calculateInvoicePayments(Invoice $Invoice): array
     {
         return self::calculatePayments($Invoice);
     }
@@ -704,7 +723,7 @@ class Calc
     {
         if (self::isAllowedForCalculation($ToCalculate) === false) {
             QUI\ERP\Debug::getInstance()->log(
-                'Calc->calculatePayments(); Object is not allowed to calculate ' . \get_class($ToCalculate)
+                'Calc->calculatePayments(); Object is not allowed to calculate ' . get_class($ToCalculate)
             );
 
             throw new QUI\ERP\Exception('Object is not allowed to calculate');
@@ -717,19 +736,19 @@ class Calc
         // if payment status is paid, take it immediately and do not query any transactions
         if ($ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_PAID) {
             $paidData = $ToCalculate->getAttribute('paid_data');
-            $paid = 0;
+            $paid     = 0;
 
-            if (!\is_array($paidData)) {
-                $paidData = \json_decode($paidData, true);
+            if (!is_array($paidData)) {
+                $paidData = json_decode($paidData, true);
             }
 
-            if (!\is_array($paidData)) {
+            if (!is_array($paidData)) {
                 $paidData = [];
             }
 
             foreach ($paidData as $entry) {
                 if (isset($entry['amount'])) {
-                    $paid = $paid + \floatval($entry['amount']);
+                    $paid = $paid + floatval($entry['amount']);
                 }
             }
 
@@ -765,8 +784,8 @@ class Calc
 
         $paidData = [];
         $paidDate = 0;
-        $sum = 0;
-        $total = $calculations['sum'];
+        $sum      = 0;
+        $total    = $calculations['sum'];
 
         QUI\ERP\Debug::getInstance()->log(
             'Calc->calculatePayments(); total: ' . $total
@@ -774,8 +793,8 @@ class Calc
 
         $isValidTimeStamp = function ($timestamp) {
             try {
-                new \DateTime('@' . $timestamp);
-            } catch (\Exception $e) {
+                new DateTime('@' . $timestamp);
+            } catch (Exception $e) {
                 return false;
             }
 
@@ -796,10 +815,10 @@ class Calc
             $date = $Transaction->getDate();
 
             if ($isValidTimeStamp($date) === false) {
-                $date = \strtotime($date);
+                $date = strtotime($date);
 
                 if ($isValidTimeStamp($date) === false) {
-                    $date = \time();
+                    $date = time();
                 }
             } else {
                 $date = (int)$date;
@@ -827,7 +846,7 @@ class Calc
             ];
         }
 
-        $paid = Price::validatePrice($sum);
+        $paid  = Price::validatePrice($sum);
         $toPay = Price::validatePrice($calculations['sum']);
 
         // workaround fix
@@ -848,7 +867,7 @@ class Calc
             }
         }
 
-        $ToCalculate->setAttribute('paid_data', \json_encode($paidData));
+        $ToCalculate->setAttribute('paid_data', json_encode($paidData));
         $ToCalculate->setAttribute('paid_date', $paidDate);
         $ToCalculate->setAttribute('paid', $sum);
         $ToCalculate->setAttribute('toPay', $toPay - $paid);
@@ -927,14 +946,14 @@ class Calc
     {
         if ($Currency === null) {
             try {
-                $currency = \json_decode($invoiceList[0]['currency_data'], true);
+                $currency = json_decode($invoiceList[0]['currency_data'], true);
                 $Currency = QUI\ERP\Currency\Handler::getCurrency($currency['code']);
             } catch (QUI\Exception $Exception) {
                 $Currency = QUI\ERP\Defaults::getCurrency();
             }
         }
 
-        if (!\count($invoiceList)) {
+        if (!count($invoiceList)) {
             $display = $Currency->format(0);
 
             return [
@@ -962,13 +981,13 @@ class Calc
         }
 
         $nettoTotal = 0;
-        $vatTotal = 0;
+        $vatTotal   = 0;
 
         $bruttoToPay = 0;
-        $bruttoPaid = 0;
+        $bruttoPaid  = 0;
         $bruttoTotal = 0;
-        $vatPaid = 0;
-        $nettoToPay = 0;
+        $vatPaid     = 0;
+        $nettoToPay  = 0;
 
         foreach ($invoiceList as $invoice) {
 //            if (isset($invoice['type']) && (int)$invoice['type'] === Handler::TYPE_INVOICE_CANCEL ||
@@ -978,12 +997,12 @@ class Calc
 //            }
 //          soll doch mit berechnet werden
 
-            $invBruttoSum = floatval($invoice['calculated_sum']);
-            $invVatSum = floatval($invoice['calculated_vatsum']);
-            $invPaid = floatval($invoice['calculated_paid']);
-            $invToPay = floatval($invoice['calculated_toPay']);
+            $invBruttoSum  = floatval($invoice['calculated_sum']);
+            $invVatSum     = floatval($invoice['calculated_vatsum']);
+            $invPaid       = floatval($invoice['calculated_paid']);
+            $invToPay      = floatval($invoice['calculated_toPay']);
             $invNettoTotal = floatval($invoice['calculated_nettosum']);
-            $invVatSumPC = QUI\Utils\Math::percent($invVatSum, $invBruttoSum);
+            $invVatSumPC   = QUI\Utils\Math::percent($invVatSum, $invBruttoSum);
 
             if ($invVatSumPC) {
                 if ($invToPay === 0.0) {
@@ -995,16 +1014,16 @@ class Calc
                 $invVatPaid = 0;
             }
 
-            $invNettoPaid = $invPaid - $invVatPaid;
+            $invNettoPaid  = $invPaid - $invVatPaid;
             $invNettoToPay = $invNettoTotal - $invNettoPaid;
 
             // complete + addition
-            $vatPaid = $vatPaid + $invVatPaid;
+            $vatPaid     = $vatPaid + $invVatPaid;
             $bruttoTotal = $bruttoTotal + $invBruttoSum;
-            $bruttoPaid = $bruttoPaid + $invPaid;
+            $bruttoPaid  = $bruttoPaid + $invPaid;
             //$bruttoToPay = $bruttoToPay + $invToPay;
             $nettoToPay = $nettoToPay + $invNettoToPay;
-            $vatTotal = $vatTotal + $invVatSum;
+            $vatTotal   = $vatTotal + $invVatSum;
 
             $nettoTotal = $nettoTotal + $invNettoTotal;
         }
@@ -1014,7 +1033,7 @@ class Calc
         $nettoPaid = $bruttoPaid - $vatPaid;
 
         // vat calculation
-        $vatToPay = $vatTotal - $vatPaid;
+        $vatToPay    = $vatTotal - $vatPaid;
         $bruttoToPay = $bruttoTotal - $bruttoPaid;
 
         return [
@@ -1049,16 +1068,16 @@ class Calc
      */
     public static function calculateTotalVatOfInvoice($vatArray)
     {
-        if (\is_string($vatArray)) {
-            $vatArray = \json_decode($vatArray, true);
+        if (is_string($vatArray)) {
+            $vatArray = json_decode($vatArray, true);
         }
 
-        if (!\is_array($vatArray)) {
+        if (!is_array($vatArray)) {
             return 0;
         }
 
-        return \array_sum(
-            \array_map(function ($vat) {
+        return array_sum(
+            array_map(function ($vat) {
                 return $vat['sum'];
             }, $vatArray)
         );

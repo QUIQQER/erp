@@ -6,9 +6,13 @@
 
 namespace QUI\ERP\Accounting\PriceFactors;
 
+use QUI\ERP\Accounting\Calc as ERPCalc;
 use QUI\ERP\Exception;
 use QUI\Utils\Math;
-use QUI\ERP\Accounting\Calc as ERPCalc;
+
+use function abs;
+use function is_string;
+use function json_encode;
 
 /**
  * Class FactorList
@@ -31,7 +35,7 @@ class Factor
     protected $description = '';
 
     /**
-     * @var int|double|float
+     * @var int|double
      */
     protected $sum = 0;
 
@@ -41,7 +45,7 @@ class Factor
     protected $sumFormatted = '';
 
     /**
-     * @var int|double|float
+     * @var int|double
      */
     protected $nettoSum = '';
 
@@ -53,7 +57,7 @@ class Factor
     /**
      * @var int
      */
-    protected $visible = 1;
+    protected int $visible = 1;
 
     /**
      * @var bool
@@ -73,17 +77,17 @@ class Factor
     /**
      * @var integer
      */
-    protected $calculation = ERPCalc::CALCULATION_COMPLEMENT;
+    protected int $calculation = ERPCalc::CALCULATION_COMPLEMENT;
 
     /**
      * @var integer
      */
-    protected $calculation_basis = ERPCalc::CALCULATION_BASIS_NETTO;
+    protected int $calculation_basis = ERPCalc::CALCULATION_BASIS_NETTO;
 
     /**
-     * @var
+     * @var bool
      */
-    protected $euVat = false;
+    protected bool $euVat = false;
 
     /**
      * FactorList constructor.
@@ -92,7 +96,7 @@ class Factor
      *
      * @throws Exception
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         $fields = [
             'title',
@@ -108,7 +112,7 @@ class Factor
         foreach ($fields as $field) {
             if (!isset($data[$field])) {
                 throw new Exception(
-                    'Missing QUI\ERP\Accounting\PriceFactors\Factor field '.$field,
+                    'Missing QUI\ERP\Accounting\PriceFactors\Factor field ' . $field,
                     500,
                     [
                         'data' => $data
@@ -138,11 +142,11 @@ class Factor
             $this->vat = (int)$data['vat'];
         }
 
-        if (isset($data['valueText']) && \is_string($data['valueText'])) {
+        if (isset($data['valueText']) && is_string($data['valueText'])) {
             $this->valueText = $data['valueText'];
         }
 
-        if (isset($data['identifier']) && \is_string($data['identifier'])) {
+        if (isset($data['identifier']) && is_string($data['identifier'])) {
             $this->identifier = $data['identifier'];
         }
     }
@@ -160,7 +164,7 @@ class Factor
      *
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -170,7 +174,7 @@ class Factor
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -202,7 +206,7 @@ class Factor
      *
      * @return string
      */
-    public function getSumFormatted()
+    public function getSumFormatted(): string
     {
         return $this->sumFormatted;
     }
@@ -250,8 +254,8 @@ class Factor
             return $this->vat;
         }
 
-        $vat      = \abs($this->sum - $this->nettoSum);
-        $nettoSum = \abs($this->nettoSum);
+        $vat      = abs($this->sum - $this->nettoSum);
+        $nettoSum = abs($this->nettoSum);
 
         return Math::percent($vat, $nettoSum);
     }
@@ -261,7 +265,7 @@ class Factor
      *
      * @return string
      */
-    public function getNettoSumFormatted()
+    public function getNettoSumFormatted(): string
     {
         return $this->nettoSumFormatted;
     }
@@ -269,7 +273,7 @@ class Factor
     /**
      * @return int
      */
-    public function getCalculation()
+    public function getCalculation(): int
     {
         return $this->calculation;
     }
@@ -277,7 +281,7 @@ class Factor
     /**
      * @return int
      */
-    public function getCalculationBasis()
+    public function getCalculationBasis(): int
     {
         return $this->calculation_basis;
     }
@@ -285,7 +289,7 @@ class Factor
     /**
      * @return int
      */
-    public function isVisible()
+    public function isVisible(): int
     {
         return $this->visible;
     }
@@ -295,7 +299,7 @@ class Factor
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'identifier'        => $this->identifier,
@@ -319,14 +323,17 @@ class Factor
      *
      * @return string
      */
-    public function toJSON()
+    public function toJSON(): string
     {
-        return \json_encode($this->toArray());
+        return json_encode($this->toArray());
     }
 
     //region eu vat
 
-    public function isEuVat()
+    /**
+     * @return bool
+     */
+    public function isEuVat(): bool
     {
         return $this->euVat;
     }
@@ -352,7 +359,7 @@ class Factor
     /**
      * @param string $sumFormatted
      */
-    public function setSumFormatted($sumFormatted)
+    public function setSumFormatted(string $sumFormatted)
     {
         $this->sumFormatted = $sumFormatted;
     }
@@ -368,7 +375,7 @@ class Factor
     /**
      * @param string $sumFormatted
      */
-    public function setNettoSumFormatted($sumFormatted)
+    public function setNettoSumFormatted(string $sumFormatted)
     {
         $this->nettoSumFormatted = $sumFormatted;
     }
@@ -384,7 +391,7 @@ class Factor
     /**
      * @param string $valueText
      */
-    public function setValueText($valueText)
+    public function setValueText(string $valueText)
     {
         $this->valueText = $valueText;
     }
