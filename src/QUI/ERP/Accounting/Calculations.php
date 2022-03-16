@@ -9,6 +9,8 @@ namespace QUI\ERP\Accounting;
 use QUI;
 use QUI\ERP\Exception;
 
+use function is_array;
+
 /**
  * Class Calculations
  *
@@ -19,17 +21,17 @@ class Calculations
     /**
      * @var array
      */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      * @var Article[]
      */
-    protected $articles = [];
+    protected array $articles = [];
 
     /**
      * @var QUI\ERP\Currency\Currency
      */
-    protected $Currency;
+    protected QUI\ERP\Currency\Currency $Currency;
 
     /**
      * Calculations constructor.
@@ -37,7 +39,7 @@ class Calculations
      * @param array $attributes - calculation array
      * @param array $articles - list of articles
      *
-     * @throws \QUI\ERP\Exception
+     * @throws Exception
      */
     public function __construct($attributes, $articles = [])
     {
@@ -69,7 +71,7 @@ class Calculations
             $this->Currency = QUI\ERP\Defaults::getCurrency();
         }
 
-        if (\is_array($articles)) {
+        if (is_array($articles)) {
             foreach ($articles as $Article) {
                 if ($Article instanceof Article) {
                     $this->articles[] = $Article;
@@ -83,7 +85,7 @@ class Calculations
      *
      * @return CalculationValue
      */
-    public function getSum()
+    public function getSum(): CalculationValue
     {
         return new CalculationValue(
             $this->attributes['sum'],
@@ -97,7 +99,7 @@ class Calculations
      *
      * @return CalculationValue
      */
-    public function getSubSum()
+    public function getSubSum(): CalculationValue
     {
         return new CalculationValue(
             $this->attributes['subSum'],
@@ -111,7 +113,7 @@ class Calculations
      *
      * @return CalculationValue
      */
-    public function getNettoSum()
+    public function getNettoSum(): CalculationValue
     {
         return new CalculationValue(
             $this->attributes['nettoSum'],
@@ -125,7 +127,7 @@ class Calculations
      *
      * @return CalculationValue
      */
-    public function getNettoSubSum()
+    public function getNettoSubSum(): CalculationValue
     {
         return new CalculationValue(
             $this->attributes['nettoSubSum'],
@@ -141,12 +143,12 @@ class Calculations
      *
      * @return CalculationValue
      */
-    public function getVatSum()
+    public function getVatSum(): CalculationValue
     {
         $sum = 0;
         $vat = $this->attributes['vatArray'];
 
-        foreach ($vat as $pc => $data) {
+        foreach ($vat as $data) {
             $sum = $sum + $data['sum'];
         }
 
@@ -172,7 +174,7 @@ class Calculations
      *
      * @return CalculationVatValue[]
      */
-    public function getVat()
+    public function getVat(): array
     {
         $result = [];
 
@@ -194,7 +196,7 @@ class Calculations
     /**
      * @return Article[]
      */
-    public function getArticles()
+    public function getArticles(): array
     {
         return $this->articles;
     }
