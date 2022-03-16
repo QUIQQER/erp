@@ -6,7 +6,10 @@
 
 namespace QUI\ERP\Utils;
 
+use Exception;
 use QUI;
+
+use function strpos;
 
 /**
  * Class Shop
@@ -16,9 +19,9 @@ use QUI;
 class Shop
 {
     /**
-     * @var string
+     * @var string|null
      */
-    protected static $type = null;
+    protected static ?string $type = null;
 
     /**
      * Return the shop business type
@@ -63,9 +66,9 @@ class Shop
      *
      * @return bool
      */
-    public static function isB2B()
+    public static function isB2B(): bool
     {
-        return \strpos(self::getBusinessType(), 'B2B') !== false;
+        return strpos(self::getBusinessType(), 'B2B') !== false;
     }
 
     /**
@@ -74,9 +77,9 @@ class Shop
      *
      * @return bool
      */
-    public static function isB2C()
+    public static function isB2C(): bool
     {
-        return \strpos(self::getBusinessType(), 'B2C') !== false;
+        return strpos(self::getBusinessType(), 'B2C') !== false;
     }
 
     /**
@@ -84,13 +87,13 @@ class Shop
      *
      * @return bool
      */
-    public static function isB2BPrioritized()
+    public static function isB2BPrioritized(): bool
     {
         if (self::isB2B() === false) {
             return false;
         }
 
-        return \strpos(self::getBusinessType(), 'B2B') === 0;
+        return strpos(self::getBusinessType(), 'B2B') === 0;
     }
 
     /**
@@ -98,13 +101,13 @@ class Shop
      *
      * @return bool
      */
-    public static function isB2CPrioritized()
+    public static function isB2CPrioritized(): bool
     {
         if (self::isB2C() === false) {
             return false;
         }
 
-        return \strpos(self::getBusinessType(), 'B2C') === 0;
+        return strpos(self::getBusinessType(), 'B2C') === 0;
     }
 
     /**
@@ -112,7 +115,7 @@ class Shop
      *
      * @return bool
      */
-    public static function isOnlyB2B()
+    public static function isOnlyB2B(): bool
     {
         return self::getBusinessType() === 'B2B';
     }
@@ -122,7 +125,7 @@ class Shop
      *
      * @return bool
      */
-    public static function isOnlyB2C()
+    public static function isOnlyB2C(): bool
     {
         return self::getBusinessType() === 'B2C';
     }
@@ -132,11 +135,11 @@ class Shop
      *
      * @return bool
      */
-    public static function isShippingInstalled()
+    public static function isShippingInstalled(): bool
     {
         try {
             QUI::getPackageManager()->getInstalledPackage('quiqqer/shipping');
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             return false;
         }
 

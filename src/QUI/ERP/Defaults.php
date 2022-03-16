@@ -8,6 +8,9 @@ namespace QUI\ERP;
 
 use QUI;
 
+use function array_values;
+use function implode;
+
 /**
  * Class Defaults
  *
@@ -23,7 +26,7 @@ class Defaults
     /**
      * @var null|bool
      */
-    protected static $userRelatedCurrency = null;
+    protected static ?bool $userRelatedCurrency = null;
 
     /**
      * @var null|string
@@ -33,7 +36,7 @@ class Defaults
     /**
      * @param string $section
      * @param string $key
-     * @return mixed|bool|string
+     * @return array|bool|string
      */
     public static function conf(string $section, string $key)
     {
@@ -81,6 +84,7 @@ class Defaults
      * Return the default country
      *
      * @return QUI\Countries\Country
+     * @throws QUI\Exception
      */
     public static function getCountry(): QUI\Countries\Country
     {
@@ -100,10 +104,10 @@ class Defaults
     /**
      * Return the currency of the user
      *
-     * @param QUI\Interfaces\Users\User $User
+     * @param QUI\Interfaces\Users\User|null $User
      * @return Currency\Currency|null
      */
-    public static function getUserCurrency($User = null): ?Currency\Currency
+    public static function getUserCurrency(QUI\Interfaces\Users\User $User = null): ?Currency\Currency
     {
         if (self::$userRelatedCurrency !== null) {
             if (self::$userRelatedCurrency) {
@@ -255,6 +259,7 @@ class Defaults
      * - if no logo is set, the default logo of the default project will be used
      *
      * @return false|QUI\Projects\Media\Image|string
+     * @throws QUI\Exception
      */
     public static function getLogo()
     {
@@ -283,10 +288,10 @@ class Defaults
 
         $fields[] = self::conf('company', 'name');
         $fields[] = self::conf('company', 'street');
-        $fields[] = self::conf('company', 'zipCode').' '.self::conf('company', 'city');
+        $fields[] = self::conf('company', 'zipCode') . ' ' . self::conf('company', 'city');
 
-        $fields = \array_values($fields);
+        $fields = array_values($fields);
 
-        return \implode(' - ', $fields);
+        return implode(' - ', $fields);
     }
 }

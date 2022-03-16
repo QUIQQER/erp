@@ -7,8 +7,19 @@
 namespace QUI\ERP;
 
 use QUI;
-use QUI\Interfaces\Users\User as UserInterface;
 use QUI\ERP\Customer\NumberRange as CustomerNumberRange;
+use QUI\Groups\Group;
+use QUI\Interfaces\Users\User as UserInterface;
+
+use function array_filter;
+use function array_flip;
+use function array_walk;
+use function explode;
+use function get_class;
+use function is_array;
+use function is_bool;
+use function json_decode;
+use function trim;
 
 /**
  * Class User
@@ -89,7 +100,7 @@ class User extends QUI\QDOM implements UserInterface
         foreach ($needle as $attribute) {
             if (!isset($attributes[$attribute])) {
                 throw new QUI\ERP\Exception(
-                    'Missing attribute:'.$attribute
+                    'Missing attribute:' . $attribute
                 );
             }
         }
@@ -113,17 +124,17 @@ class User extends QUI\QDOM implements UserInterface
             $this->uuid = $attributes['uuid'];
         }
 
-        if (isset($attributes['data']) && \is_array($attributes['data'])) {
+        if (isset($attributes['data']) && is_array($attributes['data'])) {
             $this->data = $attributes['data'];
             $this->setAttributes($this->data);
         }
 
-        if (isset($attributes['address']) && \is_array($attributes['address'])) {
+        if (isset($attributes['address']) && is_array($attributes['address'])) {
             $this->address = $attributes['address'];
         }
 
 
-        $needle = \array_flip($needle);
+        $needle = array_flip($needle);
 
         foreach ($attributes as $attribute => $value) {
             if (!isset($needle[$attribute])) {
@@ -279,13 +290,13 @@ class User extends QUI\QDOM implements UserInterface
             $lastName = $this->lastName;
         }
 
-        $name = $firstName.' '.$lastName;
+        $name = $firstName . ' ' . $lastName;
 
         if (!empty($salutation)) {
-            $name = $salutation.' '.$name;
+            $name = $salutation . ' ' . $name;
         }
 
-        return \trim($name);
+        return trim($name);
     }
 
     /**
@@ -386,7 +397,7 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function getType()
     {
-        return \get_class($this);
+        return get_class($this);
     }
 
     /**
@@ -413,7 +424,7 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function setAddress(QUI\Users\Address $Address)
     {
-        $this->address = \json_decode($Address->toJSON(), true);
+        $this->address = json_decode($Address->toJSON(), true);
     }
 
     /**
@@ -471,7 +482,7 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function hasBruttoNettoStatus()
     {
-        return \is_bool($this->isNetto);
+        return is_bool($this->isNetto);
     }
 
     /**
@@ -524,7 +535,7 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
-     * @param bool|\QUI\Users\User $ParentUser
+     * @param bool|QUI\Users\User $ParentUser
      * @return mixed
      */
     public function disable($ParentUser = false)
@@ -534,7 +545,7 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Does nothing
-     * @param bool|\QUI\Users\User $ParentUser
+     * @param bool|QUI\Users\User $ParentUser
      */
     public function save($ParentUser = false)
     {
@@ -578,7 +589,7 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * @param bool $asObjects
-     * @return int[]|QUI\Groups\Group[]
+     * @return int[]|Group[]
      */
     public function getGroups($asObjects = true)
     {
@@ -588,15 +599,15 @@ class User extends QUI\QDOM implements UserInterface
             return [];
         }
 
-        if (!\is_array($groupIds)) {
-            $groupIds = \explode(',', $groupIds);
+        if (!is_array($groupIds)) {
+            $groupIds = explode(',', $groupIds);
         }
 
-        $groupIds = \array_filter($groupIds, function ($groupId) {
+        $groupIds = array_filter($groupIds, function ($groupId) {
             return !empty($groupId);
         });
 
-        \array_walk($groupIds, function (&$groupId) {
+        array_walk($groupIds, function (&$groupId) {
             $groupId = (int)$groupId;
         });
 
@@ -635,7 +646,7 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Does nothing
      * @param string $new
-     * @param bool|\QUI\Users\User $ParentUser
+     * @param bool|QUI\Users\User $ParentUser
      */
     public function setPassword($new, $ParentUser = false)
     {
@@ -692,7 +703,7 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Does nothing
-     * @param int|\QUI\Groups\Group $Group
+     * @param int|Group $Group
      */
     public function removeGroup($Group)
     {
@@ -722,7 +733,7 @@ class User extends QUI\QDOM implements UserInterface
 
         $NumberRange = new CustomerNumberRange();
 
-        return $NumberRange->getCustomerNoPrefix().$customerId;
+        return $NumberRange->getCustomerNoPrefix() . $customerId;
     }
 
     /**

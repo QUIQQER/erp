@@ -17,7 +17,7 @@ QUI::$Ajax->registerFunction(
 
         foreach ($ranges as $Range) {
             /* @var $Range \QUI\ERP\Api\NumberRangeInterface */
-            if (\get_class($Range) === $className) {
+            if (get_class($Range) === $className) {
                 $Range->setRange((int)$newIndex);
             }
         }

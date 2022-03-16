@@ -21,15 +21,14 @@ QUI::$Ajax->registerFunction(
             return false;
         }
 
-
         $status = QUI::getSession()->get('quiqqer.erp.b2b.status');
 
-        if (\is_numeric($status)) {
+        if (is_numeric($status)) {
             return false;
         }
 
         $areas = $Package->getConfig()->get('general', 'customerRequestWindow');
-        $areas = \explode(',', $areas);
+        $areas = explode(',', $areas);
 
         if (QUI\ERP\Areas\Utils::isUserInAreas($User, $areas)) {
             return true;

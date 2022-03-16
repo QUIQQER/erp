@@ -2,6 +2,10 @@
 
 namespace QUI\ERP\Utils;
 
+use function preg_replace;
+use function strip_tags;
+use function trim;
+
 /**
  * Class Utils
  *
@@ -18,13 +22,13 @@ class Utils
     public static function sanitizeArticleDescription(string $description): string
     {
         // Trim
-        $description = \trim($description);
+        $description = trim($description);
 
         // Filter tag attributes
-        $description = \preg_replace('#<([a-z][a-z0-9]*)[^>]*?(\/?)>#i', '<$1$2>', $description);
+        $description = preg_replace('#<([a-z][a-z0-9]*)[^>]*?(\/?)>#i', '<$1$2>', $description);
 
         // Allow specific tags only
-        $description = \strip_tags(
+        $description = strip_tags(
             $description,
             [
                 '<br>',

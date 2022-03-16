@@ -17,9 +17,9 @@ use QUI\System\Log;
 class Debug
 {
     /**
-     * @var
+     * @var Debug|null
      */
-    protected static $Instance = null;
+    protected static ?Debug $Instance = null;
 
     /**
      * @var QUI\Config
@@ -34,7 +34,7 @@ class Debug
     /**
      * @return Debug
      */
-    public static function getInstance()
+    public static function getInstance(): ?Debug
     {
         if (self::$Instance === null) {
             self::$Instance = new self();

@@ -8,6 +8,14 @@ namespace QUI\ERP;
 
 use QUI;
 
+use function is_array;
+use function is_string;
+use function json_decode;
+use function json_encode;
+use function strip_tags;
+use function time;
+use function usort;
+
 /**
  * Class Comments
  * - Invoice comments
@@ -23,14 +31,14 @@ class Comments
     /**
      * @var array
      */
-    protected $comments = [];
+    protected array $comments = [];
 
     /**
      * Comments constructor.
      *
      * @param array $comments
      */
-    public function __construct($comments = [])
+    public function __construct(array $comments = [])
     {
         if (!$comments) {
             return;
@@ -50,16 +58,16 @@ class Comments
     /**
      * Creates a comment list from a stored representation
      *
-     * @param string $data
+     * @param string|array $data
      * @return Comments
      */
-    public static function unserialize($data)
+    public static function unserialize($data): Comments
     {
-        if (\is_string($data)) {
-            $data = \json_decode($data, true);
+        if (is_string($data)) {
+            $data = json_decode($data, true);
         }
 
-        if (!\is_array($data)) {
+        if (!is_array($data)) {
             return new self();
         }
 
@@ -71,9 +79,9 @@ class Comments
      *
      * @return string
      */
-    public function serialize()
+    public function serialize(): string
     {
-        return \json_encode($this->toArray());
+        return json_encode($this->toArray());
     }
 
     /**
@@ -81,7 +89,7 @@ class Comments
      *
      * @retun bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->comments);
     }
@@ -92,7 +100,7 @@ class Comments
      *
      * @return string
      */
-    public function toJSON()
+    public function toJSON(): string
     {
         return $this->serialize();
     }
@@ -102,7 +110,7 @@ class Comments
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->comments;
     }
@@ -117,21 +125,21 @@ class Comments
      * @param string|false $id - optional, comment id, if needed, it will set one
      */
     public function addComment(
-        $message,
+        string $message,
         $time = false,
-        $source = '',
-        $sourceIcon = '',
+        string $source = '',
+        string $sourceIcon = '',
         $id = false
     ) {
         if ($time === false) {
-            $time = \time();
+            $time = time();
         }
 
         if ($id === false) {
             $id = QUI\Utils\Uuid::get();
         }
 
-        $message = \strip_tags(
+        $message = strip_tags(
             $message,
             '<div><span><pre><p><br><hr>
             <ul><ol><li><dl><dt><dd><strong><em><b><i><u>
@@ -139,11 +147,11 @@ class Comments
         );
 
         $this->comments[] = [
-            'message'    => $message,
-            'time'       => (int)$time,
-            'source'     => $source,
+            'message' => $message,
+            'time' => (int)$time,
+            'source' => $source,
             'sourceIcon' => $sourceIcon,
-            'id'         => $id
+            'id' => $id
         ];
     }
 
@@ -160,7 +168,7 @@ class Comments
      */
     public function sort()
     {
-        \usort($this->comments, function ($commentA, $commentB) {
+        usort($this->comments, function ($commentA, $commentB) {
             if ($commentA['time'] == $commentB['time']) {
                 return 0;
             }
@@ -214,20 +222,20 @@ class Comments
      * @throws QUI\Exception
      * @throws QUI\ExceptionStack
      */
-    public static function getCommentsByUser(QUI\Users\User $User)
+    public static function getCommentsByUser(QUI\Users\User $User): ?Comments
     {
         $Comments = null;
 
         if ($User->getAttribute('comments')) {
             $isEditable = QUI\Permissions\Permission::hasPermission('quiqqer.customer.editComments');
-            $json       = \json_decode($User->getAttribute('comments'), true);
+            $json       = json_decode($User->getAttribute('comments'), true);
 
-            if (!\is_array($json)) {
+            if (!is_array($json)) {
                 $json = [];
             }
 
             foreach ($json as $key => $entry) {
-                if (!empty($json[$key]['id']) && !empty($json[$key]['source'])) {
+                if (!empty($entry['id']) && !empty($entry['source'])) {
                     $json[$key]['editable'] = true;
                 }
 
@@ -236,7 +244,7 @@ class Comments
                 }
             }
 
-            if (\is_array($json)) {
+            if (is_array($json)) {
                 $Comments = new self($json);
             }
         }
@@ -265,7 +273,7 @@ class Comments
      * @throws QUI\Exception
      * @throws QUI\ExceptionStack
      */
-    public static function getHistoryByUser(QUI\Users\User $User)
+    public static function getHistoryByUser(QUI\Users\User $User): Comments
     {
         $Comments = new self();
 
