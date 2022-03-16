@@ -300,9 +300,9 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             this.$AddressDisplay.value = this.$getAddressLabel();
 
             if (this.getAttribute('isCommercial')) {
-                if (checkVal(this.getAttribute('contactPerson'))) {
+                if (this.getAttribute('contactPerson') !== false) {
                     this.$ContactPerson.value = this.getAttribute('contactPerson');
-                } else if (checkVal(this.getAttribute('contact_person'))) {
+                } else if (this.getAttribute('contact_person') !== false) {
                     this.$ContactPerson.value = this.getAttribute('contact_person');
                 }
 
@@ -311,9 +311,9 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 this.$RowContactPerson.setStyle('display', 'none');
             }
 
-            if (checkVal(this.getAttribute('contactEmail'))) {
+            if (this.getAttribute('contactEmail') !== false) {
                 this.$ContactEmail.value = this.getAttribute('contactEmail');
-            } else if (checkVal(this.getAttribute('contact_email'))) {
+            } else if (this.getAttribute('contact_email') !== false) {
                 this.$ContactEmail.value = this.getAttribute('contact_email');
             }
         },
