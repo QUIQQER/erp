@@ -24,13 +24,13 @@ QUI::$Ajax->registerFunction(
 
         $localeCode = $Locale->getLocalesByLang($Locale->getCurrent());
 
-        $Formatter = new \NumberFormatter(
+        $Formatter = new NumberFormatter(
             $localeCode[0],
-            \NumberFormatter::CURRENCY,
+            NumberFormatter::CURRENCY,
             $Locale->getAccountingCurrencyPattern()
         );
 
-        $Formatter->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, '');
+        $Formatter->setSymbol(NumberFormatter::CURRENCY_SYMBOL, '');
 
         return $Formatter->formatCurrency(
             $amount,

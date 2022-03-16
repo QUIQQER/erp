@@ -14,8 +14,7 @@ QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_getProductEdit',
     function ($productId, $user) {
         $Product = Products::getProduct($productId);
-        $user    = \json_encode($user, true);
-
+        
         $Control = new ProductEdit([
             'Product' => $Product
         ]);
@@ -23,7 +22,7 @@ QUI::$Ajax->registerFunction(
         $css  = QUI\Control\Manager::getCSS();
         $html = $Control->create();
 
-        return $css.$html;
+        return $css . $html;
     },
     ['productId', 'user'],
     'Permission::checkAdminUser'

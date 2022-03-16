@@ -8,6 +8,8 @@ namespace QUI\ERP;
 
 use QUI;
 
+use function count;
+
 /**
  * Class Process
  * - represents a complete erp process
@@ -19,24 +21,24 @@ class Process
     /**
      * @var string
      */
-    protected $processId;
+    protected string $processId;
 
     /**
      * @var null|array
      */
-    protected $transactions = null;
+    protected ?array $transactions = null;
 
     /**
      * @var null|QUI\ERP\Comments
      */
-    protected $History = null;
+    protected ?Comments $History = null;
 
     /**
      * Process constructor.
      *
      * @param string $processId - the global process id
      */
-    public function __construct($processId)
+    public function __construct(string $processId)
     {
         $this->processId = $processId;
     }
@@ -46,7 +48,7 @@ class Process
      *
      * @return string
      */
-    protected function table()
+    protected function table(): string
     {
         return QUI::getDBTableName('process');
     }
@@ -59,15 +61,19 @@ class Process
      * @param string $message
      * @param int|bool $time - optional, unix timestamp
      */
-    public function addHistory($message, $time = false)
+    public function addHistory(string $message, $time = false)
     {
         $this->getHistory()->addComment($message, $time);
 
-        QUI::getDataBase()->update(
-            $this->table(),
-            ['history' => $this->getHistory()->toJSON()],
-            ['id' => $this->processId]
-        );
+        try {
+            QUI::getDataBase()->update(
+                $this->table(),
+                ['history' => $this->getHistory()->toJSON()],
+                ['id' => $this->processId]
+            );
+        } catch (\QUI\Exception $Exception) {
+            QUI\System\Log::addError($Exception->getMessage());
+        }
     }
 
     /**
@@ -78,25 +84,29 @@ class Process
      *
      * @return QUI\ERP\Comments
      */
-    public function getHistory()
+    public function getHistory(): Comments
     {
         if ($this->History === null) {
-            $result = QUI::getDataBase()->fetch([
-                'from'  => $this->table(),
-                'where' => [
-                    'id' => $this->processId
-                ],
-                'limit' => 1
-            ]);
-
             $history = '';
 
-            if (isset($result[0]['history'])) {
-                $history = $result[0]['history'];
-            } else {
-                QUI::getDataBase()->insert($this->table(), [
-                    'id' => $this->processId
+            try {
+                $result = QUI::getDataBase()->fetch([
+                    'from'  => $this->table(),
+                    'where' => [
+                        'id' => $this->processId
+                    ],
+                    'limit' => 1
                 ]);
+
+                if (isset($result[0]['history'])) {
+                    $history = $result[0]['history'];
+                } else {
+                    QUI::getDataBase()->insert($this->table(), [
+                        'id' => $this->processId
+                    ]);
+                }
+            } catch (\QUI\Exception $Exception) {
+                QUI\System\Log::addError($Exception->getMessage());
             }
 
             $this->History = QUI\ERP\Comments::unserialize($history);
@@ -107,11 +117,11 @@ class Process
 
     /**
      * Return a complete history of all process objects
-     * invoices invoices and orders
+     * invoices and orders
      *
      * @return Comments
      */
-    public function getCompleteHistory()
+    public function getCompleteHistory(): Comments
     {
         $History = $this->getHistory();
 
@@ -138,7 +148,7 @@ class Process
      *
      * @return bool
      */
-    public function hasInvoice()
+    public function hasInvoice(): bool
     {
         $invoices = $this->getInvoices();
 
@@ -156,7 +166,7 @@ class Process
      *
      * @return bool
      */
-    public function hasTemporaryInvoice()
+    public function hasTemporaryInvoice(): bool
     {
         $invoices = $this->getInvoices();
 
@@ -172,12 +182,13 @@ class Process
     /**
      * @return Accounting\Invoice\Invoice[]|Accounting\Invoice\InvoiceTemporary[]
      */
-    public function getInvoices()
+    public function getInvoices(): array
     {
-        $Handler  = QUI\ERP\Accounting\Invoice\Handler::getInstance();
-        $invoices = $Handler->getInvoicesByGlobalProcessId($this->processId);
-
-        return $invoices;
+        try {
+            return QUI\ERP\Accounting\Invoice\Handler::getInstance()->getInvoicesByGlobalProcessId($this->processId);
+        } catch (\QUI\Exception $Exception) {
+            return [];
+        }
     }
 
     //endregion
@@ -187,7 +198,7 @@ class Process
     /**
      * @return bool
      */
-    public function hasOrder()
+    public function hasOrder(): bool
     {
         return !($this->getOrder() === null);
     }
@@ -195,7 +206,7 @@ class Process
     /**
      * Return the first order of the process
      *
-     * @return null|Order\Order|Order\OrderInProcess|Order\Order|Order\Order
+     * @return null|Order\Order|Order\OrderInProcess
      */
     public function getOrder()
     {
@@ -231,11 +242,11 @@ class Process
     {
         try {
             QUI::getPackage('quiqqer/order');
+
+            return QUI\ERP\Order\Handler::getInstance()->getOrdersByGlobalProcessId($this->processId);
         } catch (QUI\Exception $Exception) {
             return [];
         }
-
-        return QUI\ERP\Order\Handler::getInstance()->getOrdersByGlobalProcessId($this->processId);
     }
 
     //endregion
@@ -245,11 +256,11 @@ class Process
     /**
      * @return bool
      */
-    public function hasTransactions()
+    public function hasTransactions(): bool
     {
         $transactions = $this->getTransactions();
 
-        return !!\count($transactions);
+        return !!count($transactions);
     }
 
     /**
@@ -257,7 +268,7 @@ class Process
      *
      * @return QUI\ERP\Accounting\Payments\Transactions\Transaction[];
      */
-    public function getTransactions()
+    public function getTransactions(): ?array
     {
         try {
             QUI::getPackage('quiqqer/payment-transactions');

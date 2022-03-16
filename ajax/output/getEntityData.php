@@ -26,13 +26,13 @@ QUI::$Ajax->registerFunction(
             $defaultTemplates = $Conf->get('output', 'default_templates');
 
             if (!empty($defaultTemplates)) {
-                $defaultTemplates = \json_decode($defaultTemplates, true);
+                $defaultTemplates = json_decode($defaultTemplates, true);
 
                 if (!empty($defaultTemplates[$entityType])) {
                     $hideSystemDefaultTemplate = $defaultTemplates[$entityType]['hideSystemDefault'];
                 }
             }
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
 

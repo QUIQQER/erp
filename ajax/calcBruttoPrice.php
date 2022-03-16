@@ -4,7 +4,6 @@
  * This file contains package_quiqqer_products_ajax_products_calcNettoPrice
  */
 
-use QUI\ERP\Products\Utils\Calc;
 use QUI\ERP\Tax\TaxEntry;
 use QUI\ERP\Tax\TaxType;
 use QUI\ERP\Tax\Utils as TaxUtils;
@@ -46,7 +45,7 @@ QUI::$Ajax->registerFunction(
         $vat = (100 + $vat) / 100;
 
         $price = $price * $vat;
-        $price = \round($price, $Currency->getPrecision());
+        $price = round($price, $Currency->getPrecision());
 
         if (isset($formatted) && $formatted) {
             return $Currency->format($price);

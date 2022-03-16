@@ -2,9 +2,28 @@
 
 namespace QUI\ERP;
 
+use IntlDateFormatter;
+use PDO;
 use QUI;
 use QUI\ERP\Products\Handler\Fields;
 use QUI\Utils\Security\Orthos;
+
+use function array_filter;
+use function array_keys;
+use function array_map;
+use function array_merge;
+use function array_unique;
+use function array_values;
+use function array_walk;
+use function count;
+use function date_create;
+use function explode;
+use function implode;
+use function in_array;
+use function is_array;
+use function sort;
+use function str_replace;
+use function trim;
 
 /**
  * Class Manufacturers
@@ -18,7 +37,7 @@ class Manufacturers
      *
      * @return int[]
      */
-    public static function getManufacturerGroupIds()
+    public static function getManufacturerGroupIds(): array
     {
         $groupIds = [];
 
@@ -48,17 +67,17 @@ class Manufacturers
 
         $fieldGroupIds = $ManufacturerField->getOption('groupIds');
 
-        if (empty($fieldGroupIds) || !\is_array($fieldGroupIds)) {
+        if (empty($fieldGroupIds) || !is_array($fieldGroupIds)) {
             return $groupIds;
         }
 
-        \array_walk($fieldGroupIds, function (&$groupId) {
+        array_walk($fieldGroupIds, function (&$groupId) {
             $groupId = (int)$groupId;
         });
 
-        $groupIds = \array_merge($groupIds, $fieldGroupIds);
+        $groupIds = array_merge($groupIds, $fieldGroupIds);
 
-        return \array_values(\array_unique($groupIds));
+        return array_values(array_unique($groupIds));
     }
 
     /**
@@ -74,8 +93,11 @@ class Manufacturers
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      */
-    public static function createManufacturer(string $manufacturerId, array $address = [], array $groupIds = [])
-    {
+    public static function createManufacturer(
+        string $manufacturerId,
+        array $address = [],
+        array $groupIds = []
+    ): QUI\Users\User {
         QUI\Permissions\Permission::checkPermission('quiqqer.erp_manufacturers.create');
 
         $Users          = QUI::getUsers();
@@ -153,7 +175,7 @@ class Manufacturers
         foreach ($groupIds as $groupId) {
             $groupId = (int)$groupId;
 
-            if (\in_array($groupId, $manufacturerGroupIds)) {
+            if (in_array($groupId, $manufacturerGroupIds)) {
                 $User->addToGroup($groupId);
             }
         }
@@ -174,7 +196,7 @@ class Manufacturers
      * @param bool $countOnly (optional) - get count for search result only [default: false]
      * @return int[]|int - Manufacturer user IDs or count
      */
-    public static function search(array $searchParams, $countOnly = false)
+    public static function search(array $searchParams, bool $countOnly = false)
     {
         $Grid            = new QUI\Utils\Grid($searchParams);
         $gridParams      = $Grid->parseDBParams($searchParams);
@@ -190,24 +212,24 @@ class Manufacturers
             $sql .= ", u.`active`, u.`regdate`";
         }
 
-        $sql .= " FROM `".$usersTbl."` as u LEFT JOIN `".$usersAddressTbl."` as ua ON u.`address` = ua.`id`";
+        $sql .= " FROM `" . $usersTbl . "` as u LEFT JOIN `" . $usersAddressTbl . "` as ua ON u.`address` = ua.`id`";
 
         // Only fetch users in manufacturer groups
         $gc      = 0;
         $whereOr = [];
 
         foreach (self::getManufacturerGroupIds() as $groupId) {
-            $whereOr[] = "u.`usergroup` LIKE :group".$gc;
-            $bind      = 'group'.$gc++;
+            $whereOr[] = "u.`usergroup` LIKE :group" . $gc;
+            $bind      = 'group' . $gc++;
 
             $binds[$bind] = [
-                'value' => '%,'.$groupId.',%',
-                'type'  => \PDO::PARAM_STR
+                'value' => '%,' . $groupId . ',%',
+                'type'  => PDO::PARAM_STR
             ];
         }
 
         if (!empty($whereOr)) {
-            $where[] = "(".\implode(" OR ", $whereOr).")";
+            $where[] = "(" . implode(" OR ", $whereOr) . ")";
         }
 
         // User search
@@ -218,42 +240,42 @@ class Manufacturers
             'company'
         ];
 
-        if (!empty($searchParams['filter']) && \is_array($searchParams['filter'])) {
-            $searchFields = \array_filter($searchParams['filter'], function ($value) {
+        if (!empty($searchParams['filter']) && is_array($searchParams['filter'])) {
+            $searchFields = array_filter($searchParams['filter'], function ($value) {
                 return !!(int)$value;
             });
 
-            $searchFields = \array_keys($searchFields);
+            $searchFields = array_keys($searchFields);
 
             // date filters
             if (!empty($searchParams['filter']['regdate_from'])) {
-                $DateFrom = \date_create($searchParams['filter']['regdate_from']);
+                $DateFrom = date_create($searchParams['filter']['regdate_from']);
 
                 if ($DateFrom) {
                     $DateFrom->setTime(0, 0, 0);
 
                     $bind    = 'datefrom';
-                    $where[] = 'u.`regdate` >= :'.$bind;
+                    $where[] = 'u.`regdate` >= :' . $bind;
 
                     $binds[$bind] = [
                         'value' => $DateFrom->getTimestamp(),
-                        'type'  => \PDO::PARAM_INT
+                        'type'  => PDO::PARAM_INT
                     ];
                 }
             }
 
             if (!empty($searchParams['filter']['regdate_to'])) {
-                $DateTo = \date_create($searchParams['filter']['regdate_to']);
+                $DateTo = date_create($searchParams['filter']['regdate_to']);
 
                 if ($DateTo) {
                     $DateTo->setTime(23, 59, 59);
 
                     $bind    = 'dateto';
-                    $where[] = 'u.`regdate` <= :'.$bind;
+                    $where[] = 'u.`regdate` <= :' . $bind;
 
                     $binds[$bind] = [
                         'value' => $DateTo->getTimestamp(),
-                        'type'  => \PDO::PARAM_INT
+                        'type'  => PDO::PARAM_INT
                     ];
                 }
             }
@@ -266,7 +288,7 @@ class Manufacturers
 
             // search value filters
             foreach ($searchFields as $filter) {
-                $bind = 'filter'.$fc;
+                $bind = 'filter' . $fc;
 
                 switch ($filter) {
                     case 'id':
@@ -274,11 +296,11 @@ class Manufacturers
                     case 'firstname':
                     case 'lastname':
                     case 'email':
-                        $whereOr[] = 'u.`'.$filter.'` LIKE :'.$bind;
+                        $whereOr[] = 'u.`' . $filter . '` LIKE :' . $bind;
                         break;
 
                     case 'company':
-                        $whereOr[] = 'ua.`'.$filter.'` LIKE :'.$bind;
+                        $whereOr[] = 'ua.`' . $filter . '` LIKE :' . $bind;
                         break;
 
                     default:
@@ -286,21 +308,21 @@ class Manufacturers
                 }
 
                 $binds[$bind] = [
-                    'value' => '%'.$searchValue.'%',
-                    'type'  => \PDO::PARAM_STR
+                    'value' => '%' . $searchValue . '%',
+                    'type'  => PDO::PARAM_STR
                 ];
 
                 $fc++;
             }
 
             if (!empty($whereOr)) {
-                $where[] = "(".\implode(" OR ", $whereOr).")";
+                $where[] = "(" . implode(" OR ", $whereOr) . ")";
             }
         }
 
         // build WHERE query string
         if (!empty($where)) {
-            $sql .= " WHERE ".implode(" AND ", $where);
+            $sql .= " WHERE " . implode(" AND ", $where);
         }
 
         // ORDER
@@ -313,31 +335,31 @@ class Manufacturers
                 case 'firstname':
                 case 'lastname':
                 case 'email':
-                    $sortOn = 'u.`'.$sortOn.'`';
+                    $sortOn = 'u.`' . $sortOn . '`';
                     break;
 
                 case 'company':
-                    $sortOn = 'ua.`'.$sortOn.'`';
+                    $sortOn = 'ua.`' . $sortOn . '`';
                     break;
             }
 
-            $order = "ORDER BY ".$sortOn;
+            $order = "ORDER BY " . $sortOn;
 
             if (!empty($searchParams['sortBy'])) {
-                $order .= " ".Orthos::clear($searchParams['sortBy']);
+                $order .= " " . Orthos::clear($searchParams['sortBy']);
             } else {
                 $order .= " ASC";
             }
 
-            $sql .= " ".$order;
+            $sql .= " " . $order;
         }
 
         // LIMIT
         if (!empty($gridParams['limit']) && !$countOnly) {
-            $sql .= " LIMIT ".$gridParams['limit'];
+            $sql .= " LIMIT " . $gridParams['limit'];
         } else {
             if (!$countOnly) {
-                $sql .= " LIMIT ".(int)20;
+                $sql .= " LIMIT " . (int)20;
             }
         }
 
@@ -345,12 +367,12 @@ class Manufacturers
 
         // bind search values
         foreach ($binds as $var => $bind) {
-            $Stmt->bindValue(':'.$var, $bind['value'], $bind['type']);
+            $Stmt->bindValue(':' . $var, $bind['value'], $bind['type']);
         }
 
         try {
             $Stmt->execute();
-            $result = $Stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $result = $Stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return [];
@@ -369,22 +391,22 @@ class Manufacturers
      * @param array $data - Search result IDs
      * @return array
      */
-    public static function parseListForGrid(array $data)
+    public static function parseListForGrid(array $data): array
     {
         $localeCode = QUI::getLocale()->getLocalesByLang(
             QUI::getLocale()->getCurrent()
         );
 
-        $DateFormatter = new \IntlDateFormatter(
+        $DateFormatter = new IntlDateFormatter(
             $localeCode[0],
-            \IntlDateFormatter::SHORT,
-            \IntlDateFormatter::NONE
+            IntlDateFormatter::SHORT,
+            IntlDateFormatter::NONE
         );
 
-        $DateFormatterLong = new \IntlDateFormatter(
+        $DateFormatterLong = new IntlDateFormatter(
             $localeCode[0],
-            \IntlDateFormatter::SHORT,
-            \IntlDateFormatter::SHORT
+            IntlDateFormatter::SHORT,
+            IntlDateFormatter::SHORT
         );
 
         $result = [];
@@ -392,13 +414,13 @@ class Manufacturers
         $Users  = QUI::getUsers();
 
         foreach ($data as $entry) {
-            $entry['usergroup'] = \trim($entry['usergroup'], ',');
-            $entry['usergroup'] = \explode(',', $entry['usergroup']);
-            $entry['usergroup'] = \array_map(function ($groupId) {
+            $entry['usergroup'] = trim($entry['usergroup'], ',');
+            $entry['usergroup'] = explode(',', $entry['usergroup']);
+            $entry['usergroup'] = array_map(function ($groupId) {
                 return (int)$groupId;
             }, $entry['usergroup']);
 
-            $groups = \array_map(function ($groupId) use ($Groups) {
+            $groups = array_map(function ($groupId) use ($Groups) {
                 try {
                     $Group = $Groups->get($groupId);
 
@@ -409,10 +431,10 @@ class Manufacturers
                 return '';
             }, $entry['usergroup']);
 
-            \sort($groups);
-            $groups = \implode(', ', $groups);
-            $groups = \str_replace(',,', '', $groups);
-            $groups = \trim($groups, ',');
+            sort($groups);
+            $groups = implode(', ', $groups);
+            $groups = str_replace(',,', '', $groups);
+            $groups = trim($groups, ',');
 
             $addressData = [];
             $Address     = null;
@@ -437,7 +459,7 @@ class Manufacturers
                 }
 
                 if (!empty($name)) {
-                    $addressData[] = \implode(' ', $name);
+                    $addressData[] = implode(' ', $name);
                 }
             }
 
@@ -447,7 +469,7 @@ class Manufacturers
                 if (empty($entry['email'])) {
                     $mails = $Address->getMailList();
 
-                    if (\count($mails)) {
+                    if (count($mails)) {
                         $entry['email'] = $mails[0];
                     }
                 }
@@ -469,7 +491,7 @@ class Manufacturers
 
                 'usergroup_display' => $groups,
                 'usergroup'         => $entry['usergroup'],
-                'address_display'   => \implode(' - ', $addressData)
+                'address_display'   => implode(' - ', $addressData)
             ];
         }
 
