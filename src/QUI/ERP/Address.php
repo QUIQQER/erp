@@ -7,6 +7,7 @@
 namespace QUI\ERP;
 
 use QUI;
+use QUI\ERP\Customer\Utils as CustomerUtils;
 
 /**
  * Class Address
@@ -56,6 +57,12 @@ class Address extends QUI\Users\Address
 
         if (!empty($this->getAttribute('contactPerson'))) {
             $contactPerson = $this->getAttribute('contactPerson');
+        } elseif ($this->User) {
+            $ContactPersonAddress = CustomerUtils::getInstance()->getContactPersonAddress($this->User);
+
+            if ($ContactPersonAddress) {
+                $contactPerson = $ContactPersonAddress->getName();
+            }
         }
 
         if ((bool)Defaults::conf('general', 'contactPersonOnAddress') === false) {
