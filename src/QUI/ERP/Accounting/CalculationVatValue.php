@@ -20,23 +20,23 @@ class CalculationVatValue extends CalculationValue
     /**
      * @var string
      */
-    protected $text = '';
+    protected string $text = '';
 
     /**
      * @var int
      */
-    protected $vat;
+    protected int $vat;
 
     /**
      * CalculationValue constructor.
      *
-     * @param int|float|double $number
+     * @param int|float $number
      * @param string $text
      * @param int $vat
-     * @param QUI\ERP\Currency\Currency $Currency
+     * @param QUI\ERP\Currency\Currency|null $Currency
      * @param int|bool $precision - The optional number of decimal digits to round to.
      */
-    public function __construct($number, $text, $vat, $Currency = null, $precision = false)
+    public function __construct($number, $text, $vat, QUI\ERP\Currency\Currency $Currency = null, $precision = false)
     {
         parent::__construct($number, $Currency, $precision);
 
@@ -49,7 +49,7 @@ class CalculationVatValue extends CalculationValue
      *
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->text;
     }
@@ -59,7 +59,7 @@ class CalculationVatValue extends CalculationValue
      *
      * @return int
      */
-    public function getVat()
+    public function getVat(): int
     {
         return $this->vat;
     }

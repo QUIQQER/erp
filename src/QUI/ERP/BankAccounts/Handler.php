@@ -2,7 +2,12 @@
 
 namespace QUI\ERP\BankAccounts;
 
+use Exception;
 use QUI;
+
+use function json_decode;
+use function json_encode;
+use function mt_rand;
 
 /**
  * Class Handler.
@@ -36,7 +41,7 @@ class Handler
 
         foreach ($fields as $field => $isRequired) {
             if ($isRequired && empty($data[$field])) {
-                throw new QUI\Exception('Cannot add bank account. Required field "'.$field.'" is empty.');
+                throw new QUI\Exception('Cannot add bank account. Required field "' . $field . '" is empty.');
             }
 
             $bankAccount[$field] = !empty($data[$field]) ? $data[$field] : '';
@@ -45,7 +50,7 @@ class Handler
         $list = self::getList();
 
         do {
-            $id = \mt_rand(10000, 99999);
+            $id = mt_rand(10000, 99999);
         } while (!empty($list[$id]));
 
         $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
@@ -53,7 +58,7 @@ class Handler
         $bankAccount['id'] = $id;
         $list[$id]         = $bankAccount;
 
-        $Conf->setValue('bankAccounts', 'accounts', \json_encode($list));
+        $Conf->setValue('bankAccounts', 'accounts', json_encode($list));
         $Conf->save();
 
         return $bankAccount;
@@ -69,7 +74,7 @@ class Handler
         try {
             $bankAccounts  = self::getList();
             $bankAccountId = QUI::getPackage('quiqqer/erp')->getConfig()->get('company', 'bankAccountId');
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return false;
         }
@@ -90,7 +95,7 @@ class Handler
     {
         try {
             $bankAccounts = self::getList();
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return false;
         }
@@ -113,7 +118,7 @@ class Handler
     {
         try {
             $bankAccounts = self::getList();
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return false;
         }
@@ -136,7 +141,7 @@ class Handler
     {
         try {
             $config = self::getConfig();
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return [];
         }
@@ -147,7 +152,7 @@ class Handler
             return [];
         }
 
-        return \json_decode($bankAccounts, true);
+        return json_decode($bankAccounts, true);
     }
 
     /**

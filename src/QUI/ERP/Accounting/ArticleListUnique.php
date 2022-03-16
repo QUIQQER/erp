@@ -6,8 +6,22 @@
 
 namespace QUI\ERP\Accounting;
 
+use ArrayIterator;
+use IteratorAggregate;
 use QUI;
 use QUI\ERP\Accounting\PriceFactors\FactorList as ErpFactorList;
+use Traversable;
+
+use function array_map;
+use function class_exists;
+use function class_implements;
+use function count;
+use function dirname;
+use function file_exists;
+use function file_get_contents;
+use function is_string;
+use function json_decode;
+use function json_encode;
 
 /**
  * Class ArticleListUnique
@@ -15,12 +29,12 @@ use QUI\ERP\Accounting\PriceFactors\FactorList as ErpFactorList;
  *
  * @package QUI\ERP\Accounting
  */
-class ArticleListUnique implements \IteratorAggregate
+class ArticleListUnique implements IteratorAggregate
 {
     /**
      * @var Article[]
      */
-    protected $articles = [];
+    protected array $articles = [];
 
     /**
      * @var array
@@ -40,9 +54,9 @@ class ArticleListUnique implements \IteratorAggregate
     protected $PriceFactors = false;
 
     /**
-     * @var null
+     * @var null|QUI\Locale
      */
-    protected $Locale = null;
+    protected ?QUI\Locale $Locale = null;
 
     /**
      * @var QUI\Interfaces\Users\User
@@ -52,17 +66,17 @@ class ArticleListUnique implements \IteratorAggregate
     /**
      * @var bool
      */
-    protected $showExchangeRate = true;
+    protected bool $showExchangeRate = true;
 
     /**
-     * @var null
+     * @var null|QUI\ERP\Currency\Currency
      */
-    protected $ExchangeCurrency = null;
+    protected ?QUI\ERP\Currency\Currency $ExchangeCurrency = null;
 
     /**
-     * @var float
+     * @var float|null
      */
-    protected $exchangeRate = null;
+    protected ?float $exchangeRate = null;
 
     /**
      * ArticleList constructor.
@@ -71,7 +85,7 @@ class ArticleListUnique implements \IteratorAggregate
      * @param null|QUI\Interfaces\Users\User|QUI\Users\User $User
      * @throws QUI\ERP\Exception
      */
-    public function __construct($attributes = [], $User = null)
+    public function __construct(array $attributes = [], $User = null)
     {
         $this->Locale = QUI::getLocale();
 
@@ -109,12 +123,12 @@ class ArticleListUnique implements \IteratorAggregate
 
             $class = $article['class'];
 
-            if (!\class_exists($class)) {
+            if (!class_exists($class)) {
                 $this->articles[] = new Article($article);
                 continue;
             }
 
-            $interfaces = \class_implements($class);
+            $interfaces = class_implements($class);
 
             if (isset($interfaces[ArticleInterface::class])) {
                 $this->articles[] = new $class($article);
@@ -133,7 +147,7 @@ class ArticleListUnique implements \IteratorAggregate
         }
 
         $this->calculations = $attributes['calculations'];
-        $this->showHeader   = isset($attributes['showHeader']) ? $attributes['showHeader'] : true;
+        $this->showHeader   = $attributes['showHeader'] ?? true;
 
         // price factors
         $this->PriceFactors = new ErpFactorList();
@@ -170,7 +184,7 @@ class ArticleListUnique implements \IteratorAggregate
      * @param $Calc
      * @return ArticleListUnique
      */
-    public function calc($Calc = null)
+    public function calc($Calc = null): ArticleListUnique
     {
         // placeholder. unique list cant be calc
         return $this;
@@ -189,15 +203,15 @@ class ArticleListUnique implements \IteratorAggregate
     /**
      * Creates a list from a stored representation
      *
-     * @param string $data
+     * @param string|array $data
      * @return ArticleListUnique
      *
      * @throws QUI\Exception
      */
-    public static function unserialize(string $data): ArticleListUnique
+    public static function unserialize($data): ArticleListUnique
     {
-        if (\is_string($data)) {
-            $data = \json_decode($data, true);
+        if (is_string($data)) {
+            $data = json_decode($data, true);
         }
 
         return new self($data);
@@ -210,7 +224,7 @@ class ArticleListUnique implements \IteratorAggregate
      */
     public function serialize(): string
     {
-        return \json_encode($this->toArray());
+        return json_encode($this->toArray());
     }
 
     /**
@@ -240,7 +254,7 @@ class ArticleListUnique implements \IteratorAggregate
      */
     public function count(): int
     {
-        return \count($this->articles);
+        return count($this->articles);
     }
 
     /**
@@ -263,7 +277,7 @@ class ArticleListUnique implements \IteratorAggregate
     {
         $this->calc();
 
-        $articles = \array_map(function ($Article) {
+        $articles = array_map(function ($Article) {
             return $Article->toArray();
         }, $this->articles);
 
@@ -339,7 +353,7 @@ class ArticleListUnique implements \IteratorAggregate
 
         // price display
         foreach ($vatArray as $key => $vat) {
-            $vatArray[$key]['sum'] = $Currency->format($vatArray[$key]['sum']);
+            $vatArray[$key]['sum'] = $Currency->format($vat['sum']);
         }
 
         $this->calculations['sum']    = $Currency->format($this->calculations['sum']);
@@ -356,7 +370,7 @@ class ArticleListUnique implements \IteratorAggregate
 
         $pos = 1;
 
-        $articles = \array_map(function ($Article) use ($Currency, &$pos) {
+        $articles = array_map(function ($Article) use ($Currency, &$pos) {
             $View = $Article->getView();
             $View->setCurrency($Currency);
             $View->setPosition($pos);
@@ -414,11 +428,11 @@ class ArticleListUnique implements \IteratorAggregate
             'exchangeRateText' => $exchangeRateText
         ]);
 
-        if ($template && \file_exists($template)) {
+        if ($template && file_exists($template)) {
             return $Engine->fetch($template);
         }
 
-        return $Engine->fetch(\dirname(__FILE__).'/ArticleList.html');
+        return $Engine->fetch(dirname(__FILE__) . '/ArticleList.html');
     }
 
     /**
@@ -427,7 +441,7 @@ class ArticleListUnique implements \IteratorAggregate
      */
     public function toMailHTML(): string
     {
-        return $this->toHTML(\dirname(__FILE__).'/ArticleList.Mail.html');
+        return $this->toHTML(dirname(__FILE__) . '/ArticleList.Mail.html');
     }
 
     /**
@@ -440,10 +454,10 @@ class ArticleListUnique implements \IteratorAggregate
     public function toHTMLWithCSS(): string
     {
         $style = '<style>';
-        $style .= \file_get_contents(\dirname(__FILE__).'/ArticleList.css');
+        $style .= file_get_contents(dirname(__FILE__) . '/ArticleList.css');
         $style .= '</style>';
 
-        return $style.$this->toHTML();
+        return $style . $this->toHTML();
     }
 
     /**
@@ -453,7 +467,7 @@ class ArticleListUnique implements \IteratorAggregate
      *
      * @throws QUI\Exception
      */
-    public function render()
+    public function render(): string
     {
         return $this->toHTMLWithCSS();
     }
@@ -468,10 +482,10 @@ class ArticleListUnique implements \IteratorAggregate
     public function renderForMail(): string
     {
         $style = '<style>';
-        $style .= \file_get_contents(\dirname(__FILE__).'/ArticleList.Mail.css');
+        $style .= file_get_contents(dirname(__FILE__) . '/ArticleList.Mail.css');
         $style .= '</style>';
 
-        return $style.$this->toMailHTML();
+        return $style . $this->toMailHTML();
     }
 
     //region Price Factors
@@ -493,11 +507,11 @@ class ArticleListUnique implements \IteratorAggregate
     /**
      * Iterator helper
      *
-     * @return \ArrayIterator|\Traversable
+     * @return ArrayIterator|Traversable
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->articles);
+        return new ArrayIterator($this->articles);
     }
 
     //endregion

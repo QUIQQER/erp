@@ -9,6 +9,16 @@ namespace QUI\ERP\Money;
 use QUI;
 use QUI\ERP\Discount\Discount;
 
+use function floatval;
+use function is_float;
+use function mb_strpos;
+use function mb_substr;
+use function preg_replace;
+use function round;
+use function str_replace;
+use function substr;
+use function trim;
+
 /**
  * Class Price
  * @package QUI\ERP\Products\Price
@@ -25,18 +35,18 @@ class Price
      * Price currency
      * @var QUI\ERP\Currency\Currency
      */
-    protected $Currency;
+    protected QUI\ERP\Currency\Currency $Currency;
 
     /**
      * Flag for Price from
      * @var bool
      */
-    protected $isMinimalPrice = false;
+    protected bool $isMinimalPrice = false;
 
     /**
      * @var array
      */
-    protected $discounts;
+    protected array $discounts;
 
     /**
      * User
@@ -181,17 +191,17 @@ class Price
      */
     public static function validatePrice($value, $Locale = null)
     {
-        if (\is_float($value)) {
-            return \round($value, QUI\ERP\Defaults::getPrecision());
+        if (is_float($value)) {
+            return round($value, QUI\ERP\Defaults::getPrecision());
         }
 
         $value      = (string)$value;
-        $isNegative = \substr($value, 0, 1) === '-';
+        $isNegative = substr($value, 0, 1) === '-';
 
         // value cleanup
-        $value = \preg_replace('#[^\d,.]#i', '', $value);
+        $value = preg_replace('#[^\d,.]#i', '', $value);
 
-        if (\trim($value) === '') {
+        if (trim($value) === '') {
             return null;
         }
 
@@ -208,30 +218,30 @@ class Price
         $decimalSeparator  = $Locale->getDecimalSeparator();
         $thousandSeparator = $Locale->getGroupingSeparator();
 
-        $decimal   = \mb_strpos($value, $decimalSeparator);
-        $thousands = \mb_strpos($value, $thousandSeparator);
+        $decimal   = mb_strpos($value, $decimalSeparator);
+        $thousands = mb_strpos($value, $thousandSeparator);
 
         if ($thousands === false && $decimal === false) {
-            return \round(\floatval($value), 4) * $negativeTurn;
+            return round(floatval($value), 4) * $negativeTurn;
         }
 
         if ($thousands !== false && $decimal === false) {
-            if (\mb_substr($value, -4, 1) === $thousandSeparator) {
-                $value = \str_replace($thousandSeparator, '', $value);
+            if (mb_substr($value, -4, 1) === $thousandSeparator) {
+                $value = str_replace($thousandSeparator, '', $value);
             }
         }
 
         if ($thousands === false && $decimal !== false) {
-            $value = \str_replace($decimalSeparator, '.', $value);
+            $value = str_replace($decimalSeparator, '.', $value);
         }
 
         if ($thousands !== false && $decimal !== false) {
-            $value = \str_replace($thousandSeparator, '', $value);
-            $value = \str_replace($decimalSeparator, '.', $value);
+            $value = str_replace($thousandSeparator, '', $value);
+            $value = str_replace($decimalSeparator, '.', $value);
         }
 
-        $value = \floatval($value);
-        $value = \round($value, QUI\ERP\Defaults::getPrecision());
+        $value = floatval($value);
+        $value = round($value, QUI\ERP\Defaults::getPrecision());
         $value = $value * $negativeTurn;
 
         return $value;

@@ -8,6 +8,7 @@ namespace QUI\ERP\Requirements;
 
 use QUI;
 use QUI\ERP\Defaults;
+use QUI\Requirements\TestResult;
 use QUI\Requirements\Tests\Test;
 
 /**
@@ -21,20 +22,20 @@ class Area extends Test
     /**
      * Execute the test
      *
-     * @return \QUI\Requirements\TestResult
+     * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         try {
             Defaults::getArea();
 
-            return new QUI\Requirements\TestResult(
-                QUI\Requirements\TestResult::STATUS_FAILED,
+            return new TestResult(
+                TestResult::STATUS_FAILED,
                 QUI::getLocale()->get('quiqqer/erp', 'message.default.area.missing')
             );
         } catch (QUI\Exception $Exception) {
-            return new QUI\Requirements\TestResult(
-                QUI\Requirements\TestResult::STATUS_OK,
+            return new TestResult(
+                TestResult::STATUS_OK,
                 QUI::getLocale()->get('quiqqer/erp', 'message.default.area.ok')
             );
         }

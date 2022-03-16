@@ -8,6 +8,9 @@ namespace QUI\ERP\Accounting;
 
 use QUI;
 
+use function is_numeric;
+use function round;
+
 /**
  * Class CalculationValue
  * - represent a number for the calculations
@@ -19,7 +22,7 @@ class CalculationValue
     /**
      * @var QUI\ERP\Currency\Currency
      */
-    protected $Currency;
+    protected QUI\ERP\Currency\Currency $Currency;
 
     /**
      * @var int|string
@@ -35,19 +38,19 @@ class CalculationValue
      * CalculationValue constructor.
      *
      * @param $number
-     * @param QUI\ERP\Currency\Currency $Currency
+     * @param QUI\ERP\Currency\Currency|null $Currency
      * @param int|bool $precision - The optional number of decimal digits to round to.
      */
-    public function __construct($number, $Currency = null, $precision = false)
+    public function __construct($number, QUI\ERP\Currency\Currency $Currency = null, $precision = false)
     {
-        if (!\is_numeric($number)) {
+        if (!is_numeric($number)) {
             return;
         }
 
         $this->number = $number;
 
         // precision
-        if (\is_numeric($precision)) {
+        if (is_numeric($precision)) {
             $this->precision = $precision;
         } else {
             $this->precision = QUI\ERP\Defaults::getPrecision();
@@ -69,7 +72,7 @@ class CalculationValue
      * @param bool $precision
      * @return CalculationValue
      */
-    public function precision($precision = false)
+    public function precision(bool $precision = false): CalculationValue
     {
         if ($precision === false) {
             return $this;
@@ -88,7 +91,7 @@ class CalculationValue
      * @param null|QUI\Locale $Locale - optional, Locale object for the formatting
      * @return string
      */
-    public function formatted($Locale = null)
+    public function formatted(QUI\Locale $Locale = null): string
     {
         return $this->Currency->format($this->number, $Locale);
     }
@@ -96,10 +99,10 @@ class CalculationValue
     /**
      * Return the un-formatted number
      *
-     * @return int|string
+     * @return float
      */
-    public function get()
+    public function get(): float
     {
-        return \round($this->number, $this->precision);
+        return round($this->number, $this->precision);
     }
 }
