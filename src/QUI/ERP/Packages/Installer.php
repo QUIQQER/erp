@@ -8,6 +8,9 @@ namespace QUI\ERP\Packages;
 
 use QUI;
 
+use function array_keys;
+use function in_array;
+
 /**
  * Class Installer
  * - ERP package installer, installs ERP Packages to the system
@@ -22,7 +25,7 @@ class Installer extends QUI\Utils\Singleton
      *
      * @var array
      */
-    protected $packages = [
+    protected array $packages = [
         'quiqqer/areas' => [
             'server' => [
                 'git@dev.quiqqer.com:quiqqer/areas.git'
@@ -105,11 +108,13 @@ class Installer extends QUI\Utils\Singleton
      * Installs an erp package
      *
      * @param string $packageName - Package name
+     *
      * @throws Exception
+     * @throws QUI\Exception
      */
-    public function install($packageName)
+    public function install(string $packageName)
     {
-        if (!\in_array($packageName, $this->getPackageList())) {
+        if (!in_array($packageName, $this->getPackageList())) {
             throw new Exception([
                 'quiqqer/erp',
                 'exception.package.is.not.erp.package'
@@ -127,9 +132,9 @@ class Installer extends QUI\Utils\Singleton
      *
      * @return array
      */
-    public function getPackageList()
+    public function getPackageList(): array
     {
-        return \array_keys($this->packages);
+        return array_keys($this->packages);
     }
 
     /**
@@ -139,9 +144,9 @@ class Installer extends QUI\Utils\Singleton
      * @return array
      * @throws Exception
      */
-    protected function getPackageRequirements($packageName)
+    protected function getPackageRequirements($packageName): array
     {
-        if (!\in_array($packageName, $this->getPackageList())) {
+        if (!in_array($packageName, $this->getPackageList())) {
             throw new Exception([
                 'quiqqer/erp',
                 'exception.erp.package.not.an.erp.package'
@@ -167,7 +172,7 @@ class Installer extends QUI\Utils\Singleton
      */
     public function setPackageRequirements($packageName)
     {
-        if (!\in_array($packageName, $this->getPackageList())) {
+        if (!in_array($packageName, $this->getPackageList())) {
             throw new Exception([
                 'quiqqer/erp',
                 'exception.package.is.not.erp.package'

@@ -2,7 +2,12 @@
 
 namespace QUI\ERP\Output;
 
+use Exception;
 use QUI;
+
+use function get_class;
+use function is_string;
+use function putenv;
 
 /**
  * Class OutputTemplate
@@ -27,12 +32,12 @@ class OutputTemplate
     /**
      * @var QUI\Interfaces\Template\EngineInterface
      */
-    protected $Engine;
+    protected QUI\Interfaces\Template\EngineInterface $Engine;
 
     /**
      * @var string
      */
-    protected $entityType;
+    protected string $entityType;
 
     /**
      * @var string|int
@@ -49,7 +54,7 @@ class OutputTemplate
     /**
      * @var bool
      */
-    protected $preview = false;
+    protected bool $preview = false;
 
     /**
      * Template constructor.
@@ -146,9 +151,9 @@ class OutputTemplate
     }
 </style>';
 
-        $html .= '<div class="quiqqer-erp-output-html-header">'.$this->getHTMLHeader().'</div>';
-        $html .= '<div class="quiqqer-erp-output-html-body">'.$this->getHTMLBody().'</div>';
-        $html .= '<div class="quiqqer-erp-output-html-footer">'.$this->getHTMLFooter().'</div>';
+        $html .= '<div class="quiqqer-erp-output-html-header">' . $this->getHTMLHeader() . '</div>';
+        $html .= '<div class="quiqqer-erp-output-html-body">' . $this->getHTMLBody() . '</div>';
+        $html .= '<div class="quiqqer-erp-output-html-footer">' . $this->getHTMLFooter() . '</div>';
 
         QUI::getLocale()->resetCurrent();
 
@@ -169,7 +174,7 @@ class OutputTemplate
 
         $Document = new QUI\HtmlToPdf\Document([
             'marginTop'         => 30, // dies ist variabel durch quiqqerInvoicePdfCreate
-            'filename'          => $this->OutputProvider::getDownloadFileName($this->entityId).'.pdf',
+            'filename'          => $this->OutputProvider::getDownloadFileName($this->entityId) . '.pdf',
             'marginBottom'      => 80,  // dies ist variabel durch quiqqerInvoicePdfCreate,
             'pageNumbersPrefix' => $Locale->get('quiqqer/htmltopdf', 'footer.page.prefix')
         ]);
@@ -180,7 +185,7 @@ class OutputTemplate
         );
 
         try {
-            \putenv('QUIQQER_CACHE_DISABLE_WEBP=1');
+            putenv('QUIQQER_CACHE_DISABLE_WEBP=1');
 
             $templateData = $this->OutputProvider::getTemplateData($this->entityId);
             $this->Engine->assign($templateData);
@@ -189,8 +194,8 @@ class OutputTemplate
             $Document->setContentHTML($this->getHTMLBody());
             $Document->setFooterHTML($this->getHTMLFooter());
 
-            \putenv('QUIQQER_CACHE_DISABLE_WEBP');
-        } catch (\Exception $Exception) {
+            putenv('QUIQQER_CACHE_DISABLE_WEBP');
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
 
@@ -212,11 +217,11 @@ class OutputTemplate
      */
     public function getTemplateProvider()
     {
-        if (\is_string($this->TemplateProvider)) {
+        if (is_string($this->TemplateProvider)) {
             return $this->TemplateProvider;
         }
 
-        return \get_class($this->TemplateProvider);
+        return get_class($this->TemplateProvider);
     }
 
     //region Template Output Helper
@@ -235,6 +240,7 @@ class OutputTemplate
      * Return the html body
      *
      * @return string
+     * @throws QUI\Exception
      */
     public function getHTMLBody(): string
     {
@@ -288,7 +294,7 @@ class OutputTemplate
             $css .= '</style>';
         }
 
-        return $css.$footerHtml;
+        return $css . $footerHtml;
     }
 
     //endregion

@@ -7,11 +7,9 @@
 namespace QUI\ERP\Provider;
 
 use QUI;
-
-use QUI\ERP\Api\AbstractErpProvider;
-
-use QUI\Controls\Sitemap\Map;
 use QUI\Controls\Sitemap\Item;
+use QUI\Controls\Sitemap\Map;
+use QUI\ERP\Api\AbstractErpProvider;
 
 /**
  * Class ErpProvider
@@ -21,7 +19,7 @@ use QUI\Controls\Sitemap\Item;
 class Erp extends AbstractErpProvider
 {
     /**
-     * @param \QUI\Controls\Sitemap\Map $Map
+     * @param Map $Map
      */
     public static function addMenuItems(Map $Map)
     {

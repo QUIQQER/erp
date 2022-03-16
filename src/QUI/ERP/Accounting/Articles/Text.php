@@ -9,6 +9,9 @@ namespace QUI\ERP\Accounting\Articles;
 use QUI;
 use QUI\ERP\Money\Price;
 
+use function array_merge;
+use function get_class;
+
 /**
  * Article Text
  *
@@ -67,8 +70,8 @@ class Text extends QUI\ERP\Accounting\Article
      */
     public function toArray(): array
     {
-        return \array_merge(parent::toArray(), [
-            'class'        => \get_class($this),
+        return array_merge(parent::toArray(), [
+            'class'        => get_class($this),
             'control'      => 'package/quiqqer/erp/bin/backend/controls/articles/Text',
             'displayPrice' => $this->displayPrice()
         ]);

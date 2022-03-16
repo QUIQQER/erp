@@ -2,7 +2,17 @@
 
 namespace QUI\ERP\Output;
 
+use Exception;
 use QUI;
+
+use function array_column;
+use function class_exists;
+use function file_exists;
+use function http_build_query;
+use function json_decode;
+use function rename;
+use function unlink;
+use function usort;
 
 /**
  * Class Output
@@ -80,7 +90,7 @@ class Output
         }
 
         if (empty($OutputProvider)) {
-            throw new QUI\Exception('No output provider found for entity type "'.$entityType.'"');
+            throw new QUI\Exception('No output provider found for entity type "' . $entityType . '"');
         }
 
         if (empty($TemplateProvider)) {
@@ -88,7 +98,7 @@ class Output
         }
 
         if (empty($TemplateProvider)) {
-            throw new QUI\Exception('No default output template provider found for entity type "'.$entityType.'"');
+            throw new QUI\Exception('No default output template provider found for entity type "' . $entityType . '"');
         }
 
         $OutputTemplate = new OutputTemplate(
@@ -151,8 +161,8 @@ class Output
      */
     public static function getDocumentPdfDownloadUrl($entityId, string $entityType): string
     {
-        $url = URL_OPT_DIR.'quiqqer/erp/bin/output/frontend/download.php?';
-        $url .= \http_build_query([
+        $url = URL_OPT_DIR . 'quiqqer/erp/bin/output/frontend/download.php?';
+        $url .= http_build_query([
             'id' => $entityId,
             't'  => $entityType
         ]);
@@ -208,8 +218,8 @@ class Output
 
         // Re-name PDF
         $pdfDir   = QUI::getPackage('quiqqer/erp')->getVarDir();
-        $mailFile = $pdfDir.$OutputProvider::getDownloadFileName($entityId).'.pdf';
-        \rename($pdfFile, $mailFile);
+        $mailFile = $pdfDir . $OutputProvider::getDownloadFileName($entityId) . '.pdf';
+        rename($pdfFile, $mailFile);
 
         if (!QUI\Utils\Security\Orthos::checkMailSyntax($recipientEmail)) {
             throw new QUI\ERP\Exception([
@@ -267,8 +277,8 @@ class Output
         QUI::getEvents()->fireEvent('quiqqerErpOutputSendMail', [$entityId, $entityType, $recipientEmail]);
 
         // Delete PDF file after send
-        if (\file_exists($mailFile)) {
-            \unlink($mailFile);
+        if (file_exists($mailFile)) {
+            unlink($mailFile);
         }
     }
 
@@ -301,7 +311,7 @@ class Output
         $outputProviders = [];
 
         if (empty($entityType)) {
-            $outputProviders = \array_column(self::getAllOutputProviders(), 'class');
+            $outputProviders = array_column(self::getAllOutputProviders(), 'class');
         } else {
             $OutputProvider = self::getOutputProviderByEntityType($entityType);
 
@@ -324,12 +334,12 @@ class Output
                     $templateTitle = $class::getTemplateTitle($providerTemplateId);
 
                     if ($provider['isSystemDefault']) {
-                        $templateTitle .= ' '.QUI::getLocale()->get('quiqqer/erp', 'output.default_template.suffix');
+                        $templateTitle .= ' ' . QUI::getLocale()->get('quiqqer/erp', 'output.default_template.suffix');
                     }
 
                     $isDefault = isset($defaultOutputTemplate['provider']) &&
-                                 $defaultOutputTemplate['provider'] === $provider['package'] &&
-                                 $defaultOutputTemplate['id'] === $providerTemplateId;
+                        $defaultOutputTemplate['provider'] === $provider['package'] &&
+                        $defaultOutputTemplate['id'] === $providerTemplateId;
 
                     $providerTemplate = [
                         'id'              => $providerTemplateId,
@@ -347,7 +357,7 @@ class Output
         }
 
         // Sort so that system default is first
-        \usort($templates, function ($a, $b) {
+        usort($templates, function ($a, $b) {
             if ($a['isSystemDefault']) {
                 return -1;
             }
@@ -384,14 +394,14 @@ class Output
                 return $fallBackTemplate;
             }
 
-            $defaultTemplates = \json_decode($defaultTemplates, true);
+            $defaultTemplates = json_decode($defaultTemplates, true);
 
             if (empty($defaultTemplates[$entityType])) {
                 return $fallBackTemplate;
             }
 
             return $defaultTemplates[$entityType];
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
             return $fallBackTemplate;
@@ -454,7 +464,7 @@ class Output
 
                 /** @var OutputProviderInterface $class */
                 foreach ($packageProvider['erpOutput'] as $class) {
-                    if (!\class_exists($class)) {
+                    if (!class_exists($class)) {
                         continue;
                     }
 
@@ -497,7 +507,7 @@ class Output
 
                 /** @var OutputTemplateProviderInterface $class */
                 foreach ($packageProvider['erpOutputTemplate'] as $class) {
-                    if (!\class_exists($class)) {
+                    if (!class_exists($class)) {
                         continue;
                     }
 
@@ -513,7 +523,7 @@ class Output
         }
 
         // Sort providers that system default is first
-        \usort($providerClasses, function ($a, $b) {
+        usort($providerClasses, function ($a, $b) {
             if ($a['isSystemDefault']) {
                 return -1;
             }

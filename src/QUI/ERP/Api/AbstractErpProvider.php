@@ -7,6 +7,7 @@
 namespace QUI\ERP\Api;
 
 use QUI;
+use QUI\Controls\Sitemap\Map;
 
 /**
  * Class AbstractErpProvider
@@ -18,9 +19,9 @@ abstract class AbstractErpProvider
     /**
      * Add menu items to the e-commerce panel
      *
-     * @param \QUI\Controls\Sitemap\Map $Map
+     * @param Map $Map
      */
-    public static function addMenuItems(QUI\Controls\Sitemap\Map $Map)
+    public static function addMenuItems(Map $Map)
     {
     }
 
