@@ -1,8 +1,8 @@
 <?php
 
 use QUI\ERP\Output\Output as ERPOutput;
-use QUI\Utils\Security\Orthos;
 use QUI\Permissions\Permission;
+use QUI\Utils\Security\Orthos;
 
 /**
  * Returns e-mail data for an output document
@@ -45,7 +45,7 @@ QUI::$Ajax->registerFunction(
             if (!empty($mailAttachmentMediaFileIds) &&
                 Permission::hasPermission(ERPOutput::PERMISSION_ATTACH_EMAIL_FILES)) {
                 $Media                      = QUI::getRewrite()->getProject()->getMedia();
-                $mailAttachmentMediaFileIds = \json_decode($mailAttachmentMediaFileIds, true);
+                $mailAttachmentMediaFileIds = json_decode($mailAttachmentMediaFileIds, true);
 
                 foreach ($mailAttachmentMediaFileIds as $fileId) {
                     if (empty($fileId)) {
@@ -54,7 +54,7 @@ QUI::$Ajax->registerFunction(
 
                     try {
                         $attachedMediaFiles[] = $Media->get((int)$fileId);
-                    } catch (\Exception $Exception) {
+                    } catch (Exception $Exception) {
                         QUI\System\Log::writeException($Exception);
                     }
                 }
@@ -74,7 +74,7 @@ QUI::$Ajax->registerFunction(
         } catch (QUI\ERP\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             throw $Exception;
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             if ($Exception->getCode() === 403) {
                 throw $Exception;
             } else {

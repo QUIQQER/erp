@@ -7,10 +7,17 @@
 namespace QUI\ERP;
 
 use QUI;
+use QUI\ERP\BankAccounts\Handler as BankAccounts;
 use QUI\ERP\Products\Handler\Fields as ProductFields;
 use QUI\Package\Package;
 use Quiqqer\Engine\Collector;
-use QUI\ERP\BankAccounts\Handler as BankAccounts;
+
+use function array_flip;
+use function class_exists;
+use function dirname;
+use function is_array;
+use function is_string;
+use function json_decode;
 
 /**
  * Class EventHandler
@@ -24,7 +31,7 @@ class EventHandler
      */
     public static function onAdminLoadFooter()
     {
-        echo '<script src="'.URL_OPT_DIR.'quiqqer/erp/bin/load.js"></script>';
+        echo '<script src="' . URL_OPT_DIR . 'quiqqer/erp/bin/load.js"></script>';
     }
 
     /**
@@ -33,7 +40,7 @@ class EventHandler
     public static function onTemplateGetHeader(QUI\Template $Template)
     {
         $Template->extendHeaderWithJavaScriptFile(
-            URL_OPT_DIR.'quiqqer/erp/bin/frontend.js'
+            URL_OPT_DIR . 'quiqqer/erp/bin/frontend.js'
         );
     }
 
@@ -41,6 +48,7 @@ class EventHandler
      * event: on package setup
      *
      * @param Package $Package
+     * @throws QUI\Exception
      */
     public static function onPackageSetup(Package $Package)
     {
@@ -174,7 +182,7 @@ class EventHandler
         }
 
         $languages = QUI::availableLanguages();
-        $languages = \array_flip($languages);
+        $languages = array_flip($languages);
 
         try {
             $Config = $Package->getConfig();
@@ -278,7 +286,7 @@ class EventHandler
         }
 
         if (isset($data['data'])) {
-            $data = \json_decode($data['data'], true);
+            $data = json_decode($data['data'], true);
         }
 
         if (isset($data['company'])) {
@@ -297,7 +305,7 @@ class EventHandler
         if (isset($data['vatId'])) {
             $vatId = $data['vatId'];
 
-            if (\class_exists('QUI\ERP\Tax\Utils')
+            if (class_exists('QUI\ERP\Tax\Utils')
                 && QUI\ERP\Tax\Utils::shouldVatIdValidationBeExecuted()
                 && !empty($vatId)) {
                 $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
@@ -327,11 +335,11 @@ class EventHandler
         $Request = QUI::getRequest()->request;
         $data    = $Request->get('data');
 
-        if (\is_string($data)) {
-            $data = \json_decode($data, true);
+        if (is_string($data)) {
+            $data = json_decode($data, true);
         }
 
-        if (empty($data) || !\is_array($data)) {
+        if (empty($data) || !is_array($data)) {
             return;
         }
 
@@ -339,7 +347,7 @@ class EventHandler
             $vatId = $data['vatId'];
 
             try {
-                if (\class_exists('QUI\ERP\Tax\Utils')
+                if (class_exists('QUI\ERP\Tax\Utils')
                     && QUI\ERP\Tax\Utils::shouldVatIdValidationBeExecuted()
                     && !empty($vatId)) {
                     $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
@@ -403,7 +411,7 @@ class EventHandler
 
         try {
             $Collector->append(
-                $Engine->fetch(\dirname(__FILE__).'/FrontendUsers/customerData.html')
+                $Engine->fetch(dirname(__FILE__) . '/FrontendUsers/customerData.html')
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -411,7 +419,7 @@ class EventHandler
     }
 
     /**
-     * @param \Quiqqer\Engine\Collector $Collector
+     * @param Collector $Collector
      * @param QUI\Users\User $User
      * @param QUI\Users\Address $Address
      */
@@ -441,7 +449,7 @@ class EventHandler
 
         try {
             $Collector->append(
-                $Engine->fetch(\dirname(__FILE__).'/FrontendUsers/profileData.html')
+                $Engine->fetch(dirname(__FILE__) . '/FrontendUsers/profileData.html')
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -471,7 +479,7 @@ class EventHandler
             $settings = $Conf->getValue('profile', 'addressFields');
 
             if (!empty($settings)) {
-                $settings = \json_decode($settings, true);
+                $settings = json_decode($settings, true);
             } else {
                 $settings = [];
             }
@@ -493,7 +501,7 @@ class EventHandler
 
         try {
             $Collector->append(
-                $Engine->fetch(\dirname(__FILE__).'/FrontendUsers/createAddressBegin.html')
+                $Engine->fetch(dirname(__FILE__) . '/FrontendUsers/createAddressBegin.html')
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -523,7 +531,7 @@ class EventHandler
             $settings = $Conf->getValue('profile', 'addressFields');
 
             if (!empty($settings)) {
-                $settings = \json_decode($settings, true);
+                $settings = json_decode($settings, true);
             } else {
                 $settings = [];
             }
@@ -545,7 +553,7 @@ class EventHandler
 
         try {
             $Collector->append(
-                $Engine->fetch(\dirname(__FILE__).'/FrontendUsers/createAddressEnd.html')
+                $Engine->fetch(dirname(__FILE__) . '/FrontendUsers/createAddressEnd.html')
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -576,7 +584,7 @@ class EventHandler
             $settings = $Conf->getValue('profile', 'addressFields');
 
             if (!empty($settings)) {
-                $settings = \json_decode($settings, true);
+                $settings = json_decode($settings, true);
             } else {
                 $settings = [];
             }
@@ -613,7 +621,7 @@ class EventHandler
 
         try {
             $Collector->append(
-                $Engine->fetch(\dirname(__FILE__).'/FrontendUsers/editAddressBegin.html')
+                $Engine->fetch(dirname(__FILE__) . '/FrontendUsers/editAddressBegin.html')
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -644,7 +652,7 @@ class EventHandler
             $settings = $Conf->getValue('profile', 'addressFields');
 
             if (!empty($settings)) {
-                $settings = \json_decode($settings, true);
+                $settings = json_decode($settings, true);
             } else {
                 $settings = [];
             }
@@ -667,7 +675,7 @@ class EventHandler
 
         try {
             $Collector->append(
-                $Engine->fetch(\dirname(__FILE__).'/FrontendUsers/editAddressEnd.html')
+                $Engine->fetch(dirname(__FILE__) . '/FrontendUsers/editAddressEnd.html')
             );
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);

@@ -8,6 +8,9 @@ namespace QUI\ERP;
 
 use QUI;
 
+use function dirname;
+use function is_numeric;
+
 /**
  * Class Address
  *
@@ -62,7 +65,7 @@ class Address extends QUI\Users\Address
             $contactPerson = '';
         }
 
-        if (\is_numeric($contactPerson)) {
+        if (is_numeric($contactPerson)) {
             $contactPerson = '';
         }
 
@@ -103,7 +106,7 @@ class Address extends QUI\Users\Address
             'suffix'        => $suffix
         ]);
 
-        return $Engine->fetch(\dirname(__FILE__).'/Address.html');
+        return $Engine->fetch(dirname(__FILE__) . '/Address.html');
     }
 
     /**

@@ -1,7 +1,5 @@
 <?php
 
-use QUI\ERP\Customer\Utils;
-
 /**
  * Get contact email address.
  *
@@ -15,7 +13,7 @@ QUI::$Ajax->registerFunction(
 
         try {
             $User = QUI::getUsers()->get((int)$userId);
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return $emailAddresses;
         }
@@ -31,7 +29,7 @@ QUI::$Ajax->registerFunction(
             }
         }
 
-        return \array_values(\array_unique($emailAddresses));
+        return array_values(array_unique($emailAddresses));
     },
     ['userId'],
     'Permission::checkAdminUser'

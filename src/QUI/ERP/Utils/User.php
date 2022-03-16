@@ -10,6 +10,12 @@ use QUI;
 use QUI\Interfaces\Users\User as UserInterface;
 use QUI\Users\Address;
 
+use function array_flip;
+use function class_exists;
+use function is_array;
+use function is_numeric;
+use function is_object;
+
 /**
  * Class User Utils
  *
@@ -33,7 +39,7 @@ class User
      *
      * @var array
      */
-    protected static $userBruttoNettoStatus = [];
+    protected static array $userBruttoNettoStatus = [];
 
     /**
      * Return the brutto netto status
@@ -51,7 +57,7 @@ class User
         if ($User instanceof QUI\Users\Nobody) {
             $status = QUI::getSession()->get('quiqqer.erp.b2b.status');
 
-            if (\is_numeric($status)) {
+            if (is_numeric($status)) {
                 return (int)$status;
             }
         }
@@ -76,7 +82,7 @@ class User
 
         $nettoStatus = $User->getAttribute('quiqqer.erp.isNettoUser');
 
-        if (\is_numeric($nettoStatus)) {
+        if (is_numeric($nettoStatus)) {
             $nettoStatus = (int)$nettoStatus;
         }
 
@@ -119,7 +125,7 @@ class User
         try {
             $Address = self::getUserERPAddress($User);
 
-            if (\is_object($Address) && $Address) {
+            if (is_object($Address) && $Address) {
                 $company = $Address->getAttribute('company');
 
                 if (!empty($company)) {
@@ -135,7 +141,7 @@ class User
                 }
             }
 
-            if (\is_array($Address)
+            if (is_array($Address)
                 && isset($Address['company'])
                 && $Address['company'] == 1
             ) {
@@ -291,12 +297,12 @@ class User
      * Filter unwanted user attributes
      * Therefore we can use the attributes in the ERP stack
      *
-     * @param array $attributes
+     * @param array|mixed $attributes
      * @return array
      */
     public static function filterCustomerAttributes($attributes = []): array
     {
-        if (!\is_array($attributes)) {
+        if (!is_array($attributes)) {
             return [];
         }
 
@@ -326,7 +332,7 @@ class User
             'quiqqer.erp.isNettoUser'
         ];
 
-        $needle = \array_flip($needle);
+        $needle = array_flip($needle);
         $result = [];
 
         foreach ($attributes as $key => $value) {
@@ -346,7 +352,7 @@ class User
         QUI\Interfaces\Users\User $User,
         $Address
     ) {
-        if (\class_exists('QUI\ERP\Tax\Utils')) {
+        if (class_exists('QUI\ERP\Tax\Utils')) {
             QUI\ERP\Tax\Utils::cleanUpUserTaxCache($User);
         }
 
