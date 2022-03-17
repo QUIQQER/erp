@@ -56,7 +56,8 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             'toggleExtras',
             'editCustomer',
             '$onInject',
-            '$fireChange'
+            '$fireChange',
+            'setValue'
         ],
 
         options: {
@@ -269,8 +270,6 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 });
 
                 this.$refreshValues();
-
-                this.$setValues = false;
             });
         },
 
@@ -407,7 +406,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                     return;
                 }
 
-                this.setAttribute('isCommercial', User.getAttribute('quiqqer.erp.isNettoUser'));
+                this.setAttribute('isCommercial', parseInt(User.getAttribute('quiqqer.erp.isNettoUser')) === 1);
 
                 return this.getAddressList(User).then((addresses) => {
                     return [User, addresses];
@@ -615,6 +614,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                         }
 
                         if (this.$setValues) {
+                            this.$setValues = false;
                             return;
                         }
 
