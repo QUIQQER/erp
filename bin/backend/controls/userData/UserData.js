@@ -255,8 +255,8 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 this.$CustomerEdit.setStyle('display', 'inline');
             }
 
-            let dataPromise    = false;
-            let addressPromise = false;
+            let dataPromise    = Promise.resolve();
+            let addressPromise = Promise.resolve();
 
             if ('userId' in data && data.userId) {
                 if (this.$CustomerSelect) {
