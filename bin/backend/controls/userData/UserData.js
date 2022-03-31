@@ -175,6 +175,9 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             });
 
             // Contact email
+            this.$RowContactEmail = this.$Elm.getElement('.quiqqer-erp-userdata-row-contactEmail');
+            this.$RowContactEmail.setStyle('display', 'none');
+
             this.$ContactEmail = this.$Elm.getElement('input[name="contact_email"]');
 
             this.$BtnContactEmailSelect = this.$Elm.getElement('button[name="select-contact-email"]');
@@ -233,6 +236,8 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             fields.forEach((field) => {
                 if (this.getAttribute(field)) {
                     result[field] = this.getAttribute(field);
+                } else {
+                    result[field] = false;
                 }
             });
 
@@ -250,19 +255,23 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 this.$CustomerEdit.setStyle('display', 'inline');
             }
 
-            let dataPromise = Promise.resolve();
+            let dataPromise    = false;
+            let addressPromise = false;
 
-            if ('userId' in data) {
-                this.$setValues = true;
-
+            if ('userId' in data && data.userId) {
                 if (this.$CustomerSelect) {
+                    this.$setValues = true;
                     this.$CustomerSelect.addItem(data.userId);
                 }
 
                 dataPromise = this.$setDataByUserId(data.userId);
             }
 
-            dataPromise.then(() => {
+            if ('addressId' in data && data.addressId) {
+                addressPromise = this.setAddressId(data.addressId);
+            }
+
+            dataPromise.then(addressPromise).then(() => {
                 fields.forEach((field) => {
                     if (typeof data[field] !== 'undefined') {
                         this.setAttribute(field, data[field]);
@@ -317,6 +326,12 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 this.$ContactEmail.value = this.getAttribute('contactEmail');
             } else if (this.getAttribute('contact_email') !== false) {
                 this.$ContactEmail.value = this.getAttribute('contact_email');
+            }
+
+            if (!this.getAttribute('userId')) {
+                this.$RowContactEmail.setStyle('display', 'none');
+            } else {
+                this.$RowContactEmail.setStyle('display', null);
             }
         },
 
@@ -498,18 +513,13 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 }
 
                 QUIAjax.get('ajax_users_address_get', function (address) {
-                    self.setAttributes(address);
-                    self.$refreshValues();
-
-                    if (!self.$setValues) {
-                        self.$fireChange();
+                    if (!('id' in address)) {
+                        address.id = addressId;
                     }
 
-                    if (self.$CustomerEdit) {
-                        self.$CustomerEdit.setStyle('display', 'inline');
-                    }
-
-                    resolve(address);
+                    self.$setDataByAddress(address);
+                    self.$fireChange();
+                    resolve();
                 }, {
                     uid: self.getAttribute('userId'),
                     aid: addressId
@@ -635,6 +645,9 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                         if (this.$CustomerEdit) {
                             this.$CustomerEdit.setStyle('display', 'none');
                         }
+
+                        this.$RowContactPerson.setStyle('display', 'none');
+                        this.$RowContactEmail.setStyle('display', 'none');
 
                         this.$BtnContactPersonSelect.disabled = true;
                         this.$ContactPerson.value             = '';
