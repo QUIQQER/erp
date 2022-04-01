@@ -438,7 +438,18 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                     return;
                 }
 
-                let defaultAddress = addresses[0];
+                let defaultAddress = false;
+
+                for (let i = 0; i < addresses.length; i++) {
+                    if (addresses[i].default) {
+                        defaultAddress = addresses[i];
+                        break;
+                    }
+                }
+
+                if (!defaultAddress) {
+                    defaultAddress = addresses[0];
+                }
 
                 // Set address data
                 this.$setDataByAddress(defaultAddress);
@@ -852,6 +863,18 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
 
             if (typeof address.lastname !== 'undefined') {
                 parts.push(address.lastname);
+            }
+
+            // E-Mail address
+            const emailAddresses = JSON.decode(address.mail);
+
+            if (emailAddresses.length) {
+                const contactEmail = emailAddresses[0].trim();
+
+                if (contactEmail !== '') {
+                    this.$ContactEmail.value = contactEmail;
+                    this.setAttribute('contactEmail', contactEmail);
+                }
             }
 
             this.$ContactPerson.value = parts.join(' ').trim();
