@@ -76,11 +76,6 @@ class User extends QUI\QDOM implements UserInterface
     protected $isNetto;
 
     /**
-     * @var array
-     */
-    protected $data = [];
-
-    /**
      * Address data
      *
      * @var array
@@ -100,7 +95,7 @@ class User extends QUI\QDOM implements UserInterface
         foreach ($needle as $attribute) {
             if (!isset($attributes[$attribute])) {
                 throw new QUI\ERP\Exception(
-                    'Missing attribute:' . $attribute
+                    'Missing attribute:'.$attribute
                 );
             }
         }
@@ -125,14 +120,13 @@ class User extends QUI\QDOM implements UserInterface
         }
 
         if (isset($attributes['data']) && is_array($attributes['data'])) {
-            $this->data = $attributes['data'];
-            $this->setAttributes($this->data);
+            $this->setAttributes($attributes['data']);
+            unset($attributes['data']);
         }
 
         if (isset($attributes['address']) && is_array($attributes['address'])) {
             $this->address = $attributes['address'];
         }
-
 
         $needle = array_flip($needle);
 
@@ -203,6 +197,9 @@ class User extends QUI\QDOM implements UserInterface
             $address = $Address->getAttributes();
         }
 
+        $data = $User->getAttributes();
+        unset($data['extra']);
+
         return new self([
             'id'        => $User->getId(),
             'country'   => $country,
@@ -212,7 +209,7 @@ class User extends QUI\QDOM implements UserInterface
             'lang'      => $User->getLang(),
             'isCompany' => $User->isCompany(),
             'isNetto'   => $User->getAttribute('quiqqer.erp.isNettoUser'),
-            'data'      => $User->getAttributes(),
+            'data'      => $data,
             'address'   => $address,
 
             'quiqqer.erp.euVatId' => $User->getAttribute('quiqqer.erp.euVatId'),
@@ -290,10 +287,10 @@ class User extends QUI\QDOM implements UserInterface
             $lastName = $this->lastName;
         }
 
-        $name = $firstName . ' ' . $lastName;
+        $name = $firstName.' '.$lastName;
 
         if (!empty($salutation)) {
-            $name = $salutation . ' ' . $name;
+            $name = $salutation.' '.$name;
         }
 
         return trim($name);
@@ -733,7 +730,7 @@ class User extends QUI\QDOM implements UserInterface
 
         $NumberRange = new CustomerNumberRange();
 
-        return $NumberRange->getCustomerNoPrefix() . $customerId;
+        return $NumberRange->getCustomerNoPrefix().$customerId;
     }
 
     /**
