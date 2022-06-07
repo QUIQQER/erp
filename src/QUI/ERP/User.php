@@ -101,7 +101,7 @@ class User extends QUI\QDOM implements UserInterface
         }
 
         $this->id        = $attributes['id'];
-        $this->isCompany = (bool)$attributes['isCompany'];
+        $this->isCompany = !empty($attributes['isCompany']) || !empty($attributes['company']);
         $this->isNetto   = null;
 
         $this->lang      = $attributes['lang'];
