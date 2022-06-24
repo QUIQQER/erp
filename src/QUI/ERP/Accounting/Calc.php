@@ -227,12 +227,12 @@ class Calc
                 continue;
             }
 
-            if (!isset($vatArray[$vat])) {
-                $vatArray[$vat]        = $articleVatArray;
-                $vatArray[$vat]['sum'] = 0;
+            if (!isset($vatArray[(string)$vat])) {
+                $vatArray[(string)$vat]        = $articleVatArray;
+                $vatArray[(string)$vat]['sum'] = 0;
             }
 
-            $vatArray[$vat]['sum'] = $vatArray[$vat]['sum'] + $articleVatArray['sum'];
+            $vatArray[(string)$vat]['sum'] = $vatArray[(string)$vat]['sum'] + $articleVatArray['sum'];
         }
 
         QUI\ERP\Debug::getInstance()->log('Berechnete Artikelliste MwSt', 'quiqqer/erp');
@@ -329,16 +329,16 @@ class Calc
             $vat    = $PriceFactor->getVat();
             $vatSum = round($PriceFactor->getVatSum(), $precision);
 
-            if (!isset($vatArray[$vat])) {
-                $vatArray[$vat] = [
+            if (!isset($vatArray[(string)$vat])) {
+                $vatArray[(string)$vat] = [
                     'vat'  => $vat,
                     'text' => self::getVatText($vat, $this->getUser())
                 ];
 
-                $vatArray[$vat]['sum'] = 0;
+                $vatArray[(string)$vat]['sum'] = 0;
             }
 
-            $vatArray[$vat]['sum'] = $vatArray[$vat]['sum'] + $vatSum;
+            $vatArray[(string)$vat]['sum'] = $vatArray[(string)$vat]['sum'] + $vatSum;
         }
 
         if ($isEuVatUser) {
@@ -357,16 +357,16 @@ class Calc
         foreach ($vatArray as $vatEntry) {
             $vat = $vatEntry['vat'];
 
-            $vatLists[$vat]        = true; // liste für MWST texte
-            $vatArray[$vat]['sum'] = round($vatEntry['sum'], $precision);
+            $vatLists[(string)$vat]        = true; // liste für MWST texte
+            $vatArray[(string)$vat]['sum'] = round($vatEntry['sum'], $precision);
 
-            $bruttoSum = $bruttoSum + $vatArray[$vat]['sum'];
+            $bruttoSum = $bruttoSum + $vatArray[(string)$vat]['sum'];
         }
 
         $bruttoSum = round($bruttoSum, $precision);
 
         foreach ($vatLists as $vat => $bool) {
-            $vatText[$vat] = self::getVatText($vat, $this->getUser());
+            $vatText[(string)$vat] = self::getVatText($vat, $this->getUser());
         }
 
         // delete 0 % vat, 0% vat is allowed to calculate more easily
@@ -426,10 +426,10 @@ class Calc
 
                 $vatSum = $bruttoSum - $netto;
                 $vatSum = round($vatSum, $Currency->getPrecision());
-                $diff   = abs($vatArray[$vat]['sum'] - $vatSum);
+                $diff   = abs($vatArray[(string)$vat]['sum'] - $vatSum);
 
                 if ($diff <= 0.019) {
-                    $vatArray[$vat]['sum'] = $vatSum;
+                    $vatArray[(string)$vat]['sum'] = $vatSum;
                 }
             }
         }
@@ -439,7 +439,7 @@ class Calc
             $nettoSum  = 0;
 
             foreach ($vatArray as $vat => $entry) {
-                $vatArray[$vat]['sum'] = 0;
+                $vatArray[(string)$vat]['sum'] = 0;
             }
         }
 
@@ -649,7 +649,7 @@ class Calc
      *
      * @return array|string
      */
-    public static function getVatText(int $vat, UserInterface $User, QUI\Locale $Locale = null)
+    public static function getVatText(float $vat, UserInterface $User, QUI\Locale $Locale = null)
     {
         if ($Locale === null) {
             $Locale = $User->getLocale();

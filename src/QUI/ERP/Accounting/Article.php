@@ -10,6 +10,9 @@ use QUI;
 use QUI\ERP\Money\Price;
 use QUI\ERP\Tax\Utils as TaxUtils;
 
+use function floatval;
+use function get_called_class;
+
 /**
  * Class Article
  *
@@ -657,14 +660,14 @@ class Article implements ArticleInterface
         $discount = '';
 
         if (isset($this->attributes['vat']) && $this->attributes['vat'] !== '') {
-            $vat = (int)$this->attributes['vat'];
+            $vat = floatval($this->attributes['vat']);
         }
 
         if ($this->hasDiscount()) {
             $discount = $this->Discount->toJSON();
         }
 
-        $class = \get_called_class();
+        $class = get_called_class();
 
         if (!empty($this->attributes['control'])) {
             $class = $this->attributes['control'];

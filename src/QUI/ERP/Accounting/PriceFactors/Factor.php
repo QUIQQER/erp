@@ -11,6 +11,7 @@ use QUI\ERP\Exception;
 use QUI\Utils\Math;
 
 use function abs;
+use function floatval;
 use function is_string;
 use function json_encode;
 
@@ -139,7 +140,7 @@ class Factor
         }
 
         if (isset($data['vat'])) {
-            $this->vat = (int)$data['vat'];
+            $this->vat = floatval($data['vat']);
         }
 
         if (isset($data['valueText']) && is_string($data['valueText'])) {
@@ -242,7 +243,7 @@ class Factor
     /**
      * Return the vat %
      *
-     * @return int
+     * @return float
      */
     public function getVat()
     {
