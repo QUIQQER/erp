@@ -97,7 +97,7 @@ class FactorList implements IteratorAggregate, Countable
      *
      * @return ArrayIterator|Traversable
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new ArrayIterator($this->list);
     }

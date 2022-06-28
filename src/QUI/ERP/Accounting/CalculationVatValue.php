@@ -23,16 +23,16 @@ class CalculationVatValue extends CalculationValue
     protected string $text = '';
 
     /**
-     * @var int
+     * @var float
      */
-    protected int $vat;
+    protected float $vat;
 
     /**
      * CalculationValue constructor.
      *
      * @param int|float $number
      * @param string $text
-     * @param int $vat
+     * @param float $vat
      * @param QUI\ERP\Currency\Currency|null $Currency
      * @param int|bool $precision - The optional number of decimal digits to round to.
      */
@@ -57,9 +57,9 @@ class CalculationVatValue extends CalculationValue
     /**
      * Return the VAT
      *
-     * @return int
+     * @return float
      */
-    public function getVat(): int
+    public function getVat(): float
     {
         return $this->vat;
     }

@@ -14,6 +14,7 @@ use QUI\ERP\Accounting\Invoice\Invoice;
 use QUI\ERP\Accounting\Invoice\InvoiceTemporary;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
+use QUI\ERP\Currency\Handler as CurrencyHandler;
 
 use function array_map;
 use function array_sum;
@@ -88,6 +89,13 @@ class Calc
      * Berechnet von Gesamtpreis
      */
     const CALCULATION_GRAND_TOTAL = 5;
+
+    /**
+     * Special transaction attributes for currency exchange
+     */
+    const TRANSACTION_ATTR_TARGET_CURRENCY               = 'tx_target_currency';
+    const TRANSACTION_ATTR_TARGET_CURRENCY_EXCHANGE_RATE = 'tx_target_currency_exchange_rate';
+    const TRANSACTION_ATTR_SHOP_CURRENCY_EXCHANGE_RATE   = 'tx_shop_currency_exchange_rate';
 
     /**
      * @var UserInterface
@@ -227,12 +235,12 @@ class Calc
                 continue;
             }
 
-            if (!isset($vatArray[$vat])) {
-                $vatArray[$vat]        = $articleVatArray;
-                $vatArray[$vat]['sum'] = 0;
+            if (!isset($vatArray[(string)$vat])) {
+                $vatArray[(string)$vat]        = $articleVatArray;
+                $vatArray[(string)$vat]['sum'] = 0;
             }
 
-            $vatArray[$vat]['sum'] = $vatArray[$vat]['sum'] + $articleVatArray['sum'];
+            $vatArray[(string)$vat]['sum'] = $vatArray[(string)$vat]['sum'] + $articleVatArray['sum'];
         }
 
         QUI\ERP\Debug::getInstance()->log('Berechnete Artikelliste MwSt', 'quiqqer/erp');
@@ -329,16 +337,16 @@ class Calc
             $vat    = $PriceFactor->getVat();
             $vatSum = round($PriceFactor->getVatSum(), $precision);
 
-            if (!isset($vatArray[$vat])) {
-                $vatArray[$vat] = [
+            if (!isset($vatArray[(string)$vat])) {
+                $vatArray[(string)$vat] = [
                     'vat'  => $vat,
                     'text' => self::getVatText($vat, $this->getUser())
                 ];
 
-                $vatArray[$vat]['sum'] = 0;
+                $vatArray[(string)$vat]['sum'] = 0;
             }
 
-            $vatArray[$vat]['sum'] = $vatArray[$vat]['sum'] + $vatSum;
+            $vatArray[(string)$vat]['sum'] = $vatArray[(string)$vat]['sum'] + $vatSum;
         }
 
         if ($isEuVatUser) {
@@ -357,16 +365,16 @@ class Calc
         foreach ($vatArray as $vatEntry) {
             $vat = $vatEntry['vat'];
 
-            $vatLists[$vat]        = true; // liste für MWST texte
-            $vatArray[$vat]['sum'] = round($vatEntry['sum'], $precision);
+            $vatLists[(string)$vat]        = true; // liste für MWST texte
+            $vatArray[(string)$vat]['sum'] = round($vatEntry['sum'], $precision);
 
-            $bruttoSum = $bruttoSum + $vatArray[$vat]['sum'];
+            $bruttoSum = $bruttoSum + $vatArray[(string)$vat]['sum'];
         }
 
         $bruttoSum = round($bruttoSum, $precision);
 
         foreach ($vatLists as $vat => $bool) {
-            $vatText[$vat] = self::getVatText($vat, $this->getUser());
+            $vatText[(string)$vat] = self::getVatText($vat, $this->getUser());
         }
 
         // delete 0 % vat, 0% vat is allowed to calculate more easily
@@ -426,10 +434,10 @@ class Calc
 
                 $vatSum = $bruttoSum - $netto;
                 $vatSum = round($vatSum, $Currency->getPrecision());
-                $diff   = abs($vatArray[$vat]['sum'] - $vatSum);
+                $diff   = abs($vatArray[(string)$vat]['sum'] - $vatSum);
 
                 if ($diff <= 0.019) {
-                    $vatArray[$vat]['sum'] = $vatSum;
+                    $vatArray[(string)$vat]['sum'] = $vatSum;
                 }
             }
         }
@@ -439,7 +447,7 @@ class Calc
             $nettoSum  = 0;
 
             foreach ($vatArray as $vat => $entry) {
-                $vatArray[$vat]['sum'] = 0;
+                $vatArray[(string)$vat]['sum'] = 0;
             }
         }
 
@@ -572,7 +580,7 @@ class Calc
         ];
 
         QUI\ERP\Debug::getInstance()->log(
-            'Kalkulierter Artikel Preis ' . $Article->getId(),
+            'Kalkulierter Artikel Preis '.$Article->getId(),
             'quiqqer/erp'
         );
 
@@ -649,7 +657,7 @@ class Calc
      *
      * @return array|string
      */
-    public static function getVatText(int $vat, UserInterface $User, QUI\Locale $Locale = null)
+    public static function getVatText(float $vat, UserInterface $User, QUI\Locale $Locale = null)
     {
         if ($Locale === null) {
             $Locale = $User->getLocale();
@@ -723,7 +731,7 @@ class Calc
     {
         if (self::isAllowedForCalculation($ToCalculate) === false) {
             QUI\ERP\Debug::getInstance()->log(
-                'Calc->calculatePayments(); Object is not allowed to calculate ' . get_class($ToCalculate)
+                'Calc->calculatePayments(); Object is not allowed to calculate '.get_class($ToCalculate)
             );
 
             throw new QUI\ERP\Exception('Object is not allowed to calculate');
@@ -788,18 +796,21 @@ class Calc
         $total    = $calculations['sum'];
 
         QUI\ERP\Debug::getInstance()->log(
-            'Calc->calculatePayments(); total: ' . $total
+            'Calc->calculatePayments(); total: '.$total
         );
 
         $isValidTimeStamp = function ($timestamp) {
             try {
-                new DateTime('@' . $timestamp);
+                new DateTime('@'.$timestamp);
             } catch (Exception $e) {
                 return false;
             }
 
             return true;
         };
+
+        $CalculateCurrency = $ToCalculate->getCurrency();
+        $ShopCurrency      = QUI\ERP\Defaults::getCurrency();
 
         foreach ($transactions as $Transaction) {
             /* @var $Transaction QUI\ERP\Accounting\Payments\Transactions\Transaction */
@@ -809,7 +820,58 @@ class Calc
             }
 
             // calculate the paid amount
-            $amount = Price::validatePrice($Transaction->getAmount());
+            $amount              = Price::validatePrice($Transaction->getAmount());
+            $TransactionCurrency = $Transaction->getCurrency();
+
+            // If necessary, convert from transaction currency to calculation object currency
+            if ($CalculateCurrency->getCode() !== $TransactionCurrency->getCode()) {
+                $targetCurrencyCode = $Transaction->getData(
+                    self::TRANSACTION_ATTR_TARGET_CURRENCY
+                );
+
+                $targetCurrencyExchangeRate = $Transaction->getData(
+                    self::TRANSACTION_ATTR_TARGET_CURRENCY_EXCHANGE_RATE
+                );
+
+                $shopCurrencyExchangeRate = $Transaction->getData(
+                    self::TRANSACTION_ATTR_SHOP_CURRENCY_EXCHANGE_RATE
+                );
+
+                /*
+                 * $amount has to DIVIDED by the exchange rate because the exchange rate is always
+                 * in relation to the base (shop) currency to the given currency.
+                 *
+                 * Example: From ETH to EUR -> The exchange rate here is the rate that turn EUR into ETH; so to
+                 * get ETH to EUR you have to divide the ETH value by the exchange rate.
+                 */
+                if ($targetCurrencyCode === $CalculateCurrency->getCode() && $targetCurrencyExchangeRate) {
+                    $amount /= $targetCurrencyExchangeRate;
+                } elseif ($ShopCurrency === $CalculateCurrency->getCode() && $shopCurrencyExchangeRate) {
+                    $amount /= $shopCurrencyExchangeRate;
+                } else {
+                    $amount = $TransactionCurrency->convert($amount, $CalculateCurrency);
+
+                    QUI\System\Log::addWarning(
+                        \sprintf(
+                            'The currency of transaction "%s" for calculation of object %s (%s) is "%s" and differs'
+                            .' from the currency of the calculation object ("%s"). But the transaction does not'
+                            .' contain an exchange rate from "%s" to "%s". Thus, the exchange rate that is currently'
+                            .' live in the system is used for converting from "%s" to "%s".',
+                            $Transaction->getTxId(),
+                            $ToCalculate->getId(),
+                            \get_class($ToCalculate),
+                            $TransactionCurrency->getCode(),
+                            $CalculateCurrency->getCode(),
+                            $TransactionCurrency->getCode(),
+                            $CalculateCurrency->getCode(),
+                            $TransactionCurrency->getCode(),
+                            $CalculateCurrency->getCode()
+                        )
+                    );
+                }
+
+                $amount = $CalculateCurrency->amount($amount);
+            }
 
             // set the newest date
             $date = $Transaction->getDate();
@@ -876,8 +938,8 @@ class Calc
             && $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_PLAN) {
             // Leave everything as it is because a subscription plan order can never be set to "paid"
         } elseif ($ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::TYPE_INVOICE_REVERSAL
-            || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::TYPE_INVOICE_CANCEL
-            || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
+                  || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::TYPE_INVOICE_CANCEL
+                  || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
         ) {
             // Leave everything as it is
         } elseif ((float)$ToCalculate->getAttribute('toPay') == 0) {
@@ -885,7 +947,7 @@ class Calc
         } elseif ($ToCalculate->getAttribute('paid') == 0) {
             $ToCalculate->setAttribute('paid_status', QUI\ERP\Constants::PAYMENT_STATUS_OPEN);
         } elseif ($ToCalculate->getAttribute('toPay')
-            && $calculations['sum'] != $ToCalculate->getAttribute('paid')
+                  && $calculations['sum'] != $ToCalculate->getAttribute('paid')
         ) {
             $ToCalculate->setAttribute('paid_status', QUI\ERP\Constants::PAYMENT_STATUS_PART);
         }
