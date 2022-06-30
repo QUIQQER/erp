@@ -7,7 +7,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
     'qui/QUI',
     'qui/controls/Control',
     'qui/controls/windows/Confirm',
+    'package/quiqqer/products/bin/classes/Product',
     'qui/utils/Form',
+    'controls/grid/Grid',
     'package/quiqqer/productsearch/bin/controls/products/search/Window',
     'Ajax',
     'Locale',
@@ -16,11 +18,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
     'text!package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWindow.ProductSettings.html',
     'css!package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWindow.css'
 
-], function (QUI, QUIControl, QUIConfirm, QUIFormUtils, ProductSearch, QUIAjax, QUILocale, Mustache,
+], function (QUI, QUIControl, QUIConfirm, Product, QUIFormUtils, Grid, ProductSearch, QUIAjax, QUILocale, Mustache,
              templateProductSettings) {
     "use strict";
 
-    var lg = 'quiqqer/erp';
+    const lg = 'quiqqer/erp';
+
+    const filterField = function (field) {
+        return field.id === this;
+    };
 
     return new Class({
 
@@ -49,25 +55,40 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
          * open and start the product selection
          */
         open: function () {
-            var self = this;
+            const self = this;
 
             new ProductSearch({
                 autoclose: false,
                 events   : {
                     onOpen: function (Win) {
-                        self.fireEvent('open', [self, Win]);
+                        self.fireEvent('open', [
+                            self,
+                            Win
+                        ]);
                     },
 
                     onLoad: function (Win) {
-                        self.fireEvent('load', [self, Win]);
+                        self.fireEvent('load', [
+                            self,
+                            Win
+                        ]);
                     },
 
                     onSubmit: function (Win, products) {
-                        var productId = products[0];
+                        let productId = products[0];
 
                         Win.Loader.show();
 
-                        self.$hasProductCustomFields(productId).then(function (hasCustomFields) {
+                        self.$isVariantParent(productId).then(function (isVariantParent) {
+                            if (isVariantParent) {
+                                return self.$openVariantChildren(productId).then(function (variantId) {
+                                    productId = variantId;
+                                    return self.$hasProductCustomFields(productId);
+                                });
+                            }
+
+                            return self.$hasProductCustomFields(productId);
+                        }).then(function (hasCustomFields) {
                             return Win.close().then(function () {
                                 if (!hasCustomFields) {
                                     return Promise.resolve(false);
@@ -77,9 +98,18 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                         }).then(function (productSettings) {
                             return self.$parseProductToArticle(productId, productSettings);
                         }).then(function (article) {
-                            self.fireEvent('submit', [self, article]);
+                            self.fireEvent('submit', [
+                                self,
+                                article
+                            ]);
                         }).catch(function (err) {
+                            if (err === false) {
+                                Win.Loader.hide();
+                                return;
+                            }
+
                             console.error(err);
+                            Win.Loader.hide();
                         });
                     }
                 }
@@ -93,7 +123,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
          * @returns {Promise}
          */
         openProductSettings: function (productId) {
-            var self = this;
+            const self = this;
 
             return new Promise(function (resolve) {
                 new QUIConfirm({
@@ -105,7 +135,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                         onOpen: function (Win) {
                             Win.Loader.show();
 
-                            var Content = Win.getContent();
+                            const Content = Win.getContent();
 
                             Content.set('html', Mustache.render(templateProductSettings, {
                                 labelAmount: QUILocale.get(lg, 'products.quantity'),
@@ -114,29 +144,29 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
 
                             Content.addClass('quiqqer-erp-addProductWin');
 
-                            var Form = Content.getElement('form');
+                            const Form = Content.getElement('form');
 
                             Form.setStyles({
                                 'float': 'left',
                                 width  : '100%'
                             });
 
-                            var Table = Form.getElement('table tbody');
+                            const Table = Form.getElement('table tbody');
 
-                            var Row = new Element('tr', {
+                            const Row = new Element('tr', {
                                 'class': 'quiqqer-erp-addProductWin-row',
                                 html   : '<td><label class="field-container"></label></td>'
                             });
 
-                            var fieldValues = self.getAttribute('fieldValues');
+                            const fieldValues = self.getAttribute('fieldValues');
 
                             self.$getProductEdit(productId).then(function (result) {
-                                var Ghost = new Element('div', {
+                                const Ghost = new Element('div', {
                                     html: result
                                 });
 
-                                var Header = Ghost.getElement('header');
-                                var styles = Ghost.getElements('style');
+                                const Header = Ghost.getElement('header');
+                                const styles = Ghost.getElements('style');
 
                                 if (Header) {
                                     Header.getElements('.quiqqer-products-productEdit-header-image').destroy();
@@ -146,19 +176,19 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                 styles.inject(Form);
 
                                 Ghost.getElements('.quiqqer-products-productEdit-data-field').each(function (Field) {
-                                    var RowClone = Row.clone();
-                                    var Label    = RowClone.getElement('label');
-                                    var fieldId  = Field.get('data-field-id');
+                                    const RowClone = Row.clone();
+                                    const Label = RowClone.getElement('label');
+                                    let fieldId = Field.get('data-field-id');
 
                                     RowClone.set('data-field-id', fieldId);
 
                                     Label.set('html', Field.getElement('.quiqqer-product-field').get('html'));
 
                                     Label.getElement('.quiqqer-product-field-title')
-                                        .addClass('field-container-item');
+                                         .addClass('field-container-item');
 
-                                    var Value = Label.getElement('.quiqqer-product-field-value');
-                                    var Input = Value.getElement('input,select,textarea');
+                                    const Value = Label.getElement('.quiqqer-product-field-value');
+                                    const Input = Value.getElement('input,select,textarea');
 
                                     if (Input) {
                                         Input.replaces(Value);
@@ -169,7 +199,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                         }
                                     } else {
                                         Label.getElement('.quiqqer-product-field-value')
-                                            .addClass('field-container-field');
+                                             .addClass('field-container-field');
                                     }
 
                                     RowClone.inject(Table);
@@ -178,19 +208,22 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                 QUI.parse(Form).then(function () {
                                     QUI.fireEvent(
                                         'quiqqerErpAddProductWindowProductSettingsOpen',
-                                        [productId, Win, self]
+                                        [
+                                            productId,
+                                            Win,
+                                            self
+                                        ]
                                     );
 
                                     // Parse field controls
-                                    var controls = Content.getElements('[data-quiid]');
+                                    let controls = Content.getElements('[data-quiid]');
 
-                                    for (var i = 0, len = controls.length; i < len; i++) {
-                                        var ControlElm = controls[i];
-                                        var Control    = QUI.Controls.getById(ControlElm.get('data-quiid'));
-                                        var fieldName  = ControlElm.get('name');
-                                        var fieldId    = ControlElm
-                                            .getParent('.quiqqer-erp-addProductWin-row')
-                                            .get('data-field-id');
+                                    for (let i = 0, len = controls.length; i < len; i++) {
+                                        let ControlElm = controls[i];
+                                        let Control = QUI.Controls.getById(ControlElm.get('data-quiid'));
+                                        let fieldName = ControlElm.get('name');
+                                        let fieldId = ControlElm.getParent('.quiqqer-erp-addProductWin-row')
+                                                                .get('data-field-id');
 
                                         if (!fieldName) {
                                             continue;
@@ -213,17 +246,17 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                         },
 
                         onSubmit: function (Win) {
-                            var Content = Win.getContent();
-                            var Form    = Content.getElement('form');
-                            var data    = QUIFormUtils.getFormData(Form);
+                            const Content = Win.getContent();
+                            const Form = Content.getElement('form');
+                            let data = QUIFormUtils.getFormData(Form);
 
                             // Parse field controls
-                            var controls = Content.getElements('[data-quiid]');
+                            let controls = Content.getElements('[data-quiid]');
 
-                            for (var i = 0, len = controls.length; i < len; i++) {
-                                var ControlElm = controls[i];
-                                var Control    = QUI.Controls.getById(ControlElm.get('data-quiid'));
-                                var fieldId    = ControlElm.get('name');
+                            for (let i = 0, len = controls.length; i < len; i++) {
+                                let ControlElm = controls[i];
+                                let Control = QUI.Controls.getById(ControlElm.get('data-quiid'));
+                                let fieldId = ControlElm.get('name');
 
                                 if (!fieldId) {
                                     continue;
@@ -262,7 +295,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
          * @returns {Promise}
          */
         $parseProductToArticle: function (productId, attributes) {
-            var self = this;
+            const self = this;
 
             attributes = attributes || {};
 
@@ -302,13 +335,255 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
          * @returns {Promise}
          */
         $hasProductCustomFields: function (productId) {
-            return new Promise(function (resolve, reject) {
+            return new Promise((resolve, reject) => {
                 QUIAjax.get('package_quiqqer_erp_ajax_products_hasProductCustomFields', resolve, {
                     'package': 'quiqqer/erp',
                     productId: productId,
                     onError  : reject
                 });
-            }.bind(this));
+            });
+        },
+
+        /**
+         * Is the product a variant parent?
+         *
+         * @param productId
+         * @returns {Promise}
+         */
+        $isVariantParent: function (productId) {
+            return new Promise((resolve, reject) => {
+                QUIAjax.get('package_quiqqer_erp_ajax_products_isVariantParent', resolve, {
+                    'package': 'quiqqer/erp',
+                    productId: productId,
+                    onError  : reject
+                });
+            });
+        },
+
+        $openVariantChildren: function (productId) {
+            const self = this;
+
+            return new Promise(function (resolve, reject) {
+                new QUIConfirm({
+                    title    : QUILocale.get('quiqqer/erp', 'window.products.variant.select.title'),
+                    icon     : 'fa fa-shopping-bag',
+                    maxHeight: 500,
+                    maxWidth : 700,
+                    autoclose: false,
+                    events   : {
+                        onOpen: function (Win) {
+                            Win.Loader.show();
+                            Win.getContent().set('html', '');
+
+                            new Element('div', {
+                                html: QUILocale.get('quiqqer/erp', 'window.products.variant.select.content')
+                            }).inject(Win.getContent());
+
+                            const GridContainer = new Element('div', {
+                                styles: {
+                                    marginTop: 20
+                                }
+                            }).inject(Win.getContent());
+
+                            self.$getVariantColumns(productId).then(function (columns) {
+                                Win.$VariantGrid = new Grid(GridContainer, {
+                                    columnModel: columns,
+                                    pagination : false,
+                                    width      : Win.getContent().getSize().x - 40,
+                                    height     : 300
+                                });
+
+                                Win.$VariantGrid.addEvents({
+                                    onDblClick: function () {
+                                        Win.submit();
+                                    }
+                                });
+
+                                QUIAjax.get('package_quiqqer_erp_ajax_products_getVariantChildren', function (variants) {
+                                    let i, n, len, nLen, entry, variant, needle, field, fieldId;
+                                    let data = [];
+
+                                    let needles = [
+                                        'id',
+                                        'title',
+                                        'e_date',
+                                        'c_date',
+                                        'priority',
+                                        'url',
+                                        'price_netto_display'
+                                    ];
+
+                                    let fields = {
+                                        'productNo'  : 3,
+                                        'price_netto': 1,
+                                        'priority'   : 18
+                                    };
+
+                                    for (i = 0, len = variants.length; i < len; i++) {
+                                        entry = {};
+                                        variant = variants[i];
+
+                                        // status
+                                        if (variant.active) {
+                                            entry.status = new Element('span', {'class': 'fa fa-check'});
+                                        } else {
+                                            entry.status = new Element('span', {'class': 'fa fa-close'});
+                                        }
+
+                                        if (typeof variant.defaultVariant !== 'undefined' && variant.defaultVariant) {
+                                            entry.defaultVariant =
+                                                new Element('span', {'class': 'fa fa-check-circle-o'});
+                                        } else {
+                                            entry.defaultVariant = new Element('span', {
+                                                html: '&nbsp;'
+                                            });
+                                        }
+                                        // attributes + fields
+                                        for (n = 0, nLen = needles.length; n < nLen; n++) {
+                                            needle = needles[n];
+
+                                            if (typeof variant[needle] === 'undefined' || !variant[needle]) {
+                                                entry[needle] = '-';
+                                            } else {
+                                                entry[needle] = variant[needle];
+                                            }
+                                        }
+
+                                        for (needle in fields) {
+                                            if (!fields.hasOwnProperty(needle)) {
+                                                continue;
+                                            }
+
+                                            fieldId = fields[needle];
+                                            field = variant.fields.filter(filterField.bind(fieldId));
+
+                                            if (!field.length) {
+                                                entry[needle] = '-';
+                                            } else {
+                                                entry[needle] = field[0].value;
+                                            }
+                                        }
+
+                                        data.push(entry);
+                                    }
+
+
+                                    Win.$VariantGrid.setData({
+                                        data: data
+                                    });
+
+                                    Win.Loader.hide();
+                                }, {
+                                    'package': 'quiqqer/erp',
+                                    productId: productId
+                                });
+                            });
+                        },
+
+                        onSubmit: function (Win) {
+                            let data = Win.$VariantGrid.getSelectedData();
+
+                            if (!data.length) {
+                                return;
+                            }
+
+                            resolve(Win.$VariantGrid.getSelectedData()[0].id);
+                            Win.close();
+                        },
+
+                        onCancel: function () {
+                            reject(false);
+                        }
+                    }
+                }).open();
+            });
+        },
+
+        $getVariantColumns: function (productId) {
+            const VariantParent = new Product({
+                id: productId
+            });
+
+            return VariantParent.getVariantFields().then(function (variantFields) {
+                let columns = [
+                    {
+                        header   : QUILocale.get('quiqqer/products', 'products.product.panel.grid.defaultStatus'),
+                        dataIndex: 'defaultVariant',
+                        dataType : 'node',
+                        width    : 60
+                    },
+                    {
+                        header   : QUILocale.get('quiqqer/system', 'status'),
+                        dataIndex: 'status',
+                        dataType : 'node',
+                        width    : 60
+                    },
+                    {
+                        header   : QUILocale.get('quiqqer/system', 'id'),
+                        dataIndex: 'id',
+                        dataType : 'number',
+                        width    : 50
+                    },
+                    {
+                        header   : QUILocale.get('quiqqer/products', 'productNo'),
+                        dataIndex: 'productNo',
+                        dataType : 'text',
+                        width    : 100,
+                        sortable : false
+                    },
+                    {
+                        header   : QUILocale.get('quiqqer/system', 'title'),
+                        dataIndex: 'title',
+                        dataType : 'text',
+                        width    : 200,
+                        sortable : false
+                    },
+                    {
+                        header   : QUILocale.get('quiqqer/products', 'products.product.panel.grid.nettoprice'),
+                        dataIndex: 'price_netto_display',
+                        dataType : 'text',
+                        width    : 100,
+                        sortable : false,
+                        className: 'grid-align-right'
+                    }
+                ];
+
+                for (let i = 0, len = variantFields.length; i < len; i++) {
+                    columns.push({
+                        header   : variantFields[i].title,
+                        dataIndex: 'field-' + variantFields[i].id,
+                        dataType : 'text',
+                        width    : 150,
+                        sortable : false
+                    });
+                }
+
+                // end colums
+                columns = columns.concat([
+                    {
+                        header   : QUILocale.get('quiqqer/system', 'editdate'),
+                        dataIndex: 'e_date',
+                        dataType : 'text',
+                        width    : 160
+                    },
+                    {
+                        header   : QUILocale.get('quiqqer/system', 'createdate'),
+                        dataIndex: 'c_date',
+                        dataType : 'text',
+                        width    : 160
+                    },
+                    {
+                        header   : QUILocale.get('quiqqer/products', 'priority'),
+                        dataIndex: 'priority',
+                        dataType : 'number',
+                        width    : 60,
+                        sortable : false
+                    }
+                ]);
+
+                return columns;
+
+            });
         }
     });
 });
