@@ -277,8 +277,10 @@
     <groups name="quiqqer/erp" datatype="php">
 
         <locale name="bankAccounts.patch.bankAccount_created">
-            <de><![CDATA[Es wurde automatisch ein Standard-Bankkonto auf Basis der Firmen-Bankdaten in der ecoyn-Konfiguration angelegt.]]></de>
-            <en><![CDATA[A default bank account was automatically created based on the company bank data in the ecoyn configuration.]]></en>
+            <de>
+                <![CDATA[Es wurde automatisch ein Standard-Bankkonto auf Basis der Firmen-Bankdaten in der ecoyn-Konfiguration angelegt.]]></de>
+            <en>
+                <![CDATA[A default bank account was automatically created based on the company bank data in the ecoyn configuration.]]></en>
         </locale>
         <locale name="manufacturers.default_group_name">
             <de><![CDATA[Hersteller]]></de>
@@ -761,7 +763,8 @@
         <locale name="controls.BankAccounts.Entry.tpl.descDefault">
             <de>
                 <![CDATA[Die Standard-Bankverbindung wird automatisch ausgewählt, wenn keine andere Bankverbindung gesetzt ist. Es kann genau eine Verbindung als Standard-Bankverbindung gesetzt werden.]]></de>
-            <en><![CDATA[The default bank account is automatically selected if no other bank connection is set. Only one account can be set as the default bank account.]]></en>
+            <en>
+                <![CDATA[The default bank account is automatically selected if no other bank connection is set. Only one account can be set as the default bank account.]]></en>
         </locale>
         <locale name="controls.BankAccounts.Entry.tpl.titleEdit">
             <de><![CDATA[Bankverbindung bearbeiten]]></de>
@@ -780,8 +783,10 @@
             <en><![CDATA[Financial account no.]]></en>
         </locale>
         <locale name="controls.BankAccounts.Entry.tpl.descFinancialAccountNo">
-            <de><![CDATA[Finanzbuchhaltungs-Kontennummer dieser Bankverbindung. Wird an diversen Stellen von ecoyn verwendet, wenn Buchungen sich auf dieses Bankkonto beziehen.]]></de>
-            <en><![CDATA[Financial account no. of this bank account. Used in various places by ecoyn when accounting processes refer to this bank account.]]></en>
+            <de>
+                <![CDATA[Finanzbuchhaltungs-Kontennummer dieser Bankverbindung. Wird an diversen Stellen von ecoyn verwendet, wenn Buchungen sich auf dieses Bankkonto beziehen.]]></de>
+            <en>
+                <![CDATA[Financial account no. of this bank account. Used in various places by ecoyn when accounting processes refer to this bank account.]]></en>
         </locale>
         <locale name="controls.BankAccounts.Entry.edit.title">
             <de><![CDATA[Bankverbindung bearbeiten]]></de>
@@ -800,8 +805,10 @@
             <en><![CDATA[Shall the bank account "[title]" (at "[name]") be permanently deleted?]]></en>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete.information">
-            <de><![CDATA[Die Bankverbindung ist nicht wiederherstellbar und wird in allen Systemeinstellungen, in denen sie gesetzt ist, nicht mehr verfügbar sein.]]></de>
-            <en><![CDATA[The bank account is not recoverable and will be unavailable in all system settings where it is set.]]></en>
+            <de>
+                <![CDATA[Die Bankverbindung ist nicht wiederherstellbar und wird in allen Systemeinstellungen, in denen sie gesetzt ist, nicht mehr verfügbar sein.]]></de>
+            <en>
+                <![CDATA[The bank account is not recoverable and will be unavailable in all system settings where it is set.]]></en>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete.btn.submit">
             <de><![CDATA[Löschung bestätigen]]></de>
@@ -816,8 +823,10 @@
             <en><![CDATA[Final confirmation of permanent deletion of "[title]" (at "[name]")!]]></en>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete_final.information">
-            <de><![CDATA[Mit dieser finalen Bestätigung wird die Bankverbindung zur Löschung markiert und beim Speichern der Einstellungen durchgeführt.]]></de>
-            <en><![CDATA[With this final confirmation, the bank details will be marked for deletion and will be executed when the settings are saved.]]></en>
+            <de>
+                <![CDATA[Mit dieser finalen Bestätigung wird die Bankverbindung zur Löschung markiert und beim Speichern der Einstellungen durchgeführt.]]></de>
+            <en>
+                <![CDATA[With this final confirmation, the bank details will be marked for deletion and will be executed when the settings are saved.]]></en>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete_final.btn.submit">
             <de><![CDATA[Bankverbindung löschen]]></de>
@@ -1280,6 +1289,18 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
         <locale name="controls.QuantityUnitWindow.title">
             <de><![CDATA[Mengeneinheit]]></de>
             <en><![CDATA[Quantity unit]]></en>
+        </locale>
+        <locale name="window.products.variant.select.title">
+            <de><![CDATA[Bitte wähle eine Variante aus]]></de>
+            <en><![CDATA[Please select a variant]]></en>
+        </locale>
+        <locale name="window.products.variant.select.content">
+            <de><![CDATA[
+                Du hast ein Varianten-Parent ausgwewählt. Welche Variante dieses Produktes möchtest du einfügen?
+            ]]></de>
+            <en><![CDATA[
+                You have selected a variant parent. Which variant of this product do you want to insert?
+            ]]></en>
         </locale>
     </groups>
 </locales>
