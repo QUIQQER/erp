@@ -93,9 +93,9 @@ class Calc
     /**
      * Special transaction attributes for currency exchange
      */
-    const TRANSACTION_ATTR_TARGET_CURRENCY               = 'tx_target_currency';
+    const TRANSACTION_ATTR_TARGET_CURRENCY = 'tx_target_currency';
     const TRANSACTION_ATTR_TARGET_CURRENCY_EXCHANGE_RATE = 'tx_target_currency_exchange_rate';
-    const TRANSACTION_ATTR_SHOP_CURRENCY_EXCHANGE_RATE   = 'tx_shop_currency_exchange_rate';
+    const TRANSACTION_ATTR_SHOP_CURRENCY_EXCHANGE_RATE = 'tx_shop_currency_exchange_rate';
 
     /**
      * @var UserInterface
@@ -580,7 +580,7 @@ class Calc
         ];
 
         QUI\ERP\Debug::getInstance()->log(
-            'Kalkulierter Artikel Preis '.$Article->getId(),
+            'Kalkulierter Artikel Preis ' . $Article->getId(),
             'quiqqer/erp'
         );
 
@@ -731,7 +731,7 @@ class Calc
     {
         if (self::isAllowedForCalculation($ToCalculate) === false) {
             QUI\ERP\Debug::getInstance()->log(
-                'Calc->calculatePayments(); Object is not allowed to calculate '.get_class($ToCalculate)
+                'Calc->calculatePayments(); Object is not allowed to calculate ' . get_class($ToCalculate)
             );
 
             throw new QUI\ERP\Exception('Object is not allowed to calculate');
@@ -796,12 +796,12 @@ class Calc
         $total    = $calculations['sum'];
 
         QUI\ERP\Debug::getInstance()->log(
-            'Calc->calculatePayments(); total: '.$total
+            'Calc->calculatePayments(); total: ' . $total
         );
 
         $isValidTimeStamp = function ($timestamp) {
             try {
-                new DateTime('@'.$timestamp);
+                new DateTime('@' . $timestamp);
             } catch (Exception $e) {
                 return false;
             }
@@ -854,9 +854,9 @@ class Calc
                     QUI\System\Log::addWarning(
                         \sprintf(
                             'The currency of transaction "%s" for calculation of object %s (%s) is "%s" and differs'
-                            .' from the currency of the calculation object ("%s"). But the transaction does not'
-                            .' contain an exchange rate from "%s" to "%s". Thus, the exchange rate that is currently'
-                            .' live in the system is used for converting from "%s" to "%s".',
+                            . ' from the currency of the calculation object ("%s"). But the transaction does not'
+                            . ' contain an exchange rate from "%s" to "%s". Thus, the exchange rate that is currently'
+                            . ' live in the system is used for converting from "%s" to "%s".',
                             $Transaction->getTxId(),
                             $ToCalculate->getId(),
                             \get_class($ToCalculate),
@@ -938,8 +938,8 @@ class Calc
             && $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_PLAN) {
             // Leave everything as it is because a subscription plan order can never be set to "paid"
         } elseif ($ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::TYPE_INVOICE_REVERSAL
-                  || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::TYPE_INVOICE_CANCEL
-                  || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
+            || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::TYPE_INVOICE_CANCEL
+            || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
         ) {
             // Leave everything as it is
         } elseif ((float)$ToCalculate->getAttribute('toPay') == 0) {
@@ -947,7 +947,7 @@ class Calc
         } elseif ($ToCalculate->getAttribute('paid') == 0) {
             $ToCalculate->setAttribute('paid_status', QUI\ERP\Constants::PAYMENT_STATUS_OPEN);
         } elseif ($ToCalculate->getAttribute('toPay')
-                  && $calculations['sum'] != $ToCalculate->getAttribute('paid')
+            && $calculations['sum'] != $ToCalculate->getAttribute('paid')
         ) {
             $ToCalculate->setAttribute('paid_status', QUI\ERP\Constants::PAYMENT_STATUS_PART);
         }
@@ -1078,6 +1078,10 @@ class Calc
 
             $invNettoPaid  = $invPaid - $invVatPaid;
             $invNettoToPay = $invNettoTotal - $invNettoPaid;
+
+            if ($invToPay === 0.0) {
+                $invNettoToPay = 0;
+            }
 
             // complete + addition
             $vatPaid     = $vatPaid + $invVatPaid;
