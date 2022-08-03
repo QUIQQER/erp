@@ -108,6 +108,7 @@ define('package/quiqqer/erp/bin/backend/controls/settings/OutputTemplates', [
 
                 // Set values from setting
                 if (self.$Input.value === '') {
+                    self.$setValue();
                     return;
                 }
 
@@ -139,6 +140,8 @@ define('package/quiqqer/erp/bin/backend/controls/settings/OutputTemplates', [
 
                     DefaultCheckbox.checked = EntitySetting.hideSystemDefault;
                 }
+
+                self.$setValue();
             });
         },
 
