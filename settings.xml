@@ -271,7 +271,8 @@
                         <title>
                             <locale group="quiqqer/erp" var="menu.erp.company.bank.title"/>
                         </title>
-                        <input type="hidden" conf="company.bankAccountId" data-qui="package/quiqqer/erp/bin/backend/controls/bankAccounts/Select">
+                        <input type="hidden" conf="company.bankAccountId"
+                               data-qui="package/quiqqer/erp/bin/backend/controls/bankAccounts/Select">
                             <text>
                                 <locale group="quiqqer/erp" var="menu.erp.company.bankAccountId"/>
                             </text>
@@ -285,7 +286,7 @@
 
                         <input conf="timestampFormat"
                                data-qui="controls/system/AvailableLanguages"
-                               data-qui-options-placeholder="%c"
+                               data-qui-options-placeholder=" "
                         >
                             <text>
                                 <locale group="quiqqer/erp" var="shop.settings.general.timestampFormat"/>
@@ -297,7 +298,7 @@
 
                         <input conf="dateFormat"
                                data-qui="controls/system/AvailableLanguages"
-                               data-qui-options-placeholder="%D"
+                               data-qui-options-placeholder=" "
                         >
                             <text>
                                 <locale group="quiqqer/erp" var="shop.settings.general.dateFormat"/>
