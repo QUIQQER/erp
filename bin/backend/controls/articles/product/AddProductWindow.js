@@ -177,15 +177,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
 
                                 Ghost.getElements('.quiqqer-products-productEdit-data-field').each(function (Field) {
                                     const RowClone = Row.clone();
-                                    const Label = RowClone.getElement('label');
-                                    let fieldId = Field.get('data-field-id');
+                                    const Label    = RowClone.getElement('label');
+                                    let fieldId    = Field.get('data-field-id');
 
                                     RowClone.set('data-field-id', fieldId);
 
                                     Label.set('html', Field.getElement('.quiqqer-product-field').get('html'));
 
                                     Label.getElement('.quiqqer-product-field-title')
-                                         .addClass('field-container-item');
+                                        .addClass('field-container-item');
 
                                     const Value = Label.getElement('.quiqqer-product-field-value');
                                     const Input = Value.getElement('input,select,textarea');
@@ -199,7 +199,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                         }
                                     } else {
                                         Label.getElement('.quiqqer-product-field-value')
-                                             .addClass('field-container-field');
+                                            .addClass('field-container-field');
                                     }
 
                                     RowClone.inject(Table);
@@ -220,10 +220,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
 
                                     for (let i = 0, len = controls.length; i < len; i++) {
                                         let ControlElm = controls[i];
-                                        let Control = QUI.Controls.getById(ControlElm.get('data-quiid'));
-                                        let fieldName = ControlElm.get('name');
-                                        let fieldId = ControlElm.getParent('.quiqqer-erp-addProductWin-row')
-                                                                .get('data-field-id');
+                                        let Control    = QUI.Controls.getById(ControlElm.get('data-quiid'));
+                                        let fieldName  = ControlElm.get('name');
+                                        let fieldId    = ControlElm.getParent('.quiqqer-erp-addProductWin-row')
+                                            .get('data-field-id');
 
                                         if (!fieldName) {
                                             continue;
@@ -247,16 +247,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
 
                         onSubmit: function (Win) {
                             const Content = Win.getContent();
-                            const Form = Content.getElement('form');
-                            let data = QUIFormUtils.getFormData(Form);
+                            const Form    = Content.getElement('form');
+                            let data      = QUIFormUtils.getFormData(Form);
 
                             // Parse field controls
                             let controls = Content.getElements('[data-quiid]');
 
                             for (let i = 0, len = controls.length; i < len; i++) {
                                 let ControlElm = controls[i];
-                                let Control = QUI.Controls.getById(ControlElm.get('data-quiid'));
-                                let fieldId = ControlElm.get('name');
+                                let Control    = QUI.Controls.getById(ControlElm.get('data-quiid'));
+                                let fieldId    = ControlElm.get('name');
 
                                 if (!fieldId) {
                                     continue;
@@ -419,8 +419,37 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                         'priority'   : 18
                                     };
 
+                                    // add variant fields to field object
+                                    for (i = 0, len = columns.length; i < len; i++) {
+                                        fields['field-' + columns[i].fieldId] = columns[i].fieldId;
+                                    }
+
+                                    const lang = QUILocale.getCurrent();
+
+                                    const getAttributeListValueTitle = (FieldData) => {
+                                        const valueId = FieldData.value;
+
+                                        if (typeof FieldData.options.entries === 'undefined') {
+                                            return false;
+                                        }
+
+                                        for (const Entry of Object.values(FieldData.options.entries)) {
+                                            if (Entry.valueId != valueId) {
+                                                continue;
+                                            }
+
+                                            if (typeof Entry.title[lang] !== 'undefined') {
+                                                return Entry.title[lang];
+                                            }
+
+                                            break;
+                                        }
+
+                                        return false;
+                                    };
+
                                     for (i = 0, len = variants.length; i < len; i++) {
-                                        entry = {};
+                                        entry   = {};
                                         variant = variants[i];
 
                                         // status
@@ -455,12 +484,19 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                             }
 
                                             fieldId = fields[needle];
-                                            field = variant.fields.filter(filterField.bind(fieldId));
+                                            field   = variant.fields.filter(filterField.bind(fieldId));
 
                                             if (!field.length) {
                                                 entry[needle] = '-';
                                             } else {
-                                                entry[needle] = field[0].value;
+                                                const valueTitle = getAttributeListValueTitle(field[0]);
+                                                const value = field[0].value;
+
+                                                if (valueTitle) {
+                                                    entry[needle] = '(' + value + ') ' + valueTitle;
+                                                } else {
+                                                    entry[needle] = value;
+                                                }
                                             }
                                         }
 
@@ -552,6 +588,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                     columns.push({
                         header   : variantFields[i].title,
                         dataIndex: 'field-' + variantFields[i].id,
+                        fieldId  : variantFields[i].id,
                         dataType : 'text',
                         width    : 150,
                         sortable : false
