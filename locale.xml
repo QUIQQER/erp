@@ -502,19 +502,19 @@
         </locale>
         <locale name="shop.settings.general.timestampFormat.description" html="true">
             <de><![CDATA[
-                Dieses Datumsformat wird für ein komplettes Datumsformat verwendet (z.B: dd.mm.YYYY H:i:s).
+                Dieses Datumsformat wird für ein komplettes Datumsformat verwendet (z.B: dd.MM.yyyy HH:mm:ss).
                 <br /><br />
                 Einstellungen und oder mögliche Datumsformate finden Sie unter:<br />
-                <a href="http://php.net/manual/de/function.strftime.php#refsect1-function.strftime-parameters">
-                    http://php.net/manual/de/function.strftime.php#refsect1-function.strftime-parameters
+                <a href="https://unicode-org.github.io/icu/userguide/format_parse/datetime/" target="_blank">
+                    https://unicode-org.github.io/icu/userguide/format_parse/datetime/
                 </a>
             ]]></de>
             <en><![CDATA[
-                This date format is used for a complete date format (e.g.: dd.mm.YYYYY H:i:s).
+                This date format is used for a complete date format (e.g.: dd.MM.yyyy HH:mm:ss).
                 <br /><br />
                 Settings and or possible date formats can be found under:<br />
-                <a href="http://php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters">
-                    http://php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters
+                <a href="https://unicode-org.github.io/icu/userguide/format_parse/datetime/" target="_blank">
+                    https://unicode-org.github.io/icu/userguide/format_parse/datetime/
                 </a>
             ]]></en>
         </locale>
@@ -528,19 +528,19 @@
         </locale>
         <locale name="shop.settings.general.dateFormat.description">
             <de><![CDATA[
-                Dieses Datumsformat wird für ein partiell Datumsformat verwendet (z.B: dd.mm.YYYY).
+                Dieses Datumsformat wird für ein partiell Datumsformat verwendet (z.B: dd.MM.yyyy).
                 <br /><br />
                 Einstellungen und oder mögliche Datumsformate finden Sie unter:<br />
-                <a href="http://php.net/manual/de/function.strftime.php#refsect1-function.strftime-parameters">
-                    http://php.net/manual/de/function.strftime.php#refsect1-function.strftime-parameters
+                <a href="https://unicode-org.github.io/icu/userguide/format_parse/datetime/">
+                    https://unicode-org.github.io/icu/userguide/format_parse/datetime/
                 </a>
             ]]></de>
             <en><![CDATA[
-                This date format is used for a partial date format (e.g.: dd.mm.YYYYY).
+                This date format is used for a partial date format (e.g.: dd.MM.yyyy).
                 <br /><br />
                 Settings and or possible date formats can be found under:<br />
-                <a href="http://php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters">
-                    http://php.net/manual/en/function.strftime.php#refsect1-function.strftime-parameters
+                <a href="https://unicode-org.github.io/icu/userguide/format_parse/datetime/">
+                    https://unicode-org.github.io/icu/userguide/format_parse/datetime/
                 </a>
             ]]></en>
         </locale>
