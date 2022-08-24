@@ -679,6 +679,11 @@
 
     <groups name="quiqqer/erp" datatype="js">
 
+        <locale name="products.product.panel.grid.ean">
+            <de><![CDATA[GTIN / EAN]]></de>
+            <en><![CDATA[GTIN / EAN]]></en>
+        </locale>
+
         <locale name="ContactEmailSelectWindow.title">
             <de><![CDATA[Kontat E-Mail-Adresse auswählen]]></de>
             <en><![CDATA[Choose contact email address]]></en>
@@ -1296,10 +1301,10 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
         </locale>
         <locale name="window.products.variant.select.content">
             <de><![CDATA[
-                Du hast ein Varianten-Parent ausgwewählt. Welche Variante dieses Produktes möchtest du einfügen?
+                Du hast einen Vater-Artikel ausgwewählt. Bitte wähle eine Variante.
             ]]></de>
             <en><![CDATA[
-                You have selected a variant parent. Which variant of this product do you want to insert?
+                You have selected a variant parent. Please choose a variant.
             ]]></en>
         </locale>
     </groups>

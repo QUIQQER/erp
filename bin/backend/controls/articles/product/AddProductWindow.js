@@ -367,8 +367,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                 new QUIConfirm({
                     title    : QUILocale.get('quiqqer/erp', 'window.products.variant.select.title'),
                     icon     : 'fa fa-shopping-bag',
-                    maxHeight: 500,
-                    maxWidth : 700,
+                    maxHeight: 1000,
+                    maxWidth : 1400,
                     autoclose: false,
                     events   : {
                         onOpen: function (Win) {
@@ -390,7 +390,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                     columnModel: columns,
                                     pagination : false,
                                     width      : Win.getContent().getSize().x - 40,
-                                    height     : 300
+                                    height     : 800,
+                                    storageKey : 'quiqqer-erp-addproductwindow-variants',
                                 });
 
                                 Win.$VariantGrid.addEvents({
@@ -416,7 +417,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                     let fields = {
                                         'productNo'  : 3,
                                         'price_netto': 1,
-                                        'priority'   : 18
+                                        'priority'   : 18,
+                                        'ean'        : 21
                                     };
 
                                     // add variant fields to field object
@@ -490,7 +492,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                                 entry[needle] = '-';
                                             } else {
                                                 const valueTitle = getAttributeListValueTitle(field[0]);
-                                                const value = field[0].value;
+                                                const value      = field[0].value;
 
                                                 if (valueTitle) {
                                                     entry[needle] = '(' + value + ') ' + valueTitle;
@@ -565,21 +567,21 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                         dataIndex: 'productNo',
                         dataType : 'text',
                         width    : 100,
-                        sortable : false
+                        //sortable : false
                     },
                     {
                         header   : QUILocale.get('quiqqer/system', 'title'),
                         dataIndex: 'title',
                         dataType : 'text',
                         width    : 200,
-                        sortable : false
+                        //sortable : false
                     },
                     {
                         header   : QUILocale.get('quiqqer/products', 'products.product.panel.grid.nettoprice'),
                         dataIndex: 'price_netto_display',
                         dataType : 'text',
                         width    : 100,
-                        sortable : false,
+                        //sortable : false,
                         className: 'grid-align-right'
                     }
                 ];
@@ -591,12 +593,18 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                         fieldId  : variantFields[i].id,
                         dataType : 'text',
                         width    : 150,
-                        sortable : false
+                        //sortable : false
                     });
                 }
 
                 // end colums
                 columns = columns.concat([
+                    {
+                        header   : QUILocale.get('quiqqer/erp', 'products.product.panel.grid.ean'),
+                        dataIndex: 'ean',
+                        dataType : 'number',
+                        width    : 120,
+                    },
                     {
                         header   : QUILocale.get('quiqqer/system', 'editdate'),
                         dataIndex: 'e_date',
