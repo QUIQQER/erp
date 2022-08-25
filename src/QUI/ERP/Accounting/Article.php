@@ -146,6 +146,7 @@ class Article implements ArticleInterface
         $defaults = [
             'id',
             'articleNo',
+            'gtin',
             'title',
             'description',
             'unitPrice',
@@ -260,6 +261,20 @@ class Article implements ArticleInterface
     {
         if (isset($this->attributes['articleNo'])) {
             return $this->attributes['articleNo'];
+        }
+
+        return '';
+    }
+
+    /**
+     * Return the GTIN Number, if the article has one
+     *
+     * @return string
+     */
+    public function getGTIN(): string
+    {
+        if (isset($this->attributes['gtin'])) {
+            return $this->attributes['gtin'];
         }
 
         return '';
@@ -686,6 +701,7 @@ class Article implements ArticleInterface
             'id'           => $this->getId(),
             'title'        => $this->getTitle(),
             'articleNo'    => $this->getArticleNo(),
+            'gtin'         => $this->getGTIN(),
             'description'  => $this->getDescription(),
             'unitPrice'    => $this->getUnitPrice()->value(),
             'displayPrice' => $this->displayPrice(),
