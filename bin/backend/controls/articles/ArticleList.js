@@ -30,7 +30,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
              QUIAjax, QUILocale, AddProductWindow, Article, Sortables, template, templateSortablePlaceholder) {
     "use strict";
 
-    var lg = 'quiqqer/erp';
+    const lg = 'quiqqer/erp';
 
     return new Class({
 
@@ -98,6 +98,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             this.$Elm = this.parent();
             this.$Elm.addClass('quiqqer-erp-backend-erpItems');
+            this.$Elm.set('data-qui', 'package/quiqqer/erp/bin/backend/controls/articles/ArticleList');
 
             this.$Elm.set({
                 html: Mustache.render(template, {
@@ -118,7 +119,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }
 
             this.$Container = this.$Elm.getElement('.quiqqer-erp-backend-erpItems-items');
-            var SwitchDesc = this.$Elm.getElement('.quiqqer-erp-backend-erpItems-container-switch-desc');
+            const SwitchDesc = this.$Elm.getElement('.quiqqer-erp-backend-erpItems-container-switch-desc');
 
             this.$Switch = new QUISwitch({
                 switchTextOn     : 'netto',
@@ -161,8 +162,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * @returns {Object}
          */
         serialize: function () {
-            var articles = this.$getArticles().map(function (Article) {
-                var attr = Article.getAttributes();
+            const articles = this.$getArticles().map(function (Article) {
+                const attr = Article.getAttributes();
                 attr.control = typeOf(Article);
 
                 return attr;
@@ -193,8 +194,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * @return {Promise}
          */
         unserialize: function (list) {
-            var self = this,
-                data = {};
+            const self = this;
+            let data = {};
 
             if (typeOf(list) === 'string') {
                 try {
@@ -215,7 +216,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             this.$articles = [];
 
-            var controls = data.articles.map(function (Article) {
+            const controls = data.articles.map(function (Article) {
                 if (typeof Article.control !== 'undefined' && Article.control !== '') {
                     return Article.control;
                 }
@@ -224,7 +225,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }).unique();
 
             require(controls, function () {
-                var i, len, article, index;
+                let i, len, article, index;
 
                 for (i = 0, len = data.articles.length; i < len; i++) {
                     article = data.articles[i];
@@ -323,7 +324,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 return;
             }
 
-            var Wanted = this.$articles.find(function (Article) {
+            const Wanted = this.$articles.find(function (Article) {
                 return Article.getAttribute('position') === position;
             });
 
@@ -597,7 +598,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             Elm.getElements('.quiqqer-erp-sortableClone-placeholder').destroy();
 
             elements.each(function (Node) {
-                var Article = QUI.Controls.getById(Node.get('data-quiid'));
+                const Article = QUI.Controls.getById(Node.get('data-quiid'));
 
                 Article.removeEvents({
                     onSetPosition: self.$onArticleSetPosition
@@ -739,19 +740,19 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * @param {Object} EditArticle - package/quiqqer/erp/bin/backend/controls/articles/Article
          */
         $onArticleEditCustomFields: function (EditArticle) {
-            var ArticleCustomFields = EditArticle.getAttribute('customFields');
-            var FieldValues = {};
+            const ArticleCustomFields = EditArticle.getAttribute('customFields');
+            const FieldValues = {};
 
             for (const [fieldId, FieldData] of Object.entries(ArticleCustomFields)) {
                 FieldValues[fieldId] = FieldData.value;
             }
 
-            var AddProductControl = new AddProductWindow({
+            const AddProductControl = new AddProductWindow({
                 fieldValues: FieldValues,
                 editAmount : false
             });
 
-            var productId = EditArticle.getAttribute('id');
+            const productId = EditArticle.getAttribute('id');
 
             AddProductControl.openProductSettings(productId).then((ArticleData) => {
                 if (!ArticleData) {
@@ -774,7 +775,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
                 EditArticle.setAttribute('customFields', NewArticleCustomFields);
 
-                var NewArticle = new Article(EditArticle.getAttributes());
+                const NewArticle = new Article(EditArticle.getAttributes());
 
                 this.replaceArticle(NewArticle, EditArticle.getAttribute('position'));
             });
@@ -793,7 +794,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * refresh the brutto / netto switch display
          */
         $refreshNettoBruttoDisplay: function () {
-            var SwitchDesc = this.$Elm.getElement('.quiqqer-erp-backend-erpItems-container-switch-desc');
+            const SwitchDesc = this.$Elm.getElement('.quiqqer-erp-backend-erpItems-container-switch-desc');
 
             if (this.getAttribute('nettoinput')) {
                 SwitchDesc.set('html', QUILocale.get(lg, 'control.articleList.netto.message'));

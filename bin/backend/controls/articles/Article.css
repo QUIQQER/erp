@@ -52,7 +52,12 @@
 }
 
 .quiqqer-erp-backend-erpArticle-pos {
+    cursor: pointer;
     width: 50px;
+}
+
+.quiqqer-erp-backend-erpArticle-pos:hover {
+    background: #eaeaea;
 }
 
 .quiqqer-erp-backend-erpArticle-text {
@@ -204,4 +209,28 @@
 
 .quiqqer-erp-backend-erpArticle-customFields-entry:hover {
     background-color: #dedede;
+}
+
+/*+
+ * Custom fields
+ */
+.quiqqer-erp-backend-erpArticle-articleEdit {
+    background: #DEDEDE;
+    display: none;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-erpArticle-articleEdit button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    line-height: 20px;
+}
+
+.quiqqer-erp-backend-erpArticle-select .quiqqer-erp-backend-erpArticle-articleEdit {
+    display: inline-block;
+}
+
+.quiqqer-erp-backend-erpArticle-articleEdit button:hover {
+    background: #eaeaea;
 }
