@@ -60,8 +60,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             const showPosSummary = this.getAttribute('showPosSummary');
 
             this.$Elm = new Element('div', {
-                'class': 'quiqqer-erp-backend-temporaryErp-summary',
-                html   : Mustache.render(template, {
+                'data-qui': 'package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary',
+                'class'   : 'quiqqer-erp-backend-temporaryErp-summary',
+                html      : Mustache.render(template, {
                     showPosSummary: showPosSummary,
                     labelPosInfo  : QUILocale.get(lg, 'article.summary.tpl.labelPosInfo'),
                     labelNet      : QUILocale.get(lg, 'article.summary.tpl.labelNet'),
@@ -147,6 +148,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             List.addEvent('onArticleSelect', this.$refreshArticleSelect);
         },
 
+        // region summary
+
         /**
          * Open the summary with price factors
          */
@@ -155,23 +158,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 return;
             }
 
-            const self = this;
-
-            require(['qui/controls/windows/Popup'], function (Popup) {
-                new Popup({
-                    title    : QUILocale.get('quiqqer/erp', 'article.summary.window.title'),
-                    buttons  : false,
-                    maxHeight: 600,
-                    maxWidth : 600,
-                    events   : {
-                        onCreate: function (Win) {
-                            Win.Loader.show();
-
-                            self.$refreshSummaryContent(Win).then(function () {
-                                Win.Loader.hide();
-                            });
-                        }
-                    }
+            require([
+                'package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors'
+            ], (PriceFactorWindow) => {
+                new PriceFactorWindow({
+                    ArticleList: this.getAttribute('List')
                 }).open();
             });
         },
@@ -225,6 +216,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 });
             });
         },
+
+        //endregion
 
         /**
          * event: onArticleSelect

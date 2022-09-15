@@ -196,7 +196,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         unserialize: function (list) {
             const self = this;
             let data = {};
-
+            
             if (typeOf(list) === 'string') {
                 try {
                     data = JSON.stringify(list);
@@ -487,6 +487,31 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }
 
             this.$priceFactors = newList;
+        },
+
+        /**
+         * add a price factor
+         *
+         * {
+         *      calculation      : 2,
+         *      calculation_basis: 2,
+         *      description      : Form.elements.title.value,
+         *      identifier       : "",
+         *      index            : priority,
+         *      nettoSum         : data.nettoSum,
+         *      nettoSumFormatted: data.nettoSumFormatted,
+         *      sum              : data.sum,
+         *      sumFormatted     : data.sumFormatted,
+         *      title            : Form.elements.title.value,
+         *      value            : data.sum,
+         *      valueText        : data.sumFormatted,
+         *      vat              : Form.elements.vat.value,
+         *      visible          : 1
+         * }
+         * @param priceFactor
+         */
+        addPriceFactor: function (priceFactor) {
+            this.$priceFactors.push(priceFactor);
         },
 
         /**

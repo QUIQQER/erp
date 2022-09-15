@@ -1291,6 +1291,15 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <en><![CDATA[Product attributes]]></en>
         </locale>
 
+        <locale name="panel.btn.priceFactors">
+            <de><![CDATA[Preisfaktoren bearbeiten]]></de>
+            <en><![CDATA[Edit pricefactors]]></en>
+        </locale>
+        <locale name="pricefactors.summary.window.title">
+            <de><![CDATA[Preisfaktoren bearbeiten]]></de>
+            <en><![CDATA[Edit pricefactors]]></en>
+        </locale>
+
         <locale name="controls.QuantityUnitWindow.title">
             <de><![CDATA[Mengeneinheit]]></de>
             <en><![CDATA[Quantity unit]]></en>
@@ -1307,5 +1316,45 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
                 You have selected a variant parent. Please choose a variant.
             ]]></en>
         </locale>
+
+        <locale name="calculationBasis">
+            <de><![CDATA[Berechnungs-Grundlage]]></de>
+            <en><![CDATA[Calculation basis]]></en>
+        </locale>
+        <locale name="calculationBasis.netto">
+            <de><![CDATA[Netto]]></de>
+            <en><![CDATA[Netto]]></en>
+        </locale>
+        <locale name="calculationBasis.calculationBasisCalcPrice">
+            <de><![CDATA[Kalkulierter Preis]]></de>
+            <en><![CDATA[Calculated price]]></en>
+        </locale>
+        <locale name="calculationBasis.calculationBasisCalcBrutto">
+            <de><![CDATA[
+            Kalkulierter Brutto Preis (Geht von dem Nettopreis aus, welcher alle Preisfaktoren beinhaltet, wie z.B. Auswahllisten)
+            ]]></de>
+            <en><![CDATA[
+            Calculated brutto price (Expects from the netto price which includes all price factors, like attribute lists)
+            ]]></en>
+        </locale>
+
+        <locale name="title.price">
+            <de><![CDATA[Preis]]></de>
+            <en><![CDATA[Price]]></en>
+        </locale>
+        <locale name="title.title">
+            <de><![CDATA[Titel]]></de>
+            <en><![CDATA[Title]]></en>
+        </locale>
+        <locale name="title.priority">
+            <de><![CDATA[Priorität]]></de>
+            <en><![CDATA[Priority]]></en>
+        </locale>
+        <locale name="title.vat">
+            <de><![CDATA[MwSt.]]></de>
+            <en><![CDATA[Vat]]></en>
+        </locale>
+
+
     </groups>
 </locales>
