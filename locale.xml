@@ -1355,6 +1355,15 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <en><![CDATA[Vat]]></en>
         </locale>
 
+        <locale name="add.pricefactor.button">
+            <de><![CDATA[Preisfaktor hinzufügen]]></de>
+            <en><![CDATA[Add pricefactor]]></en>
+        </locale>
+        <locale name="message.pricefactor.empty">
+            <de><![CDATA[Keine Preisfaktoren vorhanden]]></de>
+            <en><![CDATA[No price factors available]]></en>
+        </locale>
+
 
     </groups>
 </locales>

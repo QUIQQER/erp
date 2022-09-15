@@ -185,6 +185,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         },
 
         /**
+         * Return the articles count
+         *
+         * @returns {number}
+         */
+        count: function () {
+            return this.$articles.length;
+        },
+
+        /**
          * Unserialize the list
          *
          * load the serialized list into
@@ -196,7 +205,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         unserialize: function (list) {
             const self = this;
             let data = {};
-            
+
             if (typeOf(list) === 'string') {
                 try {
                     data = JSON.stringify(list);
@@ -511,7 +520,23 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * @param priceFactor
          */
         addPriceFactor: function (priceFactor) {
-            this.$priceFactors.push(priceFactor);
+            const prio = priceFactor.index;
+
+            if (prio === this.$priceFactors.length) {
+                this.$priceFactors.push(priceFactor);
+                return;
+            }
+
+            this.$priceFactors.splice(prio, 0, priceFactor);
+        },
+
+        /**
+         * Return the articles count
+         *
+         * @returns {number}
+         */
+        countPriceFactors: function () {
+            return this.$priceFactors.length;
         },
 
         /**
