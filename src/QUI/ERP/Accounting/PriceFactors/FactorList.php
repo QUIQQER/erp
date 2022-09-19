@@ -90,6 +90,15 @@ class FactorList implements IteratorAggregate, Countable
         return json_encode($this->toArray());
     }
 
+    /**
+     * @param \QUI\ERP\Accounting\PriceFactors\Factor $Factor
+     * @return void
+     */
+    public function addFactor(Factor $Factor)
+    {
+        $this->list[] = $Factor;
+    }
+
     //region iterator
 
     /**
