@@ -1,0 +1,68 @@
+<table class="data-table data-table-flexbox quiqqer-erp-priceFactors">
+    <thead>
+    <tr>
+        <th class="quiqqer-erp-priceFactors-button">
+            <button name="add-pricefactor" disabled class="qui-button" style="float: right">
+                <span class="fa fa plus"></span>
+                <span>{{textAddButton}}</span>
+            </button>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#priceFactors}}
+    <tr data-index="{{index}}">
+        <td>
+            <div class="field-container">
+                <label style="width: 100%; display: flex;">
+                    <span class="field-container-item">
+                        <span class="pricefactor-index">#{{priority}}</span>
+                        {{title}}
+                    </span>
+                    <span class="field-container-field">{{valueText}}</span>
+                </label>
+                <button class="qui-button delete" style="width: 50px; cursor: pointer;">
+                    <span class="fa fa-close"></span>
+                </button>
+            </div>
+        </td>
+    </tr>
+    {{/priceFactors}}
+    {{^priceFactors}}
+    <tr>
+        <td>{{textNoFactors}}</td>
+    </tr>
+    {{/priceFactors}}
+    </tbody>
+</table>
+
+<table class="data-table data-table-flexbox quiqqer-erp-backend-temporaryErp-summaryWin-total">
+    <tbody>
+    {{#vatArray}}
+    <tr>
+        <td>
+            <label class="field-container">
+                <span class="field-container-item vat-title">{{text}}</span>
+                <span class="field-container-field vat-value">{{sum}}</span>
+            </label>
+        </td>
+    </tr>
+    {{/vatArray}}
+    <tr>
+        <td>
+            <label class="field-container">
+                <span class="field-container-item netto-title">{{textNetto}}</span>
+                <span class="field-container-field netto-value"></span>
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="field-container">
+                <span class="field-container-item brutto-title">{{textBrutto}}</span>
+                <span class="field-container-field brutto-value"></span>
+            </label>
+        </td>
+    </tr>
+    </tbody>
+</table>
