@@ -1300,6 +1300,11 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <en><![CDATA[Edit pricefactors]]></en>
         </locale>
 
+        <locale name="pricefactors.edit.window.title">
+            <de><![CDATA[Preisfaktor bearbeiten]]></de>
+            <en><![CDATA[Edit pricefactor]]></en>
+        </locale>
+
         <locale name="controls.QuantityUnitWindow.title">
             <de><![CDATA[Mengeneinheit]]></de>
             <en><![CDATA[Quantity unit]]></en>

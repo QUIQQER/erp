@@ -21,7 +21,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/BruttoCalcButton', [
         ],
 
         options: {
-            Price: null
+            Price: null // input element for the price
         },
 
         initialize: function (options) {

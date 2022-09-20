@@ -13,7 +13,7 @@
     {{#priceFactors}}
     <tr data-index="{{index}}">
         <td>
-            <div class="field-container">
+            <div class="field-container quiqqer-erp-priceFactors-factor">
                 <label style="width: 100%; display: flex;">
                     <span class="field-container-item">
                         <span class="pricefactor-index">#{{priority}}</span>
@@ -21,6 +21,9 @@
                     </span>
                     <span class="field-container-field">{{valueText}}</span>
                 </label>
+                <button class="qui-button edit" style="width: 50px; cursor: pointer;">
+                    <span class="fa fa-edit"></span>
+                </button>
                 <button class="qui-button delete" style="width: 50px; cursor: pointer;">
                     <span class="fa fa-close"></span>
                 </button>

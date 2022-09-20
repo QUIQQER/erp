@@ -122,6 +122,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
                     this.refresh();
                 });
 
+                Content.getElements('.edit').addEvent('click', (e) => {
+                    e.stop();
+                    let index = e.target.getParent('tr').get('data-index');
+
+                    this.editPriceFactor(index);
+                });
+
                 PriceFactorButton.addEvent('click', (e) => {
                     e.stop();
                     this.addPriceFactor();
@@ -240,6 +247,131 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
                             };
 
                             ArticleList.addPriceFactor(priceFactor);
+                            Win.close();
+                            this.refresh();
+                        });
+                    }
+                }
+            }).open();
+        },
+
+        /**
+         * edit a price factor window
+         */
+        editPriceFactor: function (index) {
+            const ArticleList = this.getAttribute('ArticleList');
+            let priceFactors = ArticleList.getPriceFactors();
+            let calculations = ArticleList.getCalculation();
+
+            if (!priceFactors.length) {
+                return;
+            }
+
+            if (typeof calculations.vatArray === 'undefined') {
+                calculations.vatArray = {};
+            }
+
+            const factor = priceFactors[index];
+
+            new QUIConfirm({
+                icon     : 'fa fa-edit',
+                title    : QUILocale.get(lg, 'pricefactors.edit.window.title'),
+                maxHeight: 400,
+                maxWidth : 580,
+                autoclose: false,
+                events   : {
+                    onOpen: (Win) => {
+                        const Content = Win.getContent();
+
+                        Win.Loader.show();
+
+                        Content.set({
+                            html: Mustache.render(templateAdd, {
+                                titlePrice   : QUILocale.get(lg, 'title.price'),
+                                titleTitle   : QUILocale.get(lg, 'title.title'),
+                                titlePriority: QUILocale.get(lg, 'title.priority'),
+                                titleVat     : QUILocale.get(lg, 'title.vat'),
+
+                                calculationBasis          : QUILocale.get(lg, 'calculationBasis'),
+                                calculationBasisNetto     : QUILocale.get(lg, 'calculationBasis.netto'),
+                                calculationBasisCalcPrice : QUILocale.get(lg, 'calculationBasis.calculationBasisCalcPrice'),
+                                calculationBasisCalcBrutto: QUILocale.get(lg, 'calculationBasis.calculationBasisCalcBrutto'),
+                            })
+                        });
+
+                        require([
+                            'package/quiqqer/erp/bin/backend/controls/articles/BruttoCalcButton'
+                        ], (Calc) => {
+                            new Calc({
+                                Price: Content.getElement('[name="price"]')
+                            }).inject(
+                                Content.getElement('[name="price"]'),
+                                'after'
+                            );
+
+                            Content.getElement('[name="priority"]')
+                                   .set('value', ArticleList.countPriceFactors() + 1);
+
+                            // vat
+                            const VatSelect = Content.getElement('[name="vat"]');
+
+                            for (let vat in calculations.calculations.vatArray) {
+                                new Element('option', {
+                                    html : vat + '%',
+                                    value: vat
+                                }).inject(VatSelect);
+                            }
+
+                            const Form = Content.getElement('form');
+
+                            Form.elements.price.value = factor.nettoSum;
+                            Form.elements.title.value = factor.title;
+                            Form.elements.vat.value = factor.vat;
+                            Form.elements.priority.value = factor.priority;
+
+                            Win.Loader.hide();
+                        });
+                    },
+
+                    onSubmit: (Win) => {
+                        const Form = Win.getContent().getElement('form');
+                        const price = Form.elements.price.value;
+                        const currency = ArticleList.getAttribute('currency');
+
+                        if (!price || price === '') {
+                            return;
+                        }
+
+                        Win.Loader.show();
+
+                        this.getPriceFactorData(
+                            price,
+                            Form.elements.vat.value,
+                            currency
+                        ).then((data) => {
+                            let priority = Form.elements.priority.value;
+
+                            if (priority === '') {
+                                priority = 1;
+                            }
+
+                            ArticleList.editPriceFactor(index, {
+                                calculation      : 2,
+                                calculation_basis: 2,
+                                description      : Form.elements.title.value,
+                                identifier       : "",
+                                index            : priority - 1,
+                                nettoSum         : data.nettoSum,
+                                nettoSumFormatted: data.nettoSumFormatted,
+                                sum              : data.sum,
+                                sumFormatted     : data.sumFormatted,
+                                title            : Form.elements.title.value,
+                                value            : data.sum,
+                                valueText        : data.valueText,
+                                vat              : Form.elements.vat.value,
+                                visible          : 1
+                            });
+                            
                             Win.close();
                             this.refresh();
                         });

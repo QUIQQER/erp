@@ -530,6 +530,36 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             this.$priceFactors.splice(prio, 0, priceFactor);
         },
 
+
+        /**
+         * edit a price factor
+         *
+         * {
+         *      calculation      : 2,
+         *      calculation_basis: 2,
+         *      description      : Form.elements.title.value,
+         *      identifier       : "",
+         *      index            : priority,
+         *      nettoSum         : data.nettoSum,
+         *      nettoSumFormatted: data.nettoSumFormatted,
+         *      sum              : data.sum,
+         *      sumFormatted     : data.sumFormatted,
+         *      title            : Form.elements.title.value,
+         *      value            : data.sum,
+         *      valueText        : data.sumFormatted,
+         *      vat              : Form.elements.vat.value,
+         *      visible          : 1
+         * }
+         *
+         * @param index
+         * @param priceFactor
+         */
+        editPriceFactor: function (index, priceFactor) {
+            for (let k in priceFactor) {
+                this.$priceFactors[index][k] = priceFactor[k];
+            }
+        },
+
         /**
          * Return the articles count
          *
