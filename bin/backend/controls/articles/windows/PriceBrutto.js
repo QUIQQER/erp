@@ -16,7 +16,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceBrutto', 
 ], function (QUI, QUIConfirm, QUILocale, QUIAjax, Mustache, template) {
     "use strict";
 
-    var lg = 'quiqqer/erp';
+    const lg = 'quiqqer/erp';
 
     return new Class({
 
@@ -60,8 +60,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceBrutto', 
          * @return {Element}
          */
         $onOpen: function () {
-            var self    = this,
-                Content = this.getContent();
+            const self    = this,
+                  Content = this.getContent();
 
             Content.set('html', Mustache.render(template, {
                 title      : QUILocale.get(lg, 'control.window.price.brutto.label'),
@@ -87,12 +87,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceBrutto', 
          * submit the window
          */
         submit: function () {
-            var self = this;
+            const self = this;
 
             this.Loader.show();
 
             QUIAjax.get('package_quiqqer_erp_ajax_calcNettoPrice', function (price) {
-                self.fireEvent('submit', [self, price]);
+                self.fireEvent('submit', [
+                    self,
+                    price
+                ]);
                 self.close();
             }, {
                 'package': 'quiqqer/erp',

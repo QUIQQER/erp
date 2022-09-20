@@ -26,7 +26,7 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
 ], function (QUI, QUIControl, QUIButton, Countries, Users, QUILocale, Mustache, template) {
     "use strict";
 
-    var lg = 'quiqqer/erp';
+    const lg = 'quiqqer/erp';
 
     return new Class({
 
@@ -47,19 +47,19 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
             this.parent(options);
 
             this.$Addresses = null;
-            this.$Company   = null;
-            this.$Street    = null;
-            this.$ZIP       = null;
-            this.$City      = null;
-            this.$Country   = null;
+            this.$Company = null;
+            this.$Street = null;
+            this.$ZIP = null;
+            this.$City = null;
+            this.$Country = null;
 
             this.$Salutation = null;
-            this.$Firstname  = null;
-            this.$Lastname   = null;
+            this.$Firstname = null;
+            this.$Lastname = null;
 
-            this.checked           = false;
-            this.$loaded           = false;
-            this.$userId           = this.getAttribute('userId');
+            this.checked = false;
+            this.$loaded = false;
+            this.$userId = this.getAttribute('userId');
             this.$AddressSelectBtn = null;
 
             this.addEvents({
@@ -73,8 +73,8 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
          * event: on import
          */
         $onImport: function () {
-            var self = this,
-                Elm  = this.getElm();
+            const self = this,
+                  Elm  = this.getElm();
 
             Elm.set('html', Mustache.render(template, {
                 labelDifferentDeliveryAddress: QUILocale.get(lg, 'control.DeliveryAddress.tpl.labelDifferentDeliveryAddress'),
@@ -108,26 +108,26 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
 
             // address stuff
             this.$addressId = false;
-            this.$Company   = Elm.getElement('[name="delivery-company"]');
-            this.$Street    = Elm.getElement('[name="delivery-street_no"]');
-            this.$ZIP       = Elm.getElement('[name="delivery-zip"]');
-            this.$City      = Elm.getElement('[name="delivery-city"]');
-            this.$Country   = Elm.getElement('[name="delivery-country"]');
+            this.$Company = Elm.getElement('[name="delivery-company"]');
+            this.$Street = Elm.getElement('[name="delivery-street_no"]');
+            this.$ZIP = Elm.getElement('[name="delivery-zip"]');
+            this.$City = Elm.getElement('[name="delivery-city"]');
+            this.$Country = Elm.getElement('[name="delivery-country"]');
 
             this.$Salutation = Elm.getElement('[name="delivery-salutation"]');
-            this.$Firstname  = Elm.getElement('[name="delivery-firstname"]');
-            this.$Lastname   = Elm.getElement('[name="delivery-lastname"]');
+            this.$Firstname = Elm.getElement('[name="delivery-firstname"]');
+            this.$Lastname = Elm.getElement('[name="delivery-lastname"]');
 
             this.$Company.disabled = false;
-            this.$Street.disabled  = false;
-            this.$ZIP.disabled     = false;
-            this.$City.disabled    = false;
+            this.$Street.disabled = false;
+            this.$ZIP.disabled = false;
+            this.$City.disabled = false;
 
             this.$Salutation.disabled = false;
-            this.$Firstname.disabled  = false;
-            this.$Lastname.disabled   = false;
+            this.$Firstname.disabled = false;
+            this.$Lastname.disabled = false;
 
-            var Panel = QUI.Controls.getById(
+            const Panel = QUI.Controls.getById(
                 this.getElm().getParent('.qui-panel').get('data-quiid')
             );
 
@@ -145,7 +145,7 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                     html : ''
                 }).inject(self.$Country);
 
-                for (var code in result) {
+                for (let code in result) {
                     if (!result.hasOwnProperty(code)) {
                         continue;
                     }
@@ -161,7 +161,7 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                 }
 
                 self.$Country.disabled = false;
-                self.$loaded           = true;
+                self.$loaded = true;
 
                 self.fireEvent('loaded', [self]);
             });
@@ -241,7 +241,7 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                 this.$userId = value.uid;
             }
 
-            var Address = {
+            const Address = {
                 company   : '',
                 street_no : '',
                 zip       : '',
@@ -269,7 +269,7 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                 return Promise.reject('No User-ID');
             }
 
-            var User = Users.get(this.$userId);
+            const User = Users.get(this.$userId);
 
             if (User.isLoaded()) {
                 return Promise.resolve(User);
@@ -285,13 +285,13 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
          */
         $displayAddressData: function (Address) {
             this.$Company.value = Address.company;
-            this.$Street.value  = Address.street_no;
-            this.$ZIP.value     = Address.zip;
-            this.$City.value    = Address.city;
+            this.$Street.value = Address.street_no;
+            this.$ZIP.value = Address.zip;
+            this.$City.value = Address.city;
 
             this.$Salutation.value = Address.salutation;
-            this.$Firstname.value  = Address.firstname;
-            this.$Lastname.value   = Address.lastname;
+            this.$Firstname.value = Address.firstname;
+            this.$Lastname.value = Address.lastname;
 
             this.$Country.value = Address.country;
             this.setAttribute('country', Address.country);
@@ -321,9 +321,9 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
          * @param {DocumentEvent} [event]
          */
         $checkBoxChange: function (event) {
-            var self      = this,
-                Checkbox  = this.getElm().getElement('[name="differentDeliveryAddress"]'),
-                closables = this.getElm().getElements('.closable');
+            const self      = this,
+                  Checkbox  = this.getElm().getElement('[name="differentDeliveryAddress"]'),
+                  closables = this.getElm().getElements('.closable');
 
             if (event) {
                 event.stop();
@@ -334,7 +334,7 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
             }
 
             if (!this.$userId) {
-                var Panel = QUI.Controls.getById(
+                const Panel = QUI.Controls.getById(
                     this.getElm().getParent('.qui-panel').get('data-quiid')
                 );
 
@@ -388,7 +388,7 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
          * Select customer address to pre-fill address fields
          */
         $onClickSelectAddress: function () {
-            var self = this;
+            const self = this;
 
             if (!this.$userId) {
                 return;
@@ -408,7 +408,7 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                             self.getUser().then(function (User) {
                                 return User.getAddressList();
                             }).then(function (addresses) {
-                                for (var i = 0, len = addresses.length; i < len; i++) {
+                                for (let i = 0, len = addresses.length; i < len; i++) {
                                     if (addresses[i].id === addressId) {
                                         self.$displayAddressData(addresses[i]);
                                         break;

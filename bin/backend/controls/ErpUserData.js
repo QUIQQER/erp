@@ -29,8 +29,8 @@ define('package/quiqqer/erp/bin/backend/controls/ErpUserData', [
          * @event: on import
          */
         $onImport: function () {
-            var self  = this;
-            var Panel = QUI.Controls.getById(
+            const self = this;
+            const Panel = QUI.Controls.getById(
                 self.getElm().getParent('.qui-panel').get('data-quiid')
             );
 

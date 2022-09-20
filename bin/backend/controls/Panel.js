@@ -78,7 +78,7 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
          * @param Parent
          */
         $appendItems: function (items, Parent) {
-            var i, len, item, text, Item;
+            let i, len, item, text, Item;
 
             for (i = 0, len = items.length; i < len; i++) {
                 item = items[i];
@@ -109,7 +109,7 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
          * @param Item
          */
         $itemClick: function (Item) {
-            var needle = Item.getAttribute('require');
+            const needle = Item.getAttribute('require');
 
             if (needle === false || needle === '') {
                 if (Item.isOpen() === false) {
@@ -120,13 +120,13 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
                 return;
             }
 
-            var icon = Item.getAttribute('icon');
+            const icon = Item.getAttribute('icon');
 
             Item.removeIcon(icon);
             Item.setAttribute('icon', 'fa fa-spinner fa-spin');
 
             require([needle], function (cls) {
-                var Instance;
+                let Instance;
 
                 Item.deselect();
 
@@ -143,7 +143,7 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
                 }
 
                 if (typeOf(cls) === 'function') {
-                    var Prom = cls();
+                    const Prom = cls();
 
                     if (!Prom) {
                         Item.removeIcon('fa-spinner');
@@ -155,8 +155,6 @@ define('package/quiqqer/erp/bin/backend/controls/Panel', [
                         Item.removeIcon('fa-spinner');
                         Item.setAttribute('icon', icon);
                     });
-
-                    return;
                 }
             });
         }

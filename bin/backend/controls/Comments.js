@@ -19,7 +19,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
 ], function (QUI, QUIControl, Mustache, QUILocale, template) {
     "use strict";
 
-    var lg = 'quiqqer/erp';
+    const lg = 'quiqqer/erp';
 
     return new Class({
 
@@ -37,7 +37,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
         initialize: function (options) {
             this.parent(options);
 
-            this.$filter   = false;
+            this.$filter = false;
             this.$comments = {};
 
             this.addEvents({
@@ -76,10 +76,10 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 return;
             }
 
-            var Formatter = this.$getFormatter();
+            const Formatter = this.$getFormatter();
 
             comments = comments.map(function (entry) {
-                var date = new Date(entry.time * 1000),
+                let date = new Date(entry.time * 1000),
                     type = 'fa fa-comment';
 
                 if (typeof entry.type !== 'undefined') {
@@ -123,15 +123,15 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
             });
 
             // grouping
-            var i, len, day, date, entry, title;
+            let i, len, day, date, entry, title;
 
-            var group        = {};
-            var DayFormatter = this.$getDayFormatter();
+            const group = {};
+            const DayFormatter = this.$getDayFormatter();
 
             for (i = 0, len = comments.length; i < len; i++) {
                 entry = comments[i];
-                date  = entry.date;
-                day   = DayFormatter.format(date);
+                date = entry.date;
+                day = DayFormatter.format(date);
 
                 if (typeof group[day] === 'undefined') {
                     group[day] = {
@@ -143,7 +143,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 title = '';
 
                 if (entry.source !== '') {
-                    var packageTitle = QUILocale.get(entry.source, 'package.title');
+                    let packageTitle = QUILocale.get(entry.source, 'package.title');
 
                     title = QUILocale.get(lg, 'comments.comment.title', {
                         source: packageTitle + ' (' + entry.source + ')'
@@ -170,20 +170,20 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
          * refresh the display
          */
         refresh: function () {
-            var i, data, realData, commentEntries;
-            var self     = this;
-            var comments = [];
+            let i, data, realData, commentEntries;
+            const self = this;
+            const comments = [];
 
-            var sortComments = function (a, b) {
+            const sortComments = function (a, b) {
                 return a.timestamp - b.timestamp;
             };
 
-            var commentClone = Object.clone(this.$comments);
+            const commentClone = Object.clone(this.$comments);
 
-            var filterComments = function (entry) {
-                var message = entry.message.toLowerCase();
-                var type    = entry.type.toLowerCase();
-                var id      = entry.id.toLowerCase();
+            const filterComments = function (entry) {
+                const message = entry.message.toLowerCase();
+                const type = entry.type.toLowerCase();
+                const id = entry.id.toLowerCase();
 
                 if (message.indexOf(self.$filter) === -1 &&
                     type.indexOf(self.$filter) === -1 &&
@@ -201,11 +201,11 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 }
 
                 commentEntries = commentClone[i];
-                data           = commentEntries.data;
+                data = commentEntries.data;
 
                 if (this.$filter) {
                     // check filter
-                    data     = [];
+                    data = [];
                     realData = commentEntries.data; // copy
 
                     realData.forEach(filterComments.bind(data));
@@ -229,18 +229,22 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
             });
 
             this.$Elm.getElements('[data-editable]').addEvent('click', function (event) {
-                var Parent = event.target;
+                let Parent = event.target;
 
                 if (!Parent.hasClass('quiqqer-erp-comments-comment')) {
                     Parent = Parent.getParent('.quiqqer-erp-comments-comment');
                 }
 
-                var data = {
+                const data = {
                     id    : Parent.get('data-id'),
                     source: Parent.get('data-source')
                 };
 
-                self.fireEvent('edit', [self, Parent, data]);
+                self.fireEvent('edit', [
+                    self,
+                    Parent,
+                    data
+                ]);
             });
         },
 
@@ -250,9 +254,9 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
          * @return {window.Intl.DateTimeFormat}
          */
         $getFormatter: function () {
-            var locale = QUILocale.getCurrent();
+            let locale = QUILocale.getCurrent();
 
-            var options = {
+            const options = {
                 // year  : 'numeric',
                 // month : '2-digit',
                 // day   : '2-digit',
@@ -280,9 +284,9 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
          * @return {window.Intl.DateTimeFormat}
          */
         $getDayFormatter: function () {
-            var locale = QUILocale.getCurrent();
+            let locale = QUILocale.getCurrent();
 
-            var options = {
+            const options = {
                 year : 'numeric',
                 month: '2-digit',
                 day  : '2-digit'

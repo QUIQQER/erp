@@ -422,7 +422,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * @param {String} msg
          */
         $addMessage: function (msg) {
-            var Now = new Date();
+            const Now = new Date();
 
             new Element('div', {
                 'class': 'quiqqer-erp-outputDialog-messages-entry box message-success',
