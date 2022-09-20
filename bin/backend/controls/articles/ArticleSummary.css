@@ -45,3 +45,16 @@
 .quiqqer-erp-backend-temporaryErp-summary-total-title {
     width: calc(100% - 800px);
 }
+
+.quiqqer-erp-backend-temporaryErp-priceFactors {
+    background: #fff;
+    border: 1px solid #DEDEDE;
+    bottom: 80px;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 12%), 0 2px 4px 0 rgb(0 0 0 / 8%);
+    display: none;
+    height: 90px;
+    position: absolute;
+    right: 10px;
+    width: 400px;
+    z-index: 1000;
+}

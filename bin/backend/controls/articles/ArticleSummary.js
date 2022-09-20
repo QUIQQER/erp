@@ -37,7 +37,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         Binds: [
             '$onInject',
             '$refreshArticleSelect',
-            'openSummary'
+            'openSummary',
+            'showPriceFactors',
+            'hidePriceFactors'
         ],
 
         initialize: function (options) {
@@ -45,6 +47,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
             this.$NettoSum = null;
             this.$BruttoSum = null;
+            this.$PriceFactors = null;
+            this.$PFFX = null;
 
             this.addEvents({
                 onInject: this.$onInject
@@ -69,10 +73,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                     labelGross    : QUILocale.get(lg, 'article.summary.tpl.labelGross'),
                     labelSums     : QUILocale.get(lg, 'article.summary.tpl.labelSums'),
                     labelVat      : QUILocale.get(lg, 'article.summary.tpl.labelVat'),
-                })
+                }),
+                events    : {
+                    mouseenter: this.showPriceFactors,
+                    mouseleave: this.hidePriceFactors
+                }
             });
 
             this.$Elm.addEvent('click', this.openSummary);
+            this.$PriceFactors = new Element('div.quiqqer-erp-backend-temporaryErp-priceFactors').inject(this.$Elm);
+            this.$PFFX = moofx(this.$PriceFactors);
 
             this.$NettoSum = this.$Elm.getElement(
                 '.quiqqer-erp-backend-temporaryErp-summary-total .netto-value'
@@ -235,7 +245,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             let calc = calculated.calculations;
 
             this.getCurrencyFormatter().then((Formatter) => {
-
                 if (this.getAttribute('showPosSummary')) {
                     if (!(ArticleInstance instanceof Article)) {
                         ArticleInstance = List.getSelectedArticle();
@@ -293,6 +302,43 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                     }
 
                     this.$VAT.set('html', vatText);
+                }
+            });
+        },
+
+        showPriceFactors: function () {
+            const ArticleList = this.getAttribute('List');
+
+            let priceFactors = ArticleList.getPriceFactors();
+            let html = '<ul>';
+
+            for (let i = 0, len = priceFactors.length; i < len; i++) {
+                html = html + '<li>' + priceFactors[i].title + ' (<b>' + priceFactors[i].valueText + '</b>)</li>';
+            }
+
+            html = html + '</ul>';
+
+            this.$PriceFactors.set('html', html);
+            this.$PriceFactors.setStyle('opacity', 0);
+            this.$PriceFactors.setStyle('display', 'block');
+            this.$PriceFactors.setStyle('bottom', 70);
+
+            this.$PFFX.animate({
+                bottom : 80,
+                opacity: 1
+            }, {
+                duration: 300
+            });
+        },
+
+        hidePriceFactors: function () {
+            this.$PFFX.animate({
+                bottom : 70,
+                opacity: 0
+            }, {
+                duration: 300,
+                callback: () => {
+                    this.$PriceFactors.setStyle('display', 'none');
                 }
             });
         }
