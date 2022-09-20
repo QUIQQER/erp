@@ -14,9 +14,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
     'Locale',
 
     'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.html',
+    'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.PriceFactors.html',
     'css!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.css'
 
-], function (QUI, QUIControl, Article, Currency, Mustache, QUILocale, template) {
+], function (QUI, QUIControl, Article, Currency, Mustache, QUILocale, template, templatePriceFactor) {
     "use strict";
 
     const lg = 'quiqqer/erp';
@@ -81,7 +82,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             });
 
             this.$Elm.addEvent('click', this.openSummary);
-            this.$PriceFactors = new Element('div.quiqqer-erp-backend-temporaryErp-priceFactors').inject(this.$Elm);
+            this.$PriceFactors = new Element('div', {
+                'class': 'quiqqer-erp-backend-temporaryErp-priceFactors'
+            }).inject(this.$Elm);
+
             this.$PFFX = moofx(this.$PriceFactors);
 
             this.$NettoSum = this.$Elm.getElement(
@@ -308,17 +312,25 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
         showPriceFactors: function () {
             const ArticleList = this.getAttribute('List');
-
             let priceFactors = ArticleList.getPriceFactors();
-            let html = '<ul>';
+            let calculated = ArticleList.getCalculation();
 
-            for (let i = 0, len = priceFactors.length; i < len; i++) {
-                html = html + '<li>' + priceFactors[i].title + ' (<b>' + priceFactors[i].valueText + '</b>)</li>';
-            }
+            const vat = Object.entries(calculated.calculations.vatArray).map((val) => {
+                return {
+                    text: val[1].text,
+                    sum : this.$Formatter.format(val[1].sum)
+                };
+            });
 
-            html = html + '</ul>';
+            this.$PriceFactors.set('html', Mustache.render(templatePriceFactor, {
+                valueSubSum : calculated.calculations.display_subSum,
+                valueSum    : calculated.calculations.display_sum,
+                vat         : vat,
+                textSubSum  : QUILocale.get(lg, 'article.list.articles.subtotal'),
+                textSum     : QUILocale.get(lg, 'article.list.articles.sumtotal'),
+                priceFactors: priceFactors
+            }));
 
-            this.$PriceFactors.set('html', html);
             this.$PriceFactors.setStyle('opacity', 0);
             this.$PriceFactors.setStyle('display', 'block');
             this.$PriceFactors.setStyle('bottom', 70);

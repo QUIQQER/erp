@@ -400,51 +400,53 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             const self = this;
 
             if (this.$isIncalculationFrame) {
-                self.fireEvent('calc', [
-                    self,
-                    self.$calculations
+                this.fireEvent('calc', [
+                    this,
+                    this.$calculations
                 ]);
 
-                return Promise.resolve(self.$calculations);
+                return Promise.resolve(this.$calculations);
             }
 
             if (this.$calculationRunning) {
-                return new Promise(function (resolve) {
-                    const trigger = function () {
-                        resolve(self.$calculations);
-                        self.removeEvent('onCalc', trigger);
+                return new Promise((resolve) => {
+                    const trigger = () => {
+                        resolve(this.$calculations);
+                        this.removeEvent('onCalc', trigger);
                     };
 
-                    self.addEvent('onCalc', trigger);
+                    this.addEvent('onCalc', trigger);
                 });
             }
 
             this.$calculationRunning = true;
 
-            return new Promise(function (resolve, reject) {
-                const articles = self.$getArticleDataForCalculation();
+            return new Promise((resolve, reject) => {
+                const articles = this.$getArticleDataForCalculation();
 
-                QUIAjax.get('package_quiqqer_erp_ajax_products_calc', function (result) {
-                    self.$calculations = result;
-                    self.$isIncalculationFrame = true;
-                    self.$calculationRunning = false;
+                QUIAjax.get('package_quiqqer_erp_ajax_products_calc', (result) => {
+                    this.$calculations = result;
+                    this.$isIncalculationFrame = true;
+                    this.$calculationRunning = false;
 
                     // performance double request -> quiqqer/invoice#104
-                    setTimeout(function () {
+                    setTimeout(() => {
                         self.$isIncalculationFrame = false;
                     }, 100);
 
-                    self.fireEvent('calc', [
-                        self,
+                    this.fireEvent('calc', [
+                        this,
                         result
                     ]);
+
                     resolve(result);
                 }, {
-                    'package': 'quiqqer/erp',
-                    articles : JSON.encode({articles: articles}),
-                    user     : JSON.encode(self.$user),
-                    currency : self.getAttribute('currency'),
-                    onError  : function (err) {
+                    'package'   : 'quiqqer/erp',
+                    articles    : JSON.encode({articles: articles}),
+                    priceFactors: JSON.encode(this.getPriceFactors()),
+                    user        : JSON.encode(this.$user),
+                    currency    : this.getAttribute('currency'),
+                    onError     : function (err) {
                         console.error(err);
                         reject();
                     }

@@ -1,0 +1,59 @@
+<table class="articles-sum">
+    <tbody>
+    <tr class="articles-sum-row-subsum">
+        <td class="articles-sum-row-firstCell">
+            <span class="articles-sum-row-subsum-text">
+                {{textSubSum}}
+            </span>
+        </td>
+        <td style="width: 140px" class="articles-sum-row-sndCell">
+            <span class="articles-sum-row-subsum-value">
+                {{valueSubSum}}
+            </span>
+        </td>
+    </tr>
+
+    {{#priceFactors}}
+    <tr>
+        <td class="articles-sum-row-firstCell">
+            <span class="articles-sum-row-firstCell-text">
+                {{title}}
+            </span>
+        </td>
+        <td class="articles-sum-row-sndCell">
+            <span class="articles-sum-row-firstCell-value">
+                {{valueText}}
+            </span>
+        </td>
+    </tr>
+    {{/priceFactors}}
+
+    {{#vat}}
+    <tr>
+        <td>
+            <span class="articles-sum-vat-text">
+                {{text}}
+            </span>
+        </td>
+        <td>
+            <span class="articles-sum-vat-value">
+                {{sum}}
+            </span>
+        </td>
+    </tr>
+    {{/vat}}
+
+    <tr class="articles-sum-row-sum">
+        <td class="articles-sum-row-firstCell">
+            <span class="articles-sum-row-sum-text">
+                {{textSum}}
+            </span>
+        </td>
+        <td class="articles-sum-row-sndCell">
+            <span class="articles-sum-row-sum-value">
+                {{valueSum}}
+            </span>
+        </td>
+    </tr>
+    </tbody>
+</table>

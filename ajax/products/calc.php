@@ -14,9 +14,10 @@ use QUI\ERP\Accounting\ArticleDiscount;
 
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_calc',
-    function ($articles, $user, $currency) {
-        $articles = json_decode($articles, true);
-        $user     = json_decode($user, true);
+    function ($articles, $priceFactors, $user, $currency) {
+        $articles     = json_decode($articles, true);
+        $user         = json_decode($user, true);
+        $priceFactors = json_decode($priceFactors, true);
 
         if (!is_array($articles)) {
             $articles = [];
@@ -36,6 +37,13 @@ QUI::$Ajax->registerFunction(
         $User = $Calc->getUser();
 
         $Articles = new QUI\ERP\Accounting\ArticleList($articles);
+
+        foreach ($priceFactors as $priceFactor) {
+            $Articles->addPriceFactor(
+                new QUI\ERP\Accounting\PriceFactors\Factor($priceFactor)
+            );
+        }
+
         $Articles->setUser($User);
         $Articles->calc($Calc);
 
@@ -113,6 +121,6 @@ QUI::$Ajax->registerFunction(
 
         return $result;
     },
-    ['articles', 'user', 'currency'],
+    ['articles', 'priceFactors', 'user', 'currency'],
     'Permission::checkAdminUser'
 );
