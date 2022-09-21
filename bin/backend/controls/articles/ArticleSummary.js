@@ -315,6 +315,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             let priceFactors = ArticleList.getPriceFactors();
             let calculated = ArticleList.getCalculation();
 
+            if (typeof calculated.calculations === 'undefined') {
+                calculated.calculations = {};
+            }
+
+            if (!calculated.calculations.vatArray ||
+                typeOf(calculated.calculations.vatArray) !== 'object') {
+                calculated.calculations.vatArray = {};
+            }
+
             const vat = Object.entries(calculated.calculations.vatArray).map((val) => {
                 return {
                     text: val[1].text,

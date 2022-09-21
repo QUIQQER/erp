@@ -99,6 +99,31 @@ class FactorList implements IteratorAggregate, Countable
         $this->list[] = $Factor;
     }
 
+    /**
+     * @param int $index
+     * @param QUI\ERP\Accounting\PriceFactors\Factor $Factor
+     * @return void
+     */
+    public function setFactor(int $index, QUI\ERP\Accounting\PriceFactors\Factor $Factor)
+    {
+        if (isset($this->list[$index])) {
+            $this->list[$index] = $Factor;
+        }
+    }
+
+    /**
+     * @param int $index
+     * @return \QUI\ERP\Accounting\PriceFactors\Factor|null
+     */
+    public function getFactor(int $index): ?Factor
+    {
+        if (isset($this->list[$index])) {
+            return $this->list[$index];
+        }
+
+        return null;
+    }
+
     //region iterator
 
     /**
