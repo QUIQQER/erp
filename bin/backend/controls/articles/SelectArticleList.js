@@ -17,8 +17,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/SelectArticleList', [
 ], function (ArticleList) {
     "use strict";
 
-    var lg = 'quiqqer/erp';
-
     return new Class({
 
         Extends: ArticleList,
@@ -55,7 +53,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/SelectArticleList', [
          * @return {[]}
          */
         getSelectedArticles: function () {
-            var articles = [];
+            let articles = [];
 
             this.$articles.forEach(function (Article) {
                 if (Article.isSelected()) {
@@ -73,7 +71,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/SelectArticleList', [
          */
         $onArticleSelect: function (Article) {
             this.$selectedArticle = Article;
-            this.fireEvent('articleSelect', [this, Article]);
+            this.fireEvent('articleSelect', [
+                this,
+                Article
+            ]);
             this.$calc();
         },
 
@@ -84,7 +85,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/SelectArticleList', [
          */
         $onArticleUnSelect: function (Article) {
             this.$selectedArticle = null;
-            this.fireEvent('articleUnSelect', [this, Article]);
+            this.fireEvent('articleUnSelect', [
+                this,
+                Article
+            ]);
             this.$calc();
         },
 
@@ -94,7 +98,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/SelectArticleList', [
          * @return {Array}
          */
         $getArticleDataForCalculation: function () {
-            var returnSelectedOnly = true;
+            let returnSelectedOnly = true;
 
             // Only return selected articles if all articles have been calculated once
             this.$articles.forEach(function (Article) {

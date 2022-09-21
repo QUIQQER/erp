@@ -14,9 +14,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
     'Locale',
 
     'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.html',
+    'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.PriceFactors.html',
     'css!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.css'
 
-], function (QUI, QUIControl, Article, Currency, Mustache, QUILocale, template) {
+], function (QUI, QUIControl, Article, Currency, Mustache, QUILocale, template, templatePriceFactor) {
     "use strict";
 
     const lg = 'quiqqer/erp';
@@ -37,7 +38,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         Binds: [
             '$onInject',
             '$refreshArticleSelect',
-            'openSummary'
+            'openSummary',
+            'showPriceFactors',
+            'hidePriceFactors'
         ],
 
         initialize: function (options) {
@@ -45,6 +48,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
             this.$NettoSum = null;
             this.$BruttoSum = null;
+            this.$PriceFactors = null;
+            this.$PFFX = null;
 
             this.addEvents({
                 onInject: this.$onInject
@@ -60,18 +65,28 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             const showPosSummary = this.getAttribute('showPosSummary');
 
             this.$Elm = new Element('div', {
-                'class': 'quiqqer-erp-backend-temporaryErp-summary',
-                html   : Mustache.render(template, {
+                'data-qui': 'package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary',
+                'class'   : 'quiqqer-erp-backend-temporaryErp-summary',
+                html      : Mustache.render(template, {
                     showPosSummary: showPosSummary,
                     labelPosInfo  : QUILocale.get(lg, 'article.summary.tpl.labelPosInfo'),
                     labelNet      : QUILocale.get(lg, 'article.summary.tpl.labelNet'),
                     labelGross    : QUILocale.get(lg, 'article.summary.tpl.labelGross'),
                     labelSums     : QUILocale.get(lg, 'article.summary.tpl.labelSums'),
                     labelVat      : QUILocale.get(lg, 'article.summary.tpl.labelVat'),
-                })
+                }),
+                events    : {
+                    mouseenter: this.showPriceFactors,
+                    mouseleave: this.hidePriceFactors
+                }
             });
 
             this.$Elm.addEvent('click', this.openSummary);
+            this.$PriceFactors = new Element('div', {
+                'class': 'quiqqer-erp-backend-temporaryErp-priceFactors'
+            }).inject(this.$Elm);
+
+            this.$PFFX = moofx(this.$PriceFactors);
 
             this.$NettoSum = this.$Elm.getElement(
                 '.quiqqer-erp-backend-temporaryErp-summary-total .netto-value'
@@ -147,6 +162,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             List.addEvent('onArticleSelect', this.$refreshArticleSelect);
         },
 
+        // region summary
+
         /**
          * Open the summary with price factors
          */
@@ -155,23 +172,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 return;
             }
 
-            const self = this;
-
-            require(['qui/controls/windows/Popup'], function (Popup) {
-                new Popup({
-                    title    : QUILocale.get('quiqqer/erp', 'article.summary.window.title'),
-                    buttons  : false,
-                    maxHeight: 600,
-                    maxWidth : 600,
-                    events   : {
-                        onCreate: function (Win) {
-                            Win.Loader.show();
-
-                            self.$refreshSummaryContent(Win).then(function () {
-                                Win.Loader.hide();
-                            });
-                        }
-                    }
+            require([
+                'package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors'
+            ], (PriceFactorWindow) => {
+                new PriceFactorWindow({
+                    ArticleList: this.getAttribute('List')
                 }).open();
             });
         },
@@ -226,6 +231,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             });
         },
 
+        //endregion
+
         /**
          * event: onArticleSelect
          *
@@ -242,7 +249,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             let calc = calculated.calculations;
 
             this.getCurrencyFormatter().then((Formatter) => {
-
                 if (this.getAttribute('showPosSummary')) {
                     if (!(ArticleInstance instanceof Article)) {
                         ArticleInstance = List.getSelectedArticle();
@@ -300,6 +306,60 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                     }
 
                     this.$VAT.set('html', vatText);
+                }
+            });
+        },
+
+        showPriceFactors: function () {
+            const ArticleList = this.getAttribute('List');
+            let priceFactors = ArticleList.getPriceFactors();
+            let calculated = ArticleList.getCalculation();
+
+            if (typeof calculated.calculations === 'undefined') {
+                calculated.calculations = {};
+            }
+
+            if (!calculated.calculations.vatArray ||
+                typeOf(calculated.calculations.vatArray) !== 'object') {
+                calculated.calculations.vatArray = {};
+            }
+
+            const vat = Object.entries(calculated.calculations.vatArray).map((val) => {
+                return {
+                    text: val[1].text,
+                    sum : this.$Formatter.format(val[1].sum)
+                };
+            });
+
+            this.$PriceFactors.set('html', Mustache.render(templatePriceFactor, {
+                valueSubSum : calculated.calculations.display_subSum,
+                valueSum    : calculated.calculations.display_sum,
+                vat         : vat,
+                textSubSum  : QUILocale.get(lg, 'article.list.articles.subtotal'),
+                textSum     : QUILocale.get(lg, 'article.list.articles.sumtotal'),
+                priceFactors: priceFactors
+            }));
+
+            this.$PriceFactors.setStyle('opacity', 0);
+            this.$PriceFactors.setStyle('display', 'block');
+            this.$PriceFactors.setStyle('bottom', 70);
+
+            this.$PFFX.animate({
+                bottom : 80,
+                opacity: 1
+            }, {
+                duration: 300
+            });
+        },
+
+        hidePriceFactors: function () {
+            this.$PFFX.animate({
+                bottom : 70,
+                opacity: 0
+            }, {
+                duration: 300,
+                callback: () => {
+                    this.$PriceFactors.setStyle('display', 'none');
                 }
             });
         }

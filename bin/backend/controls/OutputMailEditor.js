@@ -23,7 +23,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
 ], function (QUI, QUIConfirm, QUIButton, Permissions, QUIAjax, QUILocale, Mustache, template) {
     "use strict";
 
-    var lg = 'quiqqer/erp';
+    const lg = 'quiqqer/erp';
 
     return new Class({
 
@@ -60,17 +60,17 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
                 }
             });
 
-            this.$Output      = null;
-            this.$Preview     = null;
+            this.$Output = null;
+            this.$Preview = null;
             this.$cutomerMail = null;
-            this.$Template    = null;
+            this.$Template = null;
 
             this.$subject = null;
             this.$content = null;
 
-            this.$MailSubjectInput  = null;
+            this.$MailSubjectInput = null;
             this.$MailContentEditor = null;
-            this.$Attachments       = null;
+            this.$Attachments = null;
 
             this.addEvents({
                 onOpen  : this.$onOpen,
@@ -82,8 +82,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
          * event: on open
          */
         $onOpen: function () {
-            var self    = this,
-                Content = this.getContent();
+            const self    = this,
+                  Content = this.getContent();
 
             this.Loader.show();
 
@@ -101,11 +101,11 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
             Content.addClass('quiqqer-erp-OutputMailEditor');
 
             this.$MailSubjectInput = Content.getElement('.quiqqer-erp-outputMailEditor-mailEditor-subject');
-            this.$subject          = this.getAttribute('mailSubject');
-            this.$content          = this.getAttribute('mailContent');
+            this.$subject = this.getAttribute('mailSubject');
+            this.$content = this.getAttribute('mailContent');
 
             // Add attachments btn
-            var AttachmentBtn = new QUIButton({
+            const AttachmentBtn = new QUIButton({
                 text     : QUILocale.get(lg, 'controls.OutputMailEditor.btn.attachments'),
                 title    : QUILocale.get(lg, 'controls.OutputMailEditor.btn.attachments'),
                 textimage: 'fa fa-paperclip',
@@ -115,7 +115,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
                 },
                 events   : {
                     onClick: function (Btn) {
-                        var AttachmentBox = Content.getElement('.quiqqer-erp-outputMailEditor-attachments');
+                        const AttachmentBox = Content.getElement('.quiqqer-erp-outputMailEditor-attachments');
                         AttachmentBox.setStyle('display', 'block');
 
                         self.setAttribute('maxWidth', 1200);
@@ -131,7 +131,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
                 this.$getMailData(),
                 Permissions.hasPermission('quiqqer.erp.mail_editor_attach_files')
             ]).then(function (result) {
-                var MailData = result[1];
+                const MailData = result[1];
 
                 self.$Attachments = QUI.Controls.getById(
                     Content.getElement('input[name="attachments"]').get('data-quiid')
@@ -140,7 +140,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
                 self.$Attachments.getElm().setStyle('height', 610);
 
                 // Check if user has permission to attach files
-                var hasAttachmentPermission = result[2];
+                const hasAttachmentPermission = result[2];
 
                 if (hasAttachmentPermission) {
                     AttachmentBtn.enable();
@@ -150,9 +150,9 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
                     );
                 }
 
-                var mediaFilesAdded = false;
+                let mediaFilesAdded = false;
 
-                var addMediaFiles = function () {
+                const addMediaFiles = function () {
                     if (mediaFilesAdded) {
                         return;
                     }
@@ -161,10 +161,10 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
 
                     // Add previously selected media items
                     if (self.getAttribute('attachedMediaFileIds') && hasAttachmentPermission) {
-                        var mediaIds = self.getAttribute('attachedMediaFileIds');
+                        const mediaIds = self.getAttribute('attachedMediaFileIds');
 
                         if (mediaIds.length) {
-                            for (var i = 0, len = mediaIds.length; i < len; i++) {
+                            for (let i = 0, len = mediaIds.length; i < len; i++) {
                                 self.$Attachments.addItem(mediaIds[i]);
                             }
 
@@ -210,15 +210,15 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
          * Event: onSubmit
          */
         $onSubmit: function () {
-            var mediaIds = [];
+            let mediaIds = [];
 
             if (this.$Attachments.getValue()) {
                 mediaIds = this.$Attachments.getValue().split(',');
             }
 
-            var uniqueMediaIds = [];
+            const uniqueMediaIds = [];
 
-            for (var i = 0, len = mediaIds.length; i < len; i++) {
+            for (let i = 0, len = mediaIds.length; i < len; i++) {
                 if (!uniqueMediaIds.contains(mediaIds[i])) {
                     uniqueMediaIds.push(mediaIds[i]);
                 }
@@ -242,7 +242,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
          * @return {Promise}
          */
         $getMailData: function () {
-            var self = this;
+            const self = this;
 
             return new Promise(function (resolve, reject) {
                 QUIAjax.get('package_quiqqer_erp_ajax_output_getMailData', resolve, {

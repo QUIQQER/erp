@@ -14,7 +14,6 @@ use QUI\ERP\Accounting\Invoice\Invoice;
 use QUI\ERP\Accounting\Invoice\InvoiceTemporary;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
-use QUI\ERP\Currency\Handler as CurrencyHandler;
 
 use function array_map;
 use function array_sum;
@@ -72,7 +71,7 @@ class Calc
     /**
      * Basis brutto
      * include all price factors (from netto calculated price)
-     * warning: its not brutto VAT
+     * warning: it's not brutto VAT
      *
      * geht vnn der netto basis aus, welche alle price faktoren schon beinhaltet
      * alle felder sind in diesem price schon enthalten

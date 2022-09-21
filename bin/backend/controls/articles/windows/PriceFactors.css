@@ -1,0 +1,13 @@
+.quiqqer-erp-priceFactors .pricefactor-index {
+    font-weight: bold;
+    font-size: 10px;
+    margin-right: 5px;
+}
+
+.quiqqer-erp-priceFactors-factor button {
+    border-color: rgba(147, 128, 108, 0.25);
+    border-style: solid;
+    border-width: 1px 1px 1px 0;
+    border-radius: 0;
+    box-shadow: none;
+}

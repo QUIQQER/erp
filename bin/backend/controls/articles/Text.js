@@ -19,7 +19,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
 ], function (Article, QUIButton, QUILocale, Mustache, template) {
     "use strict";
 
-    var lg = 'quiqqer/erp';
+    const lg = 'quiqqer/erp';
 
     return new Class({
 
@@ -57,8 +57,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
             });
 
             this.$Position = this.$Elm.getElement('.quiqqer-erp-backend-erpArticleText-pos');
-            this.$Text     = this.$Elm.getElement('.quiqqer-erp-backend-erpArticleText-text');
-            this.$Buttons  = this.$Elm.getElement('.quiqqer-erp-backend-erpArticleText-buttons');
+            this.$Text = this.$Elm.getElement('.quiqqer-erp-backend-erpArticleText-text');
+            this.$Buttons = this.$Elm.getElement('.quiqqer-erp-backend-erpArticleText-buttons');
 
             this.$Loader = new Element('div', {
                 html  : '<span class="fa fa-spinner fa-spin"></span>',

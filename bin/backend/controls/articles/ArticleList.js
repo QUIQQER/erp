@@ -185,6 +185,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         },
 
         /**
+         * Return the articles count
+         *
+         * @returns {number}
+         */
+        count: function () {
+            return this.$articles.length;
+        },
+
+        /**
          * Unserialize the list
          *
          * load the serialized list into
@@ -391,51 +400,53 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             const self = this;
 
             if (this.$isIncalculationFrame) {
-                self.fireEvent('calc', [
-                    self,
-                    self.$calculations
+                this.fireEvent('calc', [
+                    this,
+                    this.$calculations
                 ]);
 
-                return Promise.resolve(self.$calculations);
+                return Promise.resolve(this.$calculations);
             }
 
             if (this.$calculationRunning) {
-                return new Promise(function (resolve) {
-                    const trigger = function () {
-                        resolve(self.$calculations);
-                        self.removeEvent('onCalc', trigger);
+                return new Promise((resolve) => {
+                    const trigger = () => {
+                        resolve(this.$calculations);
+                        this.removeEvent('onCalc', trigger);
                     };
 
-                    self.addEvent('onCalc', trigger);
+                    this.addEvent('onCalc', trigger);
                 });
             }
 
             this.$calculationRunning = true;
 
-            return new Promise(function (resolve, reject) {
-                const articles = self.$getArticleDataForCalculation();
+            return new Promise((resolve, reject) => {
+                const articles = this.$getArticleDataForCalculation();
 
-                QUIAjax.get('package_quiqqer_erp_ajax_products_calc', function (result) {
-                    self.$calculations = result;
-                    self.$isIncalculationFrame = true;
-                    self.$calculationRunning = false;
+                QUIAjax.get('package_quiqqer_erp_ajax_products_calc', (result) => {
+                    this.$calculations = result;
+                    this.$isIncalculationFrame = true;
+                    this.$calculationRunning = false;
 
                     // performance double request -> quiqqer/invoice#104
-                    setTimeout(function () {
+                    setTimeout(() => {
                         self.$isIncalculationFrame = false;
                     }, 100);
 
-                    self.fireEvent('calc', [
-                        self,
+                    this.fireEvent('calc', [
+                        this,
                         result
                     ]);
+
                     resolve(result);
                 }, {
-                    'package': 'quiqqer/erp',
-                    articles : JSON.encode({articles: articles}),
-                    user     : JSON.encode(self.$user),
-                    currency : self.getAttribute('currency'),
-                    onError  : function (err) {
+                    'package'   : 'quiqqer/erp',
+                    articles    : JSON.encode({articles: articles}),
+                    priceFactors: JSON.encode(this.getPriceFactors()),
+                    user        : JSON.encode(this.$user),
+                    currency    : this.getAttribute('currency'),
+                    onError     : function (err) {
                         console.error(err);
                         reject();
                     }
@@ -487,6 +498,77 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }
 
             this.$priceFactors = newList;
+        },
+
+        /**
+         * add a price factor
+         *
+         * {
+         *      calculation      : 2,
+         *      calculation_basis: 2,
+         *      description      : Form.elements.title.value,
+         *      identifier       : "",
+         *      index            : priority,
+         *      nettoSum         : data.nettoSum,
+         *      nettoSumFormatted: data.nettoSumFormatted,
+         *      sum              : data.sum,
+         *      sumFormatted     : data.sumFormatted,
+         *      title            : Form.elements.title.value,
+         *      value            : data.sum,
+         *      valueText        : data.sumFormatted,
+         *      vat              : Form.elements.vat.value,
+         *      visible          : 1
+         * }
+         * @param priceFactor
+         */
+        addPriceFactor: function (priceFactor) {
+            const prio = priceFactor.index;
+
+            if (prio === this.$priceFactors.length) {
+                this.$priceFactors.push(priceFactor);
+                return;
+            }
+
+            this.$priceFactors.splice(prio, 0, priceFactor);
+        },
+
+
+        /**
+         * edit a price factor
+         *
+         * {
+         *      calculation      : 2,
+         *      calculation_basis: 2,
+         *      description      : Form.elements.title.value,
+         *      identifier       : "",
+         *      index            : priority,
+         *      nettoSum         : data.nettoSum,
+         *      nettoSumFormatted: data.nettoSumFormatted,
+         *      sum              : data.sum,
+         *      sumFormatted     : data.sumFormatted,
+         *      title            : Form.elements.title.value,
+         *      value            : data.sum,
+         *      valueText        : data.sumFormatted,
+         *      vat              : Form.elements.vat.value,
+         *      visible          : 1
+         * }
+         *
+         * @param index
+         * @param priceFactor
+         */
+        editPriceFactor: function (index, priceFactor) {
+            for (let k in priceFactor) {
+                this.$priceFactors[index][k] = priceFactor[k];
+            }
+        },
+
+        /**
+         * Return the articles count
+         *
+         * @returns {number}
+         */
+        countPriceFactors: function () {
+            return this.$priceFactors.length;
         },
 
         /**

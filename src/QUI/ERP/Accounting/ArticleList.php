@@ -11,6 +11,8 @@ use QUI;
 
 use function count;
 use function is_null;
+use function key;
+use function round;
 
 /**
  * Class ArticleList
@@ -475,6 +477,42 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     public function importPriceFactors(QUI\ERP\Accounting\PriceFactors\FactorList $PriceFactors)
     {
         $this->PriceFactors = $PriceFactors;
+    }
+
+    /**
+     * @param \QUI\ERP\Accounting\PriceFactors\Factor|QUI\ERP\Products\Utils\PriceFactor $PriceFactor
+     * @return void
+     *
+     * @throws \QUI\ERP\Exception
+     */
+    public function addPriceFactor($PriceFactor)
+    {
+        if ($PriceFactor instanceof QUI\ERP\Products\Utils\PriceFactor) {
+            $isNetto   = $this->isNetto;
+            $vat       = 0;
+            $netto     = $PriceFactor->getNettoSum();
+            $precision = $this->getCurrency()->getPrecision();
+
+            if (count($this->vatArray)) {
+                $vat = key($this->vatArray);
+            }
+
+            $PriceFactor->setVat($vat);
+
+            $brutto = $netto * ((100 + $vat) / 100);
+            $brutto = round($brutto, $precision);
+
+            if ($isNetto) {
+                $PriceFactor->setSum($netto);
+            } else {
+                $PriceFactor->setSum($brutto);
+            }
+
+            $PriceFactor = new QUI\ERP\Accounting\PriceFactors\Factor($PriceFactor->toArray());
+        }
+
+        $this->PriceFactors->addFactor($PriceFactor);
+        $this->recalculate();
     }
 
     //endregion

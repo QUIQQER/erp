@@ -44,7 +44,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 ], function (QUI, QUIControl, QUIButton, QUIConfirm, QUIElements, DiscountUtils, MoneyUtils, Currency, Mustache, QUILocale, QUIAjax, Editors, template) {
     "use strict";
 
-    var lg = 'quiqqer/erp';
+    const lg = 'quiqqer/erp';
 
     return new Class({
 

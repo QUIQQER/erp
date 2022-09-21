@@ -45,3 +45,58 @@
 .quiqqer-erp-backend-temporaryErp-summary-total-title {
     width: calc(100% - 800px);
 }
+
+.quiqqer-erp-backend-temporaryErp-priceFactors {
+    background: #fff;
+    border: 1px solid #DEDEDE;
+    bottom: 80px;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 12%), 0 2px 4px 0 rgb(0 0 0 / 8%);
+    display: none;
+    padding: 10px;
+    position: absolute;
+    right: 10px;
+    width: 300px;
+    z-index: 1000;
+}
+
+.quiqqer-erp-backend-temporaryErp-priceFactors table {
+    width: 100%;
+}
+
+
+.quiqqer-erp-backend-temporaryErp-priceFactors .articles-sum-container {
+    display: inline-block;
+    width: 100%;
+}
+
+.quiqqer-erp-backend-temporaryErp-priceFactors .articles-sum-container,
+.quiqqer-erp-backend-temporaryErp-priceFactors .articles-sum td,
+.quiqqer-erp-backend-temporaryErp-priceFactors .articles-sum span {
+    page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.quiqqer-erp-backend-temporaryErp-priceFactors .articles-sum-row-subsum-text {
+    border-bottom: 1px solid #999999;
+}
+
+.quiqqer-erp-backend-temporaryErp-priceFactors .articles-sum-row-subsum-value {
+    border-bottom: 1px solid #999999;
+}
+
+.quiqqer-erp-backend-temporaryErp-priceFactors .articles-sum-row-sum {
+    font-weight: bold;
+}
+
+.quiqqer-erp-backend-temporaryErp-priceFactors .articles-sum-row-sum-text {
+    border-bottom: 3px double #999999;
+}
+
+.quiqqer-erp-backend-temporaryErp-priceFactors .articles-sum-row-sum-value {
+    border-bottom: 3px double #999999;
+}
+
+.quiqqer-erp-backend-temporaryErp-priceFactors .articles-sum td + td {
+    text-align: right;
+}
