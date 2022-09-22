@@ -475,6 +475,30 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         },
 
         /**
+         * Return the first / main vat of the list
+         *
+         * @returns {number}
+         */
+        getVat: function () {
+            const calculations = this.getCalculation();
+            const articles = calculations.articles;
+            const calc = calculations.calculations;
+
+            let vat = 0;
+
+            if (typeof calc !== 'undefined' && typeof calc.vatArray === 'object') {
+                let vats = Object.keys(calc.vatArray);
+                return parseFloat(vats[0]);
+            }
+
+            if (typeof articles !== 'undefined' && typeof articles.length === 'number' && articles.length) {
+                return articles[0].vat;
+            }
+
+            return vat;
+        },
+
+        /**
          * Return price factors
          *
          * @return {[]}
