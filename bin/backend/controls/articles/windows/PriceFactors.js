@@ -16,14 +16,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
     "text!package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors.Add.html",
     "css!package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors.css"
 
-], function (QUI, QUIWindow, QUIConfirm, Currency, QUIAjax, QUILocale, Mustache, template, templateAdd) {
+], function (QUI, QUIPopup, QUIConfirm, Currency, QUIAjax, QUILocale, Mustache, template, templateAdd) {
     "use strict";
 
     const lg = 'quiqqer/erp';
 
     return new Class({
 
-        Extends: QUIWindow,
+        Extends: QUIPopup,
         Type   : 'package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
 
         Binds: [
@@ -36,10 +36,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
 
         initialize: function (option) {
             this.setAttributes({
-                title    : QUILocale.get(lg, 'pricefactors.summary.window.title'),
-                buttons  : false,
-                maxHeight: 600,
-                maxWidth : 600,
+                title      : QUILocale.get(lg, 'pricefactors.summary.window.title'),
+                buttons    : true,
+                closeButton: false,
+                maxHeight  : 600,
+                maxWidth   : 600,
             });
 
             this.parent(option);
@@ -53,6 +54,18 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
 
         $onOpen: function () {
             this.refresh();
+
+            this.addButton(
+                new Element('button', {
+                    'class': 'qui-button',
+                    html   : QUILocale.get('quiqqer/quiqqer', 'close'),
+                    events : {
+                        click: () => {
+                            this.close();
+                        }
+                    }
+                })
+            );
         },
 
         /**
@@ -371,7 +384,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
                                 vat              : Form.elements.vat.value,
                                 visible          : 1
                             });
-                            
+
                             Win.close();
                             this.refresh();
                         });
