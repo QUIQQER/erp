@@ -497,6 +497,10 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
                 $vat = key($this->vatArray);
             }
 
+            if ($PriceFactor->getVat()) {
+                $vat = $PriceFactor->getVat();
+            }
+
             $PriceFactor->setVat($vat);
 
             $brutto = $netto * ((100 + $vat) / 100);

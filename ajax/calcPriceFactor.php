@@ -16,7 +16,15 @@ QUI::$Ajax->registerFunction(
     function ($price, $vat, $currency) {
         $Currency = CurrencyHandler::getCurrency($currency);
         $price    = Price::validatePrice($price);
-        
+
+        if (empty($vat)) {
+            $Area     = QUI\ERP\Defaults::getArea();
+            $TaxType  = QUI\ERP\Tax\Utils::getTaxTypeByArea($Area);
+            $TaxEntry = QUI\ERP\Tax\Utils::getTaxEntry($TaxType, $Area);
+
+            $vat = $TaxEntry->getValue();
+        }
+
         $nettoSum          = $price;
         $nettoSumFormatted = $Currency->format($price);
         $sum               = $price * (($vat + 100) / 100);
