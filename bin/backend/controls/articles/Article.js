@@ -223,8 +223,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.$VAT = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-vat');
             this.$Discount = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-discount');
             this.$Total = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-total');
-            //this.$Buttons = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-buttons');
-
+            
             this.$ButtonReplace = this.$Elm.getElement('button[name="replace"]');
             this.$ButtonDelete = this.$Elm.getElement('button[name="delete"]');
 
