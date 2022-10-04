@@ -272,7 +272,7 @@ class Calc
             }
 
             if ($PriceFactor->getCalculation() === self::CALCULATION_COMPLEMENT) {
-                // Standard calculation
+                // Standard calculation - Fester Preis
                 $vatSum = $PriceFactor->getVatSum();
 
                 if ($isNetto) {
@@ -283,6 +283,10 @@ class Calc
                 } else {
                     $PriceFactor->setSum($vatSum + $PriceFactor->getNettoSum());
                 }
+                
+                // formatted
+                $PriceFactor->setNettoSumFormatted($Currency->format($PriceFactor->getNettoSum()));
+                $PriceFactor->setSumFormatted($Currency->format($PriceFactor->getSum()));
             } elseif ($PriceFactor->getCalculation() === self::CALCULATION_PERCENTAGE) {
                 // percent - Prozent Angabe
                 $calcBasis        = $PriceFactor->getCalculationBasis();
@@ -336,6 +340,8 @@ class Calc
                 // formatted
                 $PriceFactor->setNettoSumFormatted($Currency->format($PriceFactor->getNettoSum()));
                 $PriceFactor->setSumFormatted($Currency->format($PriceFactor->getSum()));
+            } else {
+                continue;
             }
 
             $nettoSum       = $nettoSum + $PriceFactor->getNettoSum();

@@ -196,7 +196,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         /**
          * Unserialize the list
          *
-         * load the serialized list into
+         * load the serialized list into this list
          * current articles would be deleted
          *
          * @param {Object|String} list
@@ -219,6 +219,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 this.$priceFactors = data.priceFactors;
             }
 
+            if ("calculations" in data) {
+                this.$calculations.calculations = data.calculations;
+            }
+
             if (!("articles" in data)) {
                 return Promise.resolve();
             }
@@ -233,7 +237,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 return 'package/quiqqer/erp/bin/backend/controls/articles/Article';
             }).unique();
 
-            require(controls, function () {
+            require(controls, () => {
                 let i, len, article, index;
 
                 for (i = 0, len = data.articles.length; i < len; i++) {
@@ -251,6 +255,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                         console.log(e);
                     }
                 }
+
+                this.fireEvent('calc', [
+                    this,
+                    this.$calculations
+                ]);
             });
         },
 

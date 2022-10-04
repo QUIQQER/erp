@@ -160,6 +160,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
             List.addEvent('onCalc', this.$refreshArticleSelect);
             List.addEvent('onArticleSelect', this.$refreshArticleSelect);
+            this.$refreshArticleSelect(this.getAttribute('List'));
         },
 
         // region summary
@@ -247,7 +248,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             }
 
             let calc = calculated.calculations;
-
+            
             this.getCurrencyFormatter().then((Formatter) => {
                 if (this.getAttribute('showPosSummary')) {
                     if (!(ArticleInstance instanceof Article)) {
@@ -324,31 +325,33 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 calculated.calculations.vatArray = {};
             }
 
-            const vat = Object.entries(calculated.calculations.vatArray).map((val) => {
-                return {
-                    text: val[1].text,
-                    sum : this.$Formatter.format(val[1].sum)
-                };
-            });
+            this.getCurrencyFormatter().then(() => {
+                const vat = Object.entries(calculated.calculations.vatArray).map((val) => {
+                    return {
+                        text: val[1].text,
+                        sum : this.$Formatter.format(val[1].sum)
+                    };
+                });
 
-            this.$PriceFactors.set('html', Mustache.render(templatePriceFactor, {
-                valueSubSum : calculated.calculations.display_subSum,
-                valueSum    : calculated.calculations.display_sum,
-                vat         : vat,
-                textSubSum  : QUILocale.get(lg, 'article.list.articles.subtotal'),
-                textSum     : QUILocale.get(lg, 'article.list.articles.sumtotal'),
-                priceFactors: priceFactors
-            }));
+                this.$PriceFactors.set('html', Mustache.render(templatePriceFactor, {
+                    valueSubSum : calculated.calculations.display_subSum,
+                    valueSum    : calculated.calculations.display_sum,
+                    vat         : vat,
+                    textSubSum  : QUILocale.get(lg, 'article.list.articles.subtotal'),
+                    textSum     : QUILocale.get(lg, 'article.list.articles.sumtotal'),
+                    priceFactors: priceFactors
+                }));
 
-            this.$PriceFactors.setStyle('opacity', 0);
-            this.$PriceFactors.setStyle('display', 'block');
-            this.$PriceFactors.setStyle('bottom', 70);
+                this.$PriceFactors.setStyle('opacity', 0);
+                this.$PriceFactors.setStyle('display', 'block');
+                this.$PriceFactors.setStyle('bottom', 70);
 
-            this.$PFFX.animate({
-                bottom : 80,
-                opacity: 1
-            }, {
-                duration: 300
+                this.$PFFX.animate({
+                    bottom : 80,
+                    opacity: 1
+                }, {
+                    duration: 300
+                });
             });
         },
 

@@ -367,7 +367,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
                             if (priority === '') {
                                 priority = 1;
                             }
-
+                          
                             ArticleList.editPriceFactor(index, {
                                 calculation      : 2,
                                 calculation_basis: 2,
@@ -376,11 +376,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
                                 index            : priority - 1,
                                 nettoSum         : data.nettoSum,
                                 nettoSumFormatted: data.nettoSumFormatted,
-                                sum              : data.sum,
-                                sumFormatted     : data.sumFormatted,
+                                sum              : data.nettoSum,
+                                sumFormatted     : data.nettoSumFormatted,
                                 title            : Form.elements.title.value,
-                                value            : data.sum,
-                                valueText        : data.valueText,
+                                value            : data.nettoSum,
+                                valueText        : data.nettoSumFormatted,
                                 vat              : Form.elements.vat.value,
                                 visible          : 1
                             });
