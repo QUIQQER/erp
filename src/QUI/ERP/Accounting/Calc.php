@@ -271,8 +271,20 @@ class Calc
                 continue;
             }
 
-            // percent - Prozent Angabe
-            if ($PriceFactor->getCalculation() === self::CALCULATION_PERCENTAGE) {
+            if ($PriceFactor->getCalculation() === self::CALCULATION_COMPLEMENT) {
+                // Standard calculation
+                $vatSum = $PriceFactor->getVatSum();
+
+                if ($isNetto) {
+                    $PriceFactor->setSum($PriceFactor->getNettoSum());
+                } elseif ($PriceFactor->getCalculationBasis() === self::CALCULATION_BASIS_VAT_BRUTTO) {
+                    $PriceFactor->setNettoSum($PriceFactor->getNettoSum() - $vatSum);
+                    $PriceFactor->setSum($vatSum + $PriceFactor->getNettoSum());
+                } else {
+                    $PriceFactor->setSum($vatSum + $PriceFactor->getNettoSum());
+                }
+            } elseif ($PriceFactor->getCalculation() === self::CALCULATION_PERCENTAGE) {
+                // percent - Prozent Angabe
                 $calcBasis        = $PriceFactor->getCalculationBasis();
                 $priceFactorValue = $PriceFactor->getValue();
                 $vatValue         = $PriceFactor->getVat();
