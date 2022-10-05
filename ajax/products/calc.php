@@ -14,7 +14,7 @@ use QUI\ERP\Accounting\ArticleDiscount;
 
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_calc',
-    function ($articles, $priceFactors, $user, $currency) {
+    function ($articles, $priceFactors, $user, $currency, $nettoInput) {
         $articles     = json_decode($articles, true);
         $user         = json_decode($user, true);
         $priceFactors = json_decode($priceFactors, true);
@@ -36,6 +36,12 @@ QUI::$Ajax->registerFunction(
 
         $User = $Calc->getUser();
 
+        if ($nettoInput) {
+            $User->setAttribute('RUNTIME_NETTO_BRUTTO_STATUS', QUI\ERP\Utils\User::IS_NETTO_USER);
+        } else {
+            $User->setAttribute('RUNTIME_NETTO_BRUTTO_STATUS', QUI\ERP\Utils\User::IS_BRUTTO_USER);
+        }
+
         $Articles = new QUI\ERP\Accounting\ArticleList($articles);
 
         foreach ($priceFactors as $priceFactor) {
@@ -49,7 +55,7 @@ QUI::$Ajax->registerFunction(
 
         try {
             $Articles->setCurrency(
-                \QUI\ERP\Currency\Handler::getCurrency($currency)
+                QUI\ERP\Currency\Handler::getCurrency($currency)
             );
         } catch (QUI\Exception $Exception) {
         }
@@ -58,6 +64,7 @@ QUI::$Ajax->registerFunction(
 
         // brutto stuff (for display)
         $User->setAttribute('RUNTIME_NETTO_BRUTTO_STATUS', QUI\ERP\Utils\User::IS_BRUTTO_USER);
+
         $Calc->setUser($User);
         $Articles->setUser($User);
         $Articles->recalculate($Calc);
@@ -121,6 +128,6 @@ QUI::$Ajax->registerFunction(
 
         return $result;
     },
-    ['articles', 'priceFactors', 'user', 'currency'],
+    ['articles', 'priceFactors', 'user', 'currency', 'nettoInput'],
     'Permission::checkAdminUser'
 );
