@@ -205,7 +205,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         unserialize: function (list) {
             const self = this;
             let data = {};
-
+            
             if (typeOf(list) === 'string') {
                 try {
                     data = JSON.stringify(list);
@@ -237,7 +237,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 return 'package/quiqqer/erp/bin/backend/controls/articles/Article';
             }).unique();
 
-            require(controls, () => {
+            require(controls, function () { // dont use () => {
                 let i, len, article, index;
 
                 for (i = 0, len = data.articles.length; i < len; i++) {
@@ -256,9 +256,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     }
                 }
 
-                this.fireEvent('calc', [
-                    this,
-                    this.$calculations
+                self.fireEvent('calc', [
+                    self,
+                    self.$calculations
                 ]);
             });
         },
