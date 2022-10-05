@@ -14,6 +14,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
     'qui/QUI',
     'qui/controls/Control',
     'qui/controls/buttons/Switch',
+    'qui/controls/loader/Loader',
     'Mustache',
     'Ajax',
     'Locale',
@@ -26,7 +27,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
     'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleList.sortablePlaceholder.html',
     'css!package/quiqqer/erp/bin/backend/controls/articles/ArticleList.css'
 
-], function (QUI, QUIControl, QUISwitch, Mustache,
+], function (QUI, QUIControl, QUISwitch, QUILoader, Mustache,
              QUIAjax, QUILocale, AddProductWindow, Article, Sortables, template, templateSortablePlaceholder) {
     "use strict";
 
@@ -114,6 +115,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 })
             });
 
+            this.$Loader = new QUILoader().inject(this.$Elm);
+
             if (this.getAttribute('styles')) {
                 this.setStyles(this.getAttribute('styles'));
             }
@@ -128,8 +131,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 switchTextOffIcon: false,
                 events           : {
                     onChange: function () {
+                        self.$Loader.show();
                         self.setAttribute('nettoinput', !!self.$Switch.getStatus());
                         self.$refreshNettoBruttoDisplay();
+                        self.$calc().then(() => {
+                            self.$Loader.hide();
+                        });
                     }
                 }
             }).inject(
@@ -205,7 +212,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         unserialize: function (list) {
             const self = this;
             let data = {};
-            
+
             if (typeOf(list) === 'string') {
                 try {
                     data = JSON.stringify(list);
@@ -384,16 +391,18 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * Calculate the list
          */
         $calc: function () {
-            if (this.$calculationTimer) {
-                clearTimeout(this.$calculationTimer);
-                this.$calculationTimer = null;
-            }
+            return new Promise((resolve) => {
+                if (this.$calculationTimer) {
+                    clearTimeout(this.$calculationTimer);
+                    this.$calculationTimer = null;
+                }
 
-            const self = this;
+                const self = this;
 
-            this.$calculationTimer = (function () {
-                self.$executeCalculation();
-            }).delay(500);
+                this.$calculationTimer = (function () {
+                    self.$executeCalculation().then(resolve);
+                }).delay(500);
+            });
         },
 
         /**
@@ -435,6 +444,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
                 QUIAjax.get('package_quiqqer_erp_ajax_products_calc', (result) => {
                     this.$calculations = result;
+                    this.$priceFactors = result.priceFactors;
+
                     this.$isIncalculationFrame = true;
                     this.$calculationRunning = false;
 
@@ -455,6 +466,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     priceFactors: JSON.encode(this.getPriceFactors()),
                     user        : JSON.encode(this.$user),
                     currency    : this.getAttribute('currency'),
+                    nettoInput  : this.getAttribute('nettoinput') ? 1 : 0,
                     onError     : function (err) {
                         console.error(err);
                         reject();

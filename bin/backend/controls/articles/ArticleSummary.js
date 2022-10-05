@@ -248,7 +248,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             }
 
             let calc = calculated.calculations;
-            
+
             this.getCurrencyFormatter().then((Formatter) => {
                 if (this.getAttribute('showPosSummary')) {
                     if (!(ArticleInstance instanceof Article)) {
@@ -332,7 +332,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                         sum : this.$Formatter.format(val[1].sum)
                     };
                 });
-
+                
                 this.$PriceFactors.set('html', Mustache.render(templatePriceFactor, {
                     valueSubSum : calculated.calculations.display_subSum,
                     valueSum    : calculated.calculations.display_sum,
