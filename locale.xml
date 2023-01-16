@@ -1369,6 +1369,22 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <en><![CDATA[No price factors available]]></en>
         </locale>
 
+        <locale name="priceCalcInput.window.vat.title">
+            <de><![CDATA[Mehrwertsteuer Auswahl]]></de>
+            <en><![CDATA[VAT selection]]></en>
+        </locale>
+        <locale name="priceCalcInput.window.vat.message">
+            <de><![CDATA[Bitte wählen Sie hier Ihre gewünschte Mehrwertsteuer aus.]]></de>
+            <en><![CDATA[Please select your desired VAT here.]]></en>
+        </locale>
+        <locale name="priceCalcInput.netto">
+            <de><![CDATA[Netto Eingabe]]></de>
+            <en><![CDATA[Net input]]></en>
+        </locale>
+        <locale name="priceCalcInput.brutto">
+            <de><![CDATA[Brutto Eingabe]]></de>
+            <en><![CDATA[Gross input]]></en>
+        </locale>
 
     </groups>
 </locales>
