@@ -36,11 +36,11 @@ class Comments
     /**
      * Comments constructor.
      *
-     * @param array $comments
+     * @param array|null $comments
      */
-    public function __construct(array $comments = [])
+    public function __construct(?array $comments = [])
     {
-        if (!$comments) {
+        if (!$comments || !is_array($comments)) {
             return;
         }
 
