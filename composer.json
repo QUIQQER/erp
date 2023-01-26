@@ -1,6 +1,7 @@
 {
   "name": "quiqqer\/erp",
   "type": "quiqqer-application",
+  "version": "1.5.0",
   "description": "he QUIQQER ERP module bundles all QUIQQER modules which you need for a \nERP (Enterprise Resource Planning) system.",
   "license": [
     "GPL-3.0+",
