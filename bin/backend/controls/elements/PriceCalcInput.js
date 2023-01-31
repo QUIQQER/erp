@@ -230,7 +230,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
                 return;
             }
 
-            if (this.$Input.value === value) {
+            if (this.$loaded && this.$Input.value === value) {
                 return;
             }
 
