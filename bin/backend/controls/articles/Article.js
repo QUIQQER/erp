@@ -223,7 +223,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.$VAT = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-vat');
             this.$Discount = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-discount');
             this.$Total = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-total');
-            
+
             this.$ButtonReplace = this.$Elm.getElement('button[name="replace"]');
             this.$ButtonDelete = this.$Elm.getElement('button[name="delete"]');
 
@@ -640,8 +640,17 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     });
 
                     resolve(this.$Formatter);
-                }).catch(function (err) {
+                }).catch((err) => {
                     console.error(err);
+
+                    this.$Formatter = QUILocale.getNumberFormatter({
+                        style                : 'currency',
+                        currency             : 'EUR',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+
+                    resolve(this.$Formatter);
                 });
             });
         },
