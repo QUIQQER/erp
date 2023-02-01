@@ -16,7 +16,9 @@ QUI::$Ajax->registerFunction(
     function ($price, $vat, $currency) {
         $Currency = CurrencyHandler::getCurrency($currency);
         $price    = Price::validatePrice($price);
+        $vat      = floatval($vat);
 
+        /* auskommentiert weil: quiqqer/erp/-/issues/78#note_144725
         if (empty($vat)) {
             $Area     = QUI\ERP\Defaults::getArea();
             $TaxType  = QUI\ERP\Tax\Utils::getTaxTypeByArea($Area);
@@ -24,6 +26,7 @@ QUI::$Ajax->registerFunction(
 
             $vat = $TaxEntry->getValue();
         }
+        */
 
         $nettoSum          = $price;
         $nettoSumFormatted = $Currency->format($price);
