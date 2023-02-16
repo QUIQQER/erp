@@ -44,10 +44,12 @@ QUI::$Ajax->registerFunction(
 
         $Articles = new QUI\ERP\Accounting\ArticleList($articles);
 
-        foreach ($priceFactors as $priceFactor) {
-            $Articles->addPriceFactor(
-                new QUI\ERP\Accounting\PriceFactors\Factor($priceFactor)
-            );
+        if (!empty($priceFactors)) {
+            foreach ($priceFactors as $priceFactor) {
+                $Articles->addPriceFactor(
+                    new QUI\ERP\Accounting\PriceFactors\Factor($priceFactor)
+                );
+            }
         }
 
         $Articles->setUser($User);
