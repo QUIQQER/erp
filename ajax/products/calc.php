@@ -15,6 +15,8 @@ use QUI\ERP\Accounting\ArticleDiscount;
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_calc',
     function ($articles, $priceFactors, $user, $currency, $nettoInput) {
+        $nettoInput = (int)$nettoInput;
+
         $articles     = json_decode($articles, true);
         $user         = json_decode($user, true);
         $priceFactors = json_decode($priceFactors, true);
@@ -62,6 +64,8 @@ QUI::$Ajax->registerFunction(
         } catch (QUI\Exception $Exception) {
         }
 
+        $result = $Articles->toArray();
+
         // brutto stuff (for display)
         $User->setAttribute('RUNTIME_NETTO_BRUTTO_STATUS', QUI\ERP\Utils\User::IS_BRUTTO_USER);
 
@@ -69,7 +73,6 @@ QUI::$Ajax->registerFunction(
         $Articles->setUser($User);
         $Articles->recalculate($Calc);
 
-        $result = $Articles->toArray();
         $brutto = $Articles->toArray();
 
         // discount stuff
