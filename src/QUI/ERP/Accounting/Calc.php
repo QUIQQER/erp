@@ -283,7 +283,7 @@ class Calc
                 } else {
                     $PriceFactor->setSum($vatSum + $PriceFactor->getNettoSum());
                 }
-                
+
                 // formatted
                 $PriceFactor->setNettoSumFormatted($Currency->format($PriceFactor->getNettoSum()));
                 $PriceFactor->setSumFormatted($Currency->format($PriceFactor->getSum()));
@@ -439,6 +439,17 @@ class Calc
 
                 if ($added === false) {
                     $bruttoSum = $bruttoSum + $diff;
+
+                    // netto check 1cent check
+                    $bruttoVatSum = 0;
+
+                    foreach ($vatArray as $vat => $data) {
+                        $bruttoVatSum = $bruttoVatSum + $data['sum'];
+                    }
+
+                    if ($bruttoSum - $bruttoVatSum !== $nettoSum) {
+                        $nettoSum = $nettoSum + $diff;
+                    }
                 }
             }
 
