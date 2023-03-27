@@ -16,6 +16,7 @@ use function mb_substr;
 use function preg_replace;
 use function round;
 use function str_replace;
+use function strpos;
 use function substr;
 use function trim;
 
