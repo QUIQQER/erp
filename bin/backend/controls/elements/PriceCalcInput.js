@@ -44,6 +44,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             this.$NettoContainer = null;
             this.$BruttoContainer = null;
             this.$VatButton = null;
+            this.$Formatter = null;
 
             this.$BruttoEdit = null;
             this.$NettoEdit = null;
@@ -122,7 +123,6 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             }).inject(this.$BruttoContainer);
 
             this.$LoaderBrutto.setStyle('display', 'none');
-
 
             // vat
             this.$VatButton = new Element('button', {
@@ -219,13 +219,22 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             const Brutto = this.$BruttoContainer.getElement('input');
 
             if (Brutto.disabled) {
-                this.setNetto(Netto.value);
+                this.setNettoByUser(Netto.value);
             } else {
-                this.setBrutto(Brutto.value);
+                this.setBruttoByUser(Brutto.value);
             }
         },
 
         setNetto: function (value) {
+            const Netto = this.$NettoContainer.getElement('input');
+            this.$Input.value = value;
+
+            return this.$setValueToInput(value, Netto).then(() => {
+                return this.fetchBrutto();
+            });
+        },
+
+        setNettoByUser: function (value) {
             if (!value || value === '') {
                 return;
             }
@@ -235,24 +244,34 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             }
 
             const Netto = this.$NettoContainer.getElement('input');
-
             this.$LoaderBrutto.setStyle('display', null);
 
             this.validatePrice(value).then((floatPrice) => {
                 this.$Input.value = floatPrice;
-                Netto.value = floatPrice;
-
+                return this.$setValueToInput(floatPrice, Netto);
+            }).then(() => {
                 return this.fetchBrutto();
             });
         },
 
         setBrutto: function (value) {
+            return this.$setValueToInput(
+                value, this.$BruttoContainer.getElement('input')
+            ).then(() => {
+                return this.fetchNetto();
+            }).then(() => {
+                this.$Input.value = this.$NettoContainer.getElement('input').value;
+            })
+        },
+
+        setBruttoByUser: function (value) {
             if (!value || value === '') {
                 return;
             }
 
             this.validatePrice(value).then((floatPrice) => {
-                this.$BruttoContainer.getElement('input').value = floatPrice;
+                return this.$setValueToInput(floatPrice, this.$BruttoContainer.getElement('input'));
+            }).then(() => {
                 return this.fetchNetto();
             }).then(() => {
                 this.$Input.value = this.$NettoContainer.getElement('input').value;
@@ -290,7 +309,8 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
                 this.$LoaderBrutto.setStyle('display', null);
 
                 QUIAjax.get('package_quiqqer_erp_ajax_calcBruttoPrice', (result) => {
-                    Brutto.value = result;
+                    //Brutto.value = result;
+                    this.$setValueToInput(result, Brutto);
                     this.$LoaderBrutto.setStyle('display', 'none');
                     resolve();
                 }, {
@@ -316,7 +336,8 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
                 this.$LoaderNetto.setStyle('display', null);
 
                 QUIAjax.get('package_quiqqer_erp_ajax_calcNettoPrice', (result) => {
-                    Netto.value = result;
+                    this.$setValueToInput(result, Netto);
+                    //Netto.value = result;
                     this.$LoaderNetto.setStyle('display', 'none');
                     resolve();
                 }, {
@@ -403,6 +424,58 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
                     }
                 }
             }).open();
+        },
+
+        /**
+         * Return formatter
+         *
+         * @return {Promise}
+         */
+        getFormatter: function () {
+            if (this.$Formatter !== null) {
+                return Promise.resolve(this.$Formatter);
+            }
+
+            return QUILocale.getSystemLocale().then((SystemLocale) => {
+                // admin format
+                this.$Formatter = SystemLocale.getNumberFormatter({
+                    minimumFractionDigits: 8
+                });
+
+                return this.$Formatter;
+            });
+        },
+
+        $setValueToInput: function (value, Node) {
+            let groupingSeparator = QUILocale.getGroupingSeparator();
+            let decimalSeparator = QUILocale.getDecimalSeparator();
+
+            let foundGroupSeparator = typeOf(value) === 'string' && value.indexOf(groupingSeparator) >= 0;
+            let foundDecimalSeparator = typeOf(value) === 'string' && value.indexOf(decimalSeparator) >= 0;
+
+            if ((foundGroupSeparator || foundDecimalSeparator) &&
+                !(foundGroupSeparator && !foundDecimalSeparator)) {
+                Node.value = value;
+                return Promise.resolve();
+            }
+
+            return this.getFormatter().then((Formatter) => {
+                Node.value = Formatter.format(parseFloat(value));
+            });
+        },
+
+        $trim: function (str) {
+            let ch = '0';
+            let start = 0,
+                end   = str.length;
+
+            while (start < end && str[start] === ch)
+                ++start;
+
+            while (end > start && str[end - 1] === ch)
+                --end;
+
+            return (start > 0 || end < str.length) ? str.substring(start, end) : str;
         }
     });
 });
