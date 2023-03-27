@@ -196,14 +196,6 @@ class Price
             return round($value, QUI\ERP\Defaults::getPrecision());
         }
 
-        if (strpos($value, '.') === 1 && strpos($value, ',') === false) {
-            $float = floatval($value);
-
-            if ($value == $float) { // don't use ===
-                return $float;
-            }
-        }
-
         $value      = (string)$value;
         $isNegative = substr($value, 0, 1) === '-';
 
