@@ -16,6 +16,7 @@ use function mb_substr;
 use function preg_replace;
 use function round;
 use function str_replace;
+use function strpos;
 use function substr;
 use function trim;
 
@@ -193,6 +194,14 @@ class Price
     {
         if (is_float($value)) {
             return round($value, QUI\ERP\Defaults::getPrecision());
+        }
+
+        if (strpos($value, '.') === 1 && strpos($value, ',') === false) {
+            $float = floatval($value);
+
+            if ($value == $float) { // don't use ===
+                return $float;
+            }
         }
 
         $value      = (string)$value;
