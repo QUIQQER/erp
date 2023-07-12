@@ -188,6 +188,8 @@ class ArticleView extends QUI\QDOM
             ]);
         }
 
+        $articleData = $this->Article->toArray();
+
         $Engine->assign([
             'this'                  => $this,
             'position'              => $this->position,
@@ -197,7 +199,8 @@ class ArticleView extends QUI\QDOM
             'calculated_price'      => $Currency->format($calc['price']),
             'calculated_sum'        => $Currency->format($calc['sum']),
             'calculated_nettoSum'   => $Currency->format($calc['nettoSum']),
-            'customFields'          => $customFields
+            'customFields'          => $customFields,
+            'hasAppliedVat'         => !empty($articleData['calculated']['vatArray']['vat'])
         ]);
 
         if ($this->Article instanceof QUI\ERP\Accounting\Articles\Text) {
