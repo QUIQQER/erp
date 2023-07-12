@@ -35,11 +35,13 @@
             {/foreach}
         </ul>
     </td>
-    <td class="articles-article-vat"
-        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.vat'}"
-    >
-        {$this->getAttribute('vat')}%
-    </td>
+    {if $hasAppliedVat}
+        <td class="articles-article-vat"
+            data-label="{locale group='quiqqer/erp' var='article.list.articles.header.vat'}"
+        >
+            {$this->getAttribute('vat')}%
+        </td>
+    {/if}
 
     {if $this->getAttribute('quantity') !== false}
     <td class="articles-article-quantity"
