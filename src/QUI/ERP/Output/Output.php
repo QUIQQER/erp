@@ -164,7 +164,7 @@ class Output
         $url = URL_OPT_DIR . 'quiqqer/erp/bin/output/frontend/download.php?';
         $url .= http_build_query([
             'id' => $entityId,
-            't'  => $entityType
+            't' => $entityType
         ]);
 
         return $url;
@@ -217,7 +217,7 @@ class Output
         $pdfFile = $OutputTemplate->getPDFDocument()->createPDF();
 
         // Re-name PDF
-        $pdfDir   = QUI::getPackage('quiqqer/erp')->getVarDir();
+        $pdfDir = QUI::getPackage('quiqqer/erp')->getVarDir();
         $mailFile = $pdfDir . $OutputProvider::getDownloadFileName($entityId) . '.pdf';
         rename($pdfFile, $mailFile);
 
@@ -247,8 +247,10 @@ class Output
 
         // Additional attachments
         foreach ($attachedMediaFiles as $MediaFile) {
-            if (!($MediaFile instanceof QUI\Projects\Media\File) &&
-                !($MediaFile instanceof QUI\Projects\Media\Image)) {
+            if (
+                !($MediaFile instanceof QUI\Projects\Media\File) &&
+                !($MediaFile instanceof QUI\Projects\Media\Image)
+            ) {
                 continue;
             }
 
@@ -307,7 +309,7 @@ class Output
      */
     public static function getTemplates(string $entityType = null): array
     {
-        $templates       = [];
+        $templates = [];
         $outputProviders = [];
 
         if (empty($entityType)) {
@@ -322,12 +324,12 @@ class Output
 
         foreach (self::getAllOutputTemplateProviders() as $provider) {
             /** @var OutputTemplateProviderInterface $class */
-            $class   = $provider['class'];
+            $class = $provider['class'];
             $package = $provider['package'];
 
             /** @var OutputProviderInterface $OutputProvider */
             foreach ($outputProviders as $OutputProvider) {
-                $entityType            = $OutputProvider::getEntityType();
+                $entityType = $OutputProvider::getEntityType();
                 $defaultOutputTemplate = self::getDefaultOutputTemplateForEntityType($entityType);
 
                 foreach ($class::getTemplates($entityType) as $providerTemplateId) {
@@ -342,12 +344,12 @@ class Output
                         $defaultOutputTemplate['id'] === $providerTemplateId;
 
                     $providerTemplate = [
-                        'id'              => $providerTemplateId,
-                        'title'           => $templateTitle,
-                        'provider'        => $package,
+                        'id' => $providerTemplateId,
+                        'title' => $templateTitle,
+                        'provider' => $package,
                         'isSystemDefault' => $provider['isSystemDefault'],
-                        'isDefault'       => $isDefault,
-                        'entityType'      => $entityType,
+                        'isDefault' => $isDefault,
+                        'entityType' => $entityType,
                         'entityTypeTitle' => $OutputProvider::getEntityTypeTitle()
                     ];
 
@@ -381,13 +383,13 @@ class Output
     public static function getDefaultOutputTemplateForEntityType(string $entityType): array
     {
         $fallBackTemplate = [
-            'id'                => 'system_default',
-            'provider'          => 'quiqqer/erp-accounting-templates',
+            'id' => 'system_default',
+            'provider' => 'quiqqer/erp-accounting-templates',
             'hideSystemDefault' => false
         ];
 
         try {
-            $Conf             = QUI::getPackage('quiqqer/erp')->getConfig();
+            $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
             $defaultTemplates = $Conf->get('output', 'default_templates');
 
             if (empty($defaultTemplates)) {
@@ -419,7 +421,7 @@ class Output
         $defaultEntityTypeTemplate = self::getDefaultOutputTemplateForEntityType($entityType);
 
         foreach (self::getAllOutputTemplateProviders() as $provider) {
-            if ($provider['package'] === $defaultEntityTypeTemplate['provider']) {
+            if (isset($defaultEntityTypeTemplate['provider']) && $provider['package'] === $defaultEntityTypeTemplate['provider']) {
                 return $provider['class'];
             }
         }
@@ -427,7 +429,7 @@ class Output
         // Fallback: Choose next available provider
         foreach (self::getAllOutputTemplateProviders() as $provider) {
             /** @var OutputTemplateProviderInterface $class */
-            $class             = $provider['class'];
+            $class = $provider['class'];
             $providerTemplates = $class::getTemplates($entityType);
 
             if (!empty($providerTemplates)) {
@@ -445,7 +447,7 @@ class Output
      */
     protected static function getAllOutputProviders(): array
     {
-        $packages        = QUI::getPackageManager()->getInstalled();
+        $packages = QUI::getPackageManager()->getInstalled();
         $providerClasses = [];
 
         foreach ($packages as $installedPackage) {
@@ -469,7 +471,7 @@ class Output
                     }
 
                     $providerClasses[] = [
-                        'class'   => $class,
+                        'class' => $class,
                         'package' => $installedPackage['name']
                     ];
                 }
@@ -488,7 +490,7 @@ class Output
      */
     protected static function getAllOutputTemplateProviders(): array
     {
-        $packages        = QUI::getPackageManager()->getInstalled();
+        $packages = QUI::getPackageManager()->getInstalled();
         $providerClasses = [];
 
         foreach ($packages as $installedPackage) {
@@ -512,8 +514,8 @@ class Output
                     }
 
                     $providerClasses[] = [
-                        'class'           => $class,
-                        'package'         => $installedPackage['name'],
+                        'class' => $class,
+                        'package' => $installedPackage['name'],
                         'isSystemDefault' => $installedPackage['name'] === 'quiqqer/erp-accounting-templates'
                     ];
                 }
