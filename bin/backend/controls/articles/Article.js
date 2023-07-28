@@ -49,7 +49,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
     return new Class({
 
         Extends: QUIControl,
-        Type   : 'package/quiqqer/erp/bin/backend/controls/articles/Article',
+        Type: 'package/quiqqer/erp/bin/backend/controls/articles/Article',
 
         Binds: [
             '$onEditTitle',
@@ -72,41 +72,41 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         ],
 
         options: {
-            id          : false,
-            articleNo   : '',
-            description : '',
-            discount    : '-',
-            position    : 0,
-            price       : 0,
-            quantity    : 1,
+            id: false,
+            articleNo: '',
+            description: '',
+            discount: '-',
+            position: 0,
+            price: 0,
+            quantity: 1,
             quantityUnit: '',
-            title       : '',
-            unitPrice   : 0,
-            vat         : '',
-            'class'     : 'QUI\\ERP\\Accounting\\Article',
-            params      : false, // mixed value for API Articles
-            currency    : false,
+            title: '',
+            unitPrice: 0,
+            vat: '',
+            'class': 'QUI\\ERP\\Accounting\\Article',
+            params: false, // mixed value for API Articles
+            currency: false,
 
             showSelectCheckbox: false,  // select this article via checkbox instead of click
 
             // Determine article fields that can be edited
             editFields: {
-                articleNo          : true,
+                articleNo: true,
                 titleAndDescription: true,
-                quantity           : true,
-                quantityUnit       : true,
-                unitPrice          : true,
-                vat                : true,
-                discount           : true
+                quantity: true,
+                quantityUnit: true,
+                unitPrice: true,
+                vat: true,
+                discount: true
             },
 
             customFields: {},   // Custom fields (=fields where user can select/input a value)
 
             User: false,        // special user object (see this.addUser)
 
-            deletable  : true,   // show "delete" button
+            deletable: true,   // show "delete" button
             replaceable: true,   // show "replace" button
-            calcByList : true     // calculate article prices by the associated ArticleList
+            calcByList: true     // calculate article prices by the associated ArticleList
         },
 
         initialize: function (options) {
@@ -172,20 +172,20 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 let FieldDataClone = Object.clone(FieldData);
 
                 CustomFieldValues[fieldId] = {
-                    title    : FieldDataClone.title,
+                    title: FieldDataClone.title,
                     valueText: nl2br(FieldDataClone.valueText)
                 };
             }
 
             this.$Elm.set({
-                html      : Mustache.render(template, {
+                html: Mustache.render(template, {
                     showSelectCheckbox: showSelectCheckbox,
-                    customFields      : Object.values(CustomFieldValues),
-                    buttonReplace     : QUILocale.get(lg, 'articleList.article.button.replace'),
-                    buttonDelete      : QUILocale.get(lg, 'articleList.article.button.delete'),
+                    customFields: Object.values(CustomFieldValues),
+                    buttonReplace: QUILocale.get(lg, 'articleList.article.button.replace'),
+                    buttonDelete: QUILocale.get(lg, 'articleList.article.button.delete'),
                 }),
                 'tabindex': -1,
-                styles    : {
+                styles: {
                     outline: 'none'
                 }
             });
@@ -329,15 +329,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             }).inject(this.$Total, 'after');
 
             this.$Loader = new Element('div', {
-                html  : '<span class="fa fa-spinner fa-spin"></span>',
+                html: '<span class="fa fa-spinner fa-spin"></span>',
                 styles: {
                     background: '#fff',
-                    display   : 'none',
-                    left      : 0,
-                    padding   : 10,
-                    position  : 'absolute',
-                    top       : 0,
-                    width     : '100%'
+                    display: 'none',
+                    left: 0,
+                    padding: 10,
+                    position: 'absolute',
+                    top: 0,
+                    width: '100%'
                 }
             }).inject(this.$Position);
 
@@ -361,9 +361,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                 new QUIButton({
                     'class': 'quiqqer-erp-backend-erpArticle-text-btn-editor',
-                    title  : QUILocale.get(lg, 'erp.articleList.article.button.editor'),
-                    icon   : 'fa fa-edit',
-                    events : {
+                    title: QUILocale.get(lg, 'erp.articleList.article.button.editor'),
+                    icon: 'fa fa-edit',
+                    events: {
                         onClick: this.$onEditDescription
                     }
                 }).inject(this.$Text);
@@ -488,7 +488,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     }
 
                     Node.set({
-                        html : text,
+                        html: text,
                         title: text
                     });
                 };
@@ -516,7 +516,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 if (typeof this.$bruttoCalc !== 'undefined' &&
                     typeof this.$bruttoCalc.display_unitPrice !== 'undefined') {
                     this.$UnitPriceBrutto.set('html', this.$bruttoCalc.display_unitPrice);
-                    this.$UnitPriceBrutto.set('data-value', this.$bruttoCalc.unitPrice);
+                    //this.$UnitPriceBrutto.set('data-value', this.$bruttoCalc.unitPrice);
+                    this.$UnitPriceBrutto.set('data-value', this.$bruttoCalc.calculated.basisPrice);
                 }
 
                 if (typeof this.$bruttoCalc !== 'undefined' &&
@@ -541,8 +542,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             let Calc;
 
             const self = this,
-                  attr = self.getAttributes(),
-                  pos  = parseInt(attr.position);
+                attr = self.getAttributes(),
+                pos = parseInt(attr.position);
 
             let calcByList = false;
 
@@ -553,12 +554,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 Calc = new Promise(function (resolve, reject) {
                     QUIAjax.get('package_quiqqer_erp_ajax_products_calc', resolve, {
                         'package': 'quiqqer/erp',
-                        onError  : reject,
-                        articles : JSON.encode({
+                        onError: reject,
+                        articles: JSON.encode({
                             articles: [attr]
                         }),
-                        user     : JSON.encode(self.$user),
-                        currency : self.getAttribute('currency')
+                        user: JSON.encode(self.$user),
+                        currency: self.getAttribute('currency')
                     });
                 });
             }
@@ -633,8 +634,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                 Currency.getCurrency(currency).then((currency) => {
                     this.$Formatter = QUILocale.getNumberFormatter({
-                        style                : 'currency',
-                        currency             : currency.code,
+                        style: 'currency',
+                        currency: currency.code,
                         minimumFractionDigits: currency.precision,
                         maximumFractionDigits: currency.precision
                     });
@@ -644,8 +645,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     console.error(err);
 
                     this.$Formatter = QUILocale.getNumberFormatter({
-                        style                : 'currency',
-                        currency             : 'EUR',
+                        style: 'currency',
+                        currency: 'EUR',
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                     });
@@ -838,7 +839,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         setDiscount: function (discount) {
             const self = this;
             let value = '',
-                type  = '';
+                type = '';
 
             if (discount === '' || !discount) {
                 discount = '-';
@@ -947,14 +948,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          */
         openDeleteDialog: function () {
             new QUIConfirm({
-                icon       : 'fa fa-trash',
-                texticon   : 'fa fa-trash',
-                title      : QUILocale.get(lg, 'dialog.delete.article.title'),
+                icon: 'fa fa-trash',
+                texticon: 'fa fa-trash',
+                title: QUILocale.get(lg, 'dialog.delete.article.title'),
                 information: QUILocale.get(lg, 'dialog.delete.article.information'),
-                text       : QUILocale.get(lg, 'dialog.delete.article.text'),
-                maxHeight  : 400,
-                maxWidth   : 600,
-                events     : {
+                text: QUILocale.get(lg, 'dialog.delete.article.text'),
+                maxHeight: 400,
+                maxWidth: 600,
+                events: {
                     onSubmit: this.remove.bind(this)
                 }
             }).open();
@@ -987,14 +988,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             const self = this;
 
             new QUIConfirm({
-                title    : QUILocale.get(lg, 'dialog.edit.description.title', {
-                    articleNo   : this.getAttribute('articleNo'),
+                title: QUILocale.get(lg, 'dialog.edit.description.title', {
+                    articleNo: this.getAttribute('articleNo'),
                     articleTitle: this.getAttribute('title')
                 }),
-                icon     : 'fa fa-edit',
+                icon: 'fa fa-edit',
                 maxHeight: 600,
-                maxWidth : 800,
-                events   : {
+                maxWidth: 800,
+                events: {
                     onOpen: function (Win) {
                         Win.Loader.show();
 
@@ -1006,8 +1007,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                         Content.set({
                             html: '' +
-                                  '<label><input type="text" name="title" /></label>' +
-                                  '<div class="quiqqer-erp-dialog-edit-article-description-editor"></div>'
+                                '<label><input type="text" name="title" /></label>' +
+                                '<div class="quiqqer-erp-dialog-edit-article-description-editor"></div>'
                         });
 
                         const Title = Content.getElement('[name="title"]');
@@ -1028,47 +1029,47 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                                     [
                                         [
                                             {
-                                                type  : "button",
+                                                type: "button",
                                                 button: "Source"
                                             },
                                             {
                                                 type: "separator"
                                             },
                                             {
-                                                type  : "button",
+                                                type: "button",
                                                 button: "Bold"
                                             },
                                             {
-                                                type  : "button",
+                                                type: "button",
                                                 button: "Italic"
                                             },
                                             {
-                                                type  : "button",
+                                                type: "button",
                                                 button: "Underline"
                                             },
                                             {
                                                 type: "separator"
                                             },
                                             {
-                                                type  : "button",
+                                                type: "button",
                                                 button: "FontSize"
                                             },
                                             {
                                                 type: "separator"
                                             },
                                             {
-                                                type  : "button",
+                                                type: "button",
                                                 button: "RemoveFormat"
                                             },
                                             {
                                                 type: "separator"
                                             },
                                             {
-                                                type  : "button",
+                                                type: "button",
                                                 button: "NumberedList"
                                             },
                                             {
-                                                type  : "button",
+                                                type: "button",
                                                 button: "BulletedList"
                                             }
                                         ]
@@ -1160,7 +1161,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     events: {
                         onSubmit: function (Win, value, title) {
                             self.setQuantityUnit({
-                                id   : value,
+                                id: value,
                                 title: title
                             });
 
@@ -1301,18 +1302,18 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
             return new Promise(function (resolve) {
                 const Edit = new Element('input', {
-                    type  : type,
-                    value : value,
+                    type: type,
+                    value: value,
                     styles: {
-                        border    : 0,
-                        left      : 0,
+                        border: 0,
+                        left: 0,
                         lineHeight: 20,
-                        textAlign : 'right',
-                        padding   : 5,
-                        margin    : 5,
-                        position  : 'absolute',
-                        top       : 0,
-                        width     : 'calc(100% - 10px)'
+                        textAlign: 'right',
+                        padding: 5,
+                        margin: 5,
+                        position: 'absolute',
+                        top: 0,
+                        width: 'calc(100% - 10px)'
                     }
                 }).inject(Container);
 
@@ -1396,7 +1397,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!PreviousArticle) {
                         PreviousArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                                              .getLast('.article');
+                            .getLast('.article');
                     }
 
                     Next = PreviousArticle.getLast('.cell-editable');
@@ -1421,7 +1422,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                     if (!NextArticle) {
                         NextArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                                          .getElement('.article');
+                            .getElement('.article');
                     }
 
                     Next = NextArticle.getElement('.cell-editable');
@@ -1472,7 +1473,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     }
 
                     const result = {
-                        id   : i,
+                        id: i,
                         title: title
                     };
 
@@ -1497,8 +1498,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             return new Promise(function (resolve) {
                 QUIAjax.get('package_quiqqer_erp_ajax_calcNettoPrice', resolve, {
                     'package': 'quiqqer/erp',
-                    price    : value,
-                    vat      : self.getAttribute('vat'),
+                    price: value,
+                    vat: self.getAttribute('vat'),
                     formatted: formatted ? 1 : 0
                 });
             });
@@ -1517,8 +1518,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             return new Promise(function (resolve) {
                 QUIAjax.get('package_quiqqer_erp_ajax_calcBruttoPrice', resolve, {
                     'package': 'quiqqer/erp',
-                    price    : value,
-                    vat      : self.getAttribute('vat'),
+                    price: value,
+                    vat: self.getAttribute('vat'),
                     formatted: formatted ? 1 : 0
                 });
             });
@@ -1533,9 +1534,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         $sanitizeArticleDescription: function (description) {
             return new Promise((resolve, reject) => {
                 QUIAjax.get('package_quiqqer_erp_ajax_utils_sanitizeArticleDescription', resolve, {
-                    'package'  : 'quiqqer/erp',
+                    'package': 'quiqqer/erp',
                     description: description,
-                    onError    : reject
+                    onError: reject
                 });
             });
         }
