@@ -6,6 +6,7 @@
  * @param string $description
  * @return string
  */
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_utils_sanitizeArticleDescription',
     function ($description) {

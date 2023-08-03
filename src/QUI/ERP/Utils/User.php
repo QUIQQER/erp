@@ -95,7 +95,7 @@ class User
         }
 
         $euVatId = $User->getAttribute('quiqqer.erp.euVatId');
-        $taxId   = $User->getAttribute('quiqqer.erp.taxId');
+        $taxId = $User->getAttribute('quiqqer.erp.taxId');
 
         if (!empty($euVatId) || !empty($taxId)) {
             self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
@@ -141,7 +141,8 @@ class User
                 }
             }
 
-            if (is_array($Address)
+            if (
+                is_array($Address)
                 && isset($Address['company'])
                 && $Address['company'] == 1
             ) {
@@ -216,7 +217,7 @@ class User
         if ($CurrentAddress instanceof Address) {
             try {
                 $Country = $CurrentAddress->getCountry();
-                $Area    = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+                $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
 
                 if ($Area) {
                     return $Area;
@@ -228,9 +229,9 @@ class User
 
         try {
             $addressId = $User->getAttribute('quiqqer.erp.address');
-            $Address   = $User->getAddress($addressId);
-            $Country   = $Address->getCountry();
-            $Area      = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+            $Address = $User->getAddress($addressId);
+            $Country = $Address->getCountry();
+            $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
 
             if ($Area) {
                 return $Area;
@@ -241,7 +242,7 @@ class User
 
 
         $Country = $User->getCountry();
-        $Area    = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+        $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
 
         if ($Area) {
             return $Area;
