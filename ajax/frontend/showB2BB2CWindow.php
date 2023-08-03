@@ -13,7 +13,7 @@
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_frontend_showB2BB2CWindow',
     function () {
-        $User    = QUI::getUserBySession();
+        $User = QUI::getUserBySession();
         $Package = QUI::getPackage('quiqqer/erp');
 
         // user dont get the window

@@ -87,8 +87,8 @@ class ArticleView extends QUI\QDOM
     public function getCustomFields(): array
     {
         $customFields = [];
-        $article      = $this->Article->toArray();
-        $current      = QUI::getLocale()->getCurrent();
+        $article = $this->Article->toArray();
+        $current = QUI::getLocale()->getCurrent();
 
         foreach ($article['customFields'] as $field) {
             if (!isset($field['title'])) {
@@ -107,9 +107,11 @@ class ArticleView extends QUI\QDOM
                 // Add price addition
                 $sum = (float)$field['custom_calc']['value'];
 
-                if (!empty($field['custom_calc']['displayDiscounts']) &&
+                if (
+                    !empty($field['custom_calc']['displayDiscounts']) &&
                     (!QUI::isFrontend() || !QUI\ERP\Products\Utils\Package::hidePrice()) &&
-                    $sum > 0) {
+                    $sum > 0
+                ) {
                     if ($sum >= 0) {
                         $priceAddition = '+';
                     } else {
@@ -118,7 +120,7 @@ class ArticleView extends QUI\QDOM
 
                     switch ((int)$field['custom_calc']['calculation']) {
                         case ErpCalc::CALCULATION_PERCENTAGE:
-                            $priceAddition .= $sum.'%';
+                            $priceAddition .= $sum . '%';
                             break;
 
                         default:
@@ -127,7 +129,7 @@ class ArticleView extends QUI\QDOM
                     }
 
                     // locale values
-                    $field['custom_calc']['valueText'] .= ' ('.$priceAddition.')';
+                    $field['custom_calc']['valueText'] .= ' (' . $priceAddition . ')';
                 }
             }
 
@@ -151,7 +153,7 @@ class ArticleView extends QUI\QDOM
     public function getPrice(): string
     {
         $Currency = $this->getCurrency();
-        $calc     = $this->getAttribute('calculated');
+        $calc = $this->getAttribute('calculated');
 
         return $Currency->format($calc['price']);
     }
@@ -165,12 +167,12 @@ class ArticleView extends QUI\QDOM
      */
     public function toHTML(): string
     {
-        $Engine   = QUI::getTemplateManager()->getEngine();
+        $Engine = QUI::getTemplateManager()->getEngine();
         $Currency = $this->getCurrency();
 
         $customFields = $this->getCustomFields();
-        $article      = $this->Article->toArray();
-        $calc         = $article['calculated'];
+        $article = $this->Article->toArray();
+        $calc = $article['calculated'];
 
         // quantity unit
         if (isset($article['quantityUnit']) && \is_array($article['quantityUnit'])) {
@@ -191,22 +193,22 @@ class ArticleView extends QUI\QDOM
         $articleData = $this->Article->toArray();
 
         $Engine->assign([
-            'this'                  => $this,
-            'position'              => $this->position,
-            'unitPrice'             => $Currency->format($article['unitPrice']),
-            'sum'                   => $Currency->format($article['sum']),
+            'this' => $this,
+            'position' => $this->position,
+            'unitPrice' => $Currency->format($article['unitPrice']),
+            'sum' => $Currency->format($article['sum']),
             'calculated_basisPrice' => $Currency->format($calc['basisPrice']),
-            'calculated_price'      => $Currency->format($calc['price']),
-            'calculated_sum'        => $Currency->format($calc['sum']),
-            'calculated_nettoSum'   => $Currency->format($calc['nettoSum']),
-            'customFields'          => $customFields,
-            'hasAppliedVat'         => !empty($articleData['calculated']['vatArray']['vat'])
+            'calculated_price' => $Currency->format($calc['price']),
+            'calculated_sum' => $Currency->format($calc['sum']),
+            'calculated_nettoSum' => $Currency->format($calc['nettoSum']),
+            'customFields' => $customFields,
+            'hasAppliedVat' => !empty($articleData['calculated']['vatArray']['vat'])
         ]);
 
         if ($this->Article instanceof QUI\ERP\Accounting\Articles\Text) {
-            return $Engine->fetch(\dirname(__FILE__).'/ArticleViewText.html');
+            return $Engine->fetch(\dirname(__FILE__) . '/ArticleViewText.html');
         }
 
-        return $Engine->fetch(\dirname(__FILE__).'/ArticleView.html');
+        return $Engine->fetch(\dirname(__FILE__) . '/ArticleView.html');
     }
 }
