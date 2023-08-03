@@ -1,8 +1,5 @@
 <?php
 
-use QUI\ERP\Output\Output as ERPOutput;
-use QUI\Utils\Security\Orthos;
-
 /**
  * Returns basic entity data used in OutputDialog
  *
@@ -10,6 +7,10 @@ use QUI\Utils\Security\Orthos;
  * @param string $entityType
  * @return array|false - Entity data or false
  */
+
+use QUI\ERP\Output\Output as ERPOutput;
+use QUI\Utils\Security\Orthos;
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_output_getEntityData',
     function ($entityId, $entityType) {
@@ -22,7 +23,7 @@ QUI::$Ajax->registerFunction(
         $hideSystemDefaultTemplate = false;
 
         try {
-            $Conf             = QUI::getPackage('quiqqer/erp')->getConfig();
+            $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
             $defaultTemplates = $Conf->get('output', 'default_templates');
 
             if (!empty($defaultTemplates)) {
@@ -37,7 +38,7 @@ QUI::$Ajax->registerFunction(
         }
 
         return [
-            'email'                     => $OutputProvider::getEmailAddress(Orthos::clear($entityId)),
+            'email' => $OutputProvider::getEmailAddress(Orthos::clear($entityId)),
             'hideSystemDefaultTemplate' => $hideSystemDefaultTemplate
         ];
     },

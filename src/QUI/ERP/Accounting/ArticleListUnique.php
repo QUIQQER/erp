@@ -97,7 +97,7 @@ class ArticleListUnique implements IteratorAggregate
                     'Missing needle for ArticleListUnique',
                     400,
                     [
-                        'class'   => 'ArticleListUnique',
+                        'class' => 'ArticleListUnique',
                         'missing' => $needle
                     ]
                 );
@@ -147,7 +147,7 @@ class ArticleListUnique implements IteratorAggregate
         }
 
         $this->calculations = $attributes['calculations'];
-        $this->showHeader   = $attributes['showHeader'] ?? true;
+        $this->showHeader = $attributes['showHeader'] ?? true;
 
         // price factors
         $this->PriceFactors = new ErpFactorList();
@@ -284,7 +284,7 @@ class ArticleListUnique implements IteratorAggregate
         $this->PriceFactors->toArray();
 
         return [
-            'articles'     => $articles,
+            'articles' => $articles,
             'calculations' => $this->calculations,
             'priceFactors' => $this->PriceFactors->toArray()
         ];
@@ -332,7 +332,7 @@ class ArticleListUnique implements IteratorAggregate
      */
     public function toHTML($template = false): string
     {
-        $Engine   = QUI::getTemplateManager()->getEngine();
+        $Engine = QUI::getTemplateManager()->getEngine();
         $vatArray = [];
 
         if (!$this->count()) {
@@ -356,7 +356,7 @@ class ArticleListUnique implements IteratorAggregate
             $vatArray[$key]['sum'] = $Currency->format($vat['sum']);
         }
 
-        $this->calculations['sum']    = $Currency->format($this->calculations['sum']);
+        $this->calculations['sum'] = $Currency->format($this->calculations['sum']);
         $this->calculations['subSum'] = $Currency->format($this->calculations['subSum']);
 
         // Fallback for older unique article lists
@@ -365,7 +365,7 @@ class ArticleListUnique implements IteratorAggregate
         }
 
         $this->calculations['grandSubSum'] = $Currency->format($this->calculations['grandSubSum']);
-        $this->calculations['nettoSum']    = $Currency->format($this->calculations['nettoSum']);
+        $this->calculations['nettoSum'] = $Currency->format($this->calculations['nettoSum']);
         $this->calculations['nettoSubSum'] = $Currency->format($this->calculations['nettoSubSum']);
 
         $pos = 1;
@@ -386,7 +386,7 @@ class ArticleListUnique implements IteratorAggregate
 
         if (!$ExchangeCurrency || $ExchangeCurrency->getCode() === $Currency->getCode()) {
             $showExchangeRate = false;
-            $exchangeRate     = false;
+            $exchangeRate = false;
         } else {
             if ($this->exchangeRate) {
                 $Currency->setExchangeRate($this->exchangeRate);
@@ -397,12 +397,12 @@ class ArticleListUnique implements IteratorAggregate
 
             $exchangeRateText = $this->Locale->get('quiqqer/erp', 'exchangerate.text', [
                 'startCurrency' => $Currency->format(1),
-                'rate'          => $exchangeRate
+                'rate' => $exchangeRate
             ]);
         }
 
         $priceFactors = [];
-        $grandTotal   = [];
+        $grandTotal = [];
 
         foreach ($this->PriceFactors as $Factor) {
             if ($Factor->getCalculationBasis() === QUI\ERP\Accounting\Calc::CALCULATION_GRAND_TOTAL) {
@@ -415,16 +415,16 @@ class ArticleListUnique implements IteratorAggregate
 
         // output
         $Engine->assign([
-            'priceFactors'     => $priceFactors,
-            'grandTotal'       => $grandTotal,
-            'showHeader'       => $this->showHeader,
-            'this'             => $this,
-            'articles'         => $articles,
-            'calculations'     => $this->calculations,
-            'vatArray'         => $vatArray,
-            'Locale'           => $this->Locale,
+            'priceFactors' => $priceFactors,
+            'grandTotal' => $grandTotal,
+            'showHeader' => $this->showHeader,
+            'this' => $this,
+            'articles' => $articles,
+            'calculations' => $this->calculations,
+            'vatArray' => $vatArray,
+            'Locale' => $this->Locale,
             'showExchangeRate' => $showExchangeRate,
-            'exchangeRate'     => $exchangeRate,
+            'exchangeRate' => $exchangeRate,
             'exchangeRateText' => $exchangeRateText
         ]);
 

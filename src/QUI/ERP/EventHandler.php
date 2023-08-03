@@ -68,7 +68,7 @@ class EventHandler
     public static function createDefaultManufacturerGroup()
     {
         try {
-            $Conf           = QUI::getPackage('quiqqer/erp')->getConfig();
+            $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
             $defaultGroupId = $Conf->get('manufacturers', 'groupId');
 
             if (!empty($defaultGroupId)) {
@@ -92,7 +92,7 @@ class EventHandler
                 try {
                     /** @var QUI\ERP\Products\Field\Types\GroupList $ProductField */
                     $ProductField = ProductFields::getField(ProductFields::FIELD_MANUFACTURER);
-                    $groupIds     = $ProductField->getOption('groupIds');
+                    $groupIds = $ProductField->getOption('groupIds');
 
                     if (empty($groupIds)) {
                         $groupIds = [];
@@ -118,7 +118,7 @@ class EventHandler
      */
     public static function patchBankAccount()
     {
-        $Conf               = QUI::getPackage('quiqqer/erp')->getConfig();
+        $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
         $bankAccountPatched = $Conf->getValue('bankAccounts', 'isPatched');
 
         if (!empty($bankAccountPatched)) {
@@ -126,9 +126,9 @@ class EventHandler
         }
 
         // Create new bank account with existing details
-        $bankName    = $Conf->get('company', 'bankName');
-        $bankIban    = $Conf->get('company', 'bankIban');
-        $bankBic     = $Conf->get('company', 'bankBic');
+        $bankName = $Conf->get('company', 'bankName');
+        $bankIban = $Conf->get('company', 'bankIban');
+        $bankBic = $Conf->get('company', 'bankBic');
         $companyName = $Conf->get('company', 'name');
 
         if (empty($bankIban) || empty($bankBic) || empty($companyName)) {
@@ -139,12 +139,12 @@ class EventHandler
         }
 
         $bankAccountData = [
-            'name'          => $bankName ?: $bankIban,
-            'iban'          => $bankIban,
-            'bic'           => $bankBic,
-            'title'         => $companyName,
+            'name' => $bankName ?: $bankIban,
+            'iban' => $bankIban,
+            'bic' => $bankBic,
+            'title' => $companyName,
             'accountHolder' => $companyName,
-            'default'       => true
+            'default' => true
         ];
 
         try {
@@ -225,9 +225,9 @@ class EventHandler
 
         // eu vat id validation
         try {
-            $Package  = QUI::getPackage('quiqqer/tax');
+            $Package = QUI::getPackage('quiqqer/tax');
             $validate = $Package->getConfig()->getValue('shop', 'validateVatId');
-            $vatId    = $User->getAttribute('quiqqer.erp.euVatId');
+            $vatId = $User->getAttribute('quiqqer.erp.euVatId');
 
             if ($validate && $vatId && !empty($vatId)) {
                 try {
@@ -279,7 +279,7 @@ class EventHandler
         }
 
         $Request = QUI::getRequest()->request;
-        $data    = $Request->all();
+        $data = $Request->all();
 
         if (empty($data)) {
             return;
@@ -305,9 +305,11 @@ class EventHandler
         if (isset($data['vatId'])) {
             $vatId = $data['vatId'];
 
-            if (class_exists('QUI\ERP\Tax\Utils')
+            if (
+                class_exists('QUI\ERP\Tax\Utils')
                 && QUI\ERP\Tax\Utils::shouldVatIdValidationBeExecuted()
-                && !empty($vatId)) {
+                && !empty($vatId)
+            ) {
                 $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
             }
 
@@ -333,7 +335,7 @@ class EventHandler
         }
 
         $Request = QUI::getRequest()->request;
-        $data    = $Request->get('data');
+        $data = $Request->get('data');
 
         if (is_string($data)) {
             $data = json_decode($data, true);
@@ -347,9 +349,11 @@ class EventHandler
             $vatId = $data['vatId'];
 
             try {
-                if (class_exists('QUI\ERP\Tax\Utils')
+                if (
+                    class_exists('QUI\ERP\Tax\Utils')
                     && QUI\ERP\Tax\Utils::shouldVatIdValidationBeExecuted()
-                    && !empty($vatId)) {
+                    && !empty($vatId)
+                ) {
                     $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
                 }
 
@@ -387,7 +391,7 @@ class EventHandler
 
         // business type
         $businessType = 'b2c';
-        $company      = $Address->getAttribute('company');
+        $company = $Address->getAttribute('company');
 
         if (!empty($company)) {
             $businessType = 'b2b';
@@ -399,14 +403,14 @@ class EventHandler
 
         // template data
         $Engine->assign([
-            'User'         => $User,
-            'Address'      => $Address,
+            'User' => $User,
+            'Address' => $Address,
             'businessType' => $businessType,
 
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
-            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
-            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
-            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
+            'isB2C' => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B' => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B' => QUI\ERP\Utils\Shop::isOnlyB2B(),
         ]);
 
         try {
@@ -438,13 +442,13 @@ class EventHandler
         }
 
         $Engine->assign([
-            'User'    => $User,
+            'User' => $User,
             'Address' => $Address,
 
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
-            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
-            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
-            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
+            'isB2C' => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B' => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B' => QUI\ERP\Utils\Shop::isOnlyB2B(),
         ]);
 
         try {
@@ -475,7 +479,7 @@ class EventHandler
         }
 
         try {
-            $Conf     = QUI::getPackage('quiqqer/frontend-users')->getConfig();
+            $Conf = QUI::getPackage('quiqqer/frontend-users')->getConfig();
             $settings = $Conf->getValue('profile', 'addressFields');
 
             if (!empty($settings)) {
@@ -493,10 +497,10 @@ class EventHandler
             'User' => $User,
 
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
-            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
-            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
-            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
-            'isOnlyB2C'                => QUI\ERP\Utils\Shop::isOnlyB2C(),
+            'isB2C' => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B' => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B' => QUI\ERP\Utils\Shop::isOnlyB2B(),
+            'isOnlyB2C' => QUI\ERP\Utils\Shop::isOnlyB2C(),
         ]);
 
         try {
@@ -527,7 +531,7 @@ class EventHandler
         }
 
         try {
-            $Conf     = QUI::getPackage('quiqqer/frontend-users')->getConfig();
+            $Conf = QUI::getPackage('quiqqer/frontend-users')->getConfig();
             $settings = $Conf->getValue('profile', 'addressFields');
 
             if (!empty($settings)) {
@@ -545,10 +549,10 @@ class EventHandler
             'User' => $User,
 
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
-            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
-            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
-            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
-            'isOnlyB2C'                => QUI\ERP\Utils\Shop::isOnlyB2C(),
+            'isB2C' => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B' => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B' => QUI\ERP\Utils\Shop::isOnlyB2B(),
+            'isOnlyB2C' => QUI\ERP\Utils\Shop::isOnlyB2C(),
         ]);
 
         try {
@@ -580,7 +584,7 @@ class EventHandler
         }
 
         try {
-            $Conf     = QUI::getPackage('quiqqer/frontend-users')->getConfig();
+            $Conf = QUI::getPackage('quiqqer/frontend-users')->getConfig();
             $settings = $Conf->getValue('profile', 'addressFields');
 
             if (!empty($settings)) {
@@ -596,7 +600,7 @@ class EventHandler
 
         // business type
         $businessType = 'b2c';
-        $company      = $Address->getAttribute('company');
+        $company = $Address->getAttribute('company');
 
         if (!empty($company)) {
             $businessType = 'b2b';
@@ -608,15 +612,15 @@ class EventHandler
 
         // template data
         $Engine->assign([
-            'User'         => $User,
-            'Address'      => $Address,
+            'User' => $User,
+            'Address' => $Address,
             'businessType' => $businessType,
 
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
-            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
-            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
-            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
-            'isOnlyB2C'                => QUI\ERP\Utils\Shop::isOnlyB2C(),
+            'isB2C' => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B' => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B' => QUI\ERP\Utils\Shop::isOnlyB2B(),
+            'isOnlyB2C' => QUI\ERP\Utils\Shop::isOnlyB2C(),
         ]);
 
         try {
@@ -648,7 +652,7 @@ class EventHandler
         }
 
         try {
-            $Conf     = QUI::getPackage('quiqqer/frontend-users')->getConfig();
+            $Conf = QUI::getPackage('quiqqer/frontend-users')->getConfig();
             $settings = $Conf->getValue('profile', 'addressFields');
 
             if (!empty($settings)) {
@@ -663,14 +667,14 @@ class EventHandler
         }
 
         $Engine->assign([
-            'User'    => $User,
+            'User' => $User,
             'Address' => $Address,
 
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
-            'isB2C'                    => QUI\ERP\Utils\Shop::isB2C(),
-            'isB2B'                    => QUI\ERP\Utils\Shop::isB2B(),
-            'isOnlyB2B'                => QUI\ERP\Utils\Shop::isOnlyB2B(),
-            'isOnlyB2C'                => QUI\ERP\Utils\Shop::isOnlyB2C(),
+            'isB2C' => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B' => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B' => QUI\ERP\Utils\Shop::isOnlyB2B(),
+            'isOnlyB2C' => QUI\ERP\Utils\Shop::isOnlyB2C(),
         ]);
 
         try {

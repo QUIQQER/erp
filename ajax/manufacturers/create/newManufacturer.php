@@ -1,9 +1,5 @@
 <?php
 
-use QUI\ERP\Manufacturers;
-use QUI\Utils\Security\Orthos;
-use QUI\ERP\Exception as ERPException;
-
 /**
  * Create a new manufacturer users
  *
@@ -12,11 +8,16 @@ use QUI\ERP\Exception as ERPException;
  * @param array $groups
  * @return integer - New user ID
  */
+
+use QUI\ERP\Exception as ERPException;
+use QUI\ERP\Manufacturers;
+use QUI\Utils\Security\Orthos;
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_manufacturers_create_newManufacturer',
     function ($manufacturerId, $address, $groupIds) {
-        $address        = Orthos::clearArray(\json_decode($address, true));
-        $groupIds       = Orthos::clearArray(\json_decode($groupIds, true));
+        $address = Orthos::clearArray(\json_decode($address, true));
+        $groupIds = Orthos::clearArray(\json_decode($groupIds, true));
         $manufacturerId = Orthos::clear($manufacturerId);
 
         try {

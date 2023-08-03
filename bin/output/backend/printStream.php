@@ -3,7 +3,7 @@
 define('QUIQQER_SYSTEM', true);
 define('QUIQQER_AJAX', true);
 
-require_once dirname(__FILE__, 6).'/header.php';
+require_once dirname(__FILE__, 6) . '/header.php';
 
 use QUI\Utils\Security\Orthos;
 
@@ -14,8 +14,8 @@ if (!$User->canUseBackend()) {
 }
 
 $Request = QUI::getRequest();
-$hash    = Orthos::clear($Request->query->get('hash'));
-$index   = (int)$Request->query->get('index');
+$hash = Orthos::clear($Request->query->get('hash'));
+$index = (int)$Request->query->get('index');
 
 if (empty($hash)) {
     exit;

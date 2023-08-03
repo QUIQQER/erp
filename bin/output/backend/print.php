@@ -3,7 +3,7 @@
 define('QUIQQER_SYSTEM', true);
 define('QUIQQER_AJAX', true);
 
-require_once dirname(__FILE__, 6).'/header.php';
+require_once dirname(__FILE__, 6) . '/header.php';
 
 use QUI\ERP\Output\Output;
 use QUI\Utils\Security\Orthos;
@@ -14,15 +14,15 @@ if (!$User->canUseBackend()) {
     exit;
 }
 
-$Request          = QUI::getRequest();
-$entityId         = Orthos::clear($Request->query->get('id'));
-$entityType       = Orthos::clear($Request->query->get('t'));
-$template         = Orthos::clear($Request->query->get('tpl'));
+$Request = QUI::getRequest();
+$entityId = Orthos::clear($Request->query->get('id'));
+$entityType = Orthos::clear($Request->query->get('t'));
+$template = Orthos::clear($Request->query->get('tpl'));
 $templateProvider = Orthos::clear($Request->query->get('tplpr'));
-$quiId            = Orthos::clear($Request->query->get('oid'));
+$quiId = Orthos::clear($Request->query->get('oid'));
 
 $requestHash = \hash('sha256', \implode('', [$entityId, $entityType, $template, $templateProvider]));
-$cacheName   = 'quiqqer/erp/print/'.$requestHash;
+$cacheName = 'quiqqer/erp/print/' . $requestHash;
 
 try {
     $HtmlPdfDocument = Output::getDocumentPdf(
@@ -55,9 +55,9 @@ try {
 
 QUI::getSession()->set($cacheName, \json_encode($imageFiles));
 
-$baseUrl     = URL_OPT_DIR.'quiqqer/erp/bin/output/backend/printStream.php?';
+$baseUrl = URL_OPT_DIR . 'quiqqer/erp/bin/output/backend/printStream.php?';
 $queryParams = [
-    'hash'  => $cacheName,
+    'hash' => $cacheName,
     'index' => 0
 ];
 
@@ -65,7 +65,7 @@ $queryParams = [
 $printImageSources = [];
 
 foreach ($imageFiles as $imageFile) {
-    $streamFile          = $baseUrl.\http_build_query($queryParams);
+    $streamFile = $baseUrl . \http_build_query($queryParams);
     $printImageSources[] = $streamFile;
 
     $queryParams['index']++;
@@ -90,7 +90,7 @@ echo '
 foreach ($printImageSources as $imgContent) {
     echo '<img 
             class="pdfDocument" 
-            src="'.$imgContent.'"
+            src="' . $imgContent . '"
             style="width: 100%; width: 21cm; height: 29.7cm; padding: 1cm;"
         />';
 }

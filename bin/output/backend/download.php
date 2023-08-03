@@ -8,7 +8,7 @@
 define('QUIQQER_SYSTEM', true);
 define('QUIQQER_AJAX', true);
 
-require_once dirname(__FILE__, 6).'/header.php';
+require_once dirname(__FILE__, 6) . '/header.php';
 
 use QUI\ERP\Output\Output;
 use QUI\Utils\Security\Orthos;
@@ -19,12 +19,12 @@ if (!$User->canUseBackend()) {
     exit;
 }
 
-$Request          = QUI::getRequest();
-$entityId         = Orthos::clear($Request->query->get('id'));
-$entityType       = Orthos::clear($Request->query->get('t'));
-$template         = Orthos::clear($Request->query->get('tpl'));
+$Request = QUI::getRequest();
+$entityId = Orthos::clear($Request->query->get('id'));
+$entityType = Orthos::clear($Request->query->get('t'));
+$template = Orthos::clear($Request->query->get('tpl'));
 $templateProvider = Orthos::clear($Request->query->get('tplpr'));
-$quiId            = Orthos::clear($Request->query->get('oid'));
+$quiId = Orthos::clear($Request->query->get('oid'));
 
 $errorOutput = function ($message) use ($quiId) {
     echo '
@@ -34,10 +34,10 @@ $errorOutput = function ($message) use ($quiId) {
     if (typeof parent.require !== "undefined") {
         parent.require(["qui/QUI"], function(QUI) {
             QUI.getMessageHandler().then(function(MH) {
-                MH.addError("'.$message.'");
+                MH.addError("' . $message . '");
             });
             
-            var Control = QUI.Controls.getById(\''.$quiId.'\');
+            var Control = QUI.Controls.getById(\'' . $quiId . '\');
             
             if (Control) {
                 Control.Loader.hide();     

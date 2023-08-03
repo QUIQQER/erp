@@ -27,7 +27,7 @@ use function get_class;
  */
 class Text extends QUI\ERP\Accounting\Article
 {
-    protected $displayPrice = false;
+    protected bool $displayPrice = false;
 
     /**
      * @inheritdoc
@@ -71,8 +71,8 @@ class Text extends QUI\ERP\Accounting\Article
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'class'        => get_class($this),
-            'control'      => 'package/quiqqer/erp/bin/backend/controls/articles/Text',
+            'class' => get_class($this),
+            'control' => 'package/quiqqer/erp/bin/backend/controls/articles/Text',
             'displayPrice' => $this->displayPrice()
         ]);
     }

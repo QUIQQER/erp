@@ -95,19 +95,19 @@ class User extends QUI\QDOM implements UserInterface
         foreach ($needle as $attribute) {
             if (!isset($attributes[$attribute])) {
                 throw new QUI\ERP\Exception(
-                    'Missing attribute:'.$attribute
+                    'Missing attribute:' . $attribute
                 );
             }
         }
 
-        $this->id        = $attributes['id'];
+        $this->id = $attributes['id'];
         $this->isCompany = !empty($attributes['isCompany']) || !empty($attributes['company']);
-        $this->isNetto   = null;
+        $this->isNetto = null;
 
-        $this->lang      = $attributes['lang'];
-        $this->username  = $attributes['username'];
+        $this->lang = $attributes['lang'];
+        $this->username = $attributes['username'];
         $this->firstName = $attributes['firstname'];
-        $this->lastName  = $attributes['lastname'];
+        $this->lastName = $attributes['lastname'];
 
         if ($attributes['country'] instanceof QUI\Countries\Country) {
             $this->country = $attributes['country']->getCode();
@@ -201,19 +201,19 @@ class User extends QUI\QDOM implements UserInterface
         unset($data['extra']);
 
         return new self([
-            'id'        => $User->getId(),
-            'country'   => $country,
-            'username'  => $User->getUsername(),
+            'id' => $User->getId(),
+            'country' => $country,
+            'username' => $User->getUsername(),
             'firstname' => $User->getAttribute('firstname'),
-            'lastname'  => $User->getAttribute('lastname'),
-            'lang'      => $User->getLang(),
+            'lastname' => $User->getAttribute('lastname'),
+            'lang' => $User->getLang(),
             'isCompany' => $User->isCompany(),
-            'isNetto'   => $User->getAttribute('quiqqer.erp.isNettoUser'),
-            'data'      => $data,
-            'address'   => $address,
+            'isNetto' => $User->getAttribute('quiqqer.erp.isNettoUser'),
+            'data' => $data,
+            'address' => $address,
 
             'quiqqer.erp.euVatId' => $User->getAttribute('quiqqer.erp.euVatId'),
-            'quiqqer.erp.taxId'   => $User->getAttribute('quiqqer.erp.taxId')
+            'quiqqer.erp.taxId' => $User->getAttribute('quiqqer.erp.taxId')
         ]);
     }
 
@@ -236,7 +236,7 @@ class User extends QUI\QDOM implements UserInterface
         }
 
         try {
-            $User    = QUI::getUsers()->get($user['uid']);
+            $User = QUI::getUsers()->get($user['uid']);
             $Address = $User->getAddress($user['aid']);
         } catch (QUI\Exception $Exception) {
             throw new QUI\ERP\Exception(
@@ -275,7 +275,7 @@ class User extends QUI\QDOM implements UserInterface
         $Address = $this->getAddress();
 
         $salutation = $Address->getAttribute('salutation');
-        $firstName  = $Address->getAttribute('firstname');
+        $firstName = $Address->getAttribute('firstname');
 
         if (empty($firstName)) {
             $firstName = $this->firstName;
@@ -287,10 +287,10 @@ class User extends QUI\QDOM implements UserInterface
             $lastName = $this->lastName;
         }
 
-        $name = $firstName.' '.$lastName;
+        $name = $firstName . ' ' . $lastName;
 
         if (!empty($salutation)) {
-            $name = $salutation.' '.$name;
+            $name = $salutation . ' ' . $name;
         }
 
         return trim($name);
@@ -348,15 +348,15 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function getAttributes()
     {
-        $attributes              = parent::getAttributes();
-        $attributes['country']   = $this->getCountry();
-        $attributes['id']        = $this->getId();
-        $attributes['lang']      = $this->getLang();
+        $attributes = parent::getAttributes();
+        $attributes['country'] = $this->getCountry();
+        $attributes['id'] = $this->getId();
+        $attributes['lang'] = $this->getLang();
         $attributes['isCompany'] = $this->isCompany();
         $attributes['firstname'] = $this->getAttribute('firstname');
-        $attributes['lastname']  = $this->getAttribute('lastname');
-        $attributes['username']  = $this->getAttribute('username');
-        $attributes['address']   = $this->getAddress()->getAttributes();
+        $attributes['lastname'] = $this->getAttribute('lastname');
+        $attributes['username'] = $this->getAttribute('username');
+        $attributes['address'] = $this->getAddress()->getAttributes();
 
         if ($this->getAttribute('quiqqer.erp.euVatId')) {
             $attributes['quiqqer.erp.euVatId'] = $this->getAttribute('quiqqer.erp.euVatId');
@@ -730,7 +730,7 @@ class User extends QUI\QDOM implements UserInterface
 
         $NumberRange = new CustomerNumberRange();
 
-        return $NumberRange->getCustomerNoPrefix().$customerId;
+        return $NumberRange->getCustomerNoPrefix() . $customerId;
     }
 
     /**

@@ -68,7 +68,7 @@ class ArticleDiscount
                 $type = Calc::CALCULATION_COMPLEMENT;
         }
 
-        $this->type  = $type;
+        $this->type = $type;
         $this->value = $discount;
     }
 
@@ -91,7 +91,7 @@ class ArticleDiscount
         if (is_numeric($string)) {
             // number, float, int -> 5.99
             $data['value'] = QUI\ERP\Money\Price::validatePrice($string);
-            $data['type']  = Calc::CALCULATION_COMPLEMENT;
+            $data['type'] = Calc::CALCULATION_COMPLEMENT;
         } elseif (strpos($string, '{') !== false || strpos($string, '[') !== false) {
             // json string
             $data = json_decode($string, true);
@@ -103,10 +103,10 @@ class ArticleDiscount
             // is normal string 5% or 5.99 €
             if (strpos($string, '%') !== false) {
                 $data['value'] = floatval(str_replace('%', '', $string));
-                $data['type']  = Calc::CALCULATION_PERCENTAGE;
+                $data['type'] = Calc::CALCULATION_PERCENTAGE;
             } else {
                 $data['value'] = QUI\ERP\Money\Price::validatePrice($string);
-                $data['type']  = Calc::CALCULATION_COMPLEMENT;
+                $data['type'] = Calc::CALCULATION_COMPLEMENT;
             }
         }
 
@@ -195,8 +195,8 @@ class ArticleDiscount
     public function toArray(): array
     {
         return [
-            'value'    => $this->value,
-            'type'     => $this->type,
+            'value' => $this->value,
+            'type' => $this->type,
             'currency' => $this->getCurrency()->toArray()
         ];
     }
@@ -226,7 +226,7 @@ class ArticleDiscount
 
         if ($this->type === Calc::CALCULATION_COMPLEMENT) {
             if ($this->Article && $this->Article->getUser()) {
-                $User    = $this->Article->getUser();
+                $User = $this->Article->getUser();
                 $isNetto = QUI\ERP\Utils\User::isNettoUser($User);
 
                 if (!$isNetto) {
