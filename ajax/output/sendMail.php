@@ -1,9 +1,5 @@
 <?php
 
-use QUI\ERP\Output\Output as ERPOutput;
-use QUI\Permissions\Permission;
-use QUI\Utils\Security\Orthos;
-
 /**
  * Returns e-mail data for an output document
  *
@@ -18,6 +14,11 @@ use QUI\Utils\Security\Orthos;
  *
  * @return void
  */
+
+use QUI\ERP\Output\Output as ERPOutput;
+use QUI\Permissions\Permission;
+use QUI\Utils\Security\Orthos;
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_output_sendMail',
     function (
@@ -33,7 +34,7 @@ QUI::$Ajax->registerFunction(
         try {
             $entityType = Orthos::clear($entityType);
 
-            $OutputProvider   = ERPOutput::getOutputProviderByEntityType($entityType);
+            $OutputProvider = ERPOutput::getOutputProviderByEntityType($entityType);
             $TemplateProvider = ERPOutput::getOutputTemplateProviderByPackage(Orthos::clear($templateProvider));
 
             if (empty($TemplateProvider)) {
@@ -42,9 +43,11 @@ QUI::$Ajax->registerFunction(
 
             $attachedMediaFiles = [];
 
-            if (!empty($mailAttachmentMediaFileIds) &&
-                Permission::hasPermission(ERPOutput::PERMISSION_ATTACH_EMAIL_FILES)) {
-                $Media                      = QUI::getRewrite()->getProject()->getMedia();
+            if (
+                !empty($mailAttachmentMediaFileIds) &&
+                Permission::hasPermission(ERPOutput::PERMISSION_ATTACH_EMAIL_FILES)
+            ) {
+                $Media = QUI::getRewrite()->getProject()->getMedia();
                 $mailAttachmentMediaFileIds = json_decode($mailAttachmentMediaFileIds, true);
 
                 foreach ($mailAttachmentMediaFileIds as $fileId) {
