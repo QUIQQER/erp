@@ -19,17 +19,17 @@ class ArticleView extends QUI\QDOM
     /**
      * @var int
      */
-    protected $position;
+    protected int $position;
 
     /**
      * @var Article
      */
-    protected $Article;
+    protected Article $Article;
 
     /**
      * @var QUI\ERP\Currency\Currency
      */
-    protected $Currency;
+    protected QUI\ERP\Currency\Currency $Currency;
 
     /**
      * ArticleView constructor.
