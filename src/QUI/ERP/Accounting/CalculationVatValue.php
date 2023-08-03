@@ -41,7 +41,7 @@ class CalculationVatValue extends CalculationValue
         parent::__construct($number, $Currency, $precision);
 
         $this->text = $text;
-        $this->vat  = $vat;
+        $this->vat = $vat;
     }
 
     /**

@@ -23,10 +23,10 @@ class Article implements ArticleInterface
     /**
      * @var array
      */
-    protected $attributes = [
-        'id'      => '',
+    protected array $attributes = [
+        'id' => '',
         'control' => '',
-        'class'   => ''
+        'class' => ''
     ];
 
     /**
@@ -37,25 +37,25 @@ class Article implements ArticleInterface
      *
      * @var array
      */
-    protected $customFields = [];
+    protected array $customFields = [];
 
     /**
      * Custom data for plugins and modules
      *
      * @var array
      */
-    protected $customData = [];
+    protected array $customData = [];
 
     /**
      * Should the price displayed?
      * default = yes
      */
-    protected $displayPrice = true;
+    protected bool $displayPrice = true;
 
     /**
      * @var bool
      */
-    protected $calculated = false;
+    protected bool $calculated = false;
 
     /**
      * @var float|int
@@ -124,17 +124,17 @@ class Article implements ArticleInterface
     /**
      * @var ArticleDiscount|null
      */
-    protected $Discount = null;
+    protected ?ArticleDiscount $Discount = null;
 
     /**
      * @var null|QUI\Interfaces\Users\User
      */
-    protected $User = null;
+    protected ?QUI\Interfaces\Users\User $User = null;
 
     /**
-     * @var null
+     * @var null|QUI\ERP\Currency\Currency
      */
-    protected $Currency = null;
+    protected ?QUI\ERP\Currency\Currency $Currency = null;
 
     /**
      * Article constructor.
@@ -184,21 +184,21 @@ class Article implements ArticleInterface
                 $this->nettoPriceNotRounded = $calc['nettoPriceNotRounded'];
             }
 
-            $this->price      = $calc['price'];
+            $this->price = $calc['price'];
             $this->basisPrice = $calc['basisPrice'];
-            $this->sum        = $calc['sum'];
+            $this->sum = $calc['sum'];
 
-            $this->nettoPrice      = $calc['nettoPrice'];
+            $this->nettoPrice = $calc['nettoPrice'];
             $this->nettoBasisPrice = $calc['nettoBasisPrice'];
-            $this->nettoSum        = $calc['nettoSum'];
+            $this->nettoSum = $calc['nettoSum'];
 
             if (isset($calc['nettoSubSum'])) {
                 $this->nettoSubSum = $calc['nettoSubSum'];
             }
 
             $this->vatArray = $calc['vatArray'];
-            $this->isEuVat  = $calc['isEuVat'];
-            $this->isNetto  = $calc['isNetto'];
+            $this->isEuVat = $calc['isEuVat'];
+            $this->isNetto = $calc['isNetto'];
 
             $this->calculated = true;
         }
@@ -329,7 +329,7 @@ class Article implements ArticleInterface
         }
 
         try {
-            $Project          = QUI::getRewrite()->getProject();
+            $Project = QUI::getRewrite()->getProject();
             $PlaceholderImage = $Project->getMedia()->getPlaceholderImage();
 
             if ($PlaceholderImage) {
@@ -426,9 +426,9 @@ class Article implements ArticleInterface
                     $Area = QUI\ERP\Defaults::getArea();
                 }
 
-                $Product  = QUI\ERP\Products\Handler\Products::getProduct($this->attributes['id']);
-                $Vat      = $Product->getField(QUI\ERP\Products\Handler\Fields::FIELD_VAT);
-                $TaxType  = new QUI\ERP\Tax\TaxType($Vat->getValue());
+                $Product = QUI\ERP\Products\Handler\Products::getProduct($this->attributes['id']);
+                $Vat = $Product->getField(QUI\ERP\Products\Handler\Fields::FIELD_VAT);
+                $TaxType = new QUI\ERP\Tax\TaxType($Vat->getValue());
                 $TaxEntry = TaxUtils::getTaxEntry($TaxType, $Area);
 
                 return $TaxEntry->getValue();
@@ -443,8 +443,8 @@ class Article implements ArticleInterface
             }
 
             // return default vat
-            $Area     = QUI\ERP\Defaults::getArea();
-            $TaxType  = QUI\ERP\Tax\Utils::getTaxTypeByArea($Area);
+            $Area = QUI\ERP\Defaults::getArea();
+            $TaxType = QUI\ERP\Tax\Utils::getTaxTypeByArea($Area);
             $TaxEntry = QUI\ERP\Tax\Utils::getTaxEntry($TaxType, $Area);
 
             return $TaxEntry->getValue();
@@ -472,7 +472,7 @@ class Article implements ArticleInterface
     public function setUser(QUI\Interfaces\Users\User $User)
     {
         $this->calculated = false;
-        $this->User       = $User;
+        $this->User = $User;
     }
 
     /**
@@ -527,10 +527,10 @@ class Article implements ArticleInterface
             }
 
             // @todo cache unit field entries
-            $current   = $Locale->getCurrent();
-            $unitId    = $this->attributes['quantityUnit']['id'];
+            $current = $Locale->getCurrent();
+            $unitId = $this->attributes['quantityUnit']['id'];
             $UnitField = QUI\ERP\Products\Handler\Fields::getField(QUI\ERP\Products\Handler\Fields::FIELD_UNIT);
-            $options   = $UnitField->getOptions();
+            $options = $UnitField->getOptions();
 
             if (isset($options['entries'][$unitId])) {
                 $titles = $options['entries'][$unitId]['title'];
@@ -641,7 +641,7 @@ class Article implements ArticleInterface
 
         $Calc->calcArticlePrice($this, function ($data) use ($self) {
             $self->price = $data['price'];
-            $self->sum   = $data['sum'];
+            $self->sum = $data['sum'];
 
             if (isset($data['nettoPriceNotRounded'])) {
                 $self->nettoPriceNotRounded = $data['nettoPriceNotRounded'];
@@ -649,14 +649,14 @@ class Article implements ArticleInterface
 
             $self->basisPrice = $data['basisPrice'];
 
-            $self->nettoPrice      = $data['nettoPrice'];
+            $self->nettoPrice = $data['nettoPrice'];
             $self->nettoBasisPrice = $data['nettoBasisPrice'];
-            $self->nettoSubSum     = $data['nettoSubSum'];
-            $self->nettoSum        = $data['nettoSum'];
+            $self->nettoSubSum = $data['nettoSubSum'];
+            $self->nettoSum = $data['nettoSum'];
 
             $self->vatArray = $data['vatArray'];
-            $self->isEuVat  = $data['isEuVat'];
-            $self->isNetto  = $data['isNetto'];
+            $self->isEuVat = $data['isEuVat'];
+            $self->isNetto = $data['isNetto'];
 
             $self->calculated = true;
         });
@@ -671,7 +671,7 @@ class Article implements ArticleInterface
      */
     public function toArray(): array
     {
-        $vat      = $this->getVat();
+        $vat = $this->getVat();
         $discount = '';
 
         if (isset($this->attributes['vat']) && $this->attributes['vat'] !== '') {
@@ -698,36 +698,36 @@ class Article implements ArticleInterface
 
         return [
             // article data
-            'id'           => $this->getId(),
-            'title'        => $this->getTitle(),
-            'articleNo'    => $this->getArticleNo(),
-            'gtin'         => $this->getGTIN(),
-            'description'  => $this->getDescription(),
-            'unitPrice'    => $this->getUnitPrice()->value(),
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'articleNo' => $this->getArticleNo(),
+            'gtin' => $this->getGTIN(),
+            'description' => $this->getDescription(),
+            'unitPrice' => $this->getUnitPrice()->value(),
             'displayPrice' => $this->displayPrice(),
-            'quantity'     => $this->getQuantity(),
+            'quantity' => $this->getQuantity(),
             'quantityUnit' => $quantityUnit,
-            'sum'          => $this->getSum()->value(),
-            'vat'          => $vat,
-            'discount'     => $discount,
-            'control'      => $this->attributes['control'],
-            'class'        => $class,
+            'sum' => $this->getSum()->value(),
+            'vat' => $vat,
+            'discount' => $discount,
+            'control' => $this->attributes['control'],
+            'class' => $class,
             'customFields' => $this->customFields,
-            'customData'   => $this->customData,
+            'customData' => $this->customData,
 
             // calculated data
-            'calculated'   => [
-                'price'                => $this->price,
-                'basisPrice'           => $this->basisPrice,
+            'calculated' => [
+                'price' => $this->price,
+                'basisPrice' => $this->basisPrice,
                 'nettoPriceNotRounded' => $this->nettoPriceNotRounded,
-                'sum'                  => $this->sum,
-                'nettoPrice'           => $this->nettoPrice,
-                'nettoBasisPrice'      => $this->nettoBasisPrice,
-                'nettoSubSum'          => $this->nettoSubSum,
-                'nettoSum'             => $this->nettoSum,
-                'vatArray'             => $this->vatArray,
-                'isEuVat'              => $this->isEuVat,
-                'isNetto'              => $this->isNetto
+                'sum' => $this->sum,
+                'nettoPrice' => $this->nettoPrice,
+                'nettoBasisPrice' => $this->nettoBasisPrice,
+                'nettoSubSum' => $this->nettoSubSum,
+                'nettoSum' => $this->nettoSum,
+                'vatArray' => $this->vatArray,
+                'isEuVat' => $this->isEuVat,
+                'isNetto' => $this->isNetto
             ]
         ];
     }

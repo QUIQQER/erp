@@ -13,11 +13,11 @@ use QUI\ERP\Products\Handler\Products;
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_parseProductToArticle',
     function ($productId, $attributes, $user, $fields) {
-        $user       = json_decode($user, true);
-        $fields     = json_decode($fields, true);
+        $user = json_decode($user, true);
+        $fields = json_decode($fields, true);
         $attributes = json_decode($attributes, true);
-        $User       = null;
-        $Locale     = QUI::getLocale();
+        $User = null;
+        $Locale = QUI::getLocale();
 
         if (!empty($user)) {
             try {

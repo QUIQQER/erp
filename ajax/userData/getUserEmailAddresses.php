@@ -6,6 +6,7 @@
  * @param int $userId
  * @return string
  */
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_userData_getUserEmailAddresses',
     function ($userId) {
