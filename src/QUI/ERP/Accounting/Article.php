@@ -426,7 +426,7 @@ class Article implements ArticleInterface
                     $Area = QUI\ERP\Defaults::getArea();
                 }
 
-                $Product = QUI\ERP\Products\Handler\Products::getProduct($this->attributes['id']);
+                $Product = QUI\ERP\Products\Handler\Products::getProduct((int)$this->attributes['id']);
                 $Vat = $Product->getField(QUI\ERP\Products\Handler\Fields::FIELD_VAT);
                 $TaxType = new QUI\ERP\Tax\TaxType($Vat->getValue());
                 $TaxEntry = TaxUtils::getTaxEntry($TaxType, $Area);
