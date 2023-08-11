@@ -10,7 +10,7 @@ use QUI\ERP\Products\Handler\Products;
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_getProductEdit',
     function ($productId, $user) {
-        $Product = Products::getProduct($productId);
+        $Product = Products::getProduct((int)$productId);
 
         $Control = new ProductEdit([
             'Product' => $Product
