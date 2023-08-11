@@ -12,7 +12,7 @@ use QUI\ERP\Products\Handler\Products;
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_hasProductCustomFields',
     function ($productId) {
-        $Product = Products::getProduct($productId);
+        $Product = Products::getProduct((int)$productId);
         $fields  = $Product->createUniqueProduct()->getCustomFields();
 
         return count($fields);
