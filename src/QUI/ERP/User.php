@@ -102,8 +102,6 @@ class User extends QUI\QDOM implements UserInterface
 
         $this->id = $attributes['id'];
         $this->isCompany = !empty($attributes['isCompany']) || !empty($attributes['company']);
-        $this->isNetto = null;
-
         $this->lang = $attributes['lang'];
         $this->username = $attributes['username'];
         $this->firstName = $attributes['firstname'];
@@ -135,6 +133,8 @@ class User extends QUI\QDOM implements UserInterface
                 $this->setAttribute($attribute, $value);
             }
         }
+
+        $this->isNetto = $this->isNetto();
     }
 
     /**
