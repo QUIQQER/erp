@@ -609,7 +609,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         editPriceFactor: function(index, priceFactor) {
             for (let k in priceFactor) {
-                this.$priceFactors[index][k] = priceFactor[k];
+                if (priceFactor.hasOwnProperty(k)) {
+                    this.$priceFactors[index][k] = priceFactor[k];
+                }
             }
         },
 
