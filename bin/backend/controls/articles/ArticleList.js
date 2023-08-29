@@ -170,9 +170,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * @returns {Object}
          */
         serialize: function() {
-            const articles = this.$getArticles().map(function(Article) {
-                const attr = Article.getAttributes();
-                attr.control = typeOf(Article);
+            const articles = this.$getArticles().map(function(ArticleInstance) {
+                const attr = ArticleInstance.getAttributes();
+                attr.control = typeOf(ArticleInstance);
 
                 return attr;
             });
@@ -242,9 +242,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             this.$articles = [];
 
-            const controls = data.articles.map(function(Article) {
-                if (typeof Article.control !== 'undefined' && Article.control !== '') {
-                    return Article.control;
+            const controls = data.articles.map(function(ArticleInstance) {
+                if (typeof ArticleInstance.control !== 'undefined' && ArticleInstance.control !== '') {
+                    return ArticleInstance.control;
                 }
 
                 return 'package/quiqqer/erp/bin/backend/controls/articles/Article';
@@ -284,8 +284,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         setUser: function(user) {
             this.$user = user;
 
-            this.$articles.each(function(Article) {
-                Article.setUser(this.$user);
+            this.$articles.each(function(ArticleInstance) {
+                ArticleInstance.setUser(this.$user);
             }.bind(this));
         },
 
@@ -355,8 +355,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 return;
             }
 
-            const Wanted = this.$articles.find(function(Article) {
-                return Article.getAttribute('position') === position;
+            const Wanted = this.$articles.find(function(ArticleInstance) {
+                return ArticleInstance.getAttribute('position') === position;
             });
 
             this.addArticle(NewArticle);
@@ -386,9 +386,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * @return {Array}
          */
         save: function() {
-            return this.$articles.map(function(Article) {
-                return Object.merge(Article.getAttributes(), {
-                    control: Article.getType()
+            return this.$articles.map(function(ArticleInstance) {
+                return Object.merge(ArticleInstance.getAttributes(), {
+                    control: ArticleInstance.getType()
                 });
             });
         },
@@ -487,8 +487,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * @return {Array}
          */
         $getArticleDataForCalculation: function() {
-            return this.$articles.map(function(Article) {
-                return Article.getAttributes();
+            return this.$articles.map(function(ArticleInstance) {
+                return ArticleInstance.getAttributes();
             });
         },
 
@@ -649,10 +649,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 elements = Elm.getElements('.article');
 
             elements.each(function(Node) {
-                const Article = QUI.Controls.getById(Node.get('data-quiid'));
-                const attributes = Article.getAttributes();
+                const ArticleInstance = QUI.Controls.getById(Node.get('data-quiid'));
+                const attributes = ArticleInstance.getAttributes();
 
-                Article.addEvents({
+                ArticleInstance.addEvents({
                     onSetPosition: self.$onArticleSetPosition
                 });
 
@@ -731,9 +731,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             Elm.getElements('.quiqqer-erp-sortableClone-placeholder').destroy();
 
             elements.each(function(Node) {
-                const Article = QUI.Controls.getById(Node.get('data-quiid'));
+                const ArticleInstance = QUI.Controls.getById(Node.get('data-quiid'));
 
-                Article.removeEvents({
+                ArticleInstance.removeEvents({
                     onSetPosition: self.$onArticleSetPosition
                 });
             });
@@ -760,10 +760,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          *
          * @param Article
          */
-        $onArticleSetPosition: function(Article) {
-            Article.getElm().getElement('.quiqqer-erp-backend-erpArticlePlaceholder-pos').set(
+        $onArticleSetPosition: function(ArticleInstance) {
+            ArticleInstance.getElm().getElement('.quiqqer-erp-backend-erpArticlePlaceholder-pos').set(
                 'html',
-                Article.getAttribute('position')
+                ArticleInstance.getAttribute('position')
             );
         },
 
@@ -771,14 +771,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * Recalculate the Position of all Articles
          */
         $recalculatePositions: function() {
-            let i, len, Article;
+            let i, len, ArticleInstance;
 
             const Elm = this.getElm(),
                 elements = Elm.getElements('.article');
 
             for (i = 0, len = elements.length; i < len; i++) {
-                Article = QUI.Controls.getById(elements[i].get('data-quiid'));
-                Article.setPosition(i + 1);
+                ArticleInstance = QUI.Controls.getById(elements[i].get('data-quiid'));
+                ArticleInstance.setPosition(i + 1);
             }
         },
 
@@ -789,9 +789,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         /**
          * event : on article delete
          *
-         * @param {Object} Article
+         * @param {Object} ArticleInstance
          */
-        $onArticleDelete: function(Article) {
+        $onArticleDelete: function(ArticleInstance) {
             if (this.$selectedArticle) {
                 this.$selectedArticle.unselect();
             }
@@ -803,7 +803,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 position = 1;
 
             for (i = 0, len = this.$articles.length; i < len; i++) {
-                if (this.$articles[i].getAttribute('position') === Article.getAttribute('position')) {
+                if (this.$articles[i].getAttribute('position') === ArticleInstance.getAttribute('position')) {
                     continue;
                 }
 
@@ -828,13 +828,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          *
          * @param {Object} Article
          */
-        $onArticleSelect: function(Article) {
+        $onArticleSelect: function(ArticleInstance) {
             if (this.$selectedArticle &&
-                this.$selectedArticle !== Article) {
+                this.$selectedArticle !== ArticleInstance) {
                 this.$selectedArticle.unselect();
             }
 
-            this.$selectedArticle = Article;
+            this.$selectedArticle = ArticleInstance;
             this.fireEvent('articleSelect', [
                 this,
                 this.$selectedArticle
@@ -846,8 +846,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          *
          * @param Article
          */
-        $onArticleUnSelect: function(Article) {
-            if (this.$selectedArticle === Article) {
+        $onArticleUnSelect: function(ArticleInstance) {
+            if (this.$selectedArticle === ArticleInstance) {
                 this.$selectedArticle = null;
                 this.fireEvent('articleUnSelect', [
                     this,
@@ -861,10 +861,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          *
          * @param Article
          */
-        $onArticleReplace: function(Article) {
+        $onArticleReplace: function(ArticleInstance) {
             this.fireEvent('articleReplaceClick', [
                 this,
-                Article
+                ArticleInstance
             ]);
         },
 
