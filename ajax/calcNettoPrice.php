@@ -53,15 +53,43 @@ QUI::$Ajax->registerFunction(
         }
 
         $vat = ($vat / 100) + 1;
-        $price = $price / $vat;
+        $netto = $price / $vat;
+        $netto = round($netto, QUI\ERP\Defaults::getPrecision());
 
-        if (isset($formatted) && $formatted) {
-            return QUI\ERP\Defaults::getCurrency()->format($price);
+        // gegenrechnung
+        $precision = QUI\ERP\Defaults::getPrecision();
+        $bruttoInput = round($price, $precision);
+
+        $decimalParts = explode('.', $bruttoInput);
+        $inputPrecision = isset($decimalParts[1]) ? strlen($decimalParts[1]) : 0;
+
+        $brutto = round($netto, $precision) * $vat;
+        $brutto = round($brutto, $inputPrecision);
+
+        if ($brutto != $bruttoInput) {
+            $netto = round($netto, $precision);
+            $brutto = round($netto * $vat, $inputPrecision);
+
+            if ($brutto != $bruttoInput) {
+                for ($i = 0; $i < 10; $i++) {
+                    $nettoCheck = substr($netto, 0, -$precision);
+                    $bruttoCheck = round($nettoCheck * $vat, $inputPrecision);
+
+                    if ($bruttoCheck == $bruttoInput) {
+                        $netto = $nettoCheck;
+                        break;
+                    }
+                }
+            }
         }
 
-        $price = \round($price, QUI\ERP\Defaults::getPrecision());
+        if (isset($formatted) && $formatted) {
+            return QUI\ERP\Defaults::getCurrency()->format($netto);
+        }
 
-        return $price;
+        //$netto = round($netto, QUI\ERP\Defaults::getPrecision());
+
+        return $netto;
     },
     ['price', 'formatted', 'vat']
 );

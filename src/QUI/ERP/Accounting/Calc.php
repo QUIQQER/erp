@@ -600,6 +600,7 @@ class Calc
         $price = $isNetto ? $nettoPrice : $bruttoPrice;
         $sum = $isNetto ? $nettoSum : $bruttoSum;
         $basisPrice = $isNetto ? $basisNettoPrice : $basisNettoPrice + ($basisNettoPrice * $vat / 100);
+        $basisPrice = round($basisPrice, QUI\ERP\Defaults::getPrecision());
 
         $vatArray = [
             'vat' => $vat,
