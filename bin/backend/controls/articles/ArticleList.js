@@ -943,12 +943,43 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         $refreshNettoBruttoDisplay: function() {
             const SwitchDesc = this.$Elm.getElement('.quiqqer-erp-backend-erpItems-container-switch-desc');
+            const Container = this.$Elm.getElement('.quiqqer-erp-backend-erpItems-container-switch');
+
+            Container.removeClass('quiqqer-erp-backend-erpItems-container-switch--warning');
+            Container.getElements('.netto-warning').destroy();
 
             if (this.getAttribute('nettoinput')) {
                 SwitchDesc.set('html', QUILocale.get(lg, 'control.articleList.netto.message'));
+
                 this.$Switch.setSilentOn();
                 this.$Elm.addClass('netto-view');
                 this.$Elm.removeClass('brutto-view');
+
+                // hinweis, wenn die grundeinstellung brutto ist
+                // aber netto angezeigt werden soll, kann dies zu unterschiedlichen anzeigen führen
+                if (this.$calculations.calculations
+                    && typeof this.$calculations.calculations.isNetto !== 'undefined'
+                    && this.$calculations.calculations.isNetto === false
+                ) {
+                    let warning = QUILocale.get(lg, 'control.articleList.brutto.message--nettoWarning');
+
+                    Container.addClass('quiqqer-erp-backend-erpItems-container-switch--warning');
+
+                    new Element('span', {
+                        html: '<span class="fa fa-warning"></span>',
+                        'class': 'netto-warning',
+                        styles: {
+                            height: 40,
+                            lineHeight: 40,
+                            right: 0,
+                            position: 'absolute',
+                            textAlign: 'center',
+                            top: 0,
+                            width: 40
+                        },
+                        title: warning.replace(/ +(?= )/g, '').replace('\n', '').trim()
+                    }).inject(Container);
+                }
             } else {
                 SwitchDesc.set('html', QUILocale.get(lg, 'control.articleList.brutto.message'));
                 this.$Switch.setSilentOff();
