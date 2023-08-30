@@ -957,9 +957,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
                 // hinweis, wenn die grundeinstellung brutto ist
                 // aber netto angezeigt werden soll, kann dies zu unterschiedlichen anzeigen führen
-                if (this.$calculations.calculations
-                    && typeof this.$calculations.calculations.isNetto !== 'undefined'
-                    && this.$calculations.calculations.isNetto === false
+                if (this.$calculations.calculations &&
+                    typeof this.$calculations.calculations.isNetto !== 'undefined' &&
+                    this.$calculations.calculations.isNetto === false
                 ) {
                     let warning = QUILocale.get(lg, 'control.articleList.brutto.message--nettoWarning');
 
