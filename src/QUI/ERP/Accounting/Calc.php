@@ -533,7 +533,7 @@ class Calc
             $Currency = $this->getCurrency();
         }
 
-        $nettoPrice = $Article->getUnitPrice()->value();
+        $nettoPrice = $Article->getUnitPriceUnRounded()->value();
         $vat = $Article->getVat();
         $basisNettoPrice = $nettoPrice;
         $nettoSubSum = $this->round($nettoPrice * $Article->getQuantity());
@@ -564,7 +564,9 @@ class Calc
         }
 
         $vatSum = $nettoPrice * ($vat / 100);
-        $bruttoPrice = round($nettoPrice + $vatSum, $Currency->getPrecision());
+        $precision = $Currency->getPrecision();
+        $priceSum = $nettoPrice + $vatSum;
+        $bruttoPrice = round($priceSum, $precision);
 
         if (!$isNetto) {
             // korrektur rechnung / 1 cent problem
