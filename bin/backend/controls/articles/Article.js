@@ -582,15 +582,15 @@ define(
                 }
 
                 return Calc.then(function(result) {
-                    let article;
+                    let articleList;
                     let brutto;
                     let articles = result.articles;
 
                     if (!calcByList) {
-                        article = articles[0];
+                        articleList = articles[0];
                         brutto = result.brutto.articles[0];
                     } else {
-                        article = articles.filter(function(article) {
+                        articleList = articles.filter(function(article) {
                             return parseInt(article.position) === pos;
                         })[0];
 
@@ -599,15 +599,15 @@ define(
                         })[0];
                     }
 
-                    self.$calculations = article;
+                    self.$calculations = articleList;
                     self.$bruttoCalc = brutto;
                     self.fireEvent('calc', [
                         self,
                         result,
-                        article
+                        articleList
                     ]);
 
-                    return article;
+                    return articleList;
                 });
             },
 
@@ -649,12 +649,12 @@ define(
                         currency = this.getAttribute('currency');
                     }
 
-                    Currency.getCurrency(currency).then((currency) => {
+                    Currency.getCurrency(currency).then((currencyResult) => {
                         this.$Formatter = QUILocale.getNumberFormatter({
                             style: 'currency',
-                            currency: currency.code,
-                            minimumFractionDigits: currency.precision,
-                            maximumFractionDigits: currency.precision
+                            currency: currencyResult.code,
+                            minimumFractionDigits: currencyResult.precision,
+                            maximumFractionDigits: currencyResult.precision
                         });
 
                         resolve(this.$Formatter);
@@ -878,13 +878,13 @@ define(
                     }
                 }
 
-                return Prom.then(function(discount) {
-                    if (discount && type === '%') {
-                        discount = (discount).toString().replace(/\%/g, '') + type;
-                        value = discount;
+                return Prom.then(function(discountResult) {
+                    if (discountResult && type === '%') {
+                        discountResult = (discountResult).toString().replace(/\%/g, '') + type;
+                        value = discountResult;
                     } else {
-                        if (discount) {
-                            value = self.$Formatter.format(discount) + type;
+                        if (discountResult) {
+                            value = self.$Formatter.format(discountResult) + type;
                         } else {
                             value = '-';
                         }
@@ -892,7 +892,7 @@ define(
 
                     self.fireEvent('setDiscount', [self]);
 
-                    self.setAttribute('discount', discount);
+                    self.setAttribute('discount', discountResult);
                     self.$Discount.set('html', value);
                 }).then(this.calc.bind(this));
             },
@@ -1299,8 +1299,8 @@ define(
                         return self.setDiscount(0);
                     }
 
-                    return self.getNettoPrice(value).then(function(value) {
-                        self.setDiscount(value);
+                    return self.getNettoPrice(value).then(function(nettoValue) {
+                        self.setDiscount(nettoValue);
                     });
                 });
             },
