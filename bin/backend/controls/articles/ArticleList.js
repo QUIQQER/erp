@@ -241,6 +241,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }
 
             this.$articles = [];
+            let selectedPosition = null;
+
+            if (this.$Container) {
+                if (this.$selectedArticle) {
+                    selectedPosition = this.$selectedArticle.getAttribute('position');
+                }
+
+                this.$Container.set('html', '');
+            }
 
             const controls = data.articles.map(function(ArticleInstance) {
                 if (typeof ArticleInstance.control !== 'undefined' && ArticleInstance.control !== '') {
@@ -269,6 +278,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     }
                 }
 
+                if (selectedPosition && typeof self.$articles[selectedPosition - 1] !== 'undefined') {
+                    self.$articles[selectedPosition - 1].select();
+                }
+
                 self.fireEvent('calc', [
                     self,
                     self.$calculations
@@ -287,7 +300,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             this.$articles.each(function(ArticleInstance) {
                 ArticleInstance.setUser(this.$user);
             }.bind(this));
-        },
+        }
+        ,
 
         /**
          * Return the user details
@@ -296,7 +310,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         getUser: function() {
             return this.$user;
-        },
+        }
+        ,
 
         /**
          * Add a product to the list
@@ -338,7 +353,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }
 
             Child.getElm().addClass('article');
-        },
+        }
+        ,
 
         /**
          * Replace an article with another
@@ -371,14 +387,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             this.$recalculatePositions();
 
             return this.$calc();
-        },
+        }
+        ,
 
         /**
          * Insert a new empty product
          */
         insertNewProduct: function() {
             this.addArticle(new Article());
-        },
+        }
+        ,
 
         /**
          * Return the articles as an array
@@ -391,7 +409,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     control: ArticleInstance.getType()
                 });
             });
-        },
+        }
+        ,
 
         /**
          * Calculate the list
@@ -409,7 +428,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     self.$executeCalculation().then(resolve);
                 }).delay(500);
             });
-        },
+        }
+        ,
 
         /**
          * Calc
@@ -479,7 +499,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     }
                 });
             });
-        },
+        }
+        ,
 
         /**
          * Get article data used for calculation
@@ -490,7 +511,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             return this.$articles.map(function(ArticleInstance) {
                 return ArticleInstance.getAttributes();
             });
-        },
+        }
+        ,
 
         /**
          * Return the current calculations
@@ -499,7 +521,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         getCalculation: function() {
             return this.$calculations;
-        },
+        }
+        ,
 
         /**
          * Return the first / main vat of the list
@@ -523,7 +546,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }
 
             return vat;
-        },
+        }
+        ,
 
         /**
          * Return price factors
@@ -532,7 +556,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         getPriceFactors: function() {
             return this.$priceFactors;
-        },
+        }
+        ,
 
         /**
          * Remove a price factor
@@ -549,7 +574,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }
 
             this.$priceFactors = newList;
-        },
+        }
+        ,
 
         /**
          * add a price factor
@@ -581,7 +607,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }
 
             this.$priceFactors.splice(prio, 0, priceFactor);
-        },
+        }
+        ,
 
 
         /**
@@ -613,7 +640,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     this.$priceFactors[index][k] = priceFactor[k];
                 }
             }
-        },
+        }
+        ,
 
         /**
          * Return the articles count
@@ -622,7 +650,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         countPriceFactors: function() {
             return this.$priceFactors.length;
-        },
+        }
+        ,
 
         /**
          * Sorting
@@ -638,7 +667,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }
 
             this.enableSorting();
-        },
+        }
+        ,
 
         /**
          * Enables the sorting
@@ -717,7 +747,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             });
 
             this.$sorting = true;
-        },
+        }
+        ,
 
         /**
          * Disables the sorting
@@ -746,7 +777,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             this.$articles.sort(function(A, B) {
                 return A.getAttribute('position') - B.getAttribute('position');
             });
-        },
+        }
+        ,
 
         /**
          * Is the sorting enabled?
@@ -755,7 +787,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         isSortingEnabled: function() {
             return this.$sorting;
-        },
+        }
+        ,
 
         /**
          * event: on set position at article
@@ -767,7 +800,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 'html',
                 ArticleInstance.getAttribute('position')
             );
-        },
+        }
+        ,
 
         /**
          * Recalculate the Position of all Articles
@@ -782,7 +816,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 ArticleInstance = QUI.Controls.getById(elements[i].get('data-quiid'));
                 ArticleInstance.setPosition(i + 1);
             }
-        },
+        }
+        ,
 
         /**
          * Events
@@ -823,7 +858,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     self.$articles[0].select();
                 }
             });
-        },
+        }
+        ,
 
         /**
          * event : on article delete
@@ -841,7 +877,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 this,
                 this.$selectedArticle
             ]);
-        },
+        }
+        ,
 
         /**
          * event : on article delete
@@ -856,7 +893,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     this.$selectedArticle
                 ]);
             }
-        },
+        }
+        ,
 
         /**
          * event : on article replace click
@@ -868,7 +906,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 this,
                 ArticleInstance
             ]);
-        },
+        }
+        ,
 
         /**
          * event: on article edit custom fields clikc
@@ -915,7 +954,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
                 this.replaceArticle(NewArticle, EditArticle.getAttribute('position'));
             });
-        },
+        }
+        ,
 
         /**
          * Return the current selected Article
@@ -924,7 +964,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         getSelectedArticle: function() {
             return this.$selectedArticle;
-        },
+        }
+        ,
 
         /**
          * refresh the brutto / netto switch display
@@ -945,4 +986,5 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }
         }
     });
-});
+})
+;
