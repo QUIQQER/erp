@@ -1,3 +1,5 @@
+/* jshint proto: true */
+
 /**
  * @module package/quiqqer/erp/bin/backend/controls/articles/Article
  * @author www.pcsg.de (Henning Leutz)
@@ -41,8 +43,22 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
     'text!package/quiqqer/erp/bin/backend/controls/articles/Article.html',
     'css!package/quiqqer/erp/bin/backend/controls/articles/Article.css'
 
-], function (QUI, QUIControl, QUIButton, QUIConfirm, QUIElements, DiscountUtils, MoneyUtils, Currency, Mustache, QUILocale, QUIAjax, Editors, template) {
-    "use strict";
+], function(
+    QUI,
+    QUIControl,
+    QUIButton,
+    QUIConfirm,
+    QUIElements,
+    DiscountUtils,
+    MoneyUtils,
+    Currency,
+    Mustache,
+    QUILocale,
+    QUIAjax,
+    Editors,
+    template
+) {
+    'use strict';
 
     const lg = 'quiqqer/erp';
 
@@ -109,7 +125,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             calcByList: true     // calculate article prices by the associated ArticleList
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.setAttributes(this.__proto__.options); // set the default values
             this.parent(options);
 
@@ -137,7 +153,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.$created = false;
 
             // discount
-            if (options && "discount" in options) {
+            if (options && 'discount' in options) {
                 this.setAttribute(
                     'discount',
                     DiscountUtils.parseToString(
@@ -152,7 +168,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @returns {HTMLDivElement}
          */
-        create: function () {
+        create: function() {
             const self = this;
 
             this.$Elm = this.parent();
@@ -182,7 +198,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     showSelectCheckbox: showSelectCheckbox,
                     customFields: Object.values(CustomFieldValues),
                     buttonReplace: QUILocale.get(lg, 'articleList.article.button.replace'),
-                    buttonDelete: QUILocale.get(lg, 'articleList.article.button.delete'),
+                    buttonDelete: QUILocale.get(lg, 'articleList.article.button.delete')
                 }),
                 'tabindex': -1,
                 styles: {
@@ -200,7 +216,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
             if (showSelectCheckbox) {
                 this.$SelectCheckbox = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-selectbox > input');
-                this.$SelectCheckbox.addEvent('change', function (event) {
+                this.$SelectCheckbox.addEvent('change', function(event) {
                     if (event.target.checked) {
                         self.select();
                     } else {
@@ -249,7 +265,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 this.$VAT.addEvent('click', this.$onEditVat);
 
                 // Special VAT cell events
-                this.$VAT.addEvent('keydown', function (event) {
+                this.$VAT.addEvent('keydown', function(event) {
                     if (event.key === 'tab') {
                         this.$editNext(event);
                         return;
@@ -260,7 +276,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     }
                 }.bind(this));
 
-                this.$VAT.addEvent('blur', function (event) {
+                this.$VAT.addEvent('blur', function(event) {
                     if (event.key === 'tab') {
                         this.$editNext(event);
                     }
@@ -279,7 +295,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 this.$QuantityUnit.addEvent('click', this.$onEditQuantityUnit);
 
                 // Special quantity unit cell events
-                this.$QuantityUnit.addEvent('keydown', function (event) {
+                this.$QuantityUnit.addEvent('keydown', function(event) {
                     if (event.key === 'tab') {
                         this.$editNext(event);
                         return;
@@ -290,7 +306,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     }
                 }.bind(this));
 
-                this.$QuantityUnit.addEvent('blur', function (event) {
+                this.$QuantityUnit.addEvent('blur', function(event) {
                     if (event.key === 'tab') {
                         this.$editNext(event);
                     }
@@ -301,7 +317,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
             // brutto stuff
             this.$UnitPriceBrutto = new Element('div', {
-                'class': 'quiqqer-erp-backend-erpArticle-unitPrice-brutto cell cell-editable',
+                'class': 'quiqqer-erp-backend-erpArticle-unitPrice-brutto cell cell-editable'
             }).inject(this.$UnitPrice, 'after');
 
             this.$PriceBrutto = new Element('div', {
@@ -315,7 +331,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             }
 
             this.$DiscountBrutto = new Element('div', {
-                'class': 'quiqqer-erp-backend-erpArticle-discount-brutto cell cell-editable',
+                'class': 'quiqqer-erp-backend-erpArticle-discount-brutto cell cell-editable'
             }).inject(this.$Discount, 'after');
 
             if ('discount' in EditFields && EditFields.discount) {
@@ -378,14 +394,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.setVat(this.getAttribute('vat'));
             this.setTitle(this.getAttribute('title'));
             this.setDescription(this.getAttribute('description'));
+            this.setUnitPrice(this.getAttribute('unitPrice'));
 
             this.setQuantity(this.getAttribute('quantity'));
-            this.setUnitPrice(this.getAttribute('unitPrice'));
             this.setDiscount(this.getAttribute('discount'));
             this.setQuantityUnit(this.getAttribute('quantityUnit'));
 
             if (!this.getAttribute('quantityUnit')) {
-                this.$loadDefaultQuantityUnit().catch(function (err) {
+                this.$loadDefaultQuantityUnit().catch(function(err) {
                     console.error(err);
                 });
             }
@@ -412,7 +428,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
             this.calc();
 
-            this.addEvent('onEditKeyDown', function (me, event) {
+            this.addEvent('onEditKeyDown', function(me, event) {
                 if (event.key === 'tab') {
                     this.$editNext(event);
                 }
@@ -428,7 +444,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @fires onRemove [self]
          * @fires onDrop [self]
          */
-        remove: function () {
+        remove: function() {
             this.fireEvent('delete', [this]);
             this.fireEvent('remove', [this]);
             this.fireEvent('drop', [this]);
@@ -439,7 +455,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * Trigger the replace event
          */
-        $onReplaceClick: function () {
+        $onReplaceClick: function() {
             this.fireEvent('replace', [this]);
         },
 
@@ -448,7 +464,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @param {Object} user
          */
-        setUser: function (user) {
+        setUser: function(user) {
             this.$user = user;
         },
 
@@ -457,7 +473,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @return {Promise}
          */
-        calc: function () {
+        calc: function() {
             if (!this.$created) {
                 return Promise.resolve();
             }
@@ -477,7 +493,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 const price = Formatter.format(product.calculated.nettoSubSum);
                 const total = Formatter.format(product.calculated.nettoSum);
 
-                const setElement = function (Node, text) {
+                const setElement = function(Node, text) {
                     const isInEditMode = Node.getElement('input');
 
                     if (isInEditMode) {
@@ -538,7 +554,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @return {Promise}
          */
-        $calc: function () {
+        $calc: function() {
             let Calc;
 
             const self = this,
@@ -551,7 +567,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 Calc = this.getAttribute('List').$executeCalculation();
                 calcByList = true;
             } else {
-                Calc = new Promise(function (resolve, reject) {
+                Calc = new Promise(function(resolve, reject) {
                     QUIAjax.get('package_quiqqer_erp_ajax_products_calc', resolve, {
                         'package': 'quiqqer/erp',
                         onError: reject,
@@ -564,33 +580,33 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 });
             }
 
-            return Calc.then(function (result) {
-                let article;
+            return Calc.then(function(result) {
+                let articleList;
                 let brutto;
                 let articles = result.articles;
 
                 if (!calcByList) {
-                    article = articles[0];
+                    articleList = articles[0];
                     brutto = result.brutto.articles[0];
                 } else {
-                    article = articles.filter(function (article) {
+                    articleList = articles.filter(function(article) {
                         return parseInt(article.position) === pos;
                     })[0];
 
-                    brutto = result.brutto.articles.filter(function (article) {
+                    brutto = result.brutto.articles.filter(function(article) {
                         return parseInt(article.position) === pos;
                     })[0];
                 }
 
-                self.$calculations = article;
+                self.$calculations = articleList;
                 self.$bruttoCalc = brutto;
                 self.fireEvent('calc', [
                     self,
                     result,
-                    article
+                    articleList
                 ]);
 
-                return article;
+                return articleList;
             });
         },
 
@@ -599,7 +615,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @returns {{}|*}
          */
-        getCalculations: function () {
+        getCalculations: function() {
             if (!this.$calculations) {
                 return {};
             }
@@ -610,7 +626,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * @returns {*}
          */
-        getBruttoCalc: function () {
+        getBruttoCalc: function() {
             return this.$bruttoCalc;
         },
 
@@ -619,7 +635,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @return {Promise|*}
          */
-        getCurrencyFormatter: function () {
+        getCurrencyFormatter: function() {
             if (this.$Formatter) {
                 return Promise.resolve(this.$Formatter);
             }
@@ -632,12 +648,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     currency = this.getAttribute('currency');
                 }
 
-                Currency.getCurrency(currency).then((currency) => {
+                Currency.getCurrency(currency).then((currencyResult) => {
                     this.$Formatter = QUILocale.getNumberFormatter({
                         style: 'currency',
-                        currency: currency.code,
-                        minimumFractionDigits: currency.precision,
-                        maximumFractionDigits: currency.precision
+                        currency: currencyResult.code,
+                        minimumFractionDigits: currencyResult.precision,
+                        maximumFractionDigits: currencyResult.precision
                     });
 
                     resolve(this.$Formatter);
@@ -661,7 +677,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @param {String} currency
          */
-        setCurrency: function (currency) {
+        setCurrency: function(currency) {
             if (this.getAttribute('currency') === currency) {
                 return;
             }
@@ -675,7 +691,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @param {String} title
          */
-        setTitle: function (title) {
+        setTitle: function(title) {
             this.setAttribute('title', title);
             this.$Title.set('html', title);
 
@@ -691,7 +707,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @param {String} description
          */
-        setDescription: function (description) {
+        setDescription: function(description) {
             this.setAttribute('description', description);
             this.$Description.set('html', description);
 
@@ -713,7 +729,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @param {String} articleNo
          */
-        setArticleNo: function (articleNo) {
+        setArticleNo: function(articleNo) {
             this.setAttribute('articleNo', articleNo);
             this.$ArticleNo.set('html', articleNo);
 
@@ -729,7 +745,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @param {Number} pos
          */
-        setPosition: function (pos) {
+        setPosition: function(pos) {
             this.setAttribute('position', parseInt(pos));
 
             if (this.$Position) {
@@ -745,7 +761,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @param {Number} quantity
          * @return {Promise}
          */
-        setQuantity: function (quantity) {
+        setQuantity: function(quantity) {
             this.setAttribute('quantity', parseFloat(quantity));
 
             if (this.$Quantity) {
@@ -762,7 +778,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @param {Object} quantityUnit - {id:'piece', title:''}
          */
-        setQuantityUnit: function (quantityUnit) {
+        setQuantityUnit: function(quantityUnit) {
             if (typeof quantityUnit.id === 'undefined') {
                 return;
             }
@@ -785,7 +801,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @param {Number} price
          * @return {Promise}
          */
-        setUnitPrice: function (price) {
+        setUnitPrice: function(price) {
             this.setAttribute('unitPrice', parseFloat(price));
 
             if (this.$UnitPrice) {
@@ -803,7 +819,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @param {Number|String} vat
          * @return {Promise}
          */
-        setVat: function (vat) {
+        setVat: function(vat) {
             if (vat === '-' || vat === '') {
                 this.setAttribute('vat', '');
                 this.$VAT.set('html', '-');
@@ -836,7 +852,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @param {String|Number} discount - 100 = 100€, 100€ = 100€ or 10% =  calculation
          */
-        setDiscount: function (discount) {
+        setDiscount: function(discount) {
             const self = this;
             let value = '',
                 type = '';
@@ -853,25 +869,29 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
             if (discount && type === '%') {
                 Prom = Promise.resolve(discount);
-            } else if (discount) {
-                Prom = MoneyUtils.validatePrice(discount);
             } else {
-                Prom = Promise.resolve('-');
+                if (discount) {
+                    Prom = MoneyUtils.validatePrice(discount);
+                } else {
+                    Prom = Promise.resolve('-');
+                }
             }
 
-            return Prom.then(function (discount) {
-                if (discount && type === '%') {
-                    discount = (discount).toString().replace(/\%/g, '') + type;
-                    value = discount;
-                } else if (discount) {
-                    value = self.$Formatter.format(discount) + type;
+            return Prom.then(function(discountResult) {
+                if (discountResult && type === '%') {
+                    discountResult = (discountResult).toString().replace(/\%/g, '') + type;
+                    value = discountResult;
                 } else {
-                    value = '-';
+                    if (discountResult) {
+                        value = self.$Formatter.format(discountResult) + type;
+                    } else {
+                        value = '-';
+                    }
                 }
 
                 self.fireEvent('setDiscount', [self]);
 
-                self.setAttribute('discount', discount);
+                self.setAttribute('discount', discountResult);
                 self.$Discount.set('html', value);
             }).then(this.calc.bind(this));
         },
@@ -879,21 +899,21 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * Show the loader
          */
-        showLoader: function () {
+        showLoader: function() {
             this.$Loader.setStyle('display', null);
         },
 
         /**
          * Hide the loader
          */
-        hideLoader: function () {
+        hideLoader: function() {
             this.$Loader.setStyle('display', 'none');
         },
 
         /**
          * select the article
          */
-        select: function () {
+        select: function() {
             if (!this.$Elm) {
                 return;
             }
@@ -916,7 +936,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * unselect the article
          */
-        unselect: function () {
+        unselect: function() {
             if (!this.$Elm) {
                 return;
             }
@@ -935,7 +955,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * @return {boolean}
          */
-        isSelected: function () {
+        isSelected: function() {
             return this.$isSelected;
         },
 
@@ -946,7 +966,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * Opens the delete dialog
          */
-        openDeleteDialog: function () {
+        openDeleteDialog: function() {
             new QUIConfirm({
                 icon: 'fa fa-trash',
                 texticon: 'fa fa-trash',
@@ -968,11 +988,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * event : on title edit
          */
-        $onEditTitle: function () {
+        $onEditTitle: function() {
             this.$createEditField(
                 this.$Title,
                 this.getAttribute('title')
-            ).then(function (value) {
+            ).then(function(value) {
                 this.setTitle(value);
             }.bind(this));
         },
@@ -980,7 +1000,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * event : on description edit
          */
-        $onEditDescription: function () {
+        $onEditDescription: function() {
             if (this.$Editor) {
                 return;
             }
@@ -996,7 +1016,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 maxHeight: 600,
                 maxWidth: 800,
                 events: {
-                    onOpen: function (Win) {
+                    onOpen: function(Win) {
                         Win.Loader.show();
 
                         const Content = Win.getContent();
@@ -1020,7 +1040,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                         Title.set('placeholder', QUILocale.get('quiqqer/system', 'title'));
                         Title.focus();
 
-                        Editors.getEditor(null).then(function (Editor) {
+                        Editors.getEditor(null).then(function(Editor) {
                             self.$Editor = Editor;
 
                             // minimal toolbar
@@ -1029,55 +1049,55 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                                     [
                                         [
                                             {
-                                                type: "button",
-                                                button: "Source"
+                                                type: 'button',
+                                                button: 'Source'
                                             },
                                             {
-                                                type: "separator"
+                                                type: 'separator'
                                             },
                                             {
-                                                type: "button",
-                                                button: "Bold"
+                                                type: 'button',
+                                                button: 'Bold'
                                             },
                                             {
-                                                type: "button",
-                                                button: "Italic"
+                                                type: 'button',
+                                                button: 'Italic'
                                             },
                                             {
-                                                type: "button",
-                                                button: "Underline"
+                                                type: 'button',
+                                                button: 'Underline'
                                             },
                                             {
-                                                type: "separator"
+                                                type: 'separator'
                                             },
                                             {
-                                                type: "button",
-                                                button: "FontSize"
+                                                type: 'button',
+                                                button: 'FontSize'
                                             },
                                             {
-                                                type: "separator"
+                                                type: 'separator'
                                             },
                                             {
-                                                type: "button",
-                                                button: "RemoveFormat"
+                                                type: 'button',
+                                                button: 'RemoveFormat'
                                             },
                                             {
-                                                type: "separator"
+                                                type: 'separator'
                                             },
                                             {
-                                                type: "button",
-                                                button: "NumberedList"
+                                                type: 'button',
+                                                button: 'NumberedList'
                                             },
                                             {
-                                                type: "button",
-                                                button: "BulletedList"
+                                                type: 'button',
+                                                button: 'BulletedList'
                                             }
                                         ]
                                     ]
                                 ]
                             });
 
-                            self.$Editor.addEvent('onLoaded', function () {
+                            self.$Editor.addEvent('onLoaded', function() {
                                 self.$Editor.switchToWYSIWYG();
                                 self.$Editor.showToolbar();
                                 self.$Editor.setContent(self.getAttribute('description'));
@@ -1089,14 +1109,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                             self.$Editor.setHeight(340);
                         });
 
-                        Title.addEvent('keyup', function (event) {
+                        Title.addEvent('keyup', function(event) {
                             if (event.key === 'enter') {
                                 Win.submit();
                             }
                         });
                     },
 
-                    onSubmit: function (Win) {
+                    onSubmit: function(Win) {
                         const description = self.$Editor.getContent();
 
                         Win.Loader.show();
@@ -1115,7 +1135,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                         });
                     },
 
-                    onClose: function () {
+                    onClose: function() {
                         self.$Editor.destroy();
                         self.$Editor = null;
                     }
@@ -1126,11 +1146,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * event: on Article-Number edit
          */
-        $onEditArticleNo: function () {
+        $onEditArticleNo: function() {
             this.$createEditField(
                 this.$ArticleNo,
                 this.getAttribute('articleNo')
-            ).then(function (value) {
+            ).then(function(value) {
                 this.setArticleNo(value);
             }.bind(this));
         },
@@ -1138,12 +1158,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * event : on quantity edit
          */
-        $onEditQuantity: function () {
+        $onEditQuantity: function() {
             this.$createEditField(
                 this.$Quantity,
                 this.getAttribute('quantity'),
                 'number'
-            ).then(function (value) {
+            ).then(function(value) {
                 this.setQuantity(value);
             }.bind(this));
         },
@@ -1151,22 +1171,23 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * Edit quantity unit
          */
-        $onEditQuantityUnit: function () {
+        $onEditQuantityUnit: function() {
             const self = this;
 
             require([
                 'package/quiqqer/erp/bin/backend/controls/articles/product/QuantityUnitWindow'
-            ], function (QuantityUnitWindow) {
+            ], function(QuantityUnitWindow) {
                 new QuantityUnitWindow({
                     events: {
-                        onSubmit: function (Win, value, title) {
+                        onSubmit: function(Win, value, title) {
                             self.setQuantityUnit({
                                 id: value,
                                 title: title
                             });
 
                             QUIElements.simulateEvent(
-                                self.$Elm.getElement('.quiqqer-erp-backend-erpArticle-quantityUnit').getNext('.cell-editable'),
+                                self.$Elm.getElement('.quiqqer-erp-backend-erpArticle-quantityUnit').getNext(
+                                    '.cell-editable'),
                                 'click'
                             );
                         }
@@ -1178,14 +1199,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * event : on quantity edit
          */
-        $onEditUnitPriceQuantity: function () {
+        $onEditUnitPriceQuantity: function() {
             const self = this;
 
             this.$createEditField(
                 this.$UnitPrice,
                 this.getAttribute('unitPrice'),
                 'number'
-            ).then(function (value) {
+            ).then(function(value) {
                 self.setUnitPrice(value);
             });
         },
@@ -1193,16 +1214,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * event : on brutto price edit
          */
-        $onEditBruttoPrice: function () {
+        $onEditBruttoPrice: function() {
             const self = this;
 
             this.$createEditField(
                 this.$UnitPriceBrutto,
                 this.$UnitPriceBrutto.get('data-value'),
                 'number'
-            ).then(function (value) {
+            ).then(function(value) {
                 return self.getNettoPrice(value, false);
-            }).then(function (value) {
+            }).then(function(value) {
                 self.setUnitPrice(value);
             });
         },
@@ -1210,15 +1231,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * event: on edit VAT
          */
-        $onEditVat: function () {
+        $onEditVat: function() {
             const self = this;
 
             require([
                 'package/quiqqer/tax/bin/controls/taxList/AvailableTaxListWindow'
-            ], function (AvailableTaxListWindow) {
+            ], function(AvailableTaxListWindow) {
                 new AvailableTaxListWindow({
                     events: {
-                        onSubmit: function (Win, value) {
+                        onSubmit: function(Win, value) {
                             self.setVat(value);
 
                             QUIElements.simulateEvent(
@@ -1234,19 +1255,21 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * event: on edit discount
          */
-        $onEditDiscount: function () {
+        $onEditDiscount: function() {
             let discount = this.getAttribute('discount');
 
             if (discount === '-' || discount === false || !discount) {
                 discount = '';
-            } else if (!discount.toString().match('%')) {
-                discount = parseFloat(discount);
+            } else {
+                if (!discount.toString().match('%')) {
+                    discount = parseFloat(discount);
+                }
             }
 
             this.$createEditField(
                 this.$Discount,
                 discount
-            ).then(function (value) {
+            ).then(function(value) {
                 this.setDiscount(value);
             }.bind(this));
         },
@@ -1254,17 +1277,19 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * event: on brutto edit discount
          */
-        $onEditBruttoDiscount: function () {
+        $onEditBruttoDiscount: function() {
             const self = this;
             let discount = this.$DiscountBrutto.get('data-value');
 
             if (discount === '-' || discount === false || !discount) {
                 discount = '';
-            } else if (!discount.toString().match('%')) {
-                discount = parseFloat(discount);
+            } else {
+                if (!discount.toString().match('%')) {
+                    discount = parseFloat(discount);
+                }
             }
 
-            this.$createEditField(this.$DiscountBrutto, discount).then(function (value) {
+            this.$createEditField(this.$DiscountBrutto, discount).then(function(value) {
                 if (value.match('%')) {
                     return self.setDiscount(value);
                 }
@@ -1273,8 +1298,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     return self.setDiscount(0);
                 }
 
-                return self.getNettoPrice(value).then(function (value) {
-                    self.setDiscount(value);
+                return self.getNettoPrice(value).then(function(nettoValue) {
+                    self.setDiscount(nettoValue);
                 });
             });
         },
@@ -1282,7 +1307,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         /**
          * Edit custom fields
          */
-        $onCustomFieldClick: function () {
+        $onCustomFieldClick: function() {
             this.fireEvent('editCustomFields', [this]);
         },
 
@@ -1295,12 +1320,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @param {Object} [inputAttributes] - input attributes
          * @returns {Promise}
          */
-        $createEditField: function (Container, value, type, inputAttributes) {
+        $createEditField: function(Container, value, type, inputAttributes) {
             const self = this;
 
             type = type || 'text';
 
-            return new Promise(function (resolve) {
+            return new Promise(function(resolve) {
                 const Edit = new Element('input', {
                     type: type,
                     value: value,
@@ -1332,17 +1357,17 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 Edit.focus();
                 Edit.select();
 
-                const onFinish = function () {
+                const onFinish = function() {
                     Edit.destroy();
                     resolve(Edit.value);
                 };
 
                 Edit.addEvents({
-                    click: function (event) {
+                    click: function(event) {
                         event.stop();
                     },
 
-                    keydown: function (event) {
+                    keydown: function(event) {
                         self.fireEvent('editKeyDown', [
                             self,
                             event
@@ -1368,7 +1393,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @param event
          */
-        $editNext: function (event) {
+        $editNext: function(event) {
             let Cell = event.target;
 
             if (!Cell.hasClass('cell')) {
@@ -1396,8 +1421,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     PreviousArticle = Article.getPrevious('.article');
 
                     if (!PreviousArticle) {
-                        PreviousArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                            .getLast('.article');
+                        PreviousArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items').getLast('.article');
                     }
 
                     Next = PreviousArticle.getLast('.cell-editable');
@@ -1421,8 +1445,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     NextArticle = Article.getNext('.article');
 
                     if (!NextArticle) {
-                        NextArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items')
-                            .getElement('.article');
+                        NextArticle = Cell.getParent('.quiqqer-erp-backend-erpItems-items').getElement('.article');
                     }
 
                     Next = NextArticle.getElement('.cell-editable');
@@ -1446,11 +1469,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          *
          * @return {Promise}
          */
-        $loadDefaultQuantityUnit: function () {
+        $loadDefaultQuantityUnit: function() {
             const self = this;
 
-            return new Promise(function (resolve) {
-                QUIAjax.get('package_quiqqer_erp_ajax_products_getQuantityUnitList', function (unitList) {
+            return new Promise(function(resolve) {
+                QUIAjax.get('package_quiqqer_erp_ajax_products_getQuantityUnitList', function(unitList) {
                     let i, title, entry;
                     let current = QUILocale.getCurrent();
 
@@ -1492,10 +1515,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @param formatted
          * @return {Promise}
          */
-        getNettoPrice: function (value, formatted) {
+        getNettoPrice: function(value, formatted) {
             const self = this;
 
-            return new Promise(function (resolve) {
+            return new Promise(function(resolve) {
                 QUIAjax.get('package_quiqqer_erp_ajax_calcNettoPrice', resolve, {
                     'package': 'quiqqer/erp',
                     price: value,
@@ -1512,10 +1535,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @param formatted
          * @return {Promise}
          */
-        getBruttoPrice: function (value, formatted) {
+        getBruttoPrice: function(value, formatted) {
             const self = this;
 
-            return new Promise(function (resolve) {
+            return new Promise(function(resolve) {
                 QUIAjax.get('package_quiqqer_erp_ajax_calcBruttoPrice', resolve, {
                     'package': 'quiqqer/erp',
                     price: value,
@@ -1531,7 +1554,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @param {String} description
          * @return {Promise}
          */
-        $sanitizeArticleDescription: function (description) {
+        $sanitizeArticleDescription: function(description) {
             return new Promise((resolve, reject) => {
                 QUIAjax.get('package_quiqqer_erp_ajax_utils_sanitizeArticleDescription', resolve, {
                     'package': 'quiqqer/erp',

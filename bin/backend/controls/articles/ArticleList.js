@@ -241,6 +241,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }
 
             this.$articles = [];
+            let selectedPosition = null;
+
+            if (this.$Container) {
+                if (this.$selectedArticle) {
+                    selectedPosition = this.$selectedArticle.getAttribute('position');
+                }
+
+                this.$Container.set('html', '');
+            }
 
             const controls = data.articles.map(function(ArticleInstance) {
                 if (typeof ArticleInstance.control !== 'undefined' && ArticleInstance.control !== '') {
@@ -267,6 +276,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     } catch (e) {
                         console.log(e);
                     }
+                }
+
+                if (selectedPosition && typeof self.$articles[selectedPosition - 1] !== 'undefined') {
+                    self.$articles[selectedPosition - 1].select();
                 }
 
                 self.fireEvent('calc', [
@@ -582,7 +595,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             this.$priceFactors.splice(prio, 0, priceFactor);
         },
-
 
         /**
          * edit a price factor
