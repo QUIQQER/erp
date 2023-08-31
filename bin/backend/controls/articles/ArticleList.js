@@ -987,7 +987,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                             animateFill: false,
                             animation: 'shift-away',
                             allowHTML: true,
-                            content: function(reference) {
+                            content: function() {
                                 return warning.replace(/ +(?= )/g, '').replace('\n', '').trim();
                             }
                         });
