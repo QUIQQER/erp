@@ -965,7 +965,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
                     Container.addClass('quiqqer-erp-backend-erpItems-container-switch--warning');
 
-                    new Element('span', {
+                    const Warning = new Element('span', {
                         html: '<span class="fa fa-warning"></span>',
                         'class': 'netto-warning',
                         styles: {
@@ -976,9 +976,22 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                             textAlign: 'center',
                             top: 0,
                             width: 40
-                        },
-                        title: warning.replace(/ +(?= )/g, '').replace('\n', '').trim()
+                        }
                     }).inject(Container);
+
+                    require([
+                        URL_OPT_DIR + 'quiqqer/quiqqer/bin/QUI/lib/tippy/tippy.min.js',
+                        'css!' + URL_OPT_DIR + 'quiqqer/quiqqer/bin/QUI/lib/tippy/tippy.css'
+                    ], function(tippy) {
+                        tippy(Warning, {
+                            animateFill: false,
+                            animation: 'shift-away',
+                            allowHTML: true,
+                            content: function(reference) {
+                                return warning.replace(/ +(?= )/g, '').replace('\n', '').trim();
+                            }
+                        });
+                    });
                 }
             } else {
                 SwitchDesc.set('html', QUILocale.get(lg, 'control.articleList.brutto.message'));
