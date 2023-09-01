@@ -52,7 +52,7 @@ class Address extends QUI\Users\Address
         }
 
         $contactPerson = '';
-        $isCompany     = false;
+        $isCompany = false;
 
         if ($this->User && $this->User->isCompany()) {
             $isCompany = $this->User->isCompany();
@@ -77,14 +77,14 @@ class Address extends QUI\Users\Address
         }
 
         $salutation = $this->emptyStringCheck($this->getAttribute('salutation'));
-        $street_no  = $this->emptyStringCheck($this->getAttribute('street_no'));
-        $zip        = $this->emptyStringCheck($this->getAttribute('zip'));
-        $city       = $this->emptyStringCheck($this->getAttribute('city'));
-        $country    = $this->emptyStringCheck($this->getAttribute('country'));
-        $suffix     = $this->emptyStringCheck($this->getAttribute('suffix'));
+        $street_no = $this->emptyStringCheck($this->getAttribute('street_no'));
+        $zip = $this->emptyStringCheck($this->getAttribute('zip'));
+        $city = $this->emptyStringCheck($this->getAttribute('city'));
+        $country = $this->emptyStringCheck($this->getAttribute('country'));
+        $suffix = $this->emptyStringCheck($this->getAttribute('suffix'));
 
         $firstname = $this->getAttribute('firstname');
-        $lastname  = $this->getAttribute('lastname');
+        $lastname = $this->getAttribute('lastname');
 
         if (empty($firstname) && $this->User) {
             $firstname = $this->User->getAttribute('firstname');
@@ -96,24 +96,28 @@ class Address extends QUI\Users\Address
 
 
         $Engine->assign([
-            'User'      => $this->User,
-            'Address'   => $this,
+            'User' => $this->User,
+            'Address' => $this,
             'Countries' => new QUI\Countries\Manager(),
-            'options'   => $options,
+            'options' => $options,
 
-            'isCompany'     => $isCompany,
-            'salutation'    => $salutation,
-            'firstname'     => $this->emptyStringCheck($firstname),
-            'lastname'      => $this->emptyStringCheck($lastname),
-            'street_no'     => $street_no,
-            'zip'           => $zip,
-            'city'          => $city,
-            'country'       => $country,
+            'isCompany' => $isCompany,
+            'salutation' => $salutation,
+            'firstname' => $this->emptyStringCheck($firstname),
+            'lastname' => $this->emptyStringCheck($lastname),
+            'street_no' => $street_no,
+            'zip' => $zip,
+            'city' => $city,
+            'country' => $country,
             'contactPerson' => $this->emptyStringCheck($contactPerson),
-            'suffix'        => $suffix
+            'suffix' => $suffix
         ]);
 
         return $Engine->fetch(dirname(__FILE__) . '/Address.html');
+    }
+
+    public function save($PermissionUser = null)
+    {
     }
 
     /**
