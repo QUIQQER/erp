@@ -10,13 +10,14 @@
  * @param string|int|float $value
  * @return int
  */
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_frontend_showB2BB2CWindow',
     function () {
         $User = QUI::getUserBySession();
         $Package = QUI::getPackage('quiqqer/erp');
 
-        // user dont get the window
+        // user don't get the window
         if (!($User instanceof QUI\Users\Nobody)) {
             return false;
         }
