@@ -15,6 +15,7 @@ use Quiqqer\Engine\Collector;
 use function array_flip;
 use function class_exists;
 use function dirname;
+use function explode;
 use function is_array;
 use function is_string;
 use function json_decode;
@@ -39,9 +40,19 @@ class EventHandler
      */
     public static function onTemplateGetHeader(QUI\Template $Template)
     {
-        $Template->extendHeaderWithJavaScriptFile(
-            URL_OPT_DIR . 'quiqqer/erp/bin/frontend.js'
-        );
+        try {
+            $Package = QUI::getPackage('quiqqer/erp');
+            $areas = $Package->getConfig()->get('general', 'customerRequestWindow');
+            $areas = explode(',', $areas);
+        } catch (\QUI\Exception $exception) {
+            return;
+        }
+
+        if (!empty($areas)) {
+            $Template->extendHeaderWithJavaScriptFile(
+                URL_OPT_DIR . 'quiqqer/erp/bin/frontend.js'
+            );
+        }
     }
 
     /**

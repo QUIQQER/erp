@@ -20,6 +20,11 @@
     width: 100%;
 }
 
+.quiqqer-erp-backend-erpItems-container-switch--warning {
+    background: #fcebea;
+    color: #cc1f1a;
+}
+
 .quiqqer-erp-backend-erpItems-container-switch-btn {
     display: inline-block;
     float: left;

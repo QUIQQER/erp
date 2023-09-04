@@ -194,7 +194,10 @@ class User extends QUI\QDOM implements UserInterface
         if (!QUI::getUsers()->isNobodyUser($User) && !QUI::getUsers()->isSystemUser($User)) {
             /* @var $Address QUI\Users\Address */
             $Address = $User->getStandardAddress();
-            $address = $Address->getAttributes();
+
+            if ($Address) {
+                $address = $Address->getAttributes();
+            }
         }
 
         $data = $User->getAttributes();

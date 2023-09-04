@@ -913,6 +913,18 @@
             Attention: The input and display of the prices is currently in <b>brutto</b>.
             ]]></en>
         </locale>
+        <locale name="control.articleList.brutto.message--nettoWarning" html="true">
+            <de><![CDATA[
+            Bitte beachte, dass die aktuelle Liste der Artikel einem Bruttobenutzer zugeordnet ist.
+            Deine Anzeige hingegen basiert auf Nettoangaben, was zu Abweichungen in den Gesamtbeträgen führen kann.
+            Berücksichtige bitte, dass ausschließlich die Bruttoanzeige verbindlich ist.
+            ]]></de>
+            <en><![CDATA[
+            Please note that the current item list is assigned to a gross user.
+            Your ad, on the other hand, is based on net data, which may lead to discrepancies in the total amounts.
+            Please take into account that only the gross display is binding.
+            ]]></en>
+        </locale>
 
         <locale name="control.window.price.brutto.title">
             <de><![CDATA[Brutto Preiseingabe]]></de>
