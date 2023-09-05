@@ -43,6 +43,11 @@ class EventHandler
         try {
             $Package = QUI::getPackage('quiqqer/erp');
             $areas = $Package->getConfig()->get('general', 'customerRequestWindow');
+
+            if (empty($areas)) {
+                return;
+            }
+
             $areas = explode(',', $areas);
         } catch (\QUI\Exception $exception) {
             return;
@@ -54,7 +59,7 @@ class EventHandler
             );
         }
     }
-
+    
     /**
      * event: on package setup
      *
