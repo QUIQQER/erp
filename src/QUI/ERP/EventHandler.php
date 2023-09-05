@@ -59,7 +59,7 @@ class EventHandler
             );
         }
     }
-    
+
     /**
      * event: on package setup
      *
