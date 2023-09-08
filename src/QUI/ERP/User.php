@@ -214,6 +214,7 @@ class User extends QUI\QDOM implements UserInterface
             'isNetto' => $User->getAttribute('quiqqer.erp.isNettoUser'),
             'data' => $data,
             'address' => $address,
+            'email' => $User->getAttribute('email'),
 
             'quiqqer.erp.euVatId' => $User->getAttribute('quiqqer.erp.euVatId'),
             'quiqqer.erp.taxId' => $User->getAttribute('quiqqer.erp.taxId')
