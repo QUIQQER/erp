@@ -12,15 +12,15 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
 
     'css!package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput.css'
 
-], function (QUI, QUIControl, QUIConfirm, QUIAjax, QUILocale) {
-    "use strict";
+], function(QUI, QUIControl, QUIConfirm, QUIAjax, QUILocale) {
+    'use strict';
 
     const lg = 'quiqqer/erp';
 
     return new Class({
 
         Extends: QUIControl,
-        Type   : 'package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput',
+        Type: 'package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput',
 
         Binds: [
             '$onImport',
@@ -35,7 +35,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             vat: false
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.$loaded = false;
@@ -57,7 +57,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             });
         },
 
-        $onImport: function () {
+        $onImport: function() {
             this.$Input = this.getElm();
             this.$Input.type = 'hidden';
 
@@ -72,19 +72,19 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             // netto
             this.$NettoContainer = new Element('div', {
                 'class': 'quiqqer-erp-priceCalcInput-netto',
-                html   : '<span class="quiqqer-erp-priceCalcInput-label">' +
-                         QUILocale.get(lg, 'priceCalcInput.netto') +
-                         '</span>' +
-                         '<input type="text" name="netto-price" autocomplete="off" />'
+                html: '<span class="quiqqer-erp-priceCalcInput-label">' +
+                    QUILocale.get(lg, 'priceCalcInput.netto') +
+                    '</span>' +
+                    '<input type="text" name="netto-price" autocomplete="off" />'
             }).inject(this.$Elm);
 
             this.$NettoEdit = new Element('div', {
                 'class': 'quiqqer-erp-priceCalcInput-netto-edit',
-                html   : '<span class="fa fa-edit"></span>',
-                styles : {
+                html: '<span class="fa fa-edit"></span>',
+                styles: {
                     display: 'none'
                 },
-                events : {
+                events: {
                     click: this.switchToNetto
                 }
             }).inject(this.$NettoContainer);
@@ -92,7 +92,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
 
             this.$LoaderNetto = new Element('div', {
                 'class': 'quiqqer-erp-priceCalcInput-netto-loader',
-                html   : '<span class="fa fa-circle-o-notch fa-spin"></span>'
+                html: '<span class="fa fa-circle-o-notch fa-spin"></span>'
             }).inject(this.$NettoContainer);
 
             this.$LoaderNetto.setStyle('display', 'none');
@@ -100,26 +100,26 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             // brutto
             this.$BruttoContainer = new Element('div', {
                 'class': 'quiqqer-erp-priceCalcInput-brutto',
-                html   : '<span class="quiqqer-erp-priceCalcInput-label">' +
-                         QUILocale.get(lg, 'priceCalcInput.brutto') +
-                         '</span>' +
-                         '<input type="text" name="netto-price" autocomplete="off" />'
+                html: '<span class="quiqqer-erp-priceCalcInput-label">' +
+                    QUILocale.get(lg, 'priceCalcInput.brutto') +
+                    '</span>' +
+                    '<input type="text" name="netto-price" autocomplete="off" />'
             }).inject(this.$Elm);
 
             this.$BruttoEdit = new Element('button', {
                 'class': 'quiqqer-erp-priceCalcInput-brutto-edit',
-                html   : '<span class="fa fa-edit"></span>',
-                styles : {
+                html: '<span class="fa fa-edit"></span>',
+                styles: {
                     display: 'none'
                 },
-                events : {
+                events: {
                     click: this.switchToBrutto
                 }
             }).inject(this.$BruttoContainer);
 
             this.$LoaderBrutto = new Element('div', {
                 'class': 'quiqqer-erp-priceCalcInput-brutto-loader',
-                html   : '<span class="fa fa-circle-o-notch fa-spin"></span>'
+                html: '<span class="fa fa-circle-o-notch fa-spin"></span>'
             }).inject(this.$BruttoContainer);
 
             this.$LoaderBrutto.setStyle('display', 'none');
@@ -127,7 +127,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             // vat
             this.$VatButton = new Element('button', {
                 'class': 'quiqqer-erp-priceCalcInput-vat qui-button--no-icon qui-button qui-utils-noselect',
-                events : {
+                events: {
                     click: this.openVatWindow
                 }
             }).inject(this.$Elm);
@@ -169,7 +169,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             }
         },
 
-        $keyDown: function (e) {
+        $keyDown: function(e) {
             if (e.key === 'enter') {
                 Promise.all([
                     this.isNetto() ? this.fetchBrutto() : this.fetchNetto()
@@ -180,7 +180,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             }
         },
 
-        switchToNetto: function () {
+        switchToNetto: function() {
             this.$NettoContainer.removeClass('quiqqer-erp-priceCalcInput--disabled');
             this.$BruttoContainer.addClass('quiqqer-erp-priceCalcInput--disabled');
 
@@ -195,7 +195,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             this.$BruttoEdit.setStyle('display', null);
         },
 
-        switchToBrutto: function () {
+        switchToBrutto: function() {
             this.$NettoContainer.addClass('quiqqer-erp-priceCalcInput--disabled');
             this.$BruttoContainer.removeClass('quiqqer-erp-priceCalcInput--disabled');
 
@@ -210,11 +210,11 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             this.$BruttoEdit.setStyle('display', 'none');
         },
 
-        isNetto: function () {
+        isNetto: function() {
             return this.$BruttoContainer.hasClass('quiqqer-erp-priceCalcInput--disabled');
         },
 
-        $onChange: function () {
+        $onChange: function() {
             const Netto = this.$NettoContainer.getElement('input');
             const Brutto = this.$BruttoContainer.getElement('input');
 
@@ -225,7 +225,11 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             }
         },
 
-        setNetto: function (value) {
+        setNetto: function(value) {
+            if (!value || value === '') {
+                return Promise.resolve();
+            }
+
             const Netto = this.$NettoContainer.getElement('input');
             this.$Input.value = value;
 
@@ -234,19 +238,19 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             });
         },
 
-        setNettoByUser: function (value) {
+        setNettoByUser: function(value) {
             if (!value || value === '') {
-                return;
+                return Promise.resolve();
             }
 
             if (this.$loaded && this.$Input.value === value) {
-                return;
+                return Promise.resolve();
             }
 
             const Netto = this.$NettoContainer.getElement('input');
             this.$LoaderBrutto.setStyle('display', null);
 
-            this.validatePrice(value).then((floatPrice) => {
+            return this.validatePrice(value).then((floatPrice) => {
                 this.$Input.value = floatPrice;
                 return this.$setValueToInput(floatPrice, Netto);
             }).then(() => {
@@ -254,22 +258,26 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             });
         },
 
-        setBrutto: function (value) {
+        setBrutto: function(value) {
+            if (!value || value === '') {
+                return Promise.resolve();
+            }
+
             return this.$setValueToInput(
                 value, this.$BruttoContainer.getElement('input')
             ).then(() => {
                 return this.fetchNetto();
             }).then(() => {
                 this.$Input.value = this.$NettoContainer.getElement('input').value;
-            })
+            });
         },
 
-        setBruttoByUser: function (value) {
+        setBruttoByUser: function(value) {
             if (!value || value === '') {
-                return;
+                return Promise.resolve();
             }
 
-            this.validatePrice(value).then((floatPrice) => {
+            return this.validatePrice(value).then((floatPrice) => {
                 return this.$setValueToInput(floatPrice, this.$BruttoContainer.getElement('input'));
             }).then(() => {
                 return this.fetchNetto();
@@ -278,16 +286,16 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             });
         },
 
-        validatePrice: function (value) {
+        validatePrice: function(value) {
             return new Promise((resolve) => {
                 QUIAjax.get('package_quiqqer_erp_ajax_money_validatePrice', resolve, {
                     'package': 'quiqqer/erp',
-                    value    : value
+                    value: value
                 });
             });
         },
 
-        getDefaultVat: function () {
+        getDefaultVat: function() {
             return new Promise((resolve) => {
                 QUIAjax.get('package_quiqqer_erp_ajax_vat_getDefault', resolve, {
                     'package': 'quiqqer/erp'
@@ -295,7 +303,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             });
         },
 
-        fetchBrutto: function () {
+        fetchBrutto: function() {
             return new Promise((resolve) => {
                 const Netto = this.$NettoContainer.getElement('input');
                 const Brutto = this.$BruttoContainer.getElement('input');
@@ -315,14 +323,14 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
                     resolve();
                 }, {
                     'package': 'quiqqer/erp',
-                    price    : value,
+                    price: value,
                     formatted: 0,
-                    vat      : this.getAttribute('vat')
+                    vat: this.getAttribute('vat')
                 });
             });
         },
 
-        fetchNetto: function () {
+        fetchNetto: function() {
             return new Promise((resolve) => {
                 const Netto = this.$NettoContainer.getElement('input');
                 const Brutto = this.$BruttoContainer.getElement('input');
@@ -342,26 +350,26 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
                     resolve();
                 }, {
                     'package': 'quiqqer/erp',
-                    price    : value,
+                    price: value,
                     formatted: 0,
-                    vat      : this.getAttribute('vat')
+                    vat: this.getAttribute('vat')
                 });
             });
         },
 
-        $refreshVat: function () {
+        $refreshVat: function() {
             this.$VatButton.set('html', this.getAttribute('vat') + '%');
         },
 
-        openVatWindow: function () {
+        openVatWindow: function() {
             new QUIConfirm({
                 maxHeight: 300,
-                maxWidth : 400,
+                maxWidth: 400,
                 autoclose: false,
-                title    : QUILocale.get(lg, 'priceCalcInput.window.vat.title'),
-                icon     : 'fa fa-percent',
-                events   : {
-                    onOpen  : (Win) => {
+                title: QUILocale.get(lg, 'priceCalcInput.window.vat.title'),
+                icon: 'fa fa-percent',
+                events: {
+                    onOpen: (Win) => {
                         Win.Loader.show();
                         const Content = Win.getContent();
                         Content.setStyle('textAlign', 'center');
@@ -370,7 +378,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
                         const Select = new Element('select', {
                             styles: {
                                 marginTop: 20,
-                                width    : 150
+                                width: 150
                             }
                         }).inject(Content);
 
@@ -388,14 +396,14 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
                                 }
                             }
 
-                            vatList.sort(function (a, b) {
+                            vatList.sort(function(a, b) {
                                 return a - b;
                             });
 
 
                             for (i = 0, len = vatList.length; i < len; i++) {
                                 new Element('option', {
-                                    html : vatList[i] + '%',
+                                    html: vatList[i] + '%',
                                     value: vatList[i]
                                 }).inject(Select);
                             }
@@ -418,7 +426,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
 
                         Promise.all([
                             this.isNetto() ? this.fetchBrutto() : this.fetchNetto()
-                        ]).then(function () {
+                        ]).then(function() {
                             Win.close();
                         });
                     }
@@ -431,7 +439,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
          *
          * @return {Promise}
          */
-        getFormatter: function () {
+        getFormatter: function() {
             if (this.$Formatter !== null) {
                 return Promise.resolve(this.$Formatter);
             }
@@ -446,7 +454,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             });
         },
 
-        $setValueToInput: function (value, Node) {
+        $setValueToInput: function(value, Node) {
             let groupingSeparator = QUILocale.getGroupingSeparator();
             let decimalSeparator = QUILocale.getDecimalSeparator();
 
@@ -464,16 +472,18 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             });
         },
 
-        $trim: function (str) {
+        $trim: function(str) {
             let ch = '0';
             let start = 0,
-                end   = str.length;
+                end = str.length;
 
-            while (start < end && str[start] === ch)
+            while (start < end && str[start] === ch) {
                 ++start;
+            }
 
-            while (end > start && str[end - 1] === ch)
+            while (end > start && str[end - 1] === ch) {
                 --end;
+            }
 
             return (start > 0 || end < str.length) ? str.substring(start, end) : str;
         }
