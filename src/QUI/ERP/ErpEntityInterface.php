@@ -4,6 +4,7 @@ namespace QUI\ERP;
 
 use QUI;
 use QUI\ERP\Accounting\ArticleList;
+use QUI\ERP\Accounting\ArticleListUnique;
 use QUI\ERP\Accounting\Calculations;
 use QUI\ERP\Address as ErpAddress;
 use QUI\ERP\User as ErpUser;
@@ -27,9 +28,9 @@ interface ErpEntityInterface
     /**
      * Get the article list of the erp entity
      *
-     * @return ArticleList
+     * @return ArticleList|ArticleListUnique
      */
-    public function getArticles(): ArticleList;
+    public function getArticles();
 
     /**
      * Get the price calculation object of the erp entity
