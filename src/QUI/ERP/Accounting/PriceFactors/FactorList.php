@@ -13,6 +13,7 @@ use QUI;
 use Traversable;
 
 use function array_map;
+use function array_values;
 use function count;
 use function is_array;
 use function json_encode;
@@ -32,7 +33,7 @@ class FactorList implements IteratorAggregate, Countable
      *
      * @var Factor[]
      */
-    protected array $list = [];
+    protected array $factorList = [];
 
     /**
      * FactorList constructor.
@@ -49,11 +50,11 @@ class FactorList implements IteratorAggregate, Countable
 
         foreach ($data as $factorData) {
             if ($factorData instanceof Factor) {
-                $this->list[] = $factorData;
+                $this->factorList[] = $factorData;
                 continue;
             }
 
-            $this->list[] = new Factor($factorData);
+            $this->factorList[] = new Factor($factorData);
         }
     }
 
@@ -64,7 +65,7 @@ class FactorList implements IteratorAggregate, Countable
      */
     public function count(): int
     {
-        return count($this->list);
+        return count($this->factorList);
     }
 
     /**
@@ -77,7 +78,7 @@ class FactorList implements IteratorAggregate, Countable
         return array_map(function ($Factor) {
             /* @var $Factor Factor */
             return $Factor->toArray();
-        }, $this->list);
+        }, $this->factorList);
     }
 
     /**
@@ -96,7 +97,7 @@ class FactorList implements IteratorAggregate, Countable
      */
     public function addFactor(Factor $Factor)
     {
-        $this->list[] = $Factor;
+        $this->factorList[] = $Factor;
     }
 
     /**
@@ -106,8 +107,16 @@ class FactorList implements IteratorAggregate, Countable
      */
     public function setFactor(int $index, QUI\ERP\Accounting\PriceFactors\Factor $Factor)
     {
-        if (isset($this->list[$index])) {
-            $this->list[$index] = $Factor;
+        if (isset($this->factorList[$index])) {
+            $this->factorList[$index] = $Factor;
+        }
+    }
+
+    public function removeFactor(int $index)
+    {
+        if (isset($this->factorList[$index])) {
+            unset($this->factorList[$index]);
+            $this->factorList = array_values($this->factorList);
         }
     }
 
@@ -117,8 +126,8 @@ class FactorList implements IteratorAggregate, Countable
      */
     public function getFactor(int $index): ?Factor
     {
-        if (isset($this->list[$index])) {
-            return $this->list[$index];
+        if (isset($this->factorList[$index])) {
+            return $this->factorList[$index];
         }
 
         return null;
@@ -133,7 +142,7 @@ class FactorList implements IteratorAggregate, Countable
      */
     public function getIterator(): \Traversable
     {
-        return new ArrayIterator($this->list);
+        return new ArrayIterator($this->factorList);
     }
 
     //endregion
