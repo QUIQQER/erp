@@ -49,9 +49,9 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * PriceFactor List
      *
-     * @var QUI\ERP\Accounting\PriceFactors\FactorList
+     * @var ErpFactorList
      */
-    protected $PriceFactors = false;
+    protected ErpFactorList $PriceFactors;
 
     /**
      * @var null|QUI\Locale
@@ -509,9 +509,9 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Return the price factors list (list of price indicators)
      *
-     * @return QUI\ERP\Accounting\PriceFactors\FactorList
+     * @return ErpFactorList
      */
-    public function getPriceFactors()
+    public function getPriceFactors(): ErpFactorList
     {
         return $this->PriceFactors;
     }
