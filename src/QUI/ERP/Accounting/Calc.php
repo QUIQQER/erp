@@ -11,12 +11,12 @@ use Exception;
 use QUI;
 use QUI\ERP\Accounting\Invoice\Handler;
 use QUI\ERP\Accounting\Invoice\Invoice;
-use QUI\ERP\Accounting\Invoice\InvoiceTemporary;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
 
 use function array_map;
 use function array_sum;
+use function class_exists;
 use function count;
 use function floatval;
 use function get_class;
@@ -28,6 +28,7 @@ use function json_decode;
 use function json_encode;
 use function key;
 use function round;
+use function sprintf;
 use function str_replace;
 use function strpos;
 use function strtotime;
@@ -753,10 +754,10 @@ class Calc
     /**
      * Calculates the individual amounts paid of an invoice / order
      *
-     * @param InvoiceTemporary|Invoice|QUI\ERP\Order\AbstractOrder|QUI\ERP\Purchasing\Processes\PurchasingProcess $ToCalculate
+     * @param mixed $ToCalculate
      * @return array
      *
-     * @throws QUI\ERP\Exception
+     * @throws QUI\ERP\Exception|QUI\Exception
      */
     public static function calculatePayments($ToCalculate): array
     {
@@ -844,7 +845,6 @@ class Calc
         $ShopCurrency = QUI\ERP\Defaults::getCurrency();
 
         foreach ($transactions as $Transaction) {
-            /* @var $Transaction QUI\ERP\Accounting\Payments\Transactions\Transaction */
             if (!$Transaction->isComplete()) {
                 // don't add incomplete transactions
                 continue;
@@ -883,14 +883,14 @@ class Calc
                     $amount = $TransactionCurrency->convert($amount, $CalculateCurrency);
 
                     QUI\System\Log::addWarning(
-                        \sprintf(
+                        sprintf(
                             'The currency of transaction "%s" for calculation of object %s (%s) is "%s" and differs'
                             . ' from the currency of the calculation object ("%s"). But the transaction does not'
                             . ' contain an exchange rate from "%s" to "%s". Thus, the exchange rate that is currently'
                             . ' live in the system is used for converting from "%s" to "%s".',
                             $Transaction->getTxId(),
                             $ToCalculate->getId(),
-                            \get_class($ToCalculate),
+                            get_class($ToCalculate),
                             $TransactionCurrency->getCode(),
                             $CalculateCurrency->getCode(),
                             $TransactionCurrency->getCode(),
@@ -1008,24 +1008,19 @@ class Calc
     /**
      * Is the object allowed for calculation
      *
-     * @param InvoiceTemporary|Invoice|QUI\ERP\Order\AbstractOrder $ToCalculate
+     * @param mixed $ToCalculate
      * @return bool
      */
-    public static function isAllowedForCalculation($ToCalculate)
+    public static function isAllowedForCalculation($ToCalculate): bool
     {
-        if ($ToCalculate instanceof Invoice) {
+        if ($ToCalculate instanceof QUI\ERP\ErpEntityInterface) {
             return true;
         }
 
-        if ($ToCalculate instanceof InvoiceTemporary) {
-            return true;
-        }
-
-        if ($ToCalculate instanceof QUI\ERP\Order\AbstractOrder) {
-            return true;
-        }
-
-        if ($ToCalculate instanceof QUI\ERP\Purchasing\Processes\PurchasingProcess) {
+        if (
+            class_exists('QUI\ERP\Purchasing\Processes\PurchasingProcess')
+            && $ToCalculate instanceof QUI\ERP\Purchasing\Processes\PurchasingProcess
+        ) {
             return true;
         }
 
@@ -1039,7 +1034,7 @@ class Calc
      * @param QUI\ERP\Currency\Currency|null $Currency
      * @return array
      */
-    public static function calculateTotal(array $invoiceList, $Currency = null): array
+    public static function calculateTotal(array $invoiceList, QUI\ERP\Currency\Currency $Currency = null): array
     {
         if ($Currency === null) {
             try {

@@ -11,6 +11,17 @@ use QUI\ERP\User as ErpUser;
 
 interface ErpEntityInterface
 {
+    //region QDOM
+
+    public function getAttribute(string $key);
+
+    public function getAttributes();
+
+    public function setAttribute(string $key, $value);
+
+
+    //endregion
+
     /**
      * Get the customer of the erp entity
      *
