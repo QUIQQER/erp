@@ -766,7 +766,7 @@ class Calc
                 'Calc->calculatePayments(); Object is not allowed to calculate ' . get_class($ToCalculate)
             );
 
-            throw new QUI\ERP\Exception('Object is not allowed to calculate');
+            throw new QUI\ERP\Exception('Object is not allowed to calculate ' . get_class($ToCalculate));
         }
 
         QUI\ERP\Debug::getInstance()->log(
