@@ -441,7 +441,8 @@ class ArticleListUnique implements IteratorAggregate
             'Locale' => $this->Locale,
             'showExchangeRate' => $showExchangeRate,
             'exchangeRate' => $exchangeRate,
-            'exchangeRateText' => $exchangeRateText
+            'exchangeRateText' => $exchangeRateText,
+            'Currency' => $Currency
         ]);
 
         if ($template && file_exists($template)) {
