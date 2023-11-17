@@ -241,15 +241,15 @@ class Article implements ArticleInterface
     /**
      * Return the Article ID
      *
-     * @return string|int
+     * @return int
      */
     public function getId()
     {
         if (isset($this->attributes['id'])) {
-            return $this->attributes['id'];
+            return (int)$this->attributes['id'];
         }
 
-        return '';
+        return 0;
     }
 
     /**
