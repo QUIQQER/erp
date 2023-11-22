@@ -25,7 +25,7 @@ class CalculationValue
     protected QUI\ERP\Currency\Currency $Currency;
 
     /**
-     * @var int|string
+     * @var int|float
      */
     protected $number = 0;
 
@@ -64,6 +64,14 @@ class CalculationValue
         }
 
         $this->Currency = QUI\ERP\Defaults::getCurrency();
+    }
+
+    /**
+     * @return float|int|string
+     */
+    public function value()
+    {
+        return $this->number;
     }
 
     /**
