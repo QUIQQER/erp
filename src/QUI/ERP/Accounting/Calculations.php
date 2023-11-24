@@ -182,7 +182,8 @@ class Calculations
             $result[] = new CalculationVatValue(
                 $value['sum'],
                 $value['text'],
-                $key
+                $key,
+                $this->Currency
             );
         }
 
