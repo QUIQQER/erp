@@ -67,7 +67,7 @@ class User
         if (isset(self::$userBruttoNettoStatus[$uid])) {
             return self::$userBruttoNettoStatus[$uid];
         }
-        
+
         try {
             $Package = QUI::getPackage('quiqqer/erp');
             $Config = $Package->getConfig();
