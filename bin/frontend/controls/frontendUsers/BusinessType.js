@@ -97,6 +97,7 @@ define('package/quiqqer/erp/bin/frontend/controls/frontendUsers/BusinessType', [
                     height : size.height
                 }, {
                     callback: function () {
+                        Node.style.height = null;
                         resolve();
                     }
                 });
