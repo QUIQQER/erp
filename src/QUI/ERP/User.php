@@ -463,6 +463,17 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function isNetto()
     {
+        try {
+            $Package = QUI::getPackage('quiqqer/erp');
+            $Config = $Package->getConfig();
+
+            if ($Config->getValue('general', 'businessType') === 'B2B') {
+                return QUI\ERP\Utils\User::IS_NETTO_USER;
+            }
+        } catch (QUI\Exception $Exception) {
+        }
+
+
         if ($this->existsAttribute('erp.isNettoUser')) {
             return (int)$this->getAttribute('erp.isNettoUser') === QUI\ERP\Utils\User::IS_NETTO_USER;
         }

@@ -145,6 +145,8 @@ class Article implements ArticleInterface
     {
         $defaults = [
             'id',
+            'uuid',
+            'productSetParentUuid',
             'articleNo',
             'gtin',
             'title',
@@ -250,6 +252,26 @@ class Article implements ArticleInterface
         }
 
         return 0;
+    }
+
+    /**
+     * Return the Article UUID
+     *
+     * @return string|null
+     */
+    public function getUuid(): ?string
+    {
+        return !empty($this->attributes['uuid']) ? $this->attributes['uuid'] : null;
+    }
+
+    /**
+     * Return the UUID of a parent article, if this article is part of a product set.
+     *
+     * @return string|null
+     */
+    public function getProductSetParentUuid(): ?string
+    {
+        return !empty($this->attributes['productSetParentUuid']) ? $this->attributes['productSetParentUuid'] : null;
     }
 
     /**
@@ -699,6 +721,8 @@ class Article implements ArticleInterface
         return [
             // article data
             'id' => $this->getId(),
+            'uuid' => $this->getUuid(),
+            'productSetParentUuid' => $this->getProductSetParentUuid(),
             'title' => $this->getTitle(),
             'articleNo' => $this->getArticleNo(),
             'gtin' => $this->getGTIN(),
