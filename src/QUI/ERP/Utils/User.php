@@ -68,6 +68,18 @@ class User
             return self::$userBruttoNettoStatus[$uid];
         }
 
+        try {
+            $Package = QUI::getPackage('quiqqer/erp');
+            $Config = $Package->getConfig();
+
+            if ($Config->getValue('general', 'businessType') === 'B2B') {
+                self::$userBruttoNettoStatus[$uid] = QUI\ERP\Utils\User::IS_NETTO_USER;
+                return self::$userBruttoNettoStatus[$uid];
+            }
+        } catch (QUI\Exception $Exception) {
+        }
+
+
         if (QUI::getUsers()->isSystemUser($User)) {
             self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
 
@@ -75,7 +87,11 @@ class User
         }
 
         if ($User instanceof QUI\ERP\User && $User->hasBruttoNettoStatus()) {
-            self::$userBruttoNettoStatus[$uid] = $User->isNetto();
+            if ($User->isNetto()) {
+                self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+            } else {
+                self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
+            }
 
             return self::$userBruttoNettoStatus[$uid];
         }
