@@ -9,6 +9,7 @@ namespace QUI\ERP;
 use QUI;
 
 use function count;
+use function strtotime;
 
 /**
  * Class Process
@@ -91,7 +92,7 @@ class Process
 
             try {
                 $result = QUI::getDataBase()->fetch([
-                    'from'  => $this->table(),
+                    'from' => $this->table(),
                     'where' => [
                         'id' => $this->processId
                     ],
@@ -126,15 +127,31 @@ class Process
         $History = $this->getHistory();
 
         $invoices = $this->getInvoices();
-        $orders   = $this->getOrders();
+        $orders = $this->getOrders();
 
         foreach ($invoices as $Invoice) {
+            $History->addComment(
+                QUI::getLocale()->get('quiqqer/erp', 'created.invoice', [
+                    'invoiceId' => $Invoice->getId()
+                ]),
+                strtotime($Invoice->getAttribute('date'))
+            );
+
             $History->import($Invoice->getHistory());
         }
 
         foreach ($orders as $Order) {
+            $History->addComment(
+                QUI::getLocale()->get('quiqqer/erp', 'created.order', [
+                    'orderId' => $Order->getId()
+                ]),
+                strtotime($Order->getAttribute('date'))
+            );
+
             $History->import($Order->getHistory());
         }
+
+        QUI::getEvents()->fireEvent('quiqqerErpGetCompleteHistory', [$this]);
 
         return $History;
     }
@@ -280,7 +297,7 @@ class Process
             return $this->transactions;
         }
 
-        $Transactions       = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
+        $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
         $this->transactions = $Transactions->getTransactionsByProcessId($this->processId);
 
         return $this->transactions;

@@ -675,6 +675,14 @@
             <de><![CDATA[[startCurrency] = [rate]]]></de>
             <en><![CDATA[[startCurrency] = [rate]]]></en>
         </locale>
+        <locale name="created.invoice">
+            <de><![CDATA[Rechnung #[invoiceId] erstellt]]></de>
+            <en><![CDATA[Created invoice #[invoiceId]]]></en>
+        </locale>
+        <locale name="created.order">
+            <de><![CDATA[Bestellung #[orderId] erstellt]]></de>
+            <en><![CDATA[Created order #[orderId]]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">
