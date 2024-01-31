@@ -9,7 +9,6 @@ namespace QUI\ERP;
 use QUI;
 
 use function count;
-use function strtotime;
 
 /**
  * Class Process
@@ -130,28 +129,15 @@ class Process
         $orders = $this->getOrders();
 
         foreach ($invoices as $Invoice) {
-            $History->addComment(
-                QUI::getLocale()->get('quiqqer/erp', 'created.invoice', [
-                    'invoiceId' => $Invoice->getId()
-                ]),
-                strtotime($Invoice->getAttribute('date'))
-            );
-
             $History->import($Invoice->getHistory());
         }
 
         foreach ($orders as $Order) {
-            $History->addComment(
-                QUI::getLocale()->get('quiqqer/erp', 'created.order', [
-                    'orderId' => $Order->getId()
-                ]),
-                strtotime($Order->getAttribute('date'))
-            );
-
             $History->import($Order->getHistory());
         }
 
-        QUI::getEvents()->fireEvent('quiqqerErpGetCompleteHistory', [$this]);
+        QUI::getEvents()->fireEvent('quiqqerErpGetCompleteHistory', [$this, $this->processId]);
+        QUI::getEvents()->fireEvent('quiqqerErpProcessHistory', [$this, $this->processId]);
 
         return $History;
     }
@@ -225,7 +211,7 @@ class Process
      *
      * @return null|Order\Order|Order\OrderInProcess
      */
-    public function getOrder()
+    public function getOrder(): Order\OrderInProcess|Order\Order|null
     {
         try {
             QUI::getPackage('quiqqer/order');
@@ -253,9 +239,9 @@ class Process
     /**
      * Return all orders from the process
      *
-     * @return array|Order\Order|Order\Order[]|Order\OrderInProcess
+     * @return array|Order\Order|Order\Order[]|Order\OrderInProcess[]
      */
-    public function getOrders()
+    public function getOrders(): array
     {
         try {
             QUI::getPackage('quiqqer/order');
