@@ -136,8 +136,17 @@ class Process
             $History->import($Order->getHistory());
         }
 
-        QUI::getEvents()->fireEvent('quiqqerErpGetCompleteHistory', [$this, $this->processId]);
-        QUI::getEvents()->fireEvent('quiqqerErpProcessHistory', [$this, $this->processId]);
+        try {
+            QUI::getEvents()->fireEvent('quiqqerErpGetCompleteHistory', [$this, $this->processId]);
+        } catch (\Exception $exception) {
+            QUI\System\Log::addError($exception->getMessage());
+        }
+
+        try {
+            QUI::getEvents()->fireEvent('quiqqerErpProcessHistory', [$this, $this->processId]);
+        } catch (\Exception $exception) {
+            QUI\System\Log::addError($exception->getMessage());
+        }
 
         return $History;
     }
