@@ -13,6 +13,7 @@ use function count;
 /**
  * Class Process
  * - represents a complete erp process
+ * - Vorgangsnummer
  *
  * @package QUI\ERP
  */
