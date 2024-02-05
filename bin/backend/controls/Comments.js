@@ -16,15 +16,15 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
     'text!package/quiqqer/erp/bin/backend/controls/Comments.html',
     'css!package/quiqqer/erp/bin/backend/controls/Comments.css'
 
-], function (QUI, QUIControl, Mustache, QUILocale, template) {
-    "use strict";
+], function(QUI, QUIControl, Mustache, QUILocale, template) {
+    'use strict';
 
     const lg = 'quiqqer/erp';
 
     return new Class({
 
         Extends: QUIControl,
-        Type   : 'package/quiqqer/erp/bin/backend/controls/Comments',
+        Type: 'package/quiqqer/erp/bin/backend/controls/Comments',
 
         Binds: [
             '$onCreate'
@@ -34,7 +34,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
             comments: false
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.$filter = false;
@@ -50,7 +50,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
          *
          * @returns {HTMLDivElement}
          */
-        create: function () {
+        create: function() {
             this.$Elm = this.parent();
 
             this.$Elm.addClass('quiqqer-erp-comments');
@@ -60,11 +60,19 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
         },
 
         /**
+         * empties the comment list
+         */
+        clear: function() {
+            this.$comments = [];
+            this.$Elm.set('html', '');
+        },
+
+        /**
          * insert / set comments
          *
          * @param {String|Object} comments
          */
-        unserialize: function (comments) {
+        unserialize: function(comments) {
             if (typeOf(comments) === 'string') {
                 try {
                     comments = JSON.decode(comments);
@@ -78,7 +86,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
 
             const Formatter = this.$getFormatter();
 
-            comments = comments.map(function (entry) {
+            comments = comments.map(function(entry) {
                 let date = new Date(entry.time * 1000),
                     type = 'fa fa-comment';
 
@@ -111,14 +119,14 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 }
 
                 return {
-                    date     : date,
-                    time     : Formatter.format(date),
-                    message  : entry.message,
-                    type     : type,
+                    date: date,
+                    time: Formatter.format(date),
+                    message: entry.message,
+                    type: type,
                     timestamp: entry.time,
-                    id       : entry.id,
-                    source   : entry.source,
-                    editable : entry.editable
+                    id: entry.id,
+                    source: entry.source,
+                    editable: entry.editable
                 };
             });
 
@@ -135,7 +143,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
 
                 if (typeof group[day] === 'undefined') {
                     group[day] = {
-                        day : day,
+                        day: day,
                         data: []
                     };
                 }
@@ -151,14 +159,14 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 }
 
                 group[day].data.push({
-                    time     : entry.time,
-                    message  : entry.message,
-                    type     : entry.type,
+                    time: entry.time,
+                    message: entry.message,
+                    type: entry.type,
                     timestamp: entry.timestamp,
-                    id       : entry.id,
-                    source   : entry.source,
-                    title    : entry.source !== '' ? title : '',
-                    editable : entry.editable
+                    id: entry.id,
+                    source: entry.source,
+                    title: entry.source !== '' ? title : '',
+                    editable: entry.editable
                 });
             }
 
@@ -169,18 +177,18 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
         /**
          * refresh the display
          */
-        refresh: function () {
+        refresh: function() {
             let i, data, realData, commentEntries;
             const self = this;
             const comments = [];
 
-            const sortComments = function (a, b) {
+            const sortComments = function(a, b) {
                 return a.timestamp - b.timestamp;
             };
 
             const commentClone = Object.clone(this.$comments);
 
-            const filterComments = function (entry) {
+            const filterComments = function(entry) {
                 const message = entry.message.toLowerCase();
                 const type = entry.type.toLowerCase();
                 const id = entry.id.toLowerCase();
@@ -223,12 +231,12 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
 
             this.$Elm.set({
                 html: Mustache.render(template, {
-                    comments      : comments,
+                    comments: comments,
                     textNoComments: QUILocale.get(lg, 'comments.message.no.comments')
                 })
             });
 
-            this.$Elm.getElements('[data-editable]').addEvent('click', function (event) {
+            this.$Elm.getElements('[data-editable]').addEvent('click', function(event) {
                 let Parent = event.target;
 
                 if (!Parent.hasClass('quiqqer-erp-comments-comment')) {
@@ -236,7 +244,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 }
 
                 const data = {
-                    id    : Parent.get('data-id'),
+                    id: Parent.get('data-id'),
                     source: Parent.get('data-source')
                 };
 
@@ -253,14 +261,14 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
          *
          * @return {window.Intl.DateTimeFormat}
          */
-        $getFormatter: function () {
+        $getFormatter: function() {
             let locale = QUILocale.getCurrent();
 
             const options = {
                 // year  : 'numeric',
                 // month : '2-digit',
                 // day   : '2-digit',
-                hour  : '2-digit',
+                hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
             };
@@ -283,13 +291,13 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
          *
          * @return {window.Intl.DateTimeFormat}
          */
-        $getDayFormatter: function () {
+        $getDayFormatter: function() {
             let locale = QUILocale.getCurrent();
 
             const options = {
-                year : 'numeric',
+                year: 'numeric',
                 month: '2-digit',
-                day  : '2-digit'
+                day: '2-digit'
             };
 
             if (!locale.match('_')) {
@@ -312,7 +320,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
          *
          * @param {String} value
          */
-        filter: function (value) {
+        filter: function(value) {
             this.$filter = value.toString().toLowerCase();
             this.refresh();
         },
@@ -320,7 +328,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
         /**
          * Clears the filter
          */
-        clearFilter: function () {
+        clearFilter: function() {
             this.$filter = false;
             this.refresh();
         }

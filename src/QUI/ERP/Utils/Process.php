@@ -22,6 +22,8 @@ class Process
      *
      * @param string $hash - process hash
      * @return array
+     *
+     * @deprecated
      */
     public static function getProcessInformation($hash)
     {
@@ -31,7 +33,7 @@ class Process
         try {
             QUI::getPackage('quiqqer/order');
 
-            $Order           = QUI\ERP\Order\Handler::getInstance()->getOrderByHash($hash);
+            $Order = QUI\ERP\Order\Handler::getInstance()->getOrderByHash($hash);
             $result['order'] = $Order->getAttributes();
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
@@ -41,7 +43,7 @@ class Process
         try {
             QUI::getPackage('quiqqer/invoice');
 
-            $Invoice           = QUI\ERP\Accounting\Invoice\Utils\Invoice::getInvoiceByString($hash);
+            $Invoice = QUI\ERP\Accounting\Invoice\Utils\Invoice::getInvoiceByString($hash);
             $result['invoice'] = $Invoice->getAttributes();
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);

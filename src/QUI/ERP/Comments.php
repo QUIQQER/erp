@@ -119,17 +119,17 @@ class Comments
      * Add a comment
      *
      * @param string $message
-     * @param int|false $time - optional, unix timestamp
+     * @param bool|int $time - optional, unix timestamp
      * @param string $source - optional, name of the package
      * @param string $sourceIcon - optional, source icon
-     * @param string|false $id - optional, comment id, if needed, it will set one
+     * @param bool|string $id - optional, comment id, if needed, it will set one
      */
     public function addComment(
         string $message,
-        $time = false,
+        bool|int $time = false,
         string $source = '',
         string $sourceIcon = '',
-        $id = false
+        bool|string $id = false
     ) {
         if ($time === false) {
             $time = time();
@@ -228,7 +228,7 @@ class Comments
 
         if ($User->getAttribute('comments')) {
             $isEditable = QUI\Permissions\Permission::hasPermission('quiqqer.customer.editComments');
-            $json       = json_decode($User->getAttribute('comments'), true);
+            $json = json_decode($User->getAttribute('comments'), true);
 
             if (!is_array($json)) {
                 $json = [];
