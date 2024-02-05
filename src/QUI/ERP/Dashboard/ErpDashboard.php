@@ -22,7 +22,7 @@ class ErpDashboard implements DashboardInterface
             $Locale = QUI::getLocale();
         }
 
-        return $Locale->get('quiqqer/erp', 'dashboard.title');
+        return $Locale->get('quiqqer/erp', 'dashboard.erp.title');
     }
 
     /**
