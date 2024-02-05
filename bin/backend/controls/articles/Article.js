@@ -133,6 +133,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.$calculations = {};
             this.$bruttoCalc = {};
 
+            if (typeof options.calculated !== 'undefined') {
+                this.$calculations = options.calculated;
+            }
+
+            if (typeof this.$calculations.nettoPriceNotRounded !== 'undefined' && this.$calculations.nettoPriceNotRounded) {
+                this.setAttribute('unitPrice', this.$calculations.nettoPriceNotRounded);
+            }
+
             this.$SelectCheckbox = null;
             this.$Position = null;
             this.$Quantity = null;
