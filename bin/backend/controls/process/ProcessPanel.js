@@ -7,7 +7,9 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessPanel', [
     'qui/QUI',
     'qui/controls/desktop/Panel',
     'Locale',
-    'Ajax'
+    'Ajax',
+
+    'css!package/quiqqer/erp/bin/backend/controls/process/ProcessPanel.css'
 
 ], function(QUI, QUIPanel, QUILocale, QUIAjax) {
     'use strict';
@@ -56,10 +58,34 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessPanel', [
                 })
             });
 
+            this.Loader.show();
             this.refresh();
 
+            this.getBody().setStyles({
+                padding: 0
+            });
+
+            new Element('div', {
+                'class': 'quiqqer-erp-process-comments-header',
+                html: '<div class="quiqqer-customer-comments-header-filter">' +
+                    '    <input type="text" name="filter" placeholder="Filter (Nachricht, Type, ID) ...">' +
+                    '  </div>'
+            }).inject(this.getBody());
+
             require(['package/quiqqer/erp/bin/backend/controls/Comments'], (Comments) => {
-                this.$Comments = new Comments().inject(this.getBody());
+                const CommentContainer = new Element('div', {
+                    styles: {
+                        padding: 20
+                    }
+                }).inject(this.getBody());
+
+                const Filter = this.getBody().getElement('[name="filter"]');
+                this.$Comments = new Comments().inject(CommentContainer);
+
+                Filter.addEvent('keyup', () => {
+                    this.$Comments.filter(Filter.value);
+                });
+
                 this.$onShow();
             });
         },

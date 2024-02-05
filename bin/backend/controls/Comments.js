@@ -331,14 +331,17 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
             }
         },
 
+        /**
+         * event: comment click
+         *
+         * @param event
+         */
         $onEntryClick: function(event) {
             let Target = event.target;
 
             if (!Target.hasClass('quiqqer-erp-comments-comment')) {
                 Target = Target.getParent('.quiqqer-erp-comments-comment');
             }
-
-            console.log(Target.get('data-object-hash'));
 
             switch (Target.get('data-source')) {
                 case 'quiqqer/order':
@@ -351,7 +354,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                             })
                         );
                     });
-                    break;
+                    return;
 
                 case 'quiqqer/invoice':
                     require([
@@ -363,7 +366,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                             })
                         );
                     });
-                    break;
+                    return;
 
                 case 'quiqqer/offer':
                     require([
@@ -375,7 +378,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                             })
                         );
                     });
-                    break;
+                    return;
 
                 case 'quiqqer/purchasing':
                     require([
@@ -387,7 +390,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                             })
                         );
                     });
-                    break;
+                    return;
 
                 case 'quiqqer/salesorders':
                     require([
@@ -399,8 +402,10 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                             })
                         );
                     });
-                    break;
+                    return;
             }
+
+            QUI.fireEvent('onQuiqqerErpCommentsClick', [this, Target]);
         },
 
         //region filter
