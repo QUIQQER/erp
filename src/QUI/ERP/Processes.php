@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * This file contains QUI\ERP\Processes
+ */
 
 namespace QUI\ERP;
 
