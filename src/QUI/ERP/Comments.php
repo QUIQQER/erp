@@ -129,7 +129,8 @@ class Comments
         bool|int $time = false,
         string $source = '',
         string $sourceIcon = '',
-        bool|string $id = false
+        bool|string $id = false,
+        bool|string $objectHash = false
     ) {
         if ($time === false) {
             $time = time();
@@ -151,14 +152,15 @@ class Comments
             'time' => (int)$time,
             'source' => $source,
             'sourceIcon' => $sourceIcon,
-            'id' => $id
+            'id' => $id,
+            'objectHash' => $objectHash
         ];
     }
 
     /**
      * Clear all comments
      */
-    public function clear()
+    public function clear(): void
     {
         $this->comments = [];
     }
@@ -166,7 +168,7 @@ class Comments
     /**
      * Sort all comments via its time
      */
-    public function sort()
+    public function sort(): void
     {
         usort($this->comments, function ($commentA, $commentB) {
             if ($commentA['time'] == $commentB['time']) {
@@ -182,7 +184,7 @@ class Comments
      *
      * @param Comments $Comments
      */
-    public function import(Comments $Comments)
+    public function import(Comments $Comments): void
     {
         $comments = $Comments->toArray();
 
@@ -204,7 +206,8 @@ class Comments
                 $comment['time'],
                 $comment['source'],
                 $comment['sourceIcon'],
-                $comment['id']
+                $comment['id'],
+                $comment['objectHash'] ?? '',
             );
         }
 

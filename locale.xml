@@ -695,15 +695,19 @@
         </locale>
         <locale name="process.history.order.created">
             <de><![CDATA[Bestellung #[hash] erstellt]]></de>
-            <en><![CDATA[Order created #[hash]]]></en>
+            <en><![CDATA[Order #[hash] created]]></en>
         </locale>
         <locale name="process.history.offer.created">
             <de><![CDATA[Angebot #[hash] erstellt]]></de>
-            <en><![CDATA[Created offer #[hash]]]></en>
+            <en><![CDATA[Offer #[hash] created]]></en>
         </locale>
         <locale name="process.history.purchasing.created">
             <de><![CDATA[Einkauf #[hash] erstellt]]></de>
-            <en><![CDATA[Purchase created #[hash]]]></en>
+            <en><![CDATA[Purchase #[hash] created]]></en>
+        </locale>
+        <locale name="process.history.salesorders.created">
+            <de><![CDATA[Auftrag #[hash] erstellt]]></de>
+            <en><![CDATA[Sales order #[hash] created]]></en>
         </locale>
     </groups>
 

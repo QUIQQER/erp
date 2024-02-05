@@ -10,13 +10,14 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
 
     'qui/QUI',
     'qui/controls/Control',
+    'utils/Panels',
     'Mustache',
     'Locale',
 
     'text!package/quiqqer/erp/bin/backend/controls/Comments.html',
     'css!package/quiqqer/erp/bin/backend/controls/Comments.css'
 
-], function(QUI, QUIControl, Mustache, QUILocale, template) {
+], function(QUI, QUIControl, PanelUtils, Mustache, QUILocale, template) {
     'use strict';
 
     const lg = 'quiqqer/erp';
@@ -27,7 +28,8 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
         Type: 'package/quiqqer/erp/bin/backend/controls/Comments',
 
         Binds: [
-            '$onCreate'
+            '$onCreate',
+            '$onEntryClick'
         ],
 
         options: {
@@ -114,6 +116,10 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     entry.id = '';
                 }
 
+                if (typeof entry.objectHash === 'undefined') {
+                    entry.objectHash = '';
+                }
+
                 if (typeof entry.editable === 'undefined') {
                     entry.editable = false;
                 }
@@ -126,7 +132,8 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     timestamp: entry.time,
                     id: entry.id,
                     source: entry.source,
-                    editable: entry.editable
+                    editable: entry.editable,
+                    objectHash: entry.objectHash
                 };
             });
 
@@ -166,7 +173,8 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     id: entry.id,
                     source: entry.source,
                     title: entry.source !== '' ? title : '',
-                    editable: entry.editable
+                    editable: entry.editable,
+                    objectHash: entry.objectHash
                 });
             }
 
@@ -236,6 +244,15 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 })
             });
 
+            this.$Elm.querySelectorAll('.quiqqer-erp-comments-comment').forEach((Comment) => {
+                if (!Comment.get('data-object-hash')) {
+                    return;
+                }
+
+                Comment.addClass('quiqqer-erp-comments-comment--clickable');
+                Comment.addEventListener('click', this.$onEntryClick);
+            });
+
             this.$Elm.getElements('[data-editable]').addEvent('click', function(event) {
                 let Parent = event.target;
 
@@ -245,7 +262,8 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
 
                 const data = {
                     id: Parent.get('data-id'),
-                    source: Parent.get('data-source')
+                    source: Parent.get('data-source'),
+                    objectHash: Parent.get('data-object-hash')
                 };
 
                 self.fireEvent('edit', [
@@ -310,6 +328,78 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 return window.Intl.DateTimeFormat(locale, options);
             } catch (e) {
                 return window.Intl.DateTimeFormat('de-DE', options);
+            }
+        },
+
+        $onEntryClick: function(event) {
+            let Target = event.target;
+
+            if (!Target.hasClass('quiqqer-erp-comments-comment')) {
+                Target = Target.getParent('.quiqqer-erp-comments-comment');
+            }
+
+            console.log(Target.get('data-object-hash'));
+
+            switch (Target.get('data-source')) {
+                case 'quiqqer/order':
+                    require([
+                        'package/quiqqer/order/bin/backend/controls/panels/Order'
+                    ], (Order) => {
+                        PanelUtils.openPanelInTasks(
+                            new Order({
+                                orderId: Target.get('data-object-hash')
+                            })
+                        );
+                    });
+                    break;
+
+                case 'quiqqer/invoice':
+                    require([
+                        'package/quiqqer/invoice/bin/backend/controls/panels/Invoice'
+                    ], (Invoice) => {
+                        PanelUtils.openPanelInTasks(
+                            new Invoice({
+                                invoiceId: Target.get('data-object-hash')
+                            })
+                        );
+                    });
+                    break;
+
+                case 'quiqqer/offer':
+                    require([
+                        'package/quiqqer/offers/bin/js/backend/controls/panels/Offer'
+                    ], (Offer) => {
+                        PanelUtils.openPanelInTasks(
+                            new Offer({
+                                offerId: Target.get('data-object-hash')
+                            })
+                        );
+                    });
+                    break;
+
+                case 'quiqqer/purchasing':
+                    require([
+                        'package/quiqqer/purchasing/bin/js/backend/controls/panels/processes/Process'
+                    ], (Process) => {
+                        PanelUtils.openPanelInTasks(
+                            new Process({
+                                processId: Target.get('data-object-hash')
+                            })
+                        );
+                    });
+                    break;
+
+                case 'quiqqer/salesorders':
+                    require([
+                        'package/quiqqer/salesorders/bin/js/backend/controls/panels/SalesOrder'
+                    ], (SalesOrder) => {
+                        PanelUtils.openPanelInTasks(
+                            new SalesOrder({
+                                salesOrderHash: Target.get('data-object-hash')
+                            })
+                        );
+                    });
+                    break;
             }
         },
 

@@ -11,6 +11,16 @@
     width: 100%;
 }
 
+.quiqqer-erp-comments-comment--clickable:hover {
+    background: #2F8FC6;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+.quiqqer-erp-comments-comment--clickable:hover .quiqqer-erp-comments-comment-type {
+    color: #FFFFFF;
+}
+
 /** title
  ================================================== */
 

@@ -60,6 +60,7 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessPanel', [
 
             require(['package/quiqqer/erp/bin/backend/controls/Comments'], (Comments) => {
                 this.$Comments = new Comments().inject(this.getBody());
+                this.$onShow();
             });
         },
 
@@ -76,8 +77,6 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessPanel', [
             this.Loader.show();
 
             QUIAjax.get('package_quiqqer_erp_ajax_dashboard_globalProcess_getProcess', (result) => {
-                console.warn(result);
-
                 this.$Comments.clear();
                 this.$Comments.unserialize(result.history);
                 this.Loader.hide();
