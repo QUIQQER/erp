@@ -275,12 +275,6 @@
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
-        <locale name="dashboard.erp.title">
-            <de><![CDATA[ERP Dashboard]]></de>
-            <en><![CDATA[ERP Dashboard]]></en>
-        </locale>
-
-
         <locale name="bankAccounts.patch.bankAccount_created">
             <de>
                 <![CDATA[Es wurde automatisch ein Standard-Bankkonto auf Basis der Firmen-Bankdaten in der ecoyn-Konfiguration angelegt.]]></de>
@@ -674,6 +668,10 @@
         <locale name="dashboard.title">
             <de><![CDATA[ecoyn Dashboard]]></de>
             <en><![CDATA[ecoyn dashboard]]></en>
+        </locale>
+        <locale name="dashboard.erp.title">
+            <de><![CDATA[ERP Dashboard]]></de>
+            <en><![CDATA[ERP Dashboard]]></en>
         </locale>
 
         <locale name="exchangerate.text">
@@ -1435,10 +1433,6 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
         <locale name="dashboard.erp.processId">
             <de><![CDATA[Vorgangsnummer]]></de>
             <en><![CDATA[Process number]]></en>
-        </locale>
-        <locale name="dashboard.erp.title">
-            <de><![CDATA[ERP Dashboard]]></de>
-            <en><![CDATA[ERP Dashboard]]></en>
         </locale>
         <locale name="dashboard.erp.grid.title">
             <de><![CDATA[Die letzten Vorgänge]]></de>
