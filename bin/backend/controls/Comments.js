@@ -249,6 +249,10 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     return;
                 }
 
+                if (typeof QUIQQER_FRONTEND !== 'undefined') {
+                    return;
+                }
+
                 Comment.addClass('quiqqer-erp-comments-comment--clickable');
                 Comment.addEventListener('click', this.$onEntryClick);
             });
