@@ -319,7 +319,7 @@ class Processes
                 $booking['createDate']
             );
 
-            $this->list[$gpi]['booking'] = $booking['hash'];
+            $this->list[$gpi]['booking'] = $booking['uuid'];
         }
     }
 
