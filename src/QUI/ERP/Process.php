@@ -8,6 +8,7 @@ namespace QUI\ERP;
 
 use QUI;
 use QUI\ERP\Accounting\Offers\Handler as OfferHandler;
+use QUI\ERP\Booking\Table as BookingTable;
 use QUI\ERP\Purchasing\Processes\Handler as PurchasingHandler;
 use QUI\ERP\SalesOrders\Handler as SalesOrdersHandler;
 
@@ -130,9 +131,10 @@ class Process
     {
         $History = $this->getHistory();
 
+        $this->parseBookings($History);
         $this->parseInvoices($History);
-        $this->parseOrders($History);
         $this->parseOffers($History);
+        $this->parseOrders($History);
         $this->parsePurchasing($History);
         $this->parseSalesOrders($History);
 
@@ -409,6 +411,84 @@ class Process
         foreach ($offers as $offer) {
             try {
                 $result[] = $Offers->getOffer($offer['id']);
+            } catch (\Exception) {
+            }
+        }
+
+        return $result;
+    }
+
+    //endregion
+
+    //region booking
+    protected function parseBookings(Comments $History): void
+    {
+        // orders
+        $bookings = $this->getBookings();
+
+        foreach ($bookings as $Booking) {
+            $History->addComment(
+                QUI::getLocale()->get('quiqqer/erp', 'process.history.booking.created', [
+                    'hash' => $Booking->getUuid()
+                ]),
+                $Booking->getCreateDate()->getTimestamp(),
+                'quiqqer/booking',
+                'fa fa-ticket',
+                false,
+                $Booking->getUuid()
+            );
+
+            $history = $Booking->getHistory()->toArray();
+
+            foreach ($history as $entry) {
+                if (empty($entry['source'])) {
+                    $entry['source'] = 'quiqqer/booking';
+                }
+
+                if (empty($entry['sourceIcon'])) {
+                    $entry['sourceIcon'] = 'fa fa-ticket';
+                }
+
+                $History->addComment(
+                    $entry['message'],
+                    $entry['time'],
+                    $entry['source'],
+                    $entry['sourceIcon'],
+                    $entry['id'],
+                    $Booking->getUuid()
+                );
+            }
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getBookings(): array
+    {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/booking')) {
+            return [];
+        }
+
+        try {
+            $bookings = QUI::getDatabase()->fetch([
+                'select' => 'uuid,globalProcessId,createDate',
+                'from' => BookingTable::BOOKINGS->tableName(),
+                'where_or' => [
+                    'globalProcessId' => $this->processId,
+                    'uuid' => $this->processId
+                ]
+            ]);
+        } catch (\Exception) {
+            return [];
+        }
+
+        $result = [];
+        $BookingRepository = new QUI\ERP\Booking\Repository\BookingRepository();
+
+        foreach ($bookings as $booking) {
+            try {
+                $result[] = $BookingRepository->getByUuid($booking['uuid']);
             } catch (\Exception) {
             }
         }

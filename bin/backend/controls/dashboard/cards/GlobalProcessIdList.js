@@ -54,7 +54,7 @@ define('package/quiqqer/erp/bin/backend/controls/dashboard/cards/GlobalProcessId
 
             const Container = new Element('div', {
                 styles: {
-                    height: 400,
+                    height: 600,
                     width: '100%'
                 }
             }).inject(this.getContent());
@@ -183,7 +183,7 @@ define('package/quiqqer/erp/bin/backend/controls/dashboard/cards/GlobalProcessId
                 this.$Content.setStyle('padding', 10);
                 this.$Content.setStyle('display', null);
 
-                this.$Grid.setHeight(400);
+                this.$Grid.setHeight(600);
                 this.refresh();
             });
         },

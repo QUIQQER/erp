@@ -9,6 +9,7 @@ namespace QUI\ERP;
 use QUI;
 use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
 use QUI\ERP\Accounting\Offers\Handler as OfferHandler;
+use QUI\ERP\Booking\Table as BookingTable;
 use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\ERP\Purchasing\Processes\Handler as PurchasingHandler;
 use QUI\ERP\SalesOrders\Handler as SalesOrdersHandler;
@@ -36,13 +37,13 @@ class Processes
     public function getList(): array
     {
         try {
-            $this->readInvoices();
+            $this->readBooking();
         } catch (QUI\Database\Exception $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
-            $this->readOrders();
+            $this->readInvoices();
         } catch (QUI\Database\Exception $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
@@ -54,7 +55,7 @@ class Processes
         }
 
         try {
-            $this->readSalesOrders();
+            $this->readOrders();
         } catch (QUI\Database\Exception $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
@@ -65,6 +66,11 @@ class Processes
             QUI\System\Log::addError($exception->getMessage());
         }
 
+        try {
+            $this->readSalesOrders();
+        } catch (QUI\Database\Exception $exception) {
+            QUI\System\Log::addError($exception->getMessage());
+        }
 
         uasort($this->list, function ($a, $b) {
             return strtotime($b['date']) - strtotime($a['date']);
@@ -81,15 +87,15 @@ class Processes
     public function getWantedPluginList(): array
     {
         return [
-            'quiqqer/invoice',
-            'quiqqer/order',
-            'quiqqer/offers',
-            'quiqqer/salesorders',
-            'quiqqer/purchasing',
             'quiqqer/booking',
             'quiqqer/contracts',
+            'quiqqer/delivery-notes',
+            'quiqqer/invoice',
+            'quiqqer/offers',
+            'quiqqer/order',
             'quiqqer/payments',
-            'quiqqer/delivery-notes'
+            'quiqqer/purchasing',
+            'quiqqer/salesorders'
         ];
     }
 
@@ -277,6 +283,43 @@ class Processes
             );
 
             $this->list[$gpi]['purchasing'] = $entry['hash'];
+        }
+    }
+
+    /**
+     * Read all purchases
+     *
+     * @return void
+     * @throws QUI\Database\Exception
+     */
+    protected function readBooking(): void
+    {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/booking')) {
+            return;
+        }
+
+        $bookings = QUI::getDatabase()->fetch([
+            'select' => 'uuid,globalProcessId,createDate',
+            'from' => BookingTable::BOOKINGS->tableName(),
+        ]);
+
+        foreach ($bookings as $booking) {
+            $gpi = $booking['globalProcessId'];
+
+            if (empty($gpi)) {
+                $gpi = $booking['uuid'];
+            }
+
+            if (!isset($this->list[$gpi])) {
+                $this->list[$gpi] = [];
+            }
+
+            $this->list[$gpi]['date'] = $this->getEarlierDate(
+                $this->list[$gpi]['date'] ?? null,
+                $booking['createDate']
+            );
+
+            $this->list[$gpi]['booking'] = $booking['hash'];
         }
     }
 
