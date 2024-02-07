@@ -707,6 +707,10 @@
             <de><![CDATA[Auftrag #[hash] erstellt]]></de>
             <en><![CDATA[Sales order #[hash] created]]></en>
         </locale>
+         <locale name="process.history.booking.created">
+            <de><![CDATA[Buchung #[hash] erstellt]]></de>
+            <en><![CDATA[Booking #[hash] created]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">
