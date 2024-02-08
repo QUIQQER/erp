@@ -237,6 +237,10 @@ class Process
      */
     public function getInvoices(): array
     {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/invoice')) {
+            return [];
+        }
+
         try {
             return QUI\ERP\Accounting\Invoice\Handler::getInstance()->getInvoicesByGlobalProcessId($this->processId);
         } catch (\QUI\Exception $Exception) {
@@ -301,9 +305,7 @@ class Process
      */
     public function getOrder(): Order\OrderInProcess|Order\Order|null
     {
-        try {
-            QUI::getPackage('quiqqer/order');
-        } catch (QUI\Exception $Exception) {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/order')) {
             return null;
         }
 
@@ -331,9 +333,11 @@ class Process
      */
     public function getOrders(): array
     {
-        try {
-            QUI::getPackage('quiqqer/order');
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/order')) {
+            return [];
+        }
 
+        try {
             return QUI\ERP\Order\Handler::getInstance()->getOrdersByGlobalProcessId($this->processId);
         } catch (QUI\Exception $Exception) {
             return [];
@@ -345,6 +349,10 @@ class Process
     //region offers
     protected function parseOffers(Comments $History): void
     {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/offers')) {
+            return;
+        }
+
         // orders
         $offers = $this->getOffers();
 
