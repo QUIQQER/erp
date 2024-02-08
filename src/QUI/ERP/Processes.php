@@ -9,6 +9,7 @@ namespace QUI\ERP;
 use QUI;
 use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
 use QUI\ERP\Accounting\Offers\Handler as OfferHandler;
+use QUI\ERP\Accounting\Payments\Transactions\Factory as TransactionFactory;
 use QUI\ERP\Booking\Table as BookingTable;
 use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\ERP\Purchasing\Processes\Handler as PurchasingHandler;
@@ -25,6 +26,7 @@ use QUI\ERP\SalesOrders\Handler as SalesOrdersHandler;
  * - quiqqer/booking
  * - quiqqer/contracts
  * - quiqqer/payments
+ * - quiqqer/payment-transactions
  * - quiqqer/delivery-notes
  */
 class Processes
@@ -72,6 +74,12 @@ class Processes
             QUI\System\Log::addError($exception->getMessage());
         }
 
+        try {
+            $this->readTransactions();
+        } catch (QUI\Database\Exception $exception) {
+            QUI\System\Log::addError($exception->getMessage());
+        }
+
         uasort($this->list, function ($a, $b) {
             return strtotime($b['date']) - strtotime($a['date']);
         });
@@ -94,6 +102,7 @@ class Processes
             'quiqqer/offers',
             'quiqqer/order',
             'quiqqer/payments',
+            'quiqqer/payment-transactions',
             'quiqqer/purchasing',
             'quiqqer/salesorders'
         ];
@@ -246,6 +255,43 @@ class Processes
             );
 
             $this->list[$gpi]['salesorders'] = $salesOrder['hash'];
+        }
+    }
+
+    /**
+     * Read all sales orders
+     *
+     * @return void
+     * @throws QUI\Database\Exception
+     */
+    protected function readTransactions(): void
+    {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/payment-transactions')) {
+            return;
+        }
+
+        $transactions = QUI::getDatabase()->fetch([
+            'select' => 'hash,global_process_id,date',
+            'from' => TransactionFactory::table()
+        ]);
+
+        foreach ($transactions as $transaction) {
+            $gpi = $transaction['global_process_id'];
+
+            if (empty($gpi)) {
+                $gpi = $transaction['hash'];
+            }
+
+            if (!isset($this->list[$gpi])) {
+                $this->list[$gpi] = [];
+            }
+
+            $this->list[$gpi]['date'] = $this->getEarlierDate(
+                $this->list[$gpi]['date'] ?? null,
+                $transaction['date']
+            );
+
+            $this->list[$gpi]['transactions'] = $transaction['hash'];
         }
     }
 

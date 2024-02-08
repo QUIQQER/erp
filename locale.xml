@@ -707,9 +707,13 @@
             <de><![CDATA[Auftrag #[hash] erstellt]]></de>
             <en><![CDATA[Sales order #[hash] created]]></en>
         </locale>
-         <locale name="process.history.booking.created">
+        <locale name="process.history.booking.created">
             <de><![CDATA[Buchung #[hash] erstellt]]></de>
             <en><![CDATA[Booking #[hash] created]]></en>
+        </locale>
+        <locale name="process.history.transaction.created">
+            <de><![CDATA[Zahlung von [amount] eingegangen / gebucht. (#[hash])]]></de>
+            <en><![CDATA[Payment from [amount] received / posted. (#[hash])]]></en>
         </locale>
     </groups>
 
@@ -1474,9 +1478,9 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <de><![CDATA[Vertrag]]></de>
             <en><![CDATA[Contract]]></en>
         </locale>
-        <locale name="dashboard.erp.payments">
-            <de><![CDATA[Zahlungen]]></de>
-            <en><![CDATA[Payments]]></en>
+        <locale name="dashboard.erp.transactions">
+            <de><![CDATA[Zahlungen / Transaktionen]]></de>
+            <en><![CDATA[Payments / Transactions]]></en>
         </locale>
         <locale name="dashboard.erp.deliveryNotes">
             <de><![CDATA[Lieferschein]]></de>

@@ -62,8 +62,6 @@ define('package/quiqqer/erp/bin/backend/controls/dashboard/cards/GlobalProcessId
             this.$getPlugins().then((plugins) => {
                 const columnModel = [];
 
-                console.log(plugins);
-
                 columnModel.push({
                     header: QUILocale.get(lg, 'dashboard.erp.date'),
                     dataIndex: 'date',
@@ -106,6 +104,7 @@ define('package/quiqqer/erp/bin/backend/controls/dashboard/cards/GlobalProcessId
                 }
 
                 if (plugins.indexOf('quiqqer/salesorders') !== -1) {
+                    console.log(1, QUILocale.get(lg, 'dashboard.erp.salesOrder'));
                     columnModel.push({
                         header: QUILocale.get(lg, 'dashboard.erp.salesOrder'),
                         dataIndex: 'salesorders',
@@ -141,19 +140,19 @@ define('package/quiqqer/erp/bin/backend/controls/dashboard/cards/GlobalProcessId
                     });
                 }
 
-                if (plugins.indexOf('quiqqer/payments') !== -1) {
+                if (plugins.indexOf('quiqqer/delivery-notes') !== -1) {
                     columnModel.push({
-                        header: QUILocale.get(lg, 'dashboard.erp.payments'),
-                        dataIndex: 'payments',
+                        header: QUILocale.get(lg, 'dashboard.erp.deliveryNotes'),
+                        dataIndex: 'deliveryNotes',
                         dataType: 'string',
                         width: 240
                     });
                 }
 
-                if (plugins.indexOf('quiqqer/delivery-notes') !== -1) {
+                if (plugins.indexOf('quiqqer/payment-transactions') !== -1) {
                     columnModel.push({
-                        header: QUILocale.get(lg, 'dashboard.erp.deliveryNotes'),
-                        dataIndex: 'deliveryNotes',
+                        header: QUILocale.get(lg, 'dashboard.erp.transactions'),
+                        dataIndex: 'transactions',
                         dataType: 'string',
                         width: 240
                     });
@@ -219,7 +218,6 @@ define('package/quiqqer/erp/bin/backend/controls/dashboard/cards/GlobalProcessId
                         data: data
                     });
 
-                    console.log(result);
                     this.$Grid.hideLoader();
                     resolve(result);
                 }, {

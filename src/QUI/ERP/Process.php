@@ -137,6 +137,7 @@ class Process
         $this->parseOrders($History);
         $this->parsePurchasing($History);
         $this->parseSalesOrders($History);
+        $this->parseTransactions($History);
 
         try {
             QUI::getEvents()->fireEvent('quiqqerErpGetCompleteHistory', [$this, $this->processId]);
@@ -258,16 +259,27 @@ class Process
         $orders = $this->getOrders();
 
         foreach ($orders as $Order) {
-            /* order macht das schon selbst
-            $History->addComment(
-                QUI::getLocale()->get('quiqqer/erp', 'process.history.order.created'),
-                strtotime($Order->getCreateDate()),
-                'quiqqer/order',
-                'fa fa-shopping-basket'
-            );
-            */
-
             $history = $Order->getHistory()->toArray();
+            $hasCreateMessage = false;
+            $createMessage = QUI::getLocale()->get('quiqqer/erp', 'process.history.order.created', [
+                'hash' => $Order->getHash()
+            ]);
+
+            foreach ($history as $entry) {
+                if ($entry['message'] === $createMessage) {
+                    $hasCreateMessage = true;
+                    break;
+                }
+            }
+
+            if ($hasCreateMessage === false) {
+                $History->addComment(
+                    $createMessage,
+                    strtotime($Order->getCreateDate()),
+                    'quiqqer/order',
+                    'fa fa-shopping-basket'
+                );
+            }
 
             foreach ($history as $entry) {
                 if (empty($entry['source'])) {
@@ -661,6 +673,25 @@ class Process
     //endregion
 
     //region transactions
+    protected function parseTransactions(Comments $History): void
+    {
+        // orders
+        $transactions = $this->getTransactions();
+
+        foreach ($transactions as $Transaction) {
+            $History->addComment(
+                QUI::getLocale()->get('quiqqer/erp', 'process.history.transaction.created', [
+                    'hash' => $Transaction->getHash(),
+                    'amount' => $Transaction->getAmountFormatted()
+                ]),
+                strtotime($Transaction->getDate()),
+                'quiqqer/payment-transaction',
+                'fa fa-money',
+                false,
+                $Transaction->getHash()
+            );
+        }
+    }
 
     /**
      * @return bool
@@ -679,9 +710,7 @@ class Process
      */
     public function getTransactions(): array
     {
-        try {
-            QUI::getPackage('quiqqer/payment-transactions');
-        } catch (QUI\Exception $Exception) {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/payment-transactions')) {
             return [];
         }
 

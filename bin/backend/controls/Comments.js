@@ -407,6 +407,18 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                         );
                     });
                     return;
+
+                case 'quiqqer/payment-transaction':
+                    require([
+                        'package/quiqqer/payment-transactions/bin/backend/controls/windows/Transaction'
+                    ], (TransactionWindow) => {
+                        console.log(Target.get('data-object-hash'));
+
+                        new TransactionWindow({
+                            txid: Target.get('data-object-hash')
+                        }).open();
+                    });
+                    return;
             }
 
             QUI.fireEvent('onQuiqqerErpCommentsClick', [this, Target]);
