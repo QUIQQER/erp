@@ -9,6 +9,8 @@ namespace QUI\ERP\Accounting;
 use QUI;
 use QUI\ERP\Accounting\Calc as ErpCalc;
 
+use function implode;
+
 /**
  * Class ArticleView
  *
@@ -17,9 +19,9 @@ use QUI\ERP\Accounting\Calc as ErpCalc;
 class ArticleView extends QUI\QDOM
 {
     /**
-     * @var int
+     * @var float
      */
-    protected int $position;
+    protected float $position;
 
     /**
      * @var Article
@@ -39,6 +41,10 @@ class ArticleView extends QUI\QDOM
     {
         $this->Article = $Article;
         $this->setAttributes($this->Article->toArray());
+
+        if ($this->getAttribute('position')) {
+            $this->position = (float)$this->getAttribute('position');
+        }
     }
 
     /**
@@ -54,7 +60,7 @@ class ArticleView extends QUI\QDOM
      *
      * @param QUI\ERP\Currency\Currency $Currency
      */
-    public function setCurrency(QUI\ERP\Currency\Currency $Currency)
+    public function setCurrency(QUI\ERP\Currency\Currency $Currency): void
     {
         $this->Currency = $Currency;
     }
@@ -64,9 +70,17 @@ class ArticleView extends QUI\QDOM
      *
      * @param $position
      */
-    public function setPosition($position)
+    public function setPosition($position): void
     {
-        $this->position = (int)$position;
+        $this->position = (float)$position;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPosition(): float
+    {
+        return $this->position;
     }
 
     /**
@@ -191,9 +205,27 @@ class ArticleView extends QUI\QDOM
         }
 
         $articleData = $this->Article->toArray();
+        $cssClasses = ['articles-article-entry'];
+
+        if (!empty($this->Article->getProductSetParentUuid())) {
+            $cssClasses[] = 'articles-article--additional';
+        } else {
+            $cssClasses[] = 'articles-article--real';
+        }
+
+        if ($this->getAttribute('odd')) {
+            $cssClasses[] = 'articles-article--odd';
+        }
+
+        if ($this->getAttribute('even')) {
+            $cssClasses[] = 'articles-article--even';
+        }
 
         $Engine->assign([
             'this' => $this,
+            'uuid' => $articleData['uuid'],
+            'cssClasses' => implode(' ', $cssClasses),
+            'productSetParentUuid' => $articleData['productSetParentUuid'],
             'position' => $this->position,
             'unitPrice' => $Currency->format($article['unitPrice']),
             'sum' => $Currency->format($article['sum']),

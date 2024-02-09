@@ -111,6 +111,10 @@ class ArticleListUnique implements IteratorAggregate
             $currency = $attributes['calculations']['currencyData']['code'];
         }
 
+        // sorting
+        $articles = $this->sortArticlesWithParents($articles);
+
+        // adding
         foreach ($articles as $article) {
             if (!isset($article['currency'])) {
                 $article['currency'] = $currency;
@@ -164,6 +168,59 @@ class ArticleListUnique implements IteratorAggregate
                 QUI\System\Log::writeDebugException($Exception);
             }
         }
+    }
+
+    /**
+     * Sorts items within the list by parent-child relationship.
+     *
+     * Items without `productSetParentUuid` are considered parents and positioned before their children,
+     * with each child directly assigned to its parent via `productSetParentUuid`.
+     *
+     * Children follow immediately after their parents in the sorted list.
+     * Each item is assigned a consecutive position, which reflects its order in the sorted list.
+     *
+     * @param array $articles - The input list of items, articles
+     * @return array The sorted list of items with added 'position' keys, starting with 1.
+     */
+    protected function sortArticlesWithParents(array $articles = []): array
+    {
+        if (empty($articles)) {
+            return [];
+        }
+
+        $sortedArticles = [];
+        $children = [];
+
+        foreach ($articles as $article) {
+            if (!is_null($article['productSetParentUuid'])) {
+                $children[$article['productSetParentUuid']][] = $article;
+            }
+        }
+
+        $positionCounter = 1; // Starte die Positionierung bei 1
+
+        foreach ($articles as $article) {
+            if (!is_null($article['productSetParentUuid'])) {
+                continue;
+            }
+
+            $article['position'] = $positionCounter;
+            $sortedArticles[] = $article;
+            $uuid = $article['uuid'];
+
+            if (isset($children[$uuid])) {
+                $subPosition = 0.1;
+                foreach ($children[$uuid] as $child) {
+                    $child['position'] = $positionCounter + $subPosition;
+                    $sortedArticles[] = $child;
+                    $subPosition += 0.1;
+                }
+            }
+
+            $positionCounter++;
+        }
+
+        return $sortedArticles;
     }
 
     /**
@@ -368,17 +425,22 @@ class ArticleListUnique implements IteratorAggregate
         $this->calculations['nettoSum'] = $Currency->format($this->calculations['nettoSum']);
         $this->calculations['nettoSubSum'] = $Currency->format($this->calculations['nettoSubSum']);
 
-        $pos = 1;
+        $articles = [];
+        $realArticleCount = 0;
 
-        $articles = array_map(function ($Article) use ($Currency, &$pos) {
+        foreach ($this->articles as $Article) {
             $View = $Article->getView();
             $View->setCurrency($Currency);
-            $View->setPosition($pos);
+            $position = $View->getPosition();
 
-            $pos++;
+            if (floor($position) % 2) {
+                $View->setAttribute('odd', true);
+            } else {
+                $View->setAttribute('even', true);
+            }
 
-            return $View;
-        }, $this->articles);
+            $articles[] = $View;
+        }
 
         $ExchangeCurrency = $this->ExchangeCurrency;
         $showExchangeRate = $this->showExchangeRate;

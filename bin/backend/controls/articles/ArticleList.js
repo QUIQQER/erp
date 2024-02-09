@@ -242,7 +242,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             this.$articles = [];
             let selectedPosition = null;
-
+            console.log(data.articles);
             if (this.$Container) {
                 if (this.$selectedArticle) {
                     selectedPosition = this.$selectedArticle.getAttribute('position');
