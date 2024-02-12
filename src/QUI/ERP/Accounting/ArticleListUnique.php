@@ -205,6 +205,7 @@ class ArticleListUnique implements IteratorAggregate
             }
 
             if (empty($article['uuid'])) {
+                $sortedArticles[] = $article;
                 continue;
             }
 
