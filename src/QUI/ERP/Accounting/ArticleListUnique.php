@@ -192,15 +192,19 @@ class ArticleListUnique implements IteratorAggregate
         $children = [];
 
         foreach ($articles as $article) {
-            if (!is_null($article['productSetParentUuid'])) {
+            if (!empty($article['productSetParentUuid'])) {
                 $children[$article['productSetParentUuid']][] = $article;
             }
         }
 
-        $positionCounter = 1; // Starte die Positionierung bei 1
+        $positionCounter = 1;
 
         foreach ($articles as $article) {
-            if (!is_null($article['productSetParentUuid'])) {
+            if (!empty($article['productSetParentUuid'])) {
+                continue;
+            }
+
+            if (empty($article['uuid'])) {
                 continue;
             }
 
@@ -426,7 +430,6 @@ class ArticleListUnique implements IteratorAggregate
         $this->calculations['nettoSubSum'] = $Currency->format($this->calculations['nettoSubSum']);
 
         $articles = [];
-        $realArticleCount = 0;
 
         foreach ($this->articles as $Article) {
             $View = $Article->getView();
