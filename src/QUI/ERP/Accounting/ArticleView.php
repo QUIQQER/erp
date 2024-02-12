@@ -21,7 +21,7 @@ class ArticleView extends QUI\QDOM
     /**
      * @var float
      */
-    protected float $position;
+    protected float $position = 1;
 
     /**
      * @var Article
