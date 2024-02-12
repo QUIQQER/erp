@@ -102,6 +102,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             'class': 'QUI\\ERP\\Accounting\\Article',
             params: false, // mixed value for API Articles
             currency: false,
+            productSetParentUuid: null,
+            uuid: null,
 
             showSelectCheckbox: false,  // select this article via checkbox instead of click
 
@@ -132,6 +134,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.$user = {};
             this.$calculations = {};
             this.$bruttoCalc = {};
+
+            if (typeof options !== 'undefined' && typeof options.calculated !== 'undefined') {
+                this.$calculations = options.calculated;
+            }
+
+            if (typeof this.$calculations.nettoPriceNotRounded !== 'undefined' && this.$calculations.nettoPriceNotRounded) {
+                this.setAttribute('unitPrice', this.$calculations.nettoPriceNotRounded);
+            }
 
             this.$SelectCheckbox = null;
             this.$Position = null;

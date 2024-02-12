@@ -275,7 +275,6 @@
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
-
         <locale name="bankAccounts.patch.bankAccount_created">
             <de>
                 <![CDATA[Es wurde automatisch ein Standard-Bankkonto auf Basis der Firmen-Bankdaten in der ecoyn-Konfiguration angelegt.]]></de>
@@ -670,10 +669,51 @@
             <de><![CDATA[ecoyn Dashboard]]></de>
             <en><![CDATA[ecoyn dashboard]]></en>
         </locale>
+        <locale name="dashboard.erp.title">
+            <de><![CDATA[ERP Dashboard]]></de>
+            <en><![CDATA[ERP Dashboard]]></en>
+        </locale>
 
         <locale name="exchangerate.text">
             <de><![CDATA[[startCurrency] = [rate]]]></de>
             <en><![CDATA[[startCurrency] = [rate]]]></en>
+        </locale>
+        <locale name="created.invoice">
+            <de><![CDATA[Rechnung #[invoiceId] erstellt]]></de>
+            <en><![CDATA[Created invoice #[invoiceId]]]></en>
+        </locale>
+        <locale name="created.order">
+            <de><![CDATA[Bestellung #[orderId] erstellt]]></de>
+            <en><![CDATA[Created order #[orderId]]]></en>
+        </locale>
+
+        <locale name="process.history.invoice.created">
+            <de><![CDATA[Rechnung #[hash] erstellt]]></de>
+            <en><![CDATA[Invoice #[hash] created]]></en>
+        </locale>
+        <locale name="process.history.order.created">
+            <de><![CDATA[Bestellung #[hash] erstellt]]></de>
+            <en><![CDATA[Order #[hash] created]]></en>
+        </locale>
+        <locale name="process.history.offer.created">
+            <de><![CDATA[Angebot #[hash] erstellt]]></de>
+            <en><![CDATA[Offer #[hash] created]]></en>
+        </locale>
+        <locale name="process.history.purchasing.created">
+            <de><![CDATA[Einkauf #[hash] erstellt]]></de>
+            <en><![CDATA[Purchase #[hash] created]]></en>
+        </locale>
+        <locale name="process.history.salesorders.created">
+            <de><![CDATA[Auftrag #[hash] erstellt]]></de>
+            <en><![CDATA[Sales order #[hash] created]]></en>
+        </locale>
+        <locale name="process.history.booking.created">
+            <de><![CDATA[Buchung #[hash] erstellt]]></de>
+            <en><![CDATA[Booking #[hash] created]]></en>
+        </locale>
+        <locale name="process.history.transaction.created">
+            <de><![CDATA[Zahlung von [amount] eingegangen / gebucht. (#[hash])]]></de>
+            <en><![CDATA[Payment from [amount] received / posted. (#[hash])]]></en>
         </locale>
     </groups>
 
@@ -1396,6 +1436,59 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
         <locale name="priceCalcInput.brutto">
             <de><![CDATA[Brutto Eingabe]]></de>
             <en><![CDATA[Gross input]]></en>
+        </locale>
+
+        <locale name="dashboard.erp.processId">
+            <de><![CDATA[Vorgangsnummer]]></de>
+            <en><![CDATA[Process number]]></en>
+        </locale>
+        <locale name="dashboard.erp.grid.title">
+            <de><![CDATA[Die letzten Vorgänge]]></de>
+            <en><![CDATA[The latest processes]]></en>
+        </locale>
+        <locale name="dashboard.erp.date">
+            <de><![CDATA[Datum]]></de>
+            <en><![CDATA[Date]]></en>
+        </locale>
+        <locale name="dashboard.erp.invoice">
+            <de><![CDATA[Rechnung]]></de>
+            <en><![CDATA[Invoice]]></en>
+        </locale>
+        <locale name="dashboard.erp.order">
+            <de><![CDATA[Bestellung]]></de>
+            <en><![CDATA[Order]]></en>
+        </locale>
+        <locale name="dashboard.erp.offer">
+            <de><![CDATA[Angebot]]></de>
+            <en><![CDATA[Offer]]></en>
+        </locale>
+        <locale name="dashboard.erp.salesOrder">
+            <de><![CDATA[Auftrag]]></de>
+            <en><![CDATA[Sales Order]]></en>
+        </locale>
+        <locale name="dashboard.erp.purchasing">
+            <de><![CDATA[Einkauf]]></de>
+            <en><![CDATA[Purchase]]></en>
+        </locale>
+        <locale name="dashboard.erp.booking">
+            <de><![CDATA[Buchung]]></de>
+            <en><![CDATA[Booking]]></en>
+        </locale>
+        <locale name="dashboard.erp.contract">
+            <de><![CDATA[Vertrag]]></de>
+            <en><![CDATA[Contract]]></en>
+        </locale>
+        <locale name="dashboard.erp.transactions">
+            <de><![CDATA[Zahlungen / Transaktionen]]></de>
+            <en><![CDATA[Payments / Transactions]]></en>
+        </locale>
+        <locale name="dashboard.erp.deliveryNotes">
+            <de><![CDATA[Lieferschein]]></de>
+            <en><![CDATA[Delivery Notes]]></en>
+        </locale>
+        <locale name="panel.globalProcess.title">
+            <de><![CDATA[Prozess: [globalProcessId]]]></de>
+            <en><![CDATA[Process: [globalProcessId]]]></en>
         </locale>
 
     </groups>

@@ -10,7 +10,7 @@ use QUI\Dashboard\DashboardInterface;
  *
  * @package QUI\LoginLogger
  */
-class Dashboard implements DashboardInterface
+class ErpDashboard implements DashboardInterface
 {
     /**
      * @param null $Locale
@@ -22,7 +22,7 @@ class Dashboard implements DashboardInterface
             $Locale = QUI::getLocale();
         }
 
-        return $Locale->get('quiqqer/erp', 'dashboard.title');
+        return $Locale->get('quiqqer/erp', 'dashboard.erp.title');
     }
 
     /**
@@ -30,7 +30,9 @@ class Dashboard implements DashboardInterface
      */
     public function getCards(): array
     {
-        return [];
+        return [
+            'package/quiqqer/erp/bin/backend/controls/dashboard/cards/GlobalProcessIdList'
+        ];
     }
 
     public function getJavaScriptControl(): string

@@ -7,12 +7,18 @@
 namespace QUI\ERP;
 
 use QUI;
+use QUI\ERP\Accounting\Offers\Handler as OfferHandler;
+use QUI\ERP\Booking\Table as BookingTable;
+use QUI\ERP\Purchasing\Processes\Handler as PurchasingHandler;
+use QUI\ERP\SalesOrders\Handler as SalesOrdersHandler;
 
 use function count;
+use function strtotime;
 
 /**
  * Class Process
  * - represents a complete erp process
+ * - Vorgangsnummer
  *
  * @package QUI\ERP
  */
@@ -59,9 +65,9 @@ class Process
      * Add a comment to the history for the complete process
      *
      * @param string $message
-     * @param int|bool $time - optional, unix timestamp
+     * @param bool|int $time - optional, unix timestamp
      */
-    public function addHistory(string $message, $time = false)
+    public function addHistory(string $message, bool|int $time = false): void
     {
         $this->getHistory()->addComment($message, $time);
 
@@ -91,7 +97,7 @@ class Process
 
             try {
                 $result = QUI::getDataBase()->fetch([
-                    'from'  => $this->table(),
+                    'from' => $this->table(),
                     'where' => [
                         'id' => $this->processId
                     ],
@@ -125,15 +131,24 @@ class Process
     {
         $History = $this->getHistory();
 
-        $invoices = $this->getInvoices();
-        $orders   = $this->getOrders();
+        $this->parseBookings($History);
+        $this->parseInvoices($History);
+        $this->parseOffers($History);
+        $this->parseOrders($History);
+        $this->parsePurchasing($History);
+        $this->parseSalesOrders($History);
+        $this->parseTransactions($History);
 
-        foreach ($invoices as $Invoice) {
-            $History->import($Invoice->getHistory());
+        try {
+            QUI::getEvents()->fireEvent('quiqqerErpGetCompleteHistory', [$this, $this->processId]);
+        } catch (\Exception $exception) {
+            QUI\System\Log::addError($exception->getMessage());
         }
 
-        foreach ($orders as $Order) {
-            $History->import($Order->getHistory());
+        try {
+            QUI::getEvents()->fireEvent('quiqqerErpProcessHistory', [$this, $this->processId]);
+        } catch (\Exception $exception) {
+            QUI\System\Log::addError($exception->getMessage());
         }
 
         return $History;
@@ -142,6 +157,45 @@ class Process
     //endregion
 
     //region invoice
+
+    protected function parseInvoices(Comments $History): void
+    {
+        $invoices = $this->getInvoices();
+
+        foreach ($invoices as $Invoice) {
+            $History->addComment(
+                QUI::getLocale()->get('quiqqer/erp', 'process.history.invoice.created', [
+                    'hash' => $Invoice->getHash()
+                ]),
+                strtotime($Invoice->getAttribute('date')),
+                'quiqqer/invoice',
+                'fa fa-file-text-o',
+                false,
+                $Invoice->getHash()
+            );
+
+            $history = $Invoice->getHistory()->toArray();
+
+            foreach ($history as $entry) {
+                if (empty($entry['source'])) {
+                    $entry['source'] = 'quiqqer/invoice';
+                }
+
+                if (empty($entry['sourceIcon'])) {
+                    $entry['sourceIcon'] = 'fa fa-file-text-o';
+                }
+
+                $History->addComment(
+                    $entry['message'],
+                    $entry['time'],
+                    $entry['source'],
+                    $entry['sourceIcon'],
+                    $entry['id'],
+                    $Invoice->getHash()
+                );
+            }
+        }
+    }
 
     /**
      * Return if the process has invoices or not
@@ -184,6 +238,10 @@ class Process
      */
     public function getInvoices(): array
     {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/invoice')) {
+            return [];
+        }
+
         try {
             return QUI\ERP\Accounting\Invoice\Handler::getInstance()->getInvoicesByGlobalProcessId($this->processId);
         } catch (\QUI\Exception $Exception) {
@@ -194,6 +252,55 @@ class Process
     //endregion
 
     //region order
+
+    protected function parseOrders(Comments $History): void
+    {
+        // orders
+        $orders = $this->getOrders();
+
+        foreach ($orders as $Order) {
+            $history = $Order->getHistory()->toArray();
+            $hasCreateMessage = false;
+            $createMessage = QUI::getLocale()->get('quiqqer/erp', 'process.history.order.created', [
+                'hash' => $Order->getHash()
+            ]);
+
+            foreach ($history as $entry) {
+                if ($entry['message'] === $createMessage) {
+                    $hasCreateMessage = true;
+                    break;
+                }
+            }
+
+            if ($hasCreateMessage === false) {
+                $History->addComment(
+                    $createMessage,
+                    strtotime($Order->getCreateDate()),
+                    'quiqqer/order',
+                    'fa fa-shopping-basket'
+                );
+            }
+
+            foreach ($history as $entry) {
+                if (empty($entry['source'])) {
+                    $entry['source'] = 'quiqqer/order';
+                }
+
+                if (empty($entry['sourceIcon'])) {
+                    $entry['sourceIcon'] = 'fa fa-shopping-basket';
+                }
+
+                $History->addComment(
+                    $entry['message'],
+                    $entry['time'],
+                    $entry['source'],
+                    $entry['sourceIcon'],
+                    $entry['id'],
+                    $Order->getHash()
+                );
+            }
+        }
+    }
 
     /**
      * @return bool
@@ -208,11 +315,9 @@ class Process
      *
      * @return null|Order\Order|Order\OrderInProcess
      */
-    public function getOrder()
+    public function getOrder(): Order\OrderInProcess|Order\Order|null
     {
-        try {
-            QUI::getPackage('quiqqer/order');
-        } catch (QUI\Exception $Exception) {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/order')) {
             return null;
         }
 
@@ -236,13 +341,15 @@ class Process
     /**
      * Return all orders from the process
      *
-     * @return array|Order\Order|Order\Order[]|Order\OrderInProcess
+     * @return array|Order\Order|Order\Order[]|Order\OrderInProcess[]
      */
-    public function getOrders()
+    public function getOrders(): array
     {
-        try {
-            QUI::getPackage('quiqqer/order');
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/order')) {
+            return [];
+        }
 
+        try {
             return QUI\ERP\Order\Handler::getInstance()->getOrdersByGlobalProcessId($this->processId);
         } catch (QUI\Exception $Exception) {
             return [];
@@ -251,7 +358,340 @@ class Process
 
     //endregion
 
+    //region offers
+    protected function parseOffers(Comments $History): void
+    {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/offers')) {
+            return;
+        }
+
+        // orders
+        $offers = $this->getOffers();
+
+        foreach ($offers as $Offer) {
+            $History->addComment(
+                QUI::getLocale()->get('quiqqer/erp', 'process.history.offer.created', [
+                    'hash' => $Offer->getHash()
+                ]),
+                strtotime($Offer->getAttribute('date')),
+                'quiqqer/offer',
+                'fa fa-file-text-o',
+                false,
+                $Offer->getHash()
+            );
+
+            $history = $Offer->getHistory()->toArray();
+
+            foreach ($history as $entry) {
+                if (empty($entry['source'])) {
+                    $entry['source'] = 'quiqqer/offer';
+                }
+
+                if (empty($entry['sourceIcon'])) {
+                    $entry['sourceIcon'] = 'fa fa-file-text-o';
+                }
+
+                $History->addComment(
+                    $entry['message'],
+                    $entry['time'],
+                    $entry['source'],
+                    $entry['sourceIcon'],
+                    $entry['id'],
+                    $Offer->getHash()
+                );
+            }
+        }
+    }
+
+    /**
+     * @return QUI\ERP\Accounting\Offers\Offer[]
+     */
+    public function getOffers(): array
+    {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/offers')) {
+            return [];
+        }
+
+        try {
+            $offers = QUI::getDatabase()->fetch([
+                'select' => 'id,hash,global_process_id,date',
+                'from' => OfferHandler::getInstance()->offersTable(),
+                'where_or' => [
+                    'global_process_id' => $this->processId,
+                    'hash' => $this->processId
+                ]
+            ]);
+        } catch (\Exception) {
+            return [];
+        }
+
+        $result = [];
+        $Offers = OfferHandler::getInstance();
+
+        foreach ($offers as $offer) {
+            try {
+                $result[] = $Offers->getOffer($offer['id']);
+            } catch (\Exception) {
+            }
+        }
+
+        return $result;
+    }
+
+    //endregion
+
+    //region booking
+    protected function parseBookings(Comments $History): void
+    {
+        // orders
+        $bookings = $this->getBookings();
+
+        foreach ($bookings as $Booking) {
+            $History->addComment(
+                QUI::getLocale()->get('quiqqer/erp', 'process.history.booking.created', [
+                    'hash' => $Booking->getUuid()
+                ]),
+                $Booking->getCreateDate()->getTimestamp(),
+                'quiqqer/booking',
+                'fa fa-ticket',
+                false,
+                $Booking->getUuid()
+            );
+
+            $history = $Booking->getHistory()->toArray();
+
+            foreach ($history as $entry) {
+                if (empty($entry['source'])) {
+                    $entry['source'] = 'quiqqer/booking';
+                }
+
+                if (empty($entry['sourceIcon'])) {
+                    $entry['sourceIcon'] = 'fa fa-ticket';
+                }
+
+                $History->addComment(
+                    $entry['message'],
+                    $entry['time'],
+                    $entry['source'],
+                    $entry['sourceIcon'],
+                    $entry['id'],
+                    $Booking->getUuid()
+                );
+            }
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getBookings(): array
+    {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/booking')) {
+            return [];
+        }
+
+        try {
+            $bookings = QUI::getDatabase()->fetch([
+                'select' => 'uuid,globalProcessId,createDate',
+                'from' => BookingTable::BOOKINGS->tableName(),
+                'where_or' => [
+                    'globalProcessId' => $this->processId,
+                    'uuid' => $this->processId
+                ]
+            ]);
+        } catch (\Exception) {
+            return [];
+        }
+
+        $result = [];
+        $BookingRepository = new QUI\ERP\Booking\Repository\BookingRepository();
+
+        foreach ($bookings as $booking) {
+            try {
+                $result[] = $BookingRepository->getByUuid($booking['uuid']);
+            } catch (\Exception) {
+            }
+        }
+
+        return $result;
+    }
+
+    //endregion
+
+    //region purchase / Einkauf
+    protected function parsePurchasing(Comments $History): void
+    {
+        // orders
+        $purchasing = $this->getPurchasing();
+
+        foreach ($purchasing as $Purchasing) {
+            $History->addComment(
+                QUI::getLocale()->get('quiqqer/erp', 'process.history.purchasing.created', [
+                    'hash' => $Purchasing->getHash()
+                ]),
+                strtotime($Purchasing->getAttribute('c_date')),
+                'quiqqer/purchasing',
+                'fa fa-cart-arrow-down',
+                false,
+                $Purchasing->getHash()
+            );
+
+            $history = $Purchasing->getHistory()->toArray();
+
+            foreach ($history as $entry) {
+                if (empty($entry['source'])) {
+                    $entry['source'] = 'quiqqer/purchasing';
+                }
+
+                if (empty($entry['sourceIcon'])) {
+                    $entry['sourceIcon'] = 'fa fa-cart-arrow-down';
+                }
+
+                $History->addComment(
+                    $entry['message'],
+                    $entry['time'],
+                    $entry['source'],
+                    $entry['sourceIcon'],
+                    $entry['id'],
+                    $Purchasing->getHash()
+                );
+            }
+        }
+    }
+
+    /**
+     * @return QUI\ERP\Purchasing\Processes\PurchasingProcess[]
+     */
+    public function getPurchasing(): array
+    {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/purchasing')) {
+            return [];
+        }
+
+        try {
+            $purchasing = QUI::getDatabase()->fetch([
+                'select' => 'id,hash,global_process_id,date',
+                'from' => PurchasingHandler::getTablePurchasingProcesses(),
+                'where_or' => [
+                    'global_process_id' => $this->processId,
+                    'hash' => $this->processId
+                ]
+            ]);
+        } catch (\Exception) {
+            return [];
+        }
+
+        $result = [];
+
+        foreach ($purchasing as $process) {
+            try {
+                $result[] = PurchasingHandler::getPurchasingProcess($process['id']);
+            } catch (\Exception) {
+            }
+        }
+
+        return $result;
+    }
+
+    //endregion
+
+    //region sales orders / Aufträge
+    protected function parseSalesOrders(Comments $History): void
+    {
+        // orders
+        $salesOrders = $this->getSalesOrders();
+
+        foreach ($salesOrders as $SalesOrder) {
+            $History->addComment(
+                QUI::getLocale()->get('quiqqer/erp', 'process.history.salesorders.created', [
+                    'hash' => $SalesOrder->getHash()
+                ]),
+                strtotime($SalesOrder->getAttribute('c_date')),
+                'quiqqer/salesorders',
+                'fa fa-suitcase',
+                false,
+                $SalesOrder->getHash()
+            );
+
+            $history = $SalesOrder->getHistory()->toArray();
+
+            foreach ($history as $entry) {
+                if (empty($entry['source'])) {
+                    $entry['source'] = 'quiqqer/salesorders';
+                }
+
+                if (empty($entry['sourceIcon'])) {
+                    $entry['sourceIcon'] = 'fa fa-suitcase';
+                }
+
+                $History->addComment(
+                    $entry['message'],
+                    $entry['time'],
+                    $entry['source'],
+                    $entry['sourceIcon'],
+                    $entry['id'],
+                    $SalesOrder->getHash()
+                );
+            }
+        }
+    }
+
+    /**
+     * @return QUI\ERP\Purchasing\Processes\PurchasingProcess[]
+     */
+    public function getSalesOrders(): array
+    {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/salesorders')) {
+            return [];
+        }
+
+        try {
+            $salesOrders = QUI::getDatabase()->fetch([
+                'select' => 'id,hash,global_process_id,date',
+                'from' => SalesOrdersHandler::getTableSalesOrders(),
+                'where_or' => [
+                    'global_process_id' => $this->processId,
+                    'hash' => $this->processId
+                ]
+            ]);
+        } catch (\Exception) {
+            return [];
+        }
+
+        $result = [];
+
+        foreach ($salesOrders as $salesOrder) {
+            try {
+                $result[] = SalesOrdersHandler::getSalesOrder($salesOrder['id']);
+            } catch (\Exception) {
+            }
+        }
+
+        return $result;
+    }
+
+    //endregion
+
     //region transactions
+    protected function parseTransactions(Comments $History): void
+    {
+        // orders
+        $transactions = $this->getTransactions();
+
+        foreach ($transactions as $Transaction) {
+            $History->addComment(
+                QUI::getLocale()->get('quiqqer/erp', 'process.history.transaction.created', [
+                    'hash' => $Transaction->getHash(),
+                    'amount' => $Transaction->getAmountFormatted()
+                ]),
+                strtotime($Transaction->getDate()),
+                'quiqqer/payment-transaction',
+                'fa fa-money',
+                false,
+                $Transaction->getHash()
+            );
+        }
+    }
 
     /**
      * @return bool
@@ -268,11 +708,9 @@ class Process
      *
      * @return QUI\ERP\Accounting\Payments\Transactions\Transaction[];
      */
-    public function getTransactions(): ?array
+    public function getTransactions(): array
     {
-        try {
-            QUI::getPackage('quiqqer/payment-transactions');
-        } catch (QUI\Exception $Exception) {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/payment-transactions')) {
             return [];
         }
 
@@ -280,7 +718,7 @@ class Process
             return $this->transactions;
         }
 
-        $Transactions       = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
+        $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
         $this->transactions = $Transactions->getTransactionsByProcessId($this->processId);
 
         return $this->transactions;

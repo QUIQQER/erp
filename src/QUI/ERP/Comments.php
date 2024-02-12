@@ -119,17 +119,18 @@ class Comments
      * Add a comment
      *
      * @param string $message
-     * @param int|false $time - optional, unix timestamp
+     * @param bool|int $time - optional, unix timestamp
      * @param string $source - optional, name of the package
      * @param string $sourceIcon - optional, source icon
-     * @param string|false $id - optional, comment id, if needed, it will set one
+     * @param bool|string $id - optional, comment id, if needed, it will set one
      */
     public function addComment(
         string $message,
-        $time = false,
+        bool|int $time = false,
         string $source = '',
         string $sourceIcon = '',
-        $id = false
+        bool|string $id = false,
+        bool|string $objectHash = false
     ) {
         if ($time === false) {
             $time = time();
@@ -151,14 +152,15 @@ class Comments
             'time' => (int)$time,
             'source' => $source,
             'sourceIcon' => $sourceIcon,
-            'id' => $id
+            'id' => $id,
+            'objectHash' => $objectHash
         ];
     }
 
     /**
      * Clear all comments
      */
-    public function clear()
+    public function clear(): void
     {
         $this->comments = [];
     }
@@ -166,7 +168,7 @@ class Comments
     /**
      * Sort all comments via its time
      */
-    public function sort()
+    public function sort(): void
     {
         usort($this->comments, function ($commentA, $commentB) {
             if ($commentA['time'] == $commentB['time']) {
@@ -182,7 +184,7 @@ class Comments
      *
      * @param Comments $Comments
      */
-    public function import(Comments $Comments)
+    public function import(Comments $Comments): void
     {
         $comments = $Comments->toArray();
 
@@ -204,7 +206,8 @@ class Comments
                 $comment['time'],
                 $comment['source'],
                 $comment['sourceIcon'],
-                $comment['id']
+                $comment['id'],
+                $comment['objectHash'] ?? '',
             );
         }
 
@@ -228,7 +231,7 @@ class Comments
 
         if ($User->getAttribute('comments')) {
             $isEditable = QUI\Permissions\Permission::hasPermission('quiqqer.customer.editComments');
-            $json       = json_decode($User->getAttribute('comments'), true);
+            $json = json_decode($User->getAttribute('comments'), true);
 
             if (!is_array($json)) {
                 $json = [];
