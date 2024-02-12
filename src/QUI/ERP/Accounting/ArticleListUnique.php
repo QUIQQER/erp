@@ -488,7 +488,7 @@ class ArticleListUnique implements IteratorAggregate
             }
 
             $exchangeRateText = $this->Locale->get('quiqqer/erp', 'exchangerate.text', [
-                'startCurrency' => $DefaultCurrency->format(1),
+                'startCurrency' => $Currency->format(1),
                 'rate' => $exchangeRate
             ]);
         }
