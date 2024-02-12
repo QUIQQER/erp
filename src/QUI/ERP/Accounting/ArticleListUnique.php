@@ -457,8 +457,13 @@ class ArticleListUnique implements IteratorAggregate
                 $Currency->setExchangeRate($this->exchangeRate);
             }
 
-            $exchangeRate = $Currency->getExchangeRate($ExchangeCurrency);
-            $exchangeRate = $ExchangeCurrency->format($exchangeRate);
+            if ($Currency instanceof QUI\ERP\CryptoCurrency\Currency) {
+                $ExchangeCurrency->setExchangeRate($this->exchangeRate);
+                $exchangeRate = $Currency->convertFormat(1, $ExchangeCurrency);
+            } else {
+                $exchangeRate = $Currency->getExchangeRate($ExchangeCurrency);
+                $exchangeRate = $ExchangeCurrency->format($exchangeRate);
+            }
 
             $exchangeRateText = $this->Locale->get('quiqqer/erp', 'exchangerate.text', [
                 'startCurrency' => $Currency->format(1),
