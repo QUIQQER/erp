@@ -111,6 +111,10 @@ class ArticleListUnique implements IteratorAggregate
             $currency = $attributes['calculations']['currencyData']['code'];
         }
 
+        // sorting
+        $articles = $this->sortArticlesWithParents($articles);
+
+        // adding
         foreach ($articles as $article) {
             if (!isset($article['currency'])) {
                 $article['currency'] = $currency;
@@ -164,6 +168,63 @@ class ArticleListUnique implements IteratorAggregate
                 QUI\System\Log::writeDebugException($Exception);
             }
         }
+    }
+
+    /**
+     * Sorts items within the list by parent-child relationship.
+     *
+     * Items without `productSetParentUuid` are considered parents and positioned before their children,
+     * with each child directly assigned to its parent via `productSetParentUuid`.
+     *
+     * Children follow immediately after their parents in the sorted list.
+     * Each item is assigned a consecutive position, which reflects its order in the sorted list.
+     *
+     * @param array $articles - The input list of items, articles
+     * @return array The sorted list of items with added 'position' keys, starting with 1.
+     */
+    protected function sortArticlesWithParents(array $articles = []): array
+    {
+        if (empty($articles)) {
+            return [];
+        }
+
+        $sortedArticles = [];
+        $children = [];
+
+        foreach ($articles as $article) {
+            if (!empty($article['productSetParentUuid'])) {
+                $children[$article['productSetParentUuid']][] = $article;
+            }
+        }
+
+        $positionCounter = 1;
+
+        foreach ($articles as $article) {
+            if (!empty($article['productSetParentUuid'])) {
+                continue;
+            }
+
+            if (empty($article['uuid'])) {
+                continue;
+            }
+
+            $article['position'] = $positionCounter;
+            $sortedArticles[] = $article;
+            $uuid = $article['uuid'];
+
+            if (isset($children[$uuid])) {
+                $subPosition = 0.1;
+                foreach ($children[$uuid] as $child) {
+                    $child['position'] = $positionCounter + $subPosition;
+                    $sortedArticles[] = $child;
+                    $subPosition += 0.1;
+                }
+            }
+
+            $positionCounter++;
+        }
+
+        return $sortedArticles;
     }
 
     /**
@@ -368,17 +429,21 @@ class ArticleListUnique implements IteratorAggregate
         $this->calculations['nettoSum'] = $Currency->format($this->calculations['nettoSum']);
         $this->calculations['nettoSubSum'] = $Currency->format($this->calculations['nettoSubSum']);
 
-        $pos = 1;
+        $articles = [];
 
-        $articles = array_map(function ($Article) use ($Currency, &$pos) {
+        foreach ($this->articles as $Article) {
             $View = $Article->getView();
             $View->setCurrency($Currency);
-            $View->setPosition($pos);
+            $position = $View->getPosition();
 
-            $pos++;
+            if (floor($position) % 2) {
+                $View->setAttribute('odd', true);
+            } else {
+                $View->setAttribute('even', true);
+            }
 
-            return $View;
-        }, $this->articles);
+            $articles[] = $View;
+        }
 
         $ExchangeCurrency = $this->ExchangeCurrency;
         $showExchangeRate = $this->showExchangeRate;
@@ -392,8 +457,13 @@ class ArticleListUnique implements IteratorAggregate
                 $Currency->setExchangeRate($this->exchangeRate);
             }
 
-            $exchangeRate = $Currency->getExchangeRate($ExchangeCurrency);
-            $exchangeRate = $ExchangeCurrency->format($exchangeRate);
+            if ($Currency instanceof QUI\ERP\CryptoCurrency\Currency) {
+                $ExchangeCurrency->setExchangeRate($this->exchangeRate);
+                $exchangeRate = $Currency->convertFormat(1, $ExchangeCurrency);
+            } else {
+                $exchangeRate = $Currency->getExchangeRate($ExchangeCurrency);
+                $exchangeRate = $ExchangeCurrency->format($exchangeRate);
+            }
 
             $exchangeRateText = $this->Locale->get('quiqqer/erp', 'exchangerate.text', [
                 'startCurrency' => $Currency->format(1),
@@ -404,12 +474,17 @@ class ArticleListUnique implements IteratorAggregate
         // if currency of list is other currency like the default one
         // currency = BTC, Default = EUR
         // exchange rate must be displayed
-        if ($ExchangeCurrency && $ExchangeCurrency->getCode() !== QUI\ERP\Defaults::getCurrency()->getCode()) {
+        if ($Currency->getCode() !== QUI\ERP\Defaults::getCurrency()->getCode()) {
             $showExchangeRate = true;
             $DefaultCurrency = QUI\ERP\Defaults::getCurrency();
 
-            $exchangeRate = $ExchangeCurrency->getExchangeRate($DefaultCurrency);
-            $exchangeRate = $ExchangeCurrency->format($exchangeRate);
+            if ($Currency instanceof QUI\ERP\CryptoCurrency\Currency) {
+                $DefaultCurrency->setExchangeRate($this->exchangeRate);
+                $exchangeRate = $Currency->convertFormat(1, $DefaultCurrency);
+            } else {
+                $exchangeRate = $Currency->getExchangeRate($DefaultCurrency);
+                $exchangeRate = $DefaultCurrency->format($exchangeRate);
+            }
 
             $exchangeRateText = $this->Locale->get('quiqqer/erp', 'exchangerate.text', [
                 'startCurrency' => $DefaultCurrency->format(1),

@@ -121,6 +121,8 @@ class Article implements ArticleInterface
      */
     protected $isNetto;
 
+    protected float $position = 0;
+
     /**
      * @var ArticleDiscount|null
      */
@@ -168,6 +170,9 @@ class Article implements ArticleInterface
             $this->attributes['vat'] = $attributes['vat'];
         } else {
             $this->attributes['vat'] = '';
+        }
+        if (isset($attributes['position'])) {
+            $this->position = (float)$attributes['position'];
         }
 
         if (isset($attributes['discount'])) {
@@ -738,6 +743,7 @@ class Article implements ArticleInterface
             'class' => $class,
             'customFields' => $this->customFields,
             'customData' => $this->customData,
+            'position' => $this->position,
 
             // calculated data
             'calculated' => [

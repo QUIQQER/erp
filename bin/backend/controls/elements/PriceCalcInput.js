@@ -1,6 +1,8 @@
 /**
  * @module package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput
  * @author www.pcsg.de (Henning Leutz)
+ *
+ * @event onSetValue [value, this] - Fires if a net/gross price value is set/calculated
  */
 define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
 
@@ -464,11 +466,13 @@ define('package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput', [
             if ((foundGroupSeparator || foundDecimalSeparator) &&
                 !(foundGroupSeparator && !foundDecimalSeparator)) {
                 Node.value = value;
+                this.fireEvent('setValue', [value, this]);
                 return Promise.resolve();
             }
 
             return this.getFormatter().then((Formatter) => {
                 Node.value = Formatter.format(parseFloat(value));
+                this.fireEvent('setValue', [parseFloat(value), this]);
             });
         },
 
