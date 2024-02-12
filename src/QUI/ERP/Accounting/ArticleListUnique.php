@@ -474,12 +474,17 @@ class ArticleListUnique implements IteratorAggregate
         // if currency of list is other currency like the default one
         // currency = BTC, Default = EUR
         // exchange rate must be displayed
-        if ($ExchangeCurrency && $ExchangeCurrency->getCode() !== QUI\ERP\Defaults::getCurrency()->getCode()) {
+        if ($Currency->getCode() !== QUI\ERP\Defaults::getCurrency()->getCode()) {
             $showExchangeRate = true;
             $DefaultCurrency = QUI\ERP\Defaults::getCurrency();
 
-            $exchangeRate = $ExchangeCurrency->getExchangeRate($DefaultCurrency);
-            $exchangeRate = $ExchangeCurrency->format($exchangeRate);
+            if ($Currency instanceof QUI\ERP\CryptoCurrency\Currency) {
+                $DefaultCurrency->setExchangeRate($this->exchangeRate);
+                $exchangeRate = $Currency->convertFormat(1, $DefaultCurrency);
+            } else {
+                $exchangeRate = $Currency->getExchangeRate($DefaultCurrency);
+                $exchangeRate = $DefaultCurrency->format($exchangeRate);
+            }
 
             $exchangeRateText = $this->Locale->get('quiqqer/erp', 'exchangerate.text', [
                 'startCurrency' => $DefaultCurrency->format(1),
