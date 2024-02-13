@@ -395,7 +395,7 @@
                     </settings>
                 </category>
 
-                <category name="currencies" index="1">
+                <category name="currencies">
                     <settings title="general" name="general">
                         <title>
                             <locale group="quiqqer/erp" var="menu.erp.general.userRelatedCurrency.title"/>
@@ -415,7 +415,7 @@
                     </settings>
                 </category>
 
-                <category name="bankAccounts" index="99">
+                <category name="bankAccounts">
                     <text>
                         <locale group="quiqqer/erp" var="menu.erp.category.bankAccounts.title"/>
                     </text>
@@ -433,7 +433,7 @@
                     </settings>
                 </category>
 
-                <category name="mails" index="100">
+                <category name="mails">
                     <text>
                         <locale group="quiqqer/erp" var="menu.erp.mails.title"/>
                     </text>
@@ -448,7 +448,6 @@
                                label="false"/>
                     </settings>
                 </category>
-
             </categories>
 
         </window>
