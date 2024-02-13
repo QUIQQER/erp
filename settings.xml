@@ -113,7 +113,7 @@
             </section>
         </config>
 
-        <window name="ERP" alphabetical-order="1">
+        <window name="ERP">
             <title>
                 <locale group="quiqqer/erp" var="window.erp.title"/>
             </title>
