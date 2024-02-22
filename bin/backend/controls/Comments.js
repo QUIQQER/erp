@@ -138,7 +138,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
             });
 
             // grouping
-            let i, len, day, date, entry, title;
+            let i, len, Day, date, entry, title, unixDay;
 
             const group = {};
             const DayFormatter = this.$getDayFormatter();
@@ -146,11 +146,13 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
             for (i = 0, len = comments.length; i < len; i++) {
                 entry = comments[i];
                 date = entry.date;
-                day = DayFormatter.format(date);
 
-                if (typeof group[day] === 'undefined') {
-                    group[day] = {
-                        day: day,
+                Day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                unixDay = Day.getTime() / 1000;
+
+                if (typeof group[unixDay] === 'undefined') {
+                    group[unixDay] = {
+                        day: DayFormatter.format(date),
                         data: []
                     };
                 }
@@ -165,8 +167,9 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                     });
                 }
 
-                group[day].data.push({
+                group[unixDay].data.push({
                     time: entry.time,
+                    unixDay: unixDay,
                     message: entry.message,
                     type: entry.type,
                     timestamp: entry.timestamp,
@@ -187,14 +190,9 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
          */
         refresh: function() {
             let i, data, realData, commentEntries;
+
             const self = this;
             const comments = [];
-
-            const sortComments = function(a, b) {
-                return a.timestamp - b.timestamp;
-            };
-
-            const commentClone = Object.clone(this.$comments);
 
             const filterComments = function(entry) {
                 const message = entry.message.toLowerCase();
@@ -210,6 +208,21 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
 
                 this.push(entry);
             };
+
+            // sorting
+            const commentClone = [];
+            const tmpClone = Object.clone(this.$comments);
+            const sortedDays = Object.keys(tmpClone).sort((a, b) => b - a);
+
+            sortedDays.forEach(day => {
+                tmpClone[day].data.sort((a, b) => b.timestamp - a.timestamp);
+
+                commentClone.push({
+                    unix: day,
+                    day: tmpClone[day].day,
+                    data: tmpClone[day].data
+                });
+            });
 
             for (i in commentClone) {
                 if (!commentClone.hasOwnProperty(i)) {
@@ -232,7 +245,7 @@ define('package/quiqqer/erp/bin/backend/controls/Comments', [
                 }
 
                 // reverse comments
-                commentClone[i].data = data.sort(sortComments).reverse();
+                commentClone[i].data = data;
 
                 comments.push(commentClone[i]);
             }
