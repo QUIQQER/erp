@@ -294,6 +294,18 @@ class User extends QUI\QDOM implements UserInterface
         $name = $firstName . ' ' . $lastName;
 
         if (!empty($salutation)) {
+            switch ($salutation) {
+                case 'Herr':
+                case 'mr':
+                    $salutation = QUI::getLocale()->get('quiqqer/quiqqer', 'address.salutation.male');
+                    break;
+
+                case 'Frau':
+                case 'mrs':
+                    $salutation = QUI::getLocale()->get('quiqqer/quiqqer', 'address.salutation.female');
+                    break;
+            }
+
             $name = $salutation . ' ' . $name;
         }
 
