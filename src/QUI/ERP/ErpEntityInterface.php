@@ -8,6 +8,7 @@ use QUI\ERP\Accounting\ArticleListUnique;
 use QUI\ERP\Accounting\Calculations;
 use QUI\ERP\Address as ErpAddress;
 use QUI\ERP\User as ErpUser;
+use QUI\Interfaces\Users\User;
 
 interface ErpEntityInterface
 {
@@ -81,7 +82,7 @@ interface ErpEntityInterface
     /**
      * Set a customer to the erp entity
      *
-     * @param array|QUI\ERP\User|QUI\Interfaces\Users\User $User
+     * @param array|User $User
      */
-    public function setCustomer(array|QUI\ERP\User|QUI\Interfaces\Users\User $User);
+    public function setCustomer(array|QUI\Interfaces\Users\User $User);
 }
