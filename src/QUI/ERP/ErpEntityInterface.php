@@ -19,8 +19,29 @@ interface ErpEntityInterface
 
     public function setAttribute(string $key, $value);
 
-
     //endregion
+
+    /**
+     * return the internal database id
+     *
+     * @return int
+     */
+    public function getId(): int;
+
+    /**
+     * Return the uuid hash of the entity
+     *
+     * @return string
+     */
+    public function getUUID(): string;
+
+    /**
+     * Return the entity number
+     * returns the number that this entity has. a number is, for example, an invoice number or booking number. this number is not the id.
+     *
+     * @return string
+     */
+    public function getPrefixedNumber(): string;
 
     /**
      * Get the customer of the erp entity
@@ -41,7 +62,7 @@ interface ErpEntityInterface
      *
      * @return ArticleList|ArticleListUnique
      */
-    public function getArticles();
+    public function getArticles(): ArticleList|ArticleListUnique;
 
     /**
      * Get the price calculation object of the erp entity
@@ -62,5 +83,5 @@ interface ErpEntityInterface
      *
      * @param array|QUI\ERP\User|QUI\Interfaces\Users\User $User
      */
-    public function setCustomer($User);
+    public function setCustomer(array|QUI\ERP\User|QUI\Interfaces\Users\User $User);
 }
