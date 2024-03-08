@@ -1096,11 +1096,21 @@ class Calc
             $invNettoTotal = floatval($invoice['calculated_nettosum']);
             $invVatSumPC = QUI\Utils\Math::percent($invVatSum, $invBruttoSum);
 
+            $invBruttoSum = round($invBruttoSum, $Currency->getPrecision());
+            $invVatSum = round($invVatSum, $Currency->getPrecision());
+            $invPaid = round($invPaid, $Currency->getPrecision());
+            $invToPay = round($invToPay, $Currency->getPrecision());
+            $invNettoTotal = round($invNettoTotal, $Currency->getPrecision());
+
+            if ($invoice['paid_status'] === QUI\ERP\Constants::PAYMENT_STATUS_PAID) {
+                $invPaid = $invBruttoSum;
+            }
+
             if ($invVatSumPC) {
                 if ($invToPay === 0.0) {
                     $invVatPaid = $invVatSum;
                 } else {
-                    $invVatPaid = $invPaid * $invVatSumPC / 100;
+                    $invVatPaid = round($invPaid * $invVatSumPC / 100, $Currency->getPrecision());
                 }
             } else {
                 $invVatPaid = 0;
