@@ -40,7 +40,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * @var QUI\Interfaces\Users\User
      */
-    protected $User = null;
+    protected QUI\Users\User|QUI\Interfaces\Users\User|null $User = null;
 
     /**
      * @var ?QUI\ERP\Order\AbstractOrder

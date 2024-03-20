@@ -39,12 +39,12 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * @var array
      */
-    protected $calculations = [];
+    protected mixed $calculations = [];
 
     /**
      * @var bool|mixed
      */
-    protected $showHeader;
+    protected mixed $showHeader;
 
     /**
      * PriceFactor List
@@ -59,9 +59,9 @@ class ArticleListUnique implements IteratorAggregate
     protected ?QUI\Locale $Locale = null;
 
     /**
-     * @var QUI\Interfaces\Users\User
+     * @var ?QUI\Interfaces\Users\User
      */
-    protected $User = null;
+    protected ?QUI\Interfaces\Users\User $User = null;
 
     /**
      * @var bool
@@ -82,10 +82,10 @@ class ArticleListUnique implements IteratorAggregate
      * ArticleList constructor.
      *
      * @param array $attributes
-     * @param null|QUI\Interfaces\Users\User|QUI\Users\User $User
-     * @throws QUI\ERP\Exception
+     * @param ?QUI\Interfaces\Users\User $User
+     * @throws QUI\ERP\Exception|QUI\Exception
      */
-    public function __construct(array $attributes = [], $User = null)
+    public function __construct(array $attributes = [], QUI\Interfaces\Users\User $User = null)
     {
         $this->Locale = QUI::getLocale();
 
@@ -257,7 +257,7 @@ class ArticleListUnique implements IteratorAggregate
      *
      * @param QUI\Locale $Locale
      */
-    public function setLocale(QUI\Locale $Locale)
+    public function setLocale(QUI\Locale $Locale): void
     {
         $this->Locale = $Locale;
     }
@@ -265,12 +265,12 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Creates a list from a stored representation
      *
-     * @param string|array $data
+     * @param array|string $data
      * @return ArticleListUnique
      *
      * @throws QUI\Exception
      */
-    public static function unserialize($data): ArticleListUnique
+    public static function unserialize(array|string $data): ArticleListUnique
     {
         if (is_string($data)) {
             $data = json_decode($data, true);
@@ -355,7 +355,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Display of the header = true
      */
-    public function displayHeader()
+    public function displayHeader(): void
     {
         $this->showHeader = true;
     }
@@ -363,7 +363,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Display of the header = false
      */
-    public function hideHeader()
+    public function hideHeader(): void
     {
         $this->showHeader = false;
     }
@@ -371,7 +371,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * @param QUI\ERP\Currency\Currency $Currency
      */
-    public function setExchangeCurrency(QUI\ERP\Currency\Currency $Currency)
+    public function setExchangeCurrency(QUI\ERP\Currency\Currency $Currency): void
     {
         $this->ExchangeCurrency = $Currency;
     }
@@ -379,7 +379,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * @param float $rate
      */
-    public function setExchangeRate(float $rate)
+    public function setExchangeRate(float $rate): void
     {
         $this->exchangeRate = $rate;
     }
@@ -387,12 +387,12 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Return the Article List as HTML, without CSS
      *
-     * @param string|bool $template - custom template
+     * @param bool|string $template - custom template
      * @return string
      *
      * @throws QUI\Exception
      */
-    public function toHTML($template = false): string
+    public function toHTML(bool|string $template = false): string
     {
         $Engine = QUI::getTemplateManager()->getEngine();
         $vatArray = [];
@@ -602,7 +602,7 @@ class ArticleListUnique implements IteratorAggregate
      *
      * @return ArrayIterator|Traversable
      */
-    public function getIterator()
+    public function getIterator(): Traversable|ArrayIterator
     {
         return new ArrayIterator($this->articles);
     }
