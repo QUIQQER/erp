@@ -60,7 +60,7 @@ class Process
     /**
      * Return all entities which are connected to this process
      *
-     * @return array
+     * @return ErpEntityInterface[]
      */
     public function getEntities(): array
     {

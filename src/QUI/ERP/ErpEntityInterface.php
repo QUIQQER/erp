@@ -99,4 +99,23 @@ interface ErpEntityInterface
      * @return array
      */
     public function toArray(): array;
+
+    /**
+     * Cancel the entity
+     * (Reversal, Storno, Cancel)
+     *
+     * @param string $reason
+     * @param User|null $PermissionUser
+     * @return ?ErpEntityInterface
+     */
+    public function reversal(
+        string $reason = '',
+        QUI\Interfaces\Users\User $PermissionUser = null
+    ): ?ErpEntityInterface;
+
+    public function addCustomerFile(string $fileHash, array $options = []): void;
+
+    public function clearCustomerFiles(): void;
+
+    public function getCustomerFiles(): array;
 }
