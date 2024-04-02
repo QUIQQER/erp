@@ -281,6 +281,14 @@
             <de><![CDATA[Rechnung öffnen]]></de>
             <en><![CDATA[Open invoice]]></en>
         </locale>
+        <locale name="processGrid.invoiceTemporary.open">
+            <de><![CDATA[Rechnungsentwurf öffnen]]></de>
+            <en><![CDATA[Open temporary invoice]]></en>
+        </locale>
+        <locale name="processGrid.salesOrder.open">
+            <de><![CDATA[Auftrag öffnen]]></de>
+            <en><![CDATA[Open sales order]]></en>
+        </locale>
         <locale name="erp.process.type">
             <de><![CDATA[Typ]]></de>
             <en><![CDATA[Type]]></en>

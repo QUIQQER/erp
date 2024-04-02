@@ -108,10 +108,19 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                             Type.setAttribute('title', QUILocale.get(lg, 'processGrid.order.open'));
                             break;
 
-                        case 'QUI\\ERP\\Invoice\\Invoice':
-                        case 'QUI\\ERP\\Accounting\\Invoice\\InvoiceTemporary':
+                        case 'QUI\\ERP\\Accounting\\Invoice\\Invoice':
                             Type.setAttribute('icon', 'fa fa-file-text-o');
                             Type.setAttribute('title', QUILocale.get(lg, 'processGrid.invoice.open'));
+                            break;
+
+                        case 'QUI\\ERP\\Accounting\\Invoice\\InvoiceTemporary':
+                            Type.setAttribute('icon', 'fa fa-file-text-o');
+                            Type.setAttribute('title', QUILocale.get(lg, 'processGrid.invoiceTemporary.open'));
+                            break;
+
+                        case 'QUI\\ERP\\SalesOrders\\SalesOrder':
+                            Type.setAttribute('icon', 'fa fa-suitcase');
+                            Type.setAttribute('title', QUILocale.get(lg, 'processGrid.salesOrder.open'));
                             break;
                     }
 
@@ -144,12 +153,16 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                     panel = 'package/quiqqer/order/bin/backend/controls/panels/Order';
                     break;
 
-                case 'QUI\\ERP\\Invoice\\Invoice':
+                case 'QUI\\ERP\\Accounting\\Invoice\\Invoice':
                     panel = 'package/quiqqer/invoice/bin/backend/controls/panels/Invoice';
                     break;
 
                 case 'QUI\\ERP\\Accounting\\Invoice\\InvoiceTemporary':
                     panel = 'package/quiqqer/invoice/bin/backend/controls/panels/TemporaryInvoice';
+                    break;
+
+                case 'QUI\\ERP\\SalesOrders\\SalesOrder':
+                    panel = 'package/quiqqer/salesorders/bin/js/backend/controls/panels/SalesOrder';
                     break;
 
                 default:
