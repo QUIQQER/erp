@@ -33,7 +33,7 @@ class EventHandler
      */
     public static function onAdminLoadFooter(): void
     {
-        echo '<link href="'. URL_OPT_DIR .'quiqqer/erp/bin/backend/payment-status.css" rel="stylesheet" type="text/css" />';
+        echo '<link href="' . URL_OPT_DIR . 'quiqqer/erp/bin/backend/payment-status.css" rel="stylesheet" type="text/css" />';
         echo '<script>window.ERP_ENTITY_ICONS = ' . json_encode(QUI\ERP\Utils\Utils::$entityIcons) . '</script>';
         echo '<script src="' . URL_OPT_DIR . 'quiqqer/erp/bin/load.js"></script>';
     }
