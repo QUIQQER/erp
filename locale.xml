@@ -309,6 +309,40 @@
             <de><![CDATA[Entitäts UUID]]></de>
             <en><![CDATA[Entity uuid]]></en>
         </locale>
+
+
+        <locale name="payment.status.0">
+            <de><![CDATA[offen]]></de>
+            <en><![CDATA[open]]></en>
+        </locale>
+        <locale name="payment.status.1">
+            <de><![CDATA[bezahlt]]></de>
+            <en><![CDATA[paid]]></en>
+        </locale>
+        <locale name="payment.status.2">
+            <de><![CDATA[Teilzahlung]]></de>
+            <en><![CDATA[part payment]]></en>
+        </locale>
+        <locale name="payment.status.3">
+            <de><![CDATA[storniert]]></de>
+            <en><![CDATA[canceled]]></en>
+        </locale>
+        <locale name="payment.status.4">
+            <de><![CDATA[error]]></de>
+            <en><![CDATA[error]]></en>
+        </locale>
+        <locale name="payment.status.5">
+            <de><![CDATA[storniert]]></de>
+            <en><![CDATA[canceled]]></en>
+        </locale>
+        <locale name="payment.status.11">
+            <de><![CDATA[Lastschrift]]></de>
+            <en><![CDATA[Debit]]></en>
+        </locale>
+        <locale name="payment.status.12">
+            <de><![CDATA[Abonnement]]></de>
+            <en><![CDATA[Subscription plan]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">

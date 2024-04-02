@@ -58,7 +58,7 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                         width: 60
                     }, {
                         header: QUILocale.get(lg, 'erp.process.state'),
-                        dataIndex: 'status',
+                        dataIndex: 'paid_status',
                         dataType: 'node',
                         width: 100
                     }, {
@@ -95,6 +95,7 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                         events: {
                             click: this.$click
                         },
+                        icon: 'fa ' + window.ERP_ENTITY_ICONS[entry.entityType],
                         entityType: entry.entityType,
                         uuid: entry.uuid,
                         styles: {
@@ -104,29 +105,34 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
 
                     switch (entry.entityType) {
                         case 'QUI\\ERP\\Order\\Order':
-                            Type.setAttribute('icon', 'fa fa-shopping-basket');
                             Type.setAttribute('title', QUILocale.get(lg, 'processGrid.order.open'));
                             break;
 
                         case 'QUI\\ERP\\Accounting\\Invoice\\Invoice':
-                            Type.setAttribute('icon', 'fa fa-file-text-o');
                             Type.setAttribute('title', QUILocale.get(lg, 'processGrid.invoice.open'));
                             break;
 
                         case 'QUI\\ERP\\Accounting\\Invoice\\InvoiceTemporary':
-                            Type.setAttribute('icon', 'fa fa-file-text-o');
                             Type.setAttribute('title', QUILocale.get(lg, 'processGrid.invoiceTemporary.open'));
                             break;
 
                         case 'QUI\\ERP\\SalesOrders\\SalesOrder':
-                            Type.setAttribute('icon', 'fa fa-suitcase');
                             Type.setAttribute('title', QUILocale.get(lg, 'processGrid.salesOrder.open'));
                             break;
                     }
 
+                    if (typeof entry.paid_status === 'undefined') {
+                        entry.paid_status = 0;
+                    }
+
+                    const PaymentStatus = new Element('span', {
+                        'class': 'payment-status payment-status-' + entry.paid_status,
+                        html: QUILocale.get('quiqqer/erp', 'payment.status.' + entry.paid_status)
+                    });
+
                     data.push({
                         type: Type,
-                        status: entry.status,
+                        paid_status: PaymentStatus,
                         prefixedNumber: entry.prefixedNumber,
                         uuid: entry.uuid
                     });
