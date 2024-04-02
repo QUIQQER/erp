@@ -10,7 +10,7 @@ use QUI;
 use QUI\ERP\BankAccounts\Handler as BankAccounts;
 use QUI\ERP\Products\Handler\Fields as ProductFields;
 use QUI\Package\Package;
-use Quiqqer\Engine\Collector;
+use QUI\Smarty\Collector;
 
 use function array_flip;
 use function class_exists;
@@ -30,7 +30,7 @@ class EventHandler
     /**
      * event : on admin load footer
      */
-    public static function onAdminLoadFooter()
+    public static function onAdminLoadFooter(): void
     {
         echo '<script src="' . URL_OPT_DIR . 'quiqqer/erp/bin/load.js"></script>';
     }
@@ -38,7 +38,7 @@ class EventHandler
     /**
      * @param QUI\Template $Template
      */
-    public static function onTemplateGetHeader(QUI\Template $Template)
+    public static function onTemplateGetHeader(QUI\Template $Template): void
     {
         try {
             $Package = QUI::getPackage('quiqqer/erp');
@@ -49,11 +49,11 @@ class EventHandler
             }
 
             $areas = explode(',', $areas);
-        } catch (\QUI\Exception $exception) {
+        } catch (\QUI\Exception) {
             return;
         }
 
-        if (!empty($areas)) {
+        if (count($areas)) {
             $Template->extendHeaderWithJavaScriptFile(
                 URL_OPT_DIR . 'quiqqer/erp/bin/frontend.js'
             );
@@ -66,7 +66,7 @@ class EventHandler
      * @param Package $Package
      * @throws QUI\Exception
      */
-    public static function onPackageSetup(Package $Package)
+    public static function onPackageSetup(Package $Package): void
     {
         if ($Package->getName() !== 'quiqqer/erp') {
             return;
@@ -81,7 +81,7 @@ class EventHandler
      *
      * @return void
      */
-    public static function createDefaultManufacturerGroup()
+    public static function createDefaultManufacturerGroup(): void
     {
         try {
             $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
@@ -132,7 +132,7 @@ class EventHandler
      * @return void
      * @throws QUI\Exception
      */
-    public static function patchBankAccount()
+    public static function patchBankAccount(): void
     {
         $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
         $bankAccountPatched = $Conf->getValue('bankAccounts', 'isPatched');
@@ -191,7 +191,7 @@ class EventHandler
      * @param Package $Package
      * @param array $params
      */
-    public static function onPackageConfigSave(QUI\Package\Package $Package, array $params)
+    public static function onPackageConfigSave(QUI\Package\Package $Package, array $params): void
     {
         if ($Package->getName() !== 'quiqqer/erp') {
             return;
@@ -233,7 +233,7 @@ class EventHandler
      * @todo prüfung auch für steuernummer
      *
      */
-    public static function onUserSave(QUI\Interfaces\Users\User $User)
+    public static function onUserSave(QUI\Interfaces\Users\User $User): void
     {
         if (!QUI::getUsers()->isUser($User)) {
             return;
@@ -245,7 +245,7 @@ class EventHandler
             $validate = $Package->getConfig()->getValue('shop', 'validateVatId');
             $vatId = $User->getAttribute('quiqqer.erp.euVatId');
 
-            if ($validate && $vatId && !empty($vatId)) {
+            if ($validate && !empty($vatId)) {
                 try {
                     $vatId = QUI\ERP\Tax\Utils::validateVatId($vatId);
                 } catch (QUI\ERP\Tax\Exception $Exception) {
@@ -284,7 +284,7 @@ class EventHandler
      * @param QUI\Users\User $User
      * @throws QUI\Exception
      */
-    public static function onUserSaveBegin(QUI\Users\User $User)
+    public static function onUserSaveBegin(QUI\Users\User $User): void
     {
         if (!QUI::getUsers()->isUser($User)) {
             return;
@@ -344,7 +344,7 @@ class EventHandler
      * @param QUI\Users\Address $Address
      * @param QUI\Users\User $User
      */
-    public static function onUserAddressSave(QUI\Users\Address $Address, QUI\Users\User $User)
+    public static function onUserAddressSave(QUI\Users\Address $Address, QUI\Users\User $User): void
     {
         if (!QUI::getUsers()->isUser($User)) {
             return;
@@ -388,11 +388,14 @@ class EventHandler
 
     /**
      * @param Collector $Collector
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      * @param QUI\Users\Address $Address
      */
-    public static function onFrontendUserCustomerBegin(Collector $Collector, $User, $Address)
-    {
+    public static function onFrontendUserCustomerBegin(
+        Collector $Collector,
+        QUI\Interfaces\Users\User $User,
+        QUI\Users\Address $Address
+    ): void {
         if (!QUI::getUsers()->isUser($User)) {
             return;
         }
@@ -440,11 +443,14 @@ class EventHandler
 
     /**
      * @param Collector $Collector
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      * @param QUI\Users\Address $Address
      */
-    public static function onFrontendUserDataMiddle(Collector $Collector, $User, $Address)
-    {
+    public static function onFrontendUserDataMiddle(
+        Collector $Collector,
+        QUI\Interfaces\Users\User $User,
+        QUI\Users\Address $Address
+    ): void {
         if (!QUI::getUsers()->isUser($User)) {
             return;
         }
@@ -478,9 +484,9 @@ class EventHandler
 
     /**
      * @param Collector $Collector
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      */
-    public static function onFrontendUserAddressCreateBegin(Collector $Collector, $User)
+    public static function onFrontendUserAddressCreateBegin(Collector $Collector, QUI\Interfaces\Users\User $User): void
     {
         if (!QUI::getUsers()->isUser($User)) {
             return;
@@ -505,7 +511,7 @@ class EventHandler
             }
 
             $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray($settings));
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray([]));
         }
 
@@ -530,9 +536,9 @@ class EventHandler
 
     /**
      * @param Collector $Collector
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      */
-    public static function onFrontendUserAddressCreateEnd(Collector $Collector, $User)
+    public static function onFrontendUserAddressCreateEnd(Collector $Collector, QUI\Interfaces\Users\User $User): void
     {
         if (!QUI::getUsers()->isUser($User)) {
             return;
@@ -557,7 +563,7 @@ class EventHandler
             }
 
             $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray($settings));
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray([]));
         }
 
@@ -582,11 +588,14 @@ class EventHandler
 
     /**
      * @param Collector $Collector
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      * @param QUI\Users\Address $Address
      */
-    public static function onFrontendUserAddressEditBegin(Collector $Collector, $User, $Address)
-    {
+    public static function onFrontendUserAddressEditBegin(
+        Collector $Collector,
+        QUI\Interfaces\Users\User $User,
+        QUI\Users\Address $Address
+    ): void {
         if (!QUI::getUsers()->isUser($User)) {
             return;
         }
@@ -610,7 +619,7 @@ class EventHandler
             }
 
             $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray($settings));
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray([]));
         }
 
@@ -650,11 +659,14 @@ class EventHandler
 
     /**
      * @param Collector $Collector
-     * @param $User
-     * @param $Address
+     * @param QUI\Interfaces\Users\User $User
+     * @param QUI\Users\Address $Address
      */
-    public static function onFrontendUserAddressEditEnd(Collector $Collector, $User, $Address)
-    {
+    public static function onFrontendUserAddressEditEnd(
+        Collector $Collector,
+        QUI\Interfaces\Users\User $User,
+        QUI\Users\Address $Address
+    ): void {
         if (!QUI::getUsers()->isUser($User)) {
             return;
         }
@@ -678,7 +690,7 @@ class EventHandler
             }
 
             $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray($settings));
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             $Engine->assign('settings', QUI\FrontendUsers\Controls\Address\Address::checkSettingsArray([]));
         }
 
