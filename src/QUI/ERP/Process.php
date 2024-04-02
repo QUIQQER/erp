@@ -7,11 +7,9 @@
 namespace QUI\ERP;
 
 use QUI;
-use QUI\ERP\Accounting\Offers\Handler as OfferHandler;
-use QUI\ERP\Booking\Table as BookingTable;
-use QUI\ERP\Purchasing\Processes\Handler as PurchasingHandler;
-use QUI\ERP\SalesOrders\Handler as SalesOrdersHandler;
 
+use function array_merge;
+use function class_exists;
 use function count;
 use function strtotime;
 
@@ -57,6 +55,25 @@ class Process
     protected function table(): string
     {
         return QUI::getDBTableName('process');
+    }
+
+    /**
+     * Return all entities which are connected to this process
+     *
+     * @return ErpEntityInterface[]
+     */
+    public function getEntities(): array
+    {
+        $entities = array_merge(
+            $this->getInvoices(),
+            $this->getOrders(),
+            $this->getOffers(),
+            $this->getBookings(),
+            $this->getPurchasing(),
+            $this->getSalesOrders()
+        );
+
+        return array_filter($entities);
     }
 
     //region messages
@@ -165,13 +182,13 @@ class Process
         foreach ($invoices as $Invoice) {
             $History->addComment(
                 QUI::getLocale()->get('quiqqer/erp', 'process.history.invoice.created', [
-                    'hash' => $Invoice->getHash()
+                    'hash' => $Invoice->getUUID()
                 ]),
                 strtotime($Invoice->getAttribute('date')),
                 'quiqqer/invoice',
                 'fa fa-file-text-o',
                 false,
-                $Invoice->getHash()
+                $Invoice->getUUID()
             );
 
             $history = $Invoice->getHistory()->toArray();
@@ -191,7 +208,7 @@ class Process
                     $entry['source'],
                     $entry['sourceIcon'],
                     $entry['id'],
-                    $Invoice->getHash()
+                    $Invoice->getUUID()
                 );
             }
         }
@@ -244,7 +261,7 @@ class Process
 
         try {
             return QUI\ERP\Accounting\Invoice\Handler::getInstance()->getInvoicesByGlobalProcessId($this->processId);
-        } catch (\QUI\Exception $Exception) {
+        } catch (\QUI\Exception) {
             return [];
         }
     }
@@ -262,7 +279,7 @@ class Process
             $history = $Order->getHistory()->toArray();
             $hasCreateMessage = false;
             $createMessage = QUI::getLocale()->get('quiqqer/erp', 'process.history.order.created', [
-                'hash' => $Order->getHash()
+                'hash' => $Order->getUUID()
             ]);
 
             foreach ($history as $entry) {
@@ -296,7 +313,7 @@ class Process
                     $entry['source'],
                     $entry['sourceIcon'],
                     $entry['id'],
-                    $Order->getHash()
+                    $Order->getUUID()
                 );
             }
         }
@@ -341,7 +358,7 @@ class Process
     /**
      * Return all orders from the process
      *
-     * @return array|Order\Order|Order\Order[]|Order\OrderInProcess[]
+     * @return array
      */
     public function getOrders(): array
     {
@@ -351,7 +368,7 @@ class Process
 
         try {
             return QUI\ERP\Order\Handler::getInstance()->getOrdersByGlobalProcessId($this->processId);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             return [];
         }
     }
@@ -415,7 +432,7 @@ class Process
         try {
             $offers = QUI::getDatabase()->fetch([
                 'select' => 'id,hash,global_process_id,date',
-                'from' => OfferHandler::getInstance()->offersTable(),
+                'from' => QUI\ERP\Accounting\Offers\Handler::getInstance()->offersTable(),
                 'where_or' => [
                     'global_process_id' => $this->processId,
                     'hash' => $this->processId
@@ -426,7 +443,7 @@ class Process
         }
 
         $result = [];
-        $Offers = OfferHandler::getInstance();
+        $Offers = QUI\ERP\Accounting\Offers\Handler::getInstance();
 
         foreach ($offers as $offer) {
             try {
@@ -490,10 +507,18 @@ class Process
             return [];
         }
 
+        if (!class_exists('QUI\ERP\Booking\Repository\BookingRepository')) {
+            return [];
+        }
+
+        if (!class_exists('QUI\ERP\Booking\Table')) {
+            return [];
+        }
+
         try {
             $bookings = QUI::getDatabase()->fetch([
                 'select' => 'uuid,globalProcessId,createDate',
-                'from' => BookingTable::BOOKINGS->tableName(),
+                'from' => QUI\ERP\Booking\Table::BOOKINGS->tableName(),
                 'where_or' => [
                     'globalProcessId' => $this->processId,
                     'uuid' => $this->processId
@@ -560,7 +585,7 @@ class Process
     }
 
     /**
-     * @return QUI\ERP\Purchasing\Processes\PurchasingProcess[]
+     * @return array
      */
     public function getPurchasing(): array
     {
@@ -568,10 +593,18 @@ class Process
             return [];
         }
 
+        if (!class_exists('QUI\ERP\Purchasing\Processes\PurchasingProcess')) {
+            return [];
+        }
+
+        if (!class_exists('QUI\ERP\Purchasing\Processes\Handler')) {
+            return [];
+        }
+
         try {
             $purchasing = QUI::getDatabase()->fetch([
                 'select' => 'id,hash,global_process_id,date',
-                'from' => PurchasingHandler::getTablePurchasingProcesses(),
+                'from' => QUI\ERP\Purchasing\Processes\Handler::getTablePurchasingProcesses(),
                 'where_or' => [
                     'global_process_id' => $this->processId,
                     'hash' => $this->processId
@@ -585,7 +618,7 @@ class Process
 
         foreach ($purchasing as $process) {
             try {
-                $result[] = PurchasingHandler::getPurchasingProcess($process['id']);
+                $result[] = QUI\ERP\Purchasing\Processes\Handler::getPurchasingProcess($process['id']);
             } catch (\Exception) {
             }
         }
@@ -637,7 +670,7 @@ class Process
     }
 
     /**
-     * @return QUI\ERP\Purchasing\Processes\PurchasingProcess[]
+     * @return array
      */
     public function getSalesOrders(): array
     {
@@ -648,7 +681,7 @@ class Process
         try {
             $salesOrders = QUI::getDatabase()->fetch([
                 'select' => 'id,hash,global_process_id,date',
-                'from' => SalesOrdersHandler::getTableSalesOrders(),
+                'from' => QUI\ERP\SalesOrders\Handler::getTableSalesOrders(),
                 'where_or' => [
                     'global_process_id' => $this->processId,
                     'hash' => $this->processId
@@ -662,7 +695,7 @@ class Process
 
         foreach ($salesOrders as $salesOrder) {
             try {
-                $result[] = SalesOrdersHandler::getSalesOrder($salesOrder['id']);
+                $result[] = QUI\ERP\SalesOrders\Handler::getSalesOrder($salesOrder['id']);
             } catch (\Exception) {
             }
         }

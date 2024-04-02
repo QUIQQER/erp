@@ -37,6 +37,13 @@ interface ErpEntityInterface
     public function getUUID(): string;
 
     /**
+     * Return the process of the entity (global process id))
+     *
+     * @return string
+     */
+    public function getGlobalProcessId(): string;
+
+    /**
      * Return the entity number
      * returns the number that this entity has. a number is, for example, an invoice number or booking number. this number is not the id.
      *
@@ -85,4 +92,30 @@ interface ErpEntityInterface
      * @param array|User $User
      */
     public function setCustomer(array|QUI\Interfaces\Users\User $User);
+
+    /**
+     * Returns the erp entity as an array
+     *
+     * @return array
+     */
+    public function toArray(): array;
+
+    /**
+     * Cancel the entity
+     * (Reversal, Storno, Cancel)
+     *
+     * @param string $reason
+     * @param User|null $PermissionUser
+     * @return ?ErpEntityInterface
+     */
+    public function reversal(
+        string $reason = '',
+        QUI\Interfaces\Users\User $PermissionUser = null
+    ): ?ErpEntityInterface;
+
+    public function addCustomerFile(string $fileHash, array $options = []): void;
+
+    public function clearCustomerFiles(): void;
+
+    public function getCustomerFiles(): array;
 }
