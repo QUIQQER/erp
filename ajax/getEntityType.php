@@ -7,7 +7,7 @@
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_getEntityType',
     function ($uuid) {
-        $Instance = (new QUI\ERP\Processes)->getEntity($uuid);
+        $Instance = (new QUI\ERP\Processes())->getEntity($uuid);
         return get_class($Instance);
     },
     ['uuid'],
