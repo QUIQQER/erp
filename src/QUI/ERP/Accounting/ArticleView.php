@@ -8,7 +8,6 @@ namespace QUI\ERP\Accounting;
 
 use QUI;
 use QUI\ERP\Accounting\Calc as ErpCalc;
-
 use QUI\Exception;
 
 use function dirname;
