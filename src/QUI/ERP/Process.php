@@ -13,6 +13,9 @@ use function array_map;
 use function array_merge;
 use function class_exists;
 use function count;
+use function get_class;
+use function in_array;
+use function is_callable;
 use function strtotime;
 
 /**
@@ -87,14 +90,21 @@ class Process
      * The primary function is to categorize these ERP entities based on their relationships and associations,
      * facilitating easier management and retrieval of related transactional data within the ERP system.
      *
+     * @param callable|null $filterEntityTypes - own filter function
      * @return array
      */
-    public function getGroupedRelatedTransactionEntities(): array
+    public function getGroupedRelatedTransactionEntities(?callable $filterEntityTypes = null): array
     {
         $entities = $this->getEntities();
         $entities = array_filter($entities, function ($obj) {
             return $obj instanceof ErpTransactionsInterface;
         });
+
+        if (is_callable($filterEntityTypes)) {
+            $entities = array_filter($entities, $filterEntityTypes);
+        }
+
+        $groups = [];
 
         // invoices into the groups
         if (
