@@ -42,7 +42,7 @@ class Manufacturers
         $groupIds = [];
 
         try {
-            $Conf           = QUI::getPackage('quiqqer/erp')->getConfig();
+            $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
             $defaultGroupId = $Conf->get('manufacturers', 'groupId');
 
             if (!empty($defaultGroupId)) {
@@ -100,7 +100,7 @@ class Manufacturers
     ): QUI\Users\User {
         QUI\Permissions\Permission::checkPermission('quiqqer.erp_manufacturers.create');
 
-        $Users          = QUI::getUsers();
+        $Users = QUI::getUsers();
         $manufacturerId = $Users::clearUsername($manufacturerId);
 
         // Check ID
@@ -115,12 +115,12 @@ class Manufacturers
         }
 
         $SystemUser = $Users->getSystemUser();
-        $User       = $Users->createChild($manufacturerId, $SystemUser);
+        $User = $Users->createChild($manufacturerId, $SystemUser);
 
         if (!empty($address)) {
             try {
                 $Address = $User->getStandardAddress();
-            } catch (QUI\Exception $Exception) {
+            } catch (QUI\Exception) {
                 $Address = $User->addAddress();
             }
 
@@ -198,12 +198,12 @@ class Manufacturers
      */
     public static function search(array $searchParams, bool $countOnly = false)
     {
-        $Grid            = new QUI\Utils\Grid($searchParams);
-        $gridParams      = $Grid->parseDBParams($searchParams);
-        $usersTbl        = QUI::getDBTableName('users');
+        $Grid = new QUI\Utils\Grid($searchParams);
+        $gridParams = $Grid->parseDBParams($searchParams);
+        $usersTbl = QUI::getDBTableName('users');
         $usersAddressTbl = QUI::getDBTableName('users_address');
-        $binds           = [];
-        $where           = [];
+        $binds = [];
+        $where = [];
 
         if ($countOnly) {
             $sql = "SELECT COUNT(*)";
@@ -215,16 +215,16 @@ class Manufacturers
         $sql .= " FROM `" . $usersTbl . "` as u LEFT JOIN `" . $usersAddressTbl . "` as ua ON u.`address` = ua.`id`";
 
         // Only fetch users in manufacturer groups
-        $gc      = 0;
+        $gc = 0;
         $whereOr = [];
 
         foreach (self::getManufacturerGroupIds() as $groupId) {
             $whereOr[] = "u.`usergroup` LIKE :group" . $gc;
-            $bind      = 'group' . $gc++;
+            $bind = 'group' . $gc++;
 
             $binds[$bind] = [
                 'value' => '%,' . $groupId . ',%',
-                'type'  => PDO::PARAM_STR
+                'type' => PDO::PARAM_STR
             ];
         }
 
@@ -254,12 +254,12 @@ class Manufacturers
                 if ($DateFrom) {
                     $DateFrom->setTime(0, 0, 0);
 
-                    $bind    = 'datefrom';
+                    $bind = 'datefrom';
                     $where[] = 'u.`regdate` >= :' . $bind;
 
                     $binds[$bind] = [
                         'value' => $DateFrom->getTimestamp(),
-                        'type'  => PDO::PARAM_INT
+                        'type' => PDO::PARAM_INT
                     ];
                 }
             }
@@ -270,12 +270,12 @@ class Manufacturers
                 if ($DateTo) {
                     $DateTo->setTime(23, 59, 59);
 
-                    $bind    = 'dateto';
+                    $bind = 'dateto';
                     $where[] = 'u.`regdate` <= :' . $bind;
 
                     $binds[$bind] = [
                         'value' => $DateTo->getTimestamp(),
-                        'type'  => PDO::PARAM_INT
+                        'type' => PDO::PARAM_INT
                     ];
                 }
             }
@@ -283,8 +283,8 @@ class Manufacturers
 
         if (!empty($searchParams['search'])) {
             $searchValue = $searchParams['search'];
-            $fc          = 0;
-            $whereOr     = [];
+            $fc = 0;
+            $whereOr = [];
 
             // search value filters
             foreach ($searchFields as $filter) {
@@ -309,7 +309,7 @@ class Manufacturers
 
                 $binds[$bind] = [
                     'value' => '%' . $searchValue . '%',
-                    'type'  => PDO::PARAM_STR
+                    'type' => PDO::PARAM_STR
                 ];
 
                 $fc++;
@@ -411,7 +411,7 @@ class Manufacturers
 
         $result = [];
         $Groups = QUI::getGroups();
-        $Users  = QUI::getUsers();
+        $Users = QUI::getUsers();
 
         foreach ($data as $entry) {
             $entry['usergroup'] = trim($entry['usergroup'], ',');
@@ -425,7 +425,7 @@ class Manufacturers
                     $Group = $Groups->get($groupId);
 
                     return $Group->getName();
-                } catch (QUI\Exception $Exception) {
+                } catch (QUI\Exception) {
                 }
 
                 return '';
@@ -437,12 +437,12 @@ class Manufacturers
             $groups = trim($groups, ',');
 
             $addressData = [];
-            $Address     = null;
+            $Address = null;
 
             try {
-                $User    = $Users->get((int)$entry['id']);
+                $User = $Users->get($entry['id']);
                 $Address = $User->getStandardAddress();
-            } catch (QUI\Exception $Exception) {
+            } catch (QUI\Exception) {
             }
 
             if ($Address && (empty($entry['firstname']) || empty($entry['lastname']))) {
@@ -450,12 +450,12 @@ class Manufacturers
 
                 if ($Address->getAttribute('firstname')) {
                     $entry['firstname'] = $Address->getAttribute('firstname');
-                    $name[]             = $Address->getAttribute('firstname');
+                    $name[] = $Address->getAttribute('firstname');
                 }
 
                 if ($Address->getAttribute('lastname')) {
                     $entry['lastname'] = $Address->getAttribute('lastname');
-                    $name[]            = $Address->getAttribute('lastname');
+                    $name[] = $Address->getAttribute('lastname');
                 }
 
                 if (!empty($name)) {
@@ -480,18 +480,18 @@ class Manufacturers
             }
 
             $result[] = [
-                'id'        => (int)$entry['id'],
-                'status'    => !!$entry['active'],
-                'username'  => $entry['username'],
+                'id' => (int)$entry['id'],
+                'status' => !!$entry['active'],
+                'username' => $entry['username'],
                 'firstname' => $entry['firstname'],
-                'lastname'  => $entry['lastname'],
-                'company'   => $entry['company'],
-                'email'     => $entry['email'],
-                'regdate'   => $DateFormatterLong->format($entry['regdate']),
+                'lastname' => $entry['lastname'],
+                'company' => $entry['company'],
+                'email' => $entry['email'],
+                'regdate' => $DateFormatterLong->format($entry['regdate']),
 
                 'usergroup_display' => $groups,
-                'usergroup'         => $entry['usergroup'],
-                'address_display'   => implode(' - ', $addressData)
+                'usergroup' => $entry['usergroup'],
+                'address_display' => implode(' - ', $addressData)
             ];
         }
 
