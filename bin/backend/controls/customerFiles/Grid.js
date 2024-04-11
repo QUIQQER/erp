@@ -2,12 +2,15 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
 
     'qui/QUI',
     'qui/controls/Control',
+    'classes/request/Upload',
     'package/quiqqer/erp/bin/backend/utils/ERPEntities',
     'controls/grid/Grid',
     'Ajax',
-    'Locale'
+    'Locale',
 
-], function(QUI, QUIControl, ERPEntityUtils, Grid, QUIAjax, QUILocale) {
+    'css!package/quiqqer/erp/bin/backend/controls/customerFiles/Grid.css'
+
+], function(QUI, QUIControl, Upload, ERPEntityUtils, Grid, QUIAjax, QUILocale) {
     'use strict';
 
     const lg = 'quiqqer/erp';
@@ -32,6 +35,8 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
         initialize: function(options) {
             this.parent(options);
 
+            this.$DropInfo = new Element('div');
+
             this.addEvents({
                 onInject: this.$onInject
             });
@@ -44,6 +49,56 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                 width: '100%'
             });
 
+            // drag drop
+            this.$DropInfo = new Element('div.drag-drop-dropper').inject(this.getElm());
+            this.$DropInfo.setStyle('display', 'none');
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                this.getElm().addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                this.getElm().addEventListener(eventName, () => {
+                    this.$DropInfo.setStyle('display', null);
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                this.getElm().addEventListener(eventName, (e) => {
+                    if (!e.relatedTarget || e.relatedTarget.parentNode !== this.getElm()) {
+                        this.$DropInfo.setStyle('display', 'none');
+                    }
+                }, false);
+            });
+
+            this.getElm().addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = Array.from(dt.files);
+
+                this.$Grid.showLoader();
+
+                require(['classes/request/BulkUpload'], (BulkUpload) => {
+                    new BulkUpload({
+                        phpOnFinish: 'package_quiqqer_customer_ajax_backend_files_upload',
+                        params: {
+                            hash: this.getAttribute('hash'),
+                            customerId: this.getAttribute('customerId')
+                        },
+                        events: {
+                            onFinish: (Instance, uploadedFiles) => {
+                                this.addFiles(uploadedFiles).then(() => {
+                                    this.refresh();
+                                });
+                            }
+                        }
+                    }).upload(files);
+                });
+            }, false);
+
+            // grid
             const Container = new Element('div', {
                 style: {
                     height: '100%',
@@ -131,7 +186,7 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                 return this.getCustomer();
             }).then((customerHash) => {
                 this.setAttribute('customerId', customerHash);
-            }).then((result) => {
+            }).then(() => {
                 return this.refresh();
             });
         },
@@ -196,6 +251,21 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
             });
         },
 
+        addFiles: function(fileHashes) {
+            this.$Grid.showLoader();
+
+            return new Promise((resolve) => {
+                QUIAjax.post('package_quiqqer_erp_ajax_customerFiles_addFiles', () => {
+                    this.refresh();
+                    resolve();
+                }, {
+                    'package': 'quiqqer/erp',
+                    hash: this.getAttribute('hash'),
+                    fileHashes: JSON.encode(fileHashes)
+                });
+            });
+        },
+
         getCustomer: function() {
             return new Promise((resolve, reject) => {
                 QUIAjax.get('package_quiqqer_erp_ajax_customerFiles_getCustomer', resolve, {
@@ -240,8 +310,6 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
          * open customer file window
          */
         openCustomerFiles: function() {
-            console.log(this.getAttribute('customerId'));
-
             require([
                 'package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window'
             ], (Window) => {
@@ -249,6 +317,7 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                     userId: this.getAttribute('customerId'),
                     events: {
                         onSelect: (selectedFiles, Win) => {
+                            // @todo
                             for (let File of selectedFiles) {
                                 this.addFile(File.hash);
                             }
