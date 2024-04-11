@@ -18,7 +18,7 @@ trait ErpEntityCustomerFiles
 
     abstract public function addCustomDataEntry(string $key, mixed $value): void;
 
-    abstract public function getCustomDataEntry($key): mixed;
+    abstract public function getCustomDataEntry(string $key): mixed;
 
     //endregion
 

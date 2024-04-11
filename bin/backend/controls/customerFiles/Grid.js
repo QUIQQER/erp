@@ -2,14 +2,16 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
 
     'qui/QUI',
     'qui/controls/Control',
+    'package/quiqqer/erp/bin/backend/utils/ERPEntities',
     'controls/grid/Grid',
     'Ajax',
     'Locale'
 
-], function(QUI, QUIControl, Grid, QUIAjax, QUILocale) {
+], function(QUI, QUIControl, ERPEntityUtils, Grid, QUIAjax, QUILocale) {
     'use strict';
 
     const lg = 'quiqqer/erp';
+    let entityTitle = '';
 
     return new Class({
 
@@ -18,6 +20,7 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
 
         Binds: [
             'openCustomerFiles',
+            'removeSelectedFiles',
             '$onInject'
         ],
 
@@ -48,54 +51,87 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                 }
             }).inject(this.getElm());
 
-            this.$Grid = new Grid(Container, {
-                buttons: [
-                    {
-                        text: 'Kundendateien',
-                        title: 'Datei aus Kundendateien auswählen',
-                        events: {
-                            click: this.openCustomerFiles
+            ERPEntityUtils.getEntityTitle(this.getAttribute('hash')).then((result) => {
+                entityTitle = result;
+
+                this.$Grid = new Grid(Container, {
+                    multipleSelection: true,
+                    buttons: [
+                        {
+                            text: QUILocale.get(lg, 'customer.grid.customerFiles'),
+                            textimage: 'fa fa-user-o',
+                            title: QUILocale.get(lg, 'customer.grid.customerFiles.title'),
+                            events: {
+                                click: this.openCustomerFiles
+                            }
+                        }, {
+                            text: QUILocale.get(lg, 'customer.grid.button.remove', {
+                                entity: entityTitle
+                            }),
+                            textimage: 'fa fa-link-slash',
+                            name: 'remove',
+                            disabled: true,
+                            position: 'right',
+                            events: {
+                                click: this.removeSelectedFiles
+                            }
+                        }
+                    ],
+                    columnModel: [
+                        {
+                            header: '<span class="fa fa-envelope" title="' +
+                                QUILocale.get(lg, 'customer.grid.mail.checkbox.title') + '"></span>',
+                            dataIndex: 'mail',
+                            dataType: 'node',
+                            width: 50
+                        }, {
+                            header: QUILocale.get('quiqqer/quiqqer', 'type'),
+                            dataIndex: 'icon',
+                            dataType: 'node',
+                            width: 40
+                        }, {
+                            header: QUILocale.get('quiqqer/quiqqer', 'file'),
+                            dataIndex: 'basename',
+                            dataType: 'string',
+                            width: 300
+                        }, {
+                            header: QUILocale.get('quiqqer/quiqqer', 'size'),
+                            dataIndex: 'filesize_formatted',
+                            dataType: 'string',
+                            width: 100
+                        }, {
+                            header: QUILocale.get('quiqqer/customer', 'window.customer.tbl.header.uploadTime'),
+                            dataIndex: 'uploadTime',
+                            dataType: 'string',
+                            width: 100
+                        }, {
+                            dataIndex: 'hash',
+                            dataType: 'string',
+                            hidden: true
+                        }
+                    ]
+                });
+
+                this.$Grid.addEvents({
+                    refresh: () => {
+                        this.$Grid.getButtons('remove')[0].disable();
+                    },
+                    click: () => {
+                        const selected = this.$Grid.getSelectedData();
+                        const Remove = this.$Grid.getButtons('remove')[0];
+
+                        if (selected.length) {
+                            Remove.enable();
                         }
                     }
-                ],
-                columnModel: [
-                    {
-                        header: '<span class="fa fa-envelope" title="Als Mailanhang setzen"></span>',
-                        dataIndex: 'mail',
-                        dataType: 'node',
-                        width: 50
-                    }, {
-                        header: QUILocale.get('quiqqer/quiqqer', 'type'),
-                        dataIndex: 'icon',
-                        dataType: 'node',
-                        width: 40
-                    }, {
-                        header: QUILocale.get('quiqqer/quiqqer', 'file'),
-                        dataIndex: 'basename',
-                        dataType: 'string',
-                        width: 300
-                    }, {
-                        header: QUILocale.get('quiqqer/quiqqer', 'size'),
-                        dataIndex: 'filesize_formatted',
-                        dataType: 'string',
-                        width: 100
-                    }, {
-                        header: QUILocale.get('quiqqer/customer', 'window.customer.tbl.header.uploadTime'),
-                        dataIndex: 'uploadTime',
-                        dataType: 'string',
-                        width: 100
-                    }, {
-                        dataIndex: 'hash',
-                        dataType: 'string',
-                        hidden: true
-                    }
-                ]
-            });
+                });
 
-            this.$Grid.showLoader();
+                this.$Grid.showLoader();
 
-            this.getCustomer().then((customerHash) => {
+                return this.getCustomer();
+            }).then((customerHash) => {
                 this.setAttribute('customerId', customerHash);
+            }).then((result) => {
                 return this.refresh();
             });
         },
@@ -109,8 +145,6 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
 
             return new Promise((resolve, reject) => {
                 QUIAjax.get('package_quiqqer_erp_ajax_customerFiles_getFiles', (files) => {
-                    console.log(files);
-
                     const data = [];
 
                     files.forEach((entry) => {
@@ -173,8 +207,6 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
         },
 
         update: function() {
-            console.log('update');
-
             const gridData = this.$Grid.getData().map((entry) => {
                 return {
                     hash: entry.hash,
@@ -185,7 +217,17 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
             });
 
             return new Promise((resolve, reject) => {
-                QUIAjax.get('package_quiqqer_erp_ajax_customerFiles_update', resolve, {
+                QUIAjax.get('package_quiqqer_erp_ajax_customerFiles_update', () => {
+                    QUI.getMessageHandler().then((MH) => {
+                        MH.addSuccess(
+                            QUILocale.get(lg, 'customer.grid.saved', {
+                                entity: entityTitle
+                            })
+                        );
+                    });
+
+                    resolve();
+                }, {
                     'package': 'quiqqer/erp',
                     hash: this.getAttribute('hash'),
                     files: JSON.encode(gridData),
@@ -212,6 +254,53 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                             }
 
                             Win.close();
+                        }
+                    }
+                }).open();
+            });
+        },
+
+        removeSelectedFiles: function() {
+
+            require(['qui/controls/windows/Confirm'], (QUIConfirm) => {
+                new QUIConfirm({
+                    maxHeight: 500,
+                    maxWidth: 600,
+                    information: QUILocale.get(lg, 'window.delete.customer.grid.information', {
+                        entity: entityTitle
+                    }),
+                    text: QUILocale.get(lg, 'window.delete.customer.grid.text', {
+                        entity: entityTitle
+                    }),
+                    title: QUILocale.get(lg, 'window.delete.customer.grid.title', {
+                        entity: entityTitle
+                    }),
+                    texticon: 'fa fa-link-slash',
+                    icon: 'fa fa-link-slash',
+                    ok_button: {
+                        textimage: 'fa fa-link-slash',
+                        text: QUILocale.get(lg, 'window.delete.customer.grid.title', {
+                            entity: entityTitle
+                        })
+                    },
+                    events: {
+                        onOpen: (Win) => {
+                            const List = new Element('ul').inject(Win.getContent().getElement('.textbody'));
+
+                            this.$Grid.getSelectedData().each((entry) => {
+                                new Element('li', {
+                                    html: entry.basename
+                                }).inject(List);
+                            });
+                        },
+                        onSubmit: (Win) => {
+                            this.$Grid.deleteRows(this.$Grid.getSelectedIndices());
+                            Win.Loader.show();
+
+                            this.update().then(() => {
+                                Win.close();
+                                this.refresh();
+                            });
                         }
                     }
                 }).open();
