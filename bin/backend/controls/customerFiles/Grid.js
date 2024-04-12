@@ -219,6 +219,7 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
             }
 
             this.$Grid.showLoader();
+            this.$Grid.getButtons('remove')[0].disable();
 
             return new Promise((resolve, reject) => {
                 QUIAjax.get('package_quiqqer_erp_ajax_customerFiles_getFiles', (files) => {
