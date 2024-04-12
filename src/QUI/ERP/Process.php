@@ -8,9 +8,14 @@ namespace QUI\ERP;
 
 use QUI;
 
+use function array_filter;
+use function array_map;
 use function array_merge;
 use function class_exists;
 use function count;
+use function get_class;
+use function in_array;
+use function is_callable;
 use function strtotime;
 
 /**
@@ -74,6 +79,114 @@ class Process
         );
 
         return array_filter($entities);
+    }
+
+    /**
+     * This method is designed to organize and group ERP transaction entities that implement the ErpTransactionsInterface.
+     * It filters entities such as invoices, invoice drafts, orders,
+     * and other related items to identify and group together entities that are interconnected.
+     *
+     * For instance, if an order generates an invoice, this method will group them together.
+     * The primary function is to categorize these ERP entities based on their relationships and associations,
+     * facilitating easier management and retrieval of related transactional data within the ERP system.
+     *
+     * @param callable|null $filterEntityTypes - own filter function
+     * @return array
+     */
+    public function getGroupedRelatedTransactionEntities(?callable $filterEntityTypes = null): array
+    {
+        $entities = $this->getEntities();
+        $entities = array_filter($entities, function ($obj) {
+            return $obj instanceof ErpTransactionsInterface;
+        });
+
+        if (is_callable($filterEntityTypes)) {
+            $entities = array_filter($entities, $filterEntityTypes);
+        }
+
+        $groups = [];
+
+        // invoices into the groups
+        if (
+            class_exists('QUI\ERP\Accounting\Invoice\Invoice')
+            && class_exists('QUI\ERP\Accounting\Invoice\InvoiceTemporary')
+        ) {
+            foreach ($entities as $Entity) {
+                if (
+                    !($Entity instanceof QUI\ERP\Accounting\Invoice\Invoice
+                        || $Entity instanceof QUI\ERP\Accounting\Invoice\InvoiceTemporary)
+                ) {
+                    continue;
+                }
+
+                $uuid = $Entity->getUUID();
+
+                $groups[$uuid][] = $Entity;
+
+                if (class_exists('QUI\ERP\Order\Handler') && $Entity->getAttribute('order_id')) {
+                    try {
+                        $groups[$uuid][] = QUI\ERP\Order\Handler::getInstance()->get(
+                            $Entity->getAttribute('order_id')
+                        );
+                    } catch (QUI\Exception) {
+                    }
+                }
+
+                if (class_exists('QUI\ERP\SalesOrders\SalesOrder')) {
+                    $salesOrder = $Entity->getPaymentData('salesOrder');
+
+                    if ($salesOrder) {
+                        try {
+                            $groups[$uuid][] = QUI\ERP\SalesOrders\Handler::getSalesOrder($salesOrder['hash']);
+                        } catch (QUI\Exception) {
+                        }
+                    }
+                }
+            }
+        }
+
+        // not group
+        $notGroup = [];
+        $isInGroups = function (ErpEntityInterface $Entity) use ($groups) {
+            foreach ($groups as $group) {
+                foreach ($group as $EntityInstance) {
+                    if ($Entity->getUUID() === $EntityInstance->getUUID()) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        };
+
+        foreach ($entities as $Entity) {
+            if (!$isInGroups($Entity)) {
+                $notGroup[] = $Entity;
+            }
+        }
+
+        // resulting
+        $entitiesArray = array_map(function ($Entity) {
+            return $Entity->toArray();
+        }, $entities);
+
+        $notGroup = array_map(function ($Entity) {
+            return $Entity->toArray();
+        }, $notGroup);
+
+        $grouped = [];
+
+        foreach ($groups as $key => $entries) {
+            foreach ($entries as $entity) {
+                $grouped[$key][] = $entity->toArray();
+            }
+        }
+
+        return [
+            'entities' => $entitiesArray,
+            'grouped' => $grouped,
+            'notGroup' => $notGroup
+        ];
     }
 
     //region messages

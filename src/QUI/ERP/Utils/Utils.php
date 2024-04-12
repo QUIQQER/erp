@@ -13,6 +13,13 @@ use function trim;
  */
 class Utils
 {
+    public static array $entityIcons = [
+        'QUI\\ERP\\Order\\Order' => 'fa-shopping-basket',
+        'QUI\\ERP\\Accounting\\Invoice\\InvoiceTemporary' => 'fa-file-text-o',
+        'QUI\\ERP\\Accounting\\Invoice\\Invoice' => 'fa-file-text-o',
+        'QUI\\ERP\\SalesOrders\\SalesOrder' => 'fa-suitcase',
+    ];
+
     /**
      * Sanitize article description.
      *
@@ -28,7 +35,7 @@ class Utils
         $description = preg_replace('#<([a-z][a-z0-9]*)[^>]*?(\/?)>#i', '<$1$2>', $description);
 
         // Allow specific tags only
-        $description = strip_tags(
+        return strip_tags(
             $description,
             [
                 '<br>',
@@ -49,7 +56,14 @@ class Utils
                 '<sub>'
             ]
         );
+    }
 
-        return $description;
+    public static function getEntityIcon($className): string
+    {
+        if (isset(self::$entityIcons[$className])) {
+            return self::$entityIcons[$className];
+        }
+
+        return '';
     }
 }

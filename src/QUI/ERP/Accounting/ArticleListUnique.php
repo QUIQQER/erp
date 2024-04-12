@@ -392,8 +392,10 @@ class ArticleListUnique implements IteratorAggregate
      *
      * @throws QUI\Exception
      */
-    public function toHTML(bool|string $template = false): string
-    {
+    public function toHTML(
+        bool|string $template = false,
+        bool|string $articleTemplate = false
+    ): string {
         $Engine = QUI::getTemplateManager()->getEngine();
         $vatArray = [];
 
@@ -458,7 +460,10 @@ class ArticleListUnique implements IteratorAggregate
                 $Currency->setExchangeRate($this->exchangeRate);
             }
 
-            if ($Currency instanceof QUI\ERP\CryptoCurrency\Currency) {
+            if (
+                class_exists('QUI\ERP\CryptoCurrency\Currency')
+                && $Currency instanceof QUI\ERP\CryptoCurrency\Currency
+            ) {
                 $ExchangeCurrency->setExchangeRate($this->exchangeRate);
                 $exchangeRate = $Currency->convertFormat(1, $ExchangeCurrency);
             } else {
@@ -479,7 +484,10 @@ class ArticleListUnique implements IteratorAggregate
             $showExchangeRate = true;
             $DefaultCurrency = QUI\ERP\Defaults::getCurrency();
 
-            if ($Currency instanceof QUI\ERP\CryptoCurrency\Currency) {
+            if (
+                class_exists('QUI\ERP\CryptoCurrency\Currency')
+                && $Currency instanceof QUI\ERP\CryptoCurrency\Currency
+            ) {
                 $DefaultCurrency->setExchangeRate($this->exchangeRate);
                 $exchangeRate = $Currency->convertFormat(1, $DefaultCurrency);
             } else {
@@ -512,6 +520,7 @@ class ArticleListUnique implements IteratorAggregate
             'showHeader' => $this->showHeader,
             'this' => $this,
             'articles' => $articles,
+            'articleTemplate' => $articleTemplate,
             'calculations' => $this->calculations,
             'vatArray' => $vatArray,
             'Locale' => $this->Locale,
