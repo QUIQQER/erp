@@ -13,7 +13,7 @@
     opacity: 0;
 }
 
-.drag-drop-dropper.animation {
+.drag-drop-dropper-animation {
     animation-name: fadeIn;
     animation-duration: 0.3s;
     animation-fill-mode: forwards;
@@ -38,18 +38,18 @@
 }
 
 /* animation */
-.animation .drag-drop-dropper__inner,
-.animation .drag-drop-dropper__icon {
+.drag-drop-dropper-animation .drag-drop-dropper__inner,
+.drag-drop-dropper-animation .drag-drop-dropper__icon {
     animation-duration: 0.3s;
     animation-fill-mode: forwards;
     animation-delay: 0.1s;
 }
 
-.animation .drag-drop-dropper__inner {
+.drag-drop-dropper-animation .drag-drop-dropper__inner {
     animation-name: fadeInBorder;
 }
 
-.animation .drag-drop-dropper__icon {
+.drag-drop-dropper-animation .drag-drop-dropper__icon {
     animation-name: fadeInIconColor;
 }
 
