@@ -8,8 +8,13 @@ namespace QUI\ERP\Accounting;
 
 use QUI;
 use QUI\ERP\Accounting\Calc as ErpCalc;
+use QUI\Exception;
 
+use function dirname;
+use function file_exists;
 use function implode;
+use function is_array;
+use function is_string;
 
 /**
  * Class ArticleView
@@ -29,9 +34,9 @@ class ArticleView extends QUI\QDOM
     protected Article $Article;
 
     /**
-     * @var QUI\ERP\Currency\Currency
+     * @var ?QUI\ERP\Currency\Currency
      */
-    protected QUI\ERP\Currency\Currency $Currency;
+    protected ?QUI\ERP\Currency\Currency $Currency = null;
 
     /**
      * ArticleView constructor.
@@ -110,7 +115,7 @@ class ArticleView extends QUI\QDOM
             }
 
             if (isset($field['custom_calc']['valueText'])) {
-                if (!\is_string($field['custom_calc']['valueText'])) {
+                if (!is_string($field['custom_calc']['valueText'])) {
                     if (isset($field['custom_calc']['valueText'][$current])) {
                         $field['custom_calc']['valueText'] = $field['custom_calc']['valueText'][$current];
                     } else {
@@ -175,11 +180,12 @@ class ArticleView extends QUI\QDOM
     /**
      * Create the html
      *
+     * @param string|bool $template
      * @return string
      *
-     * @throws QUI\Exception
+     * @throws Exception
      */
-    public function toHTML(): string
+    public function toHTML(string|bool $template = false): string
     {
         $Engine = QUI::getTemplateManager()->getEngine();
         $Currency = $this->getCurrency();
@@ -189,7 +195,7 @@ class ArticleView extends QUI\QDOM
         $calc = $article['calculated'];
 
         // quantity unit
-        if (isset($article['quantityUnit']) && \is_array($article['quantityUnit'])) {
+        if (isset($article['quantityUnit']) && is_array($article['quantityUnit'])) {
             $article['quantityUnit'] = $article['quantityUnit']['title'];
         }
 
@@ -237,10 +243,14 @@ class ArticleView extends QUI\QDOM
             'hasAppliedVat' => !empty($articleData['calculated']['vatArray']['vat'])
         ]);
 
-        if ($this->Article instanceof QUI\ERP\Accounting\Articles\Text) {
-            return $Engine->fetch(\dirname(__FILE__) . '/ArticleViewText.html');
+        if ($template && file_exists($template)) {
+            return $Engine->fetch($template);
         }
 
-        return $Engine->fetch(\dirname(__FILE__) . '/ArticleView.html');
+        if ($this->Article instanceof QUI\ERP\Accounting\Articles\Text) {
+            return $Engine->fetch(dirname(__FILE__) . '/ArticleViewText.html');
+        }
+
+        return $Engine->fetch(dirname(__FILE__) . '/ArticleView.html');
     }
 }
