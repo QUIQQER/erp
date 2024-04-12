@@ -32,6 +32,9 @@
     "quiqqer\/erp-accounting-templates": "^1",
     "quiqqer/areas": "^1.2.1"
   },
+  "conflict": {
+    "quiqqer\/quiqqer": "^1.10"
+  },
   "autoload": {
     "psr-4": {
       "QUI\\ERP\\": "src\/QUI\/ERP"
