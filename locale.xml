@@ -1590,6 +1590,10 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <de><![CDATA[Kundendateien]]></de>
             <en><![CDATA[Customer files]]></en>
         </locale>
+        <locale name="customer.grid.uploadCustomerFile">
+            <de><![CDATA[Kundendatei hochladen]]></de>
+            <en><![CDATA[Upload Customer files]]></en>
+        </locale>
         <locale name="customer.grid.customerFiles.title">
             <de><![CDATA[Datei aus Kundendateien auswählen]]></de>
             <en><![CDATA[Select file from customer files]]></en>

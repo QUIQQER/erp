@@ -23,6 +23,7 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
 
         Binds: [
             'openCustomerFiles',
+            'uploadCustomFile',
             'removeSelectedFiles',
             '$onInject'
         ],
@@ -71,7 +72,7 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                     this.$DropInfo.setStyle('display', null);
 
                     if (!this.$DropInfo.hasClass('drag-drop-dropper--animation')) {
-                            this.$DropInfo.addClass('drag-drop-dropper--animation');
+                        this.$DropInfo.addClass('drag-drop-dropper--animation');
                     }
                 }, false);
             });
@@ -98,23 +99,7 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                 const files = Array.from(dt.files);
 
                 this.$Grid.showLoader();
-
-                require(['classes/request/BulkUpload'], (BulkUpload) => {
-                    new BulkUpload({
-                        phpOnFinish: 'package_quiqqer_customer_ajax_backend_files_upload',
-                        params: {
-                            hash: this.getAttribute('hash'),
-                            customerId: this.getAttribute('customerId')
-                        },
-                        events: {
-                            onFinish: (Instance, uploadedFiles) => {
-                                this.addFiles(uploadedFiles).then(() => {
-                                    this.refresh();
-                                });
-                            }
-                        }
-                    }).upload(files);
-                });
+                this.$uploadFiles(files);
             }, false);
 
             // grid
@@ -137,6 +122,12 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                             title: QUILocale.get(lg, 'customer.grid.customerFiles.title'),
                             events: {
                                 click: this.openCustomerFiles
+                            }
+                        }, {
+                            title: QUILocale.get(lg, 'customer.grid.uploadCustomerFile'),
+                            icon: 'fa fa-upload',
+                            events: {
+                                click: this.uploadCustomFile
                             }
                         }, {
                             text: QUILocale.get(lg, 'customer.grid.button.remove', {
@@ -327,6 +318,38 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
         },
 
         /**
+         * @param files
+         * @return {Promise<unknown>}
+         */
+        $uploadFiles: function(files) {
+            return new Promise((resolve) => {
+                require(['classes/request/BulkUpload'], (BulkUpload) => {
+                    const Instance = new BulkUpload({
+                        phpOnFinish: 'package_quiqqer_customer_ajax_backend_files_upload',
+                        params: {
+                            hash: this.getAttribute('hash'),
+                            customerId: this.getAttribute('customerId')
+                        },
+                        events: {
+                            onFinish: (Instance, uploadedFiles) => {
+                                this.addFiles(uploadedFiles).then(() => {
+                                    this.refresh();
+                                    resolve();
+                                });
+                            }
+                        }
+                    });
+
+                    if (files instanceof FileList) {
+                        files = Array.from(files);
+                    }
+                    
+                    Instance.upload(files);
+                });
+            });
+        },
+
+        /**
          * open customer file window
          */
         openCustomerFiles: function() {
@@ -337,7 +360,7 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                     userId: this.getAttribute('customerId'),
                     events: {
                         onSelect: (selectedFiles, Win) => {
-                            // @todo
+                            // @todo refactor to add files
                             for (let File of selectedFiles) {
                                 this.addFile(File.hash);
                             }
@@ -349,8 +372,27 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
             });
         },
 
-        removeSelectedFiles: function() {
+        uploadCustomFile: function() {
+            const Container = new Element('div', {
+                html: '<form action="" method="">' +
+                    '<input type="file" name="files" value="upload" multiple />' +
+                    '</form>'
+            });
 
+            Container.getElement('input').click();
+            Container.getElement('input').addEvent('change', (event) => {
+                const Target = event.target,
+                    files = Target.files;
+
+                if (files.length) {
+                    this.$uploadFiles(files).then(() => {
+                        Container.destroy();
+                    });
+                }
+            });
+        },
+
+        removeSelectedFiles: function() {
             require(['qui/controls/windows/Confirm'], (QUIConfirm) => {
                 new QUIConfirm({
                     maxHeight: 500,
