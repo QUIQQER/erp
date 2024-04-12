@@ -50,7 +50,11 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
             });
 
             // drag drop
-            this.$DropInfo = new Element('div.drag-drop-dropper').inject(this.getElm());
+            this.$DropInfo = new Element('div.drag-drop-dropper', {
+                html: '<div class="drag-drop-dropper__inner drag-drop-dropper__child">' +
+                    '<i class="fa-solid fa-upload drag-drop-dropper__icon drag-drop-dropper__child"></i>' +
+                    '</div>'
+            }).inject(this.getElm());
             this.$DropInfo.setStyle('display', 'none');
 
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -63,16 +67,34 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
             ['dragenter', 'dragover'].forEach(eventName => {
                 this.getElm().addEventListener(eventName, () => {
                     this.$DropInfo.setStyle('display', null);
+                    this.$DropInfo.classList.add('animation');
                 }, false);
             });
 
-            ['dragleave', 'drop'].forEach(eventName => {
-                this.getElm().addEventListener(eventName, (e) => {
-                    if (!e.relatedTarget || e.relatedTarget.parentNode !== this.getElm()) {
-                        this.$DropInfo.setStyle('display', 'none');
-                    }
-                }, false);
-            });
+
+            // Hide drop info only when mouse pointer leaves the element, not when it moves within
+            this.getElm().addEventListener('dragleave', (e) => {
+                const target = e.target;
+
+                // do not hide if target is a child of this.$DropInfo
+                if (target.classList.contains('drag-drop-dropper__child')) {
+                    return;
+                }
+                const rect = target.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+                const offsetY = e.clientY - rect.top;
+
+                if (offsetX <= 0 || offsetY <= 0 || offsetX >= rect.width || offsetY >= rect.height) {
+                    this.$DropInfo.setStyle('display', 'none');
+                    this.$DropInfo.classList.remove('animation');
+                }
+            }, false);
+
+            // Hide drop info when dropping the file
+            this.getElm().addEventListener('drop', () => {
+                this.$DropInfo.setStyle('display', 'none');
+                this.$DropInfo.classList.remove('animation');
+            }, false);
 
             this.getElm().addEventListener('drop', (e) => {
                 const dt = e.dataTransfer;
