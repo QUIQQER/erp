@@ -68,11 +68,12 @@ trait ErpEntityCustomerFiles
      */
     public function setCustomFiles(array $files = []): void
     {
+        $this->clearCustomerFiles();
+
         if (empty($files)) {
             return;
         }
 
-        $this->clearCustomerFiles();
         $customerFiles = [];
 
         foreach ($files as $file) {
