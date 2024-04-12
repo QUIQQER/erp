@@ -13,11 +13,10 @@
     opacity: 0;
 }
 
-.drag-drop-dropper-animation {
+.drag-drop-dropper--animation {
     animation-name: fadeIn;
     animation-duration: 0.3s;
     animation-fill-mode: forwards;
-    /*animation-delay: 0.1s;*/
 }
 
 .drag-drop-dropper__inner {
@@ -31,26 +30,27 @@
 }
 
 .drag-drop-dropper__icon {
-    font-size: 3rem;
+    font-size: 4rem;
     color: #d3e5e5;
     transition: var(--_transition);
     transition-delay: var(--_transition-delay);
 }
 
 /* animation */
-.drag-drop-dropper-animation .drag-drop-dropper__inner,
-.drag-drop-dropper-animation .drag-drop-dropper__icon {
-    animation-duration: 0.3s;
+.drag-drop-dropper--animation .drag-drop-dropper__inner {
+    animation-name: fadeInBorder;
     animation-fill-mode: forwards;
     animation-delay: 0.1s;
 }
 
-.drag-drop-dropper-animation .drag-drop-dropper__inner {
-    animation-name: fadeInBorder;
-}
-
-.drag-drop-dropper-animation .drag-drop-dropper__icon {
-    animation-name: fadeInIconColor;
+/*.drag-drop-dropper--animation .drag-drop-dropper__icon {*/
+.drag-drop-dropper .drag-drop-dropper__icon {
+    animation-name: fadeInIconColor, bounce;
+    animation-delay: 0.1s, 0.2s;
+    animation-timing-function: linear, cubic-bezier(0.280, 0.840, 0.420, 1);
+    animation-duration: 0.3s, 1.25s;
+    animation-iteration-count: 1, infinite;
+    animation-fill-mode: forwards, forwards
 }
 
 @keyframes fadeIn {
@@ -78,4 +78,14 @@
     to {
         color: #6c7d7d;
     }
+}
+
+@keyframes bounce {
+    0%   { transform: scale(1,1)      translateY(0); }
+    15%  { transform: scale(1.1,.9)   translateY(0); }
+    35%  { transform: scale(.9,1.1)   translateY(-20px); }
+    50%  { transform: scale(1.05,.95) translateY(0); }
+    57%  { transform: scale(1,1)      translateY(-5px); }
+    64%  { transform: scale(1,1)      translateY(0); }
+    100% { transform: scale(1,1)      translateY(0); }
 }

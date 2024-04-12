@@ -70,8 +70,8 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                 this.getElm().addEventListener(eventName, () => {
                     this.$DropInfo.setStyle('display', null);
 
-                    if (!this.$DropInfo.hasClass('drag-drop-dropper-animation')) {
-                        this.$DropInfo.addClass('drag-drop-dropper-animation');
+                    if (!this.$DropInfo.hasClass('drag-drop-dropper--animation')) {
+                            this.$DropInfo.addClass('drag-drop-dropper--animation');
                     }
                 }, false);
             });
@@ -89,7 +89,7 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                     }
 
                     this.$DropInfo.setStyle('display', 'none');
-                    this.$DropInfo.removeClass('drag-drop-dropper-animation');
+                    this.$DropInfo.removeClass('drag-drop-dropper--animation');
                 }, false);
             });
 
