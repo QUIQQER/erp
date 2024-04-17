@@ -8,6 +8,7 @@ namespace QUI\ERP;
 
 use QUI;
 use QUI\ERP\Customer\Utils as CustomerUtils;
+use QUI\Interfaces\Users\User as QUIUserInterface;
 
 use function dirname;
 use function is_numeric;
@@ -41,7 +42,7 @@ class Address extends QUI\Users\Address
      * @param array $options - options ['mail' => true, 'tel' => true]
      * @return string - HTML <address>
      */
-    public function getDisplay($options = []): string
+    public function getDisplay(array $options = []): string
     {
         try {
             $Engine = QUI::getTemplateManager()->getEngine(true);
@@ -116,7 +117,7 @@ class Address extends QUI\Users\Address
         return $Engine->fetch(dirname(__FILE__) . '/Address.html');
     }
 
-    public function save($PermissionUser = null)
+    public function save(?QUIUserInterface $PermissionUser = null): void
     {
     }
 

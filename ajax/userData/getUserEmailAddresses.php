@@ -13,7 +13,7 @@ QUI::$Ajax->registerFunction(
         $emailAddresses = [];
 
         try {
-            $User = QUI::getUsers()->get((int)$userId);
+            $User = QUI::getUsers()->get($userId);
         } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return $emailAddresses;

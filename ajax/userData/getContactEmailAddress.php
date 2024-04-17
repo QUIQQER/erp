@@ -14,7 +14,7 @@ QUI::$Ajax->registerFunction(
     function ($userId) {
         try {
             $email = Utils::getInstance()->getContactEmailByCustomer(
-                QUI::getUsers()->get((int)$userId)
+                QUI::getUsers()->get($userId)
             );
         } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
