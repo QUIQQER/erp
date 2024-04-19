@@ -7,7 +7,6 @@
 namespace QUI\ERP;
 
 use QUI;
-
 use QUI\ExceptionStack;
 use QUI\Users\User;
 
