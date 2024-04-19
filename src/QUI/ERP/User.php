@@ -19,7 +19,6 @@ use function explode;
 use function get_class;
 use function is_array;
 use function is_bool;
-use function is_numeric;
 use function json_decode;
 use function trim;
 

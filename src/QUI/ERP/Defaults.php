@@ -42,10 +42,10 @@ class Defaults
     {
         try {
             $Package = QUI::getPackage('quiqqer/erp');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
 
             return $Config->get($section, $key);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         return false;
@@ -59,21 +59,21 @@ class Defaults
      */
     public static function getArea(): Areas\Area
     {
-        $Areas        = new QUI\ERP\Areas\Handler();
-        $Package      = QUI::getPackage('quiqqer/tax');
-        $Config       = $Package->getConfig();
+        $Areas = new QUI\ERP\Areas\Handler();
+        $Package = QUI::getPackage('quiqqer/tax');
+        $Config = $Package->getConfig();
         $standardArea = $Config->getValue('shop', 'area');
 
         try {
             $Area = $Areas->getChild($standardArea);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             QUI\System\Log::addError(
                 'The ecoyn default area was not found. Please check your ecoyn area settings.'
             );
 
             // use area from default country
             $Country = self::getCountry();
-            $Area    = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+            $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
         }
 
         /* @var $Area QUI\ERP\Areas\Area */
@@ -119,14 +119,14 @@ class Defaults
 
         try {
             $Package = QUI::getPackage('quiqqer/erp');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
 
             self::$userRelatedCurrency = $Config->get('general', 'userRelatedCurrency');
 
             if (!self::$userRelatedCurrency) {
                 return self::getCurrency();
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         return QUI\ERP\Currency\Handler::getUserCurrency($User);
@@ -141,8 +141,8 @@ class Defaults
     {
         try {
             $Package = QUI::getPackage('quiqqer/tax');
-            $Config  = $Package->getConfig();
-        } catch (QUI\Exception $Exception) {
+            $Config = $Package->getConfig();
+        } catch (QUI\Exception) {
             return QUI\ERP\Utils\User::IS_BRUTTO_USER;
         }
 
@@ -164,7 +164,7 @@ class Defaults
     {
         try {
             $Package = QUI::getPackage('quiqqer/erp');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
 
             if (!$Config) {
                 return 8;
@@ -202,7 +202,7 @@ class Defaults
 
         try {
             $Package = QUI::getPackage('quiqqer/erp');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
@@ -238,7 +238,7 @@ class Defaults
 
         try {
             $Package = QUI::getPackage('quiqqer/erp');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
@@ -265,7 +265,7 @@ class Defaults
     {
         try {
             $Config = QUI::getPackage('quiqqer/erp')->getConfig();
-            $logo   = $Config->get('general', 'logo');
+            $logo = $Config->get('general', 'logo');
 
             if (!empty($logo)) {
                 return QUI\Projects\Media\Utils::getImageByUrl($logo);

@@ -22,17 +22,17 @@ class Debug
     protected static ?Debug $Instance = null;
 
     /**
-     * @var QUI\Config
+     * @var ?QUI\Config
      */
-    protected $Config;
+    protected QUI\Config|null $Config = null;
 
     /**
-     * @var int
+     * @var int|bool
      */
-    protected $debug = false;
+    protected int|bool $debug = false;
 
     /**
-     * @return Debug
+     * @return Debug|null
      */
     public static function getInstance(): ?Debug
     {
@@ -62,7 +62,7 @@ class Debug
     /**
      * Enable the debugging
      */
-    public function enable()
+    public function enable(): void
     {
         $this->debug = 1;
     }
@@ -70,7 +70,7 @@ class Debug
     /**
      * Disable the debugging
      */
-    public function disable()
+    public function disable(): void
     {
         $this->debug = 0;
     }
@@ -79,10 +79,10 @@ class Debug
      * Send debug logs
      * only if debugging is true
      *
-     * @param object|string|integer|array $value - debug data
-     * @param string|bool $source - debug source
+     * @param object|integer|array|string $value - debug data
+     * @param bool|string $source - debug source
      */
-    public function log($value, $source = false)
+    public function log(object|int|array|string $value, bool|string $source = false): void
     {
         if (!$this->debug) {
             return;
