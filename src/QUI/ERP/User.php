@@ -19,6 +19,7 @@ use function explode;
 use function get_class;
 use function is_array;
 use function is_bool;
+use function is_numeric;
 use function json_decode;
 use function trim;
 
@@ -37,9 +38,9 @@ class User extends QUI\QDOM implements UserInterface
     protected int $id;
 
     /**
-     * @var string|int
+     * @var string
      */
-    protected string|int $uuid;
+    protected string $uuid = '';
 
     /**
      * @var string
@@ -101,7 +102,12 @@ class User extends QUI\QDOM implements UserInterface
             }
         }
 
-        $this->id = $attributes['id'];
+        if (!isset($attributes['id']) && !isset($attributes['uuid'])) {
+            throw new QUI\ERP\Exception(
+                'Missing attribute: id or uuid'
+            );
+        }
+
         $this->isCompany = !empty($attributes['isCompany']) || !empty($attributes['company']);
         $this->lang = $attributes['lang'];
         $this->username = $attributes['username'];
@@ -114,9 +120,18 @@ class User extends QUI\QDOM implements UserInterface
             $this->country = $attributes['country'];
         }
 
+        if (isset($attributes['id'])) {
+            $this->id = $attributes['id'];
+        }
+
         if (isset($attributes['uuid'])) {
             $this->uuid = $attributes['uuid'];
         }
+
+        if (empty($this->uuid)) {
+            $this->uuid = $this->id;
+        }
+
 
         if (isset($attributes['data']) && is_array($attributes['data'])) {
             $this->setAttributes($attributes['data']);
@@ -145,7 +160,6 @@ class User extends QUI\QDOM implements UserInterface
     public static function getNeedles(): array
     {
         return [
-            'id',
             'country',
             'username',
             'firstname',
@@ -206,6 +220,7 @@ class User extends QUI\QDOM implements UserInterface
 
         return new self([
             'id' => $User->getId(),
+            'uuid' => $User->getUUID(),
             'country' => $country,
             'username' => $User->getUsername(),
             'firstname' => $User->getAttribute('firstname'),
@@ -258,6 +273,7 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * @return int|false
+     * @deprecated
      */
     public function getId(): int|false
     {
@@ -266,6 +282,7 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * @return string
+     * @deprecated
      */
     public function getUniqueId(): string
     {
@@ -375,7 +392,7 @@ class User extends QUI\QDOM implements UserInterface
     {
         $attributes = parent::getAttributes();
         $attributes['country'] = $this->getCountry();
-        $attributes['id'] = $this->getId();
+        $attributes['uuid'] = $this->getUUID();
         $attributes['lang'] = $this->getLang();
         $attributes['isCompany'] = $this->isCompany();
         $attributes['firstname'] = $this->getAttribute('firstname');
@@ -400,18 +417,12 @@ class User extends QUI\QDOM implements UserInterface
      */
     public function getAttribute(string $name): mixed
     {
-        switch ($name) {
-            case 'firstname':
-                return $this->firstName;
-
-            case 'lastname':
-                return $this->lastName;
-
-            case 'country':
-                return $this->getCountry();
-        }
-
-        return parent::getAttribute($name);
+        return match ($name) {
+            'firstname' => $this->firstName,
+            'lastname' => $this->lastName,
+            'country' => $this->getCountry(),
+            default => parent::getAttribute($name),
+        };
     }
 
     /**

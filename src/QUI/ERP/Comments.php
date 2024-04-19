@@ -8,6 +8,9 @@ namespace QUI\ERP;
 
 use QUI;
 
+use QUI\ExceptionStack;
+use QUI\Users\User;
+
 use function is_array;
 use function is_string;
 use function json_decode;
@@ -219,11 +222,10 @@ class Comments
     /**
      * Get comments by user
      *
-     * @param QUI\Users\User $User
-     * @return Comments
+     * @param User $User
+     * @return Comments|null
      *
-     * @throws QUI\Exception
-     * @throws QUI\ExceptionStack
+     * @throws ExceptionStack
      */
     public static function getCommentsByUser(QUI\Users\User $User): ?Comments
     {

@@ -254,7 +254,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             if (this.$CustomerEdit) {
                 this.$CustomerEdit.setStyle('display', 'inline');
             }
-            console.log('user data', data);
+
             let dataPromise = Promise.resolve();
             let addressPromise = Promise.resolve();
 
@@ -475,7 +475,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
         /**
          * Sets data by specific address.
          *
-         * @param {Object} address - Adress data
+         * @param {Object} address - Address data
          * @return {void}
          */
         $setDataByAddress: function(address) {
@@ -483,7 +483,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             this.$AddressField.value = address.id;
 
             this.setAttribute('id', address.id);
-            this.setAttribute('addressId', address.id);
+            this.setAttribute('addressId', address.uuid);
 
             this.$refreshValues();
 
@@ -515,7 +515,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
         },
 
         /**
-         * Set a address to the user data
+         * Set an address to the user data
          *
          * @param {String|Number} addressId
          * @return {Promise}

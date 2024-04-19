@@ -64,10 +64,10 @@ class Price
      */
     public function __construct($price, QUI\ERP\Currency\Currency $Currency, $User = false)
     {
-        $this->price    = $price;
+        $this->price = $price;
         $this->Currency = $Currency;
 
-        $this->User      = $User;
+        $this->User = $User;
         $this->discounts = [];
 
         if (!QUI::getUsers()->isUser($User)) {
@@ -82,9 +82,9 @@ class Price
     public function toArray(): array
     {
         return [
-            'price'          => $this->value(),
-            'currency'       => $this->getCurrency()->getCode(),
-            'display'        => $this->getDisplayPrice(),
+            'price' => $this->value(),
+            'currency' => $this->getCurrency()->getCode(),
+            'display' => $this->getDisplayPrice(),
             'isMinimalPrice' => $this->isMinimalPrice()
         ];
     }
@@ -186,17 +186,17 @@ class Price
     /**
      * Validates a price value
      *
-     * @param int|float|string $value
+     * @param mixed $value
      * @param QUI\Locale|null $Locale - based locale, in which the price is
      * @return float|int|null
      */
-    public static function validatePrice($value, $Locale = null)
+    public static function validatePrice(mixed $value, QUI\Locale $Locale = null): float|int|null
     {
         if (is_float($value)) {
             return round($value, QUI\ERP\Defaults::getPrecision());
         }
 
-        $value      = (string)$value;
+        $value = (string)$value;
         $isNegative = substr($value, 0, 1) === '-';
 
         // value cleanup
@@ -216,10 +216,10 @@ class Price
             $negativeTurn = -1;
         }
 
-        $decimalSeparator  = $Locale->getDecimalSeparator();
+        $decimalSeparator = $Locale->getDecimalSeparator();
         $thousandSeparator = $Locale->getGroupingSeparator();
 
-        $decimal   = mb_strpos($value, $decimalSeparator);
+        $decimal = mb_strpos($value, $decimalSeparator);
         $thousands = mb_strpos($value, $thousandSeparator);
 
         if ($thousands === false && $decimal === false) {

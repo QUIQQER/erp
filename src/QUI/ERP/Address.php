@@ -34,6 +34,10 @@ class Address extends QUI\Users\Address
         if (isset($data['id'])) {
             $this->id = (int)$data['id'];
         }
+
+        if (isset($data['uuid'])) {
+            $this->uuid = $data['uuid'];
+        }
     }
 
     /**
@@ -44,13 +48,7 @@ class Address extends QUI\Users\Address
      */
     public function getDisplay(array $options = []): string
     {
-        try {
-            $Engine = QUI::getTemplateManager()->getEngine(true);
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::writeDebugException($Exception);
-
-            return '';
-        }
+        $Engine = QUI::getTemplateManager()->getEngine(true);
 
         $contactPerson = '';
         $isCompany = false;
