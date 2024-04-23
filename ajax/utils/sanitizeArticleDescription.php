@@ -7,10 +7,12 @@
  * @return string
  */
 
+use QUI\ERP\Utils\Utils;
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_utils_sanitizeArticleDescription',
     function ($description) {
-        return \QUI\ERP\Utils\Utils::sanitizeArticleDescription($description);
+        return Utils::sanitizeArticleDescription($description);
     },
     ['description'],
     'Permission::checkAdminUser'

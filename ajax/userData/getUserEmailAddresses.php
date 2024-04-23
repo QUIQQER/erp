@@ -7,6 +7,8 @@
  * @return string
  */
 
+use QUI\Users\Address;
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_userData_getUserEmailAddresses',
     function ($userId) {
@@ -23,7 +25,7 @@ QUI::$Ajax->registerFunction(
             $emailAddresses[] = $User->getAttribute('email');
         }
 
-        /** @var \QUI\Users\Address $Address */
+        /** @var Address $Address */
         foreach ($User->getAddressList() as $Address) {
             foreach ($Address->getMailList() as $email) {
                 $emailAddresses[] = $email;
