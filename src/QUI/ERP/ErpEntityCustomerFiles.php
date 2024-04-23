@@ -14,8 +14,6 @@ trait ErpEntityCustomerFiles
 
     abstract public function getCustomer(): ?ErpUser;
 
-    abstract public function getId(): int;
-
     abstract public function addCustomDataEntry(string $key, mixed $value): void;
 
     abstract public function getCustomDataEntry(string $key): mixed;

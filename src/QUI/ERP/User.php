@@ -26,7 +26,6 @@ use function trim;
  * Class User
  * ERP User, a user object compatible to the QUIQQER User Interface
  *
- * @todo implement UUID
  * @package QUI\ERP
  */
 class User extends QUI\QDOM implements UserInterface
@@ -272,7 +271,7 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * @return int|false
-     * @deprecated
+     * @deprecated use getUUID()
      */
     public function getId(): int|false
     {
@@ -281,7 +280,7 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * @return string
-     * @deprecated
+     * @deprecated use getUUID()
      */
     public function getUniqueId(): string
     {
@@ -297,7 +296,7 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getName(): string
     {
