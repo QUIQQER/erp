@@ -9,7 +9,6 @@ namespace QUI\ERP\Accounting;
 use QUI;
 use QUI\ERP\Money\Price;
 use QUI\ERP\Tax\Utils as TaxUtils;
-
 use QUI\Exception;
 
 use function floatval;

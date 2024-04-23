@@ -8,7 +8,6 @@ namespace QUI\ERP\Accounting;
 
 use IteratorAggregate;
 use QUI;
-
 use QUI\ERP\Accounting\PriceFactors\Factor;
 use QUI\ERP\Currency\Currency;
 use QUI\ERP\Exception;
