@@ -72,9 +72,9 @@ class OutputTemplate
         string $entityType,
         string $template = null
     ) {
-        $this->Engine           = QUI::getTemplateManager()->getEngine();
+        $this->Engine = QUI::getTemplateManager()->getEngine();
         $this->TemplateProvider = $TemplateProvider;
-        $this->OutputProvider   = $OutputProvider;
+        $this->OutputProvider = $OutputProvider;
 
         $templates = $this->TemplateProvider::getTemplates($entityType);
 
@@ -96,10 +96,10 @@ class OutputTemplate
             }
         }
 
-        $this->template   = $template;
+        $this->template = $template;
         $this->entityType = $entityType;
-        $this->entityId   = $entityId;
-        $this->Entity     = $this->OutputProvider::getEntity($entityId);
+        $this->entityId = $entityId;
+        $this->Entity = $this->OutputProvider::getEntity($entityId);
     }
 
     /**
@@ -122,7 +122,7 @@ class OutputTemplate
         $Locale = $this->OutputProvider::getLocale($this->entityId);
         QUI::getLocale()->setTemporaryCurrent($Locale->getCurrent());
 
-        $templateData                    = $this->OutputProvider::getTemplateData($this->entityId);
+        $templateData = $this->OutputProvider::getTemplateData($this->entityId);
         $templateData['erpOutputEntity'] = $this->Entity;
 
         $this->Engine->assign($templateData);
@@ -172,9 +172,9 @@ class OutputTemplate
         QUI::getLocale()->setTemporaryCurrent($Locale->getCurrent());
 
         $Document = new QUI\HtmlToPdf\Document([
-            'marginTop'         => 30, // dies ist variabel durch quiqqerInvoicePdfCreate
-            'filename'          => $this->OutputProvider::getDownloadFileName($this->entityId) . '.pdf',
-            'marginBottom'      => 80,  // dies ist variabel durch quiqqerInvoicePdfCreate,
+            'marginTop' => 30, // dies ist variabel durch quiqqerInvoicePdfCreate
+            'filename' => $this->OutputProvider::getDownloadFileName($this->entityId) . '.pdf',
+            'marginBottom' => 80,  // dies ist variabel durch quiqqerInvoicePdfCreate,
             'pageNumbersPrefix' => $Locale->get('quiqqer/htmltopdf', 'footer.page.prefix')
         ]);
 

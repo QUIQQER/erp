@@ -47,12 +47,11 @@ class Output
      * Get the OutputProvider for a specific entity type
      *
      * @param string $entityType
-     * @return OutputProviderInterface|false - OutputProvider class (static) or false if none found
+     * @return string|false - OutputProvider class (static) or false if none found
      */
-    public static function getOutputProviderByEntityType(string $entityType): bool|OutputProviderInterface
+    public static function getOutputProviderByEntityType(string $entityType): bool|string
     {
         foreach (self::getAllOutputProviders() as $outputProvider) {
-            /** @var OutputProviderInterface $class */
             $class = $outputProvider['class'];
 
             if ($class::getEntityType() === $entityType) {
@@ -414,9 +413,9 @@ class Output
      * Return default Output Template provider class for a specific entity type
      *
      * @param string $entityType
-     * @return OutputTemplateProviderInterface|false
+     * @return string|false
      */
-    public static function getDefaultOutputTemplateProviderForEntityType(string $entityType): OutputTemplateProviderInterface|bool
+    public static function getDefaultOutputTemplateProviderForEntityType(string $entityType): string|bool
     {
         $defaultEntityTypeTemplate = self::getDefaultOutputTemplateForEntityType($entityType);
 
@@ -428,7 +427,6 @@ class Output
 
         // Fallback: Choose next available provider
         foreach (self::getAllOutputTemplateProviders() as $provider) {
-            /** @var OutputTemplateProviderInterface $class */
             $class = $provider['class'];
             $providerTemplates = $class::getTemplates($entityType);
 
