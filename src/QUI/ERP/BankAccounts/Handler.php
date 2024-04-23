@@ -27,13 +27,13 @@ class Handler
     public static function addBankAccount(array $data): array
     {
         $fields = [
-            'title'              => true,
-            'name'               => true,
-            'iban'               => true,
-            'bic'                => true,
-            'accountHolder'      => true,
-            'creditorId'         => false,
-            'default'            => false,
+            'title' => true,
+            'name' => true,
+            'iban' => true,
+            'bic' => true,
+            'accountHolder' => true,
+            'creditorId' => false,
+            'default' => false,
             'financialAccountNo' => false
         ];
 
@@ -56,7 +56,7 @@ class Handler
         $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
 
         $bankAccount['id'] = $id;
-        $list[$id]         = $bankAccount;
+        $list[$id] = $bankAccount;
 
         $Conf->setValue('bankAccounts', 'accounts', json_encode($list));
         $Conf->save();
@@ -69,10 +69,10 @@ class Handler
      *
      * @return array|false
      */
-    public static function getCompanyBankAccount()
+    public static function getCompanyBankAccount(): bool|array
     {
         try {
-            $bankAccounts  = self::getList();
+            $bankAccounts = self::getList();
             $bankAccountId = QUI::getPackage('quiqqer/erp')->getConfig()->get('company', 'bankAccountId');
         } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -91,7 +91,7 @@ class Handler
      *
      * @return array|false
      */
-    public static function getDefaultBankAccount()
+    public static function getDefaultBankAccount(): bool|array
     {
         try {
             $bankAccounts = self::getList();
@@ -114,7 +114,7 @@ class Handler
      *
      * @return array|false
      */
-    public static function getBankAccountById(int $id)
+    public static function getBankAccountById(int $id): bool|array
     {
         try {
             $bankAccounts = self::getList();

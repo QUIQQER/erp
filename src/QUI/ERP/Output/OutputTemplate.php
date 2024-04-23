@@ -15,19 +15,19 @@ use function putenv;
 class OutputTemplate
 {
     /**
-     * @var OutputTemplateProviderInterface
+     * @var string|OutputTemplateProviderInterface
      */
-    protected $TemplateProvider;
+    protected string|OutputTemplateProviderInterface $TemplateProvider;
 
     /**
-     * @var OutputProviderInterface
+     * @var string|OutputProviderInterface
      */
-    protected $OutputProvider;
+    protected string|OutputProviderInterface $OutputProvider;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $template;
+    protected string|null $template;
 
     /**
      * @var QUI\Interfaces\Template\EngineInterface
@@ -42,14 +42,14 @@ class OutputTemplate
     /**
      * @var string|int
      */
-    protected $entityId;
+    protected string|int $entityId;
 
     /**
      * The entity the output is created for
      *
      * @var mixed
      */
-    protected $Entity;
+    protected mixed $Entity;
 
     /**
      * @var bool
@@ -61,18 +61,16 @@ class OutputTemplate
      *
      * @param string|OutputTemplateProviderInterface $TemplateProvider - Template provider class
      * @param string|OutputProviderInterface $OutputProvider - Output provider class
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @param string $entityType
      * @param string|null $template (optional) - Template identifier (from template provider)
-     *
-     * @throws QUI\Exception
      */
     public function __construct(
-        $TemplateProvider,
-        $OutputProvider,
-        $entityId,
+        OutputTemplateProviderInterface|string $TemplateProvider,
+        OutputProviderInterface|string $OutputProvider,
+        int|string $entityId,
         string $entityType,
-        $template = null
+        string $template = null
     ) {
         $this->Engine           = QUI::getTemplateManager()->getEngine();
         $this->TemplateProvider = $TemplateProvider;
@@ -107,7 +105,7 @@ class OutputTemplate
     /**
      * @return mixed
      */
-    public function getEntity()
+    public function getEntity(): mixed
     {
         return $this->Entity;
     }
@@ -117,8 +115,9 @@ class OutputTemplate
      *
      * @param bool $preview (optional) -
      * @return string - HTML content
+     * @throws QUI\Exception
      */
-    public function getHTML($preview = false): string
+    public function getHTML(bool $preview = false): string
     {
         $Locale = $this->OutputProvider::getLocale($this->entityId);
         QUI::getLocale()->setTemporaryCurrent($Locale->getCurrent());
@@ -215,7 +214,7 @@ class OutputTemplate
     /**
      * @return OutputTemplateProviderInterface|string
      */
-    public function getTemplateProvider()
+    public function getTemplateProvider(): OutputTemplateProviderInterface|string
     {
         if (is_string($this->TemplateProvider)) {
             return $this->TemplateProvider;

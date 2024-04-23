@@ -41,7 +41,7 @@ class Calculations
      *
      * @throws Exception
      */
-    public function __construct($attributes, $articles = [])
+    public function __construct(array $attributes, array $articles = [])
     {
         $needles = [
             'sum',
@@ -67,7 +67,7 @@ class Calculations
             $this->Currency = QUI\ERP\Currency\Handler::getCurrency(
                 $attributes['currencyData']['code']
             );
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             $this->Currency = QUI\ERP\Defaults::getCurrency();
         }
 
@@ -164,7 +164,7 @@ class Calculations
      *
      * @return mixed
      */
-    public function getVatArray()
+    public function getVatArray(): mixed
     {
         return $this->attributes['vatArray'];
     }

@@ -7,7 +7,9 @@
 namespace QUI\ERP\Money;
 
 use QUI;
+use QUI\ERP\Currency\Currency;
 use QUI\ERP\Discount\Discount;
+use QUI\Interfaces\Users\User;
 
 use function floatval;
 use function is_float;
@@ -16,8 +18,6 @@ use function mb_substr;
 use function preg_replace;
 use function round;
 use function str_replace;
-use function strpos;
-use function substr;
 use function trim;
 
 /**
@@ -28,9 +28,9 @@ class Price
 {
     /**
      * Netto Price
-     * @var float
+     * @var float|int
      */
-    protected $price;
+    protected float|int $price;
 
     /**
      * Price currency
@@ -51,19 +51,22 @@ class Price
 
     /**
      * User
-     * @var bool|QUI\Users\User
+     * @var ?QUI\Interfaces\Users\User
      */
-    protected $User;
+    protected ?QUI\Interfaces\Users\User $User = null;
 
     /**
      * Price constructor.
      *
-     * @param float|int|string $price
-     * @param QUI\ERP\Currency\Currency $Currency
-     * @param QUI\Users\User|boolean $User - optional, if no user, session user are used
+     * @param float|int $price
+     * @param Currency $Currency
+     * @param User|null $User - optional, if no user, session user are used
      */
-    public function __construct($price, QUI\ERP\Currency\Currency $Currency, $User = false)
-    {
+    public function __construct(
+        float|int $price,
+        QUI\ERP\Currency\Currency $Currency,
+        QUI\Interfaces\Users\User $User = null
+    ) {
         $this->price = $price;
         $this->Currency = $Currency;
 
@@ -92,9 +95,9 @@ class Price
     /**
      * Return the real price
      *
-     * @return float
+     * @return float|int|null
      */
-    public function getPrice()
+    public function getPrice(): float|int|null
     {
         return $this->validatePrice($this->price);
     }
@@ -102,9 +105,9 @@ class Price
     /**
      * Alias for getPrice
      *
-     * @return float
+     * @return float|int|null
      */
-    public function value()
+    public function value(): float|int|null
     {
         return $this->getPrice();
     }
@@ -112,9 +115,9 @@ class Price
     /**
      * Alias for getPrice
      *
-     * @return float
+     * @return float|int|null
      */
-    public function getValue()
+    public function getValue(): float|int|null
     {
         return $this->getPrice();
     }
@@ -135,7 +138,7 @@ class Price
      * @param QUI\ERP\Discount\Discount $Discount
      * @throws QUI\Exception
      */
-    public function addDiscount(Discount $Discount)
+    public function addDiscount(Discount $Discount): void
     {
         /* @var $Disc Discount */
         foreach ($this->discounts as $Disc) {
@@ -197,7 +200,7 @@ class Price
         }
 
         $value = (string)$value;
-        $isNegative = substr($value, 0, 1) === '-';
+        $isNegative = str_starts_with($value, '-');
 
         // value cleanup
         $value = preg_replace('#[^\d,.]#i', '', $value);
@@ -243,13 +246,12 @@ class Price
 
         $value = floatval($value);
         $value = round($value, QUI\ERP\Defaults::getPrecision());
-        $value = $value * $negativeTurn;
 
-        return $value;
+        return $value * $negativeTurn;
     }
 
     /**
-     * Return if the the price is minimal price and higher prices exists
+     * Return if the price is minimal price and higher prices exists
      *
      * @return bool
      */
@@ -263,7 +265,7 @@ class Price
      * -> price from
      * -> ab
      */
-    public function enableMinimalPrice()
+    public function enableMinimalPrice(): void
     {
         $this->isMinimalPrice = true;
     }
@@ -273,7 +275,7 @@ class Price
      * -> price from
      * -> ab
      */
-    public function disableMinimalPrice()
+    public function disableMinimalPrice(): void
     {
         $this->isMinimalPrice = false;
     }

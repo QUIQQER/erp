@@ -624,6 +624,10 @@ class User extends QUI\QDOM implements UserInterface
         return $this->getAddress();
     }
 
+    public function addAddress(): void
+    {
+    }
+
     /**
      * Does nothing
      * @param array|string $groups

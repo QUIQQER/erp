@@ -21,7 +21,7 @@ class Erp extends AbstractErpProvider
     /**
      * @param Map $Map
      */
-    public static function addMenuItems(Map $Map)
+    public static function addMenuItems(Map $Map): void
     {
         $Extras = $Map->getChildrenByName('extras');
 

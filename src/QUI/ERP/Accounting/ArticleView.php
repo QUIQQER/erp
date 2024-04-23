@@ -8,7 +8,6 @@ namespace QUI\ERP\Accounting;
 
 use QUI;
 use QUI\ERP\Accounting\Calc as ErpCalc;
-use QUI\Exception;
 
 use function dirname;
 use function file_exists;
@@ -182,8 +181,6 @@ class ArticleView extends QUI\QDOM
      *
      * @param string|bool $template
      * @return string
-     *
-     * @throws Exception
      */
     public function toHTML(string|bool $template = false): string
     {

@@ -25,7 +25,7 @@ class Process
      *
      * @deprecated
      */
-    public static function getProcessInformation($hash)
+    public static function getProcessInformation(string $hash): array
     {
         $result = [];
 
@@ -57,7 +57,6 @@ class Process
             $transactions = $Transactions->getTransactionsByHash($hash);
 
             $result['transactions'] = array_map(function ($Transaction) {
-                /* @var $Transaction QUI\ERP\Accounting\Payments\Transactions\Transaction */
                 return $Transaction->getAttributes();
             }, $transactions);
         } catch (QUI\Exception $Exception) {

@@ -19,9 +19,9 @@ use function implode;
 class Defaults
 {
     /**
-     * @var null|string
+     * @var array
      */
-    protected static $timestampFormat = [];
+    protected static array $timestampFormat = [];
 
     /**
      * @var null|bool
@@ -29,16 +29,16 @@ class Defaults
     protected static ?bool $userRelatedCurrency = null;
 
     /**
-     * @var null|string
+     * @var array
      */
-    protected static $dateFormat = [];
+    protected static array $dateFormat = [];
 
     /**
      * @param string $section
      * @param string $key
      * @return array|bool|string
      */
-    public static function conf(string $section, string $key)
+    public static function conf(string $section, string $key): bool|array|string
     {
         try {
             $Package = QUI::getPackage('quiqqer/erp');
@@ -185,10 +185,10 @@ class Defaults
     /**
      * Return the main timestamp format
      *
-     * @param false|string $lang - language of the wanted timestamp
+     * @param bool|string $lang - language of the wanted timestamp
      * @return int|null|string
      */
-    public static function getTimestampFormat($lang = false)
+    public static function getTimestampFormat(bool|string $lang = false): int|string|null
     {
         if ($lang === false) {
             $lang = QUI::getLocale()->getCurrent();
@@ -224,7 +224,7 @@ class Defaults
      * @param bool|string $lang
      * @return string
      */
-    public static function getDateFormat($lang = false): string
+    public static function getDateFormat(bool|string $lang = false): string
     {
         if ($lang === false) {
             $lang = QUI::getLocale()->getCurrent();
@@ -261,7 +261,7 @@ class Defaults
      * @return false|QUI\Projects\Media\Image|string
      * @throws QUI\Exception
      */
-    public static function getLogo()
+    public static function getLogo(): QUI\Projects\Media\Image|bool|string
     {
         try {
             $Config = QUI::getPackage('quiqqer/erp')->getConfig();
@@ -270,7 +270,7 @@ class Defaults
             if (!empty($logo)) {
                 return QUI\Projects\Media\Utils::getImageByUrl($logo);
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         return QUI::getProjectManager()->getStandard()->getMedia()->getLogoImage();

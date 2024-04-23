@@ -76,7 +76,7 @@ class User
                 self::$userBruttoNettoStatus[$uid] = QUI\ERP\Utils\User::IS_NETTO_USER;
                 return self::$userBruttoNettoStatus[$uid];
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
 
@@ -121,7 +121,7 @@ class User
 
         try {
             $Package = QUI::getPackage('quiqqer/tax');
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
 
             return self::$userBruttoNettoStatus[$uid];
@@ -172,7 +172,7 @@ class User
 
                 return self::$userBruttoNettoStatus[$uid];
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             // no address found
         }
 
@@ -196,7 +196,7 @@ class User
 
                 return self::$userBruttoNettoStatus[$uid];
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
 
             return self::$userBruttoNettoStatus[$uid];
@@ -226,7 +226,7 @@ class User
      * @return bool|QUI\ERP\Areas\Area
      * @throws QUI\Exception
      */
-    public static function getUserArea(UserInterface $User)
+    public static function getUserArea(UserInterface $User): bool|QUI\ERP\Areas\Area
     {
         $CurrentAddress = $User->getAttribute('CurrentAddress');
 
@@ -274,7 +274,7 @@ class User
      * @return false|QUI\Users\Address
      * @throws QUI\Exception
      */
-    public static function getUserERPAddress(UserInterface $User)
+    public static function getUserERPAddress(UserInterface $User): bool|Address
     {
         if (!QUI::getUsers()->isUser($User)) {
             throw new QUI\Exception([
@@ -292,7 +292,7 @@ class User
 
         try {
             return $User->getAddress($erpAddress);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         return $User->getStandardAddress();
@@ -314,15 +314,11 @@ class User
      * Filter unwanted user attributes
      * Therefore we can use the attributes in the ERP stack
      *
-     * @param array|mixed $attributes
+     * @param array $attributes
      * @return array
      */
-    public static function filterCustomerAttributes($attributes = []): array
+    public static function filterCustomerAttributes(array $attributes = []): array
     {
-        if (!is_array($attributes)) {
-            return [];
-        }
-
         $needle = [
             'uuid',
             'id',

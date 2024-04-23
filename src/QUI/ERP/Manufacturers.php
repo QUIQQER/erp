@@ -87,7 +87,7 @@ class Manufacturers
      * @param array $address
      * @param array $groupIds - QUIQQER group IDs of manufacturer groups
      *
-     * @return QUI\Users\User
+     * @return QUI\Interfaces\Users\User
      *
      * @throws Exception
      * @throws QUI\Exception
@@ -97,7 +97,7 @@ class Manufacturers
         string $manufacturerId,
         array $address = [],
         array $groupIds = []
-    ): QUI\Users\User {
+    ): QUI\Interfaces\Users\User {
         QUI\Permissions\Permission::checkPermission('quiqqer.erp_manufacturers.create');
 
         $Users = QUI::getUsers();

@@ -106,7 +106,7 @@ class EventHandler
 
             $Manufacturers->activate();
 
-            // Add manufacturer group Id to product manufacturer field
+            // Add manufacturer group ID to product manufacturer field
             if (QUI::getPackageManager()->isInstalled('quiqqer/products')) {
                 try {
                     /** @var QUI\ERP\Products\Field\Types\GroupList $ProductField */
@@ -403,13 +403,7 @@ class EventHandler
             return;
         }
 
-        try {
-            $Engine = QUI::getTemplateManager()->getEngine();
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-
-            return;
-        }
+        $Engine = QUI::getTemplateManager()->getEngine();
 
         // business type
         $businessType = 'b2c';
@@ -458,13 +452,7 @@ class EventHandler
             return;
         }
 
-        try {
-            $Engine = QUI::getTemplateManager()->getEngine();
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-
-            return;
-        }
+        $Engine = QUI::getTemplateManager()->getEngine();
 
         $Engine->assign([
             'User' => $User,
@@ -495,13 +483,7 @@ class EventHandler
             return;
         }
 
-        try {
-            $Engine = QUI::getTemplateManager()->getEngine();
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-
-            return;
-        }
+        $Engine = QUI::getTemplateManager()->getEngine();
 
         try {
             $Conf = QUI::getPackage('quiqqer/frontend-users')->getConfig();
@@ -547,13 +529,7 @@ class EventHandler
             return;
         }
 
-        try {
-            $Engine = QUI::getTemplateManager()->getEngine();
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-
-            return;
-        }
+        $Engine = QUI::getTemplateManager()->getEngine();
 
         try {
             $Conf = QUI::getPackage('quiqqer/frontend-users')->getConfig();
@@ -603,13 +579,7 @@ class EventHandler
             return;
         }
 
-        try {
-            $Engine = QUI::getTemplateManager()->getEngine();
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-
-            return;
-        }
+        $Engine = QUI::getTemplateManager()->getEngine();
 
         try {
             $Conf = QUI::getPackage('quiqqer/frontend-users')->getConfig();
@@ -674,13 +644,7 @@ class EventHandler
             return;
         }
 
-        try {
-            $Engine = QUI::getTemplateManager()->getEngine();
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-
-            return;
-        }
+        $Engine = QUI::getTemplateManager()->getEngine();
 
         try {
             $Conf = QUI::getPackage('quiqqer/frontend-users')->getConfig();

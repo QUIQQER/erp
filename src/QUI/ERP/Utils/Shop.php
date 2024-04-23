@@ -9,8 +9,6 @@ namespace QUI\ERP\Utils;
 use Exception;
 use QUI;
 
-use function strpos;
-
 /**
  * Class Shop
  *
@@ -26,9 +24,9 @@ class Shop
     /**
      * Return the shop business type
      *
-     * @return array|string
+     * @return array|string|null
      */
-    public static function getBusinessType()
+    public static function getBusinessType(): array|string|null
     {
         if (self::$type !== null) {
             return self::$type;
@@ -68,22 +66,22 @@ class Shop
      */
     public static function isB2B(): bool
     {
-        return strpos(self::getBusinessType(), 'B2B') !== false;
+        return str_contains(self::getBusinessType(), 'B2B');
     }
 
     /**
-     * Is the shop an b2c shop?
+     * Is the shop a b2c shop?
      * To know if the shop is only a b2c shop, please use isOnlyB2C()
      *
      * @return bool
      */
     public static function isB2C(): bool
     {
-        return strpos(self::getBusinessType(), 'B2C') !== false;
+        return str_contains(self::getBusinessType(), 'B2C');
     }
 
     /**
-     * Is the shop an b2c and b2b shop, but b2c is more important
+     * Is the shop a b2c and b2b shop, but b2c is more important
      *
      * @return bool
      */
@@ -93,11 +91,11 @@ class Shop
             return false;
         }
 
-        return strpos(self::getBusinessType(), 'B2B') === 0;
+        return str_starts_with(self::getBusinessType(), 'B2B');
     }
 
     /**
-     * Is the shop an b2c and b2b shop, but b2c is more important
+     * Is the shop a b2c and b2b shop, but b2c is more important
      *
      * @return bool
      */
@@ -107,7 +105,7 @@ class Shop
             return false;
         }
 
-        return strpos(self::getBusinessType(), 'B2C') === 0;
+        return str_starts_with(self::getBusinessType(), 'B2C');
     }
 
     /**
@@ -139,7 +137,7 @@ class Shop
     {
         try {
             QUI::getPackageManager()->getInstalledPackage('quiqqer/shipping');
-        } catch (Exception $Exception) {
+        } catch (Exception) {
             return false;
         }
 

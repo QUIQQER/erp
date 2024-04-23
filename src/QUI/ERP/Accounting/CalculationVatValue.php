@@ -7,6 +7,7 @@
 namespace QUI\ERP\Accounting;
 
 use QUI;
+use QUI\ERP\Currency\Currency;
 
 /**
  * Class CalculationVatValue
@@ -32,12 +33,17 @@ class CalculationVatValue extends CalculationValue
      *
      * @param int|float $number
      * @param string $text
-     * @param float $vat
-     * @param QUI\ERP\Currency\Currency|null $Currency
-     * @param int|bool $precision - The optional number of decimal digits to round to.
+     * @param float|int $vat
+     * @param Currency|null $Currency
+     * @param bool|int $precision - The optional number of decimal digits to round to.
      */
-    public function __construct($number, $text, $vat, QUI\ERP\Currency\Currency $Currency = null, $precision = false)
-    {
+    public function __construct(
+        int|float $number,
+        string $text,
+        float|int $vat,
+        QUI\ERP\Currency\Currency $Currency = null,
+        bool|int $precision = false
+    ) {
         parent::__construct($number, $Currency, $precision);
 
         $this->text = $text;
