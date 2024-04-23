@@ -62,7 +62,7 @@ class User
             }
         }
 
-        $uid = $User->getId();
+        $uid = $User->getUUID();
 
         if (isset(self::$userBruttoNettoStatus[$uid])) {
             return self::$userBruttoNettoStatus[$uid];

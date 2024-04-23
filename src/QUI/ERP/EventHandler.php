@@ -101,7 +101,7 @@ class EventHandler
                 QUI::getUsers()->getSystemUser()
             );
 
-            $Conf->setValue('manufacturers', 'groupId', $Manufacturers->getId());
+            $Conf->setValue('manufacturers', 'groupId', $Manufacturers->getUUID());
             $Conf->save();
 
             $Manufacturers->activate();
@@ -117,7 +117,7 @@ class EventHandler
                         $groupIds = [];
                     }
 
-                    $groupIds[] = $Manufacturers->getId();
+                    $groupIds[] = $Manufacturers->getUUID();
                     $ProductField->setOption('groupIds', $groupIds);
                     $ProductField->save();
                 } catch (\Exception $Exception) {
