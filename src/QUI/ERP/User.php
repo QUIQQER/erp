@@ -656,10 +656,6 @@ class User extends QUI\QDOM implements UserInterface
             return !empty($groupId);
         });
 
-        array_walk($groupIds, function (&$groupId) {
-            $groupId = (int)$groupId;
-        });
-
         if (!$array) {
             return $groupIds;
         }
