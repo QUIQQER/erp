@@ -115,9 +115,9 @@ class User extends QUI\QDOM implements UserInterface
 
         if ($attributes['country'] instanceof QUI\Countries\Country) {
             $this->country = $attributes['country']->getCode();
-        } elseif(is_string($attributes['country'])) {
+        } elseif (is_string($attributes['country'])) {
             $this->country = $attributes['country'];
-        } elseif(is_array($attributes['country']) && !empty($attributes['country'])) {
+        } elseif (is_array($attributes['country']) && !empty($attributes['country'])) {
             $this->country = $attributes['country'];
         }
 
