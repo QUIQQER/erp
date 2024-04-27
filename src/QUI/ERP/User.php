@@ -19,6 +19,7 @@ use function explode;
 use function get_class;
 use function is_array;
 use function is_bool;
+use function is_string;
 use function json_decode;
 use function trim;
 
@@ -114,7 +115,9 @@ class User extends QUI\QDOM implements UserInterface
 
         if ($attributes['country'] instanceof QUI\Countries\Country) {
             $this->country = $attributes['country']->getCode();
-        } else {
+        } elseif(is_string($attributes['country'])) {
+            $this->country = $attributes['country'];
+        } elseif(is_array($attributes['country']) && !empty($attributes['country'])) {
             $this->country = $attributes['country'];
         }
 

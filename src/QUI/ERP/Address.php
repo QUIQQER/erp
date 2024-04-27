@@ -28,7 +28,10 @@ class Address extends QUI\Users\Address
      */
     public function __construct($data = [], $User = null)
     {
-        $this->User = $User;
+        if ($User) {
+            $this->User = $User;
+        }
+
         $this->setAttributes($data);
 
         if (isset($data['id'])) {

@@ -83,14 +83,14 @@ class Article implements ArticleInterface
      * The calculated netto sum with quantity and discount
      * @var float|int
      */
-    protected float|int $nettoSum;
+    protected float|int $nettoSum = 0;
 
     /**
      * Sum from the article, without discount and with quantity
      *
      * @var float|int
      */
-    protected float|int $nettoSubSum;
+    protected float|int $nettoSubSum = 0;
 
     /**
      * The article netto price, without discount, without quantity
@@ -98,7 +98,7 @@ class Article implements ArticleInterface
      *
      * @var float|int
      */
-    protected float|int $nettoPrice;
+    protected float|int $nettoPrice = 0;
 
     /**
      * The article netto price, without discount, without quantity
@@ -106,12 +106,12 @@ class Article implements ArticleInterface
      *
      * @var float|int
      */
-    protected float|int $nettoBasisPrice;
+    protected float|int $nettoBasisPrice = 0;
 
     /**
      * @var array
      */
-    protected mixed $vatArray;
+    protected mixed $vatArray = [];
 
     /**
      * @var bool
