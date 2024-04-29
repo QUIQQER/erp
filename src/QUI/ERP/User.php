@@ -117,8 +117,8 @@ class User extends QUI\QDOM implements UserInterface
             $this->country = $attributes['country']->getCode();
         } elseif (is_string($attributes['country'])) {
             $this->country = $attributes['country'];
-        } elseif (is_array($attributes['country']) && !empty($attributes['country'])) {
-            $this->country = $attributes['country'];
+        } elseif (is_array($attributes['country']) && !empty($attributes['country']['code'])) {
+            $this->country = $attributes['country']['code'];
         }
 
         if (isset($attributes['id'])) {
