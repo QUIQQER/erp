@@ -13,6 +13,7 @@ use QUI\Interfaces\Users\User;
 
 use function floatval;
 use function is_float;
+use function is_int;
 use function mb_strpos;
 use function mb_substr;
 use function preg_replace;
@@ -58,15 +59,19 @@ class Price
     /**
      * Price constructor.
      *
-     * @param float|int $price
+     * @param float|int|null $price
      * @param Currency $Currency
      * @param User|null $User - optional, if no user, session user are used
      */
     public function __construct(
-        float|int $price,
+        float|int|null $price,
         QUI\ERP\Currency\Currency $Currency,
         QUI\Interfaces\Users\User $User = null
     ) {
+        if (!$price) {
+            $price = 0;
+        }
+
         $this->price = $price;
         $this->Currency = $Currency;
 
