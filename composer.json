@@ -20,7 +20,7 @@
   },
   "require": {
     "php": "^8",
-    "quiqqer\/quiqqer": "^2",
+    "quiqqer\/core": "^2",
     "quiqqer\/utils": "^1.6",
     "quiqqer\/watcher": "^1|^0.12",
     "quiqqer\/translator": "^1",
