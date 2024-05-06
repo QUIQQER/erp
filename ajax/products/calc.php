@@ -30,7 +30,7 @@ QUI::$Ajax->registerFunction(
             try {
                 $User = QUI\ERP\User::convertUserDataToErpUser($user);
                 $Calc = QUI\ERP\Accounting\Calc::getInstance($User);
-            } catch (QUI\ERP\Exception $Exception) {
+            } catch (QUI\ERP\Exception) {
                 $Calc = QUI\ERP\Accounting\Calc::getInstance();
             }
         } else {
@@ -62,7 +62,7 @@ QUI::$Ajax->registerFunction(
             $Articles->setCurrency(
                 QUI\ERP\Currency\Handler::getCurrency($currency)
             );
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         $result = $Articles->toArray();

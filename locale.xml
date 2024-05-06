@@ -352,6 +352,10 @@
             <de><![CDATA[Rechnungsentwurf]]></de>
             <en><![CDATA[Temporary Invoice]]></en>
         </locale>
+        <locale name="entity.title.QUI\ERP\SalesOrders\SalesOrder">
+            <de><![CDATA[Auftrag]]></de>
+            <en><![CDATA[Sales Order]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -1571,8 +1575,8 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <en><![CDATA[Process: [globalProcessId]]]></en>
         </locale>
         <locale name="window.delete.customer.grid.information">
-            <de><![CDATA[Die Dateien werden nicht gelöscht, sondern nur von der ausgewählten [entity] getrennt.]]></de>
-            <en><![CDATA[The files are not deleted, but only separated from the selected [entity].]]></en>
+            <de><![CDATA[Die Dateien werden nicht gelöscht, sondern nur von der ausgewählten Entität getrennt.]]></de>
+            <en><![CDATA[The files are not deleted, but only separated from the selected Entity.]]></en>
         </locale>
         <locale name="window.delete.customer.grid.text">
             <de><![CDATA[Dateien aus [entity] entfernen]]></de>

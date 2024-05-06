@@ -21,7 +21,7 @@ class Sites
             $Locale = QUI::getLocale();
         }
 
-        $Config   = QUI::getPackage('quiqqer/erp')->getConfig();
+        $Config = QUI::getPackage('quiqqer/erp')->getConfig();
         $language = $Locale->getCurrent();
 
         $terms = $Config->getValue('sites', 'terms_and_conditions');
@@ -30,7 +30,7 @@ class Sites
         if (isset($terms[$language])) {
             try {
                 return SiteUtils::getSiteByLink($terms[$language]);
-            } catch (QUI\Exception $Exception) {
+            } catch (QUI\Exception) {
             }
         }
 
@@ -49,7 +49,7 @@ class Sites
             $Locale = QUI::getLocale();
         }
 
-        $Config   = QUI::getPackage('quiqqer/erp')->getConfig();
+        $Config = QUI::getPackage('quiqqer/erp')->getConfig();
         $language = $Locale->getCurrent();
 
         $terms = $Config->getValue('sites', 'revocation');
@@ -58,7 +58,7 @@ class Sites
         if (isset($terms[$language])) {
             try {
                 return SiteUtils::getSiteByLink($terms[$language]);
-            } catch (QUI\Exception $Exception) {
+            } catch (QUI\Exception) {
             }
         }
 
@@ -77,7 +77,7 @@ class Sites
             $Locale = QUI::getLocale();
         }
 
-        $Config   = QUI::getPackage('quiqqer/erp')->getConfig();
+        $Config = QUI::getPackage('quiqqer/erp')->getConfig();
         $language = $Locale->getCurrent();
 
         $terms = $Config->getValue('sites', 'privacy_policy');
@@ -86,7 +86,7 @@ class Sites
         if (isset($terms[$language])) {
             try {
                 return SiteUtils::getSiteByLink($terms[$language]);
-            } catch (QUI\Exception $Exception) {
+            } catch (QUI\Exception) {
             }
         }
 

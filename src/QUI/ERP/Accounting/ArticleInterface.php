@@ -6,7 +6,8 @@
 
 namespace QUI\ERP\Accounting;
 
-use QUI;
+use QUI\ERP\Money\Price;
+use QUI\Exception;
 
 /**
  * Article
@@ -20,9 +21,9 @@ interface ArticleInterface
      * Article constructor.
      *
      * @param array $attributes - article attributes
-     * @throws \QUI\Exception
+     * @throws Exception
      */
-    public function __construct($attributes = []);
+    public function __construct(array $attributes = []);
 
     /**
      * @return ArticleView
@@ -40,24 +41,24 @@ interface ArticleInterface
     public function getDescription(): string;
 
     /**
-     * @return integer|float
+     * @return Price
      */
-    public function getUnitPrice();
+    public function getUnitPrice(): Price;
 
     /**
-     * @return integer|float
+     * @return Price
      */
-    public function getUnitPriceUnRounded();
+    public function getUnitPriceUnRounded(): Price;
 
     /**
-     * @return integer|float
+     * @return Price
      */
-    public function getSum();
+    public function getSum(): Price;
 
     /**
-     * @return integer|float
+     * @return float|int|bool
      */
-    public function getQuantity();
+    public function getQuantity(): float|int|bool;
 
     /**
      * @return array

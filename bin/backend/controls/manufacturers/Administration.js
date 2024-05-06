@@ -393,7 +393,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
             }
 
             return this.$Grid.getSelectedData().map(function (entry) {
-                return parseInt(entry.id);
+                return entry.id;
             });
         },
 

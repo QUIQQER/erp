@@ -9,9 +9,11 @@ namespace QUI\ERP\Accounting;
 use QUI;
 use QUI\ERP\Money\Price;
 use QUI\ERP\Tax\Utils as TaxUtils;
+use QUI\Exception;
 
 use function floatval;
 use function get_called_class;
+use function is_array;
 
 /**
  * Class Article
@@ -60,35 +62,35 @@ class Article implements ArticleInterface
     /**
      * @var float|int
      */
-    protected $price;
+    protected float|int $price;
 
     /**
      * @var float|int
      */
-    protected $basisPrice;
+    protected float|int $basisPrice;
+
+    /**
+     * @var float|int|null
+     */
+    protected float|int|null $nettoPriceNotRounded = null;
 
     /**
      * @var float|int
      */
-    protected $nettoPriceNotRounded = null;
-
-    /**
-     * @var float|int
-     */
-    protected $sum;
+    protected float|int $sum;
 
     /**
      * The calculated netto sum with quantity and discount
      * @var float|int
      */
-    protected $nettoSum;
+    protected float|int $nettoSum = 0;
 
     /**
      * Sum from the article, without discount and with quantity
      *
      * @var float|int
      */
-    protected $nettoSubSum;
+    protected float|int $nettoSubSum = 0;
 
     /**
      * The article netto price, without discount, without quantity
@@ -96,7 +98,7 @@ class Article implements ArticleInterface
      *
      * @var float|int
      */
-    protected $nettoPrice;
+    protected float|int $nettoPrice = 0;
 
     /**
      * The article netto price, without discount, without quantity
@@ -104,22 +106,22 @@ class Article implements ArticleInterface
      *
      * @var float|int
      */
-    protected $nettoBasisPrice;
+    protected float|int $nettoBasisPrice = 0;
 
     /**
      * @var array
      */
-    protected $vatArray;
+    protected mixed $vatArray = [];
 
     /**
      * @var bool
      */
-    protected $isEuVat;
+    protected mixed $isEuVat;
 
     /**
      * @var bool
      */
-    protected $isNetto;
+    protected mixed $isNetto;
 
     protected float $position = 0;
 
@@ -142,8 +144,9 @@ class Article implements ArticleInterface
      * Article constructor.
      *
      * @param array $attributes - (id, articleNo, title, description, unitPrice, nettoPriceNotRounded, quantity, discount, customData)
+     * @throws Exception
      */
-    public function __construct($attributes = [])
+    public function __construct(array $attributes = [])
     {
         $defaults = [
             'id',
@@ -177,10 +180,7 @@ class Article implements ArticleInterface
 
         if (isset($attributes['discount'])) {
             $this->Discount = ArticleDiscount::unserialize($attributes['discount']);
-
-            if ($this->Discount) {
-                $this->Discount->setArticle($this);
-            }
+            $this->Discount?->setArticle($this);
         }
 
 
@@ -210,11 +210,11 @@ class Article implements ArticleInterface
             $this->calculated = true;
         }
 
-        if (isset($attributes['customFields']) && \is_array($attributes['customFields'])) {
+        if (isset($attributes['customFields']) && is_array($attributes['customFields'])) {
             $this->customFields = $attributes['customFields'];
         }
 
-        if (isset($attributes['customData']) && \is_array($attributes['customData'])) {
+        if (isset($attributes['customData']) && is_array($attributes['customData'])) {
             $this->customData = $attributes['customData'];
         }
 
@@ -250,7 +250,7 @@ class Article implements ArticleInterface
      *
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         if (isset($this->attributes['id'])) {
             return (int)$this->attributes['id'];
@@ -284,7 +284,7 @@ class Article implements ArticleInterface
      *
      * @return int|string
      */
-    public function getArticleNo()
+    public function getArticleNo(): int|string
     {
         if (isset($this->attributes['articleNo'])) {
             return $this->attributes['articleNo'];
@@ -351,7 +351,7 @@ class Article implements ArticleInterface
         if (!empty($Product)) {
             try {
                 return $Product->getImage();
-            } catch (QUI\Exception $Exception) {
+            } catch (QUI\Exception) {
             }
         }
 
@@ -359,7 +359,7 @@ class Article implements ArticleInterface
             $Project = QUI::getRewrite()->getProject();
             $PlaceholderImage = $Project->getMedia()->getPlaceholderImage();
 
-            if ($PlaceholderImage) {
+            if ($PlaceholderImage instanceof QUI\Projects\Media\Image) {
                 return $PlaceholderImage;
             }
         } catch (QUI\Exception $Exception) {
@@ -432,9 +432,9 @@ class Article implements ArticleInterface
     /**
      * Return the VAT for the article
      *
-     * @return float
+     * @return float|int
      */
-    public function getVat()
+    public function getVat(): float|int
     {
         if (isset($this->attributes['vat']) && $this->attributes['vat'] !== '') {
             return (float)$this->attributes['vat'];
@@ -496,7 +496,7 @@ class Article implements ArticleInterface
      *
      * @param QUI\Interfaces\Users\User $User
      */
-    public function setUser(QUI\Interfaces\Users\User $User)
+    public function setUser(QUI\Interfaces\Users\User $User): void
     {
         $this->calculated = false;
         $this->User = $User;
@@ -517,7 +517,7 @@ class Article implements ArticleInterface
      *
      * @param QUI\ERP\Currency\Currency $Currency
      */
-    public function setCurrency(QUI\ERP\Currency\Currency $Currency)
+    public function setCurrency(QUI\ERP\Currency\Currency $Currency): void
     {
         $this->Currency = $Currency;
     }
@@ -525,9 +525,9 @@ class Article implements ArticleInterface
     /**
      * Returns the article quantity
      *
-     * @return int|bool
+     * @return float|int|bool
      */
-    public function getQuantity()
+    public function getQuantity(): float|int|bool
     {
         if (isset($this->attributes['quantity'])) {
             return $this->attributes['quantity'];
@@ -542,7 +542,7 @@ class Article implements ArticleInterface
      * @param null|QUI\Locale $Locale
      * @return string
      */
-    public function getQuantityUnit($Locale = null): string
+    public function getQuantityUnit(QUI\Locale $Locale = null): string
     {
         if ($Locale === null) {
             $Locale = QUI::getLocale();
@@ -566,7 +566,7 @@ class Article implements ArticleInterface
                     return $titles[$current];
                 }
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         return $this->attributes['quantityUnit']['title'];
@@ -597,12 +597,12 @@ class Article implements ArticleInterface
     /**
      * Set a discount to the article
      *
-     * @param int|float $discount
+     * @param float|int $discount
      * @param int $discountType - default = complement
      *
      * @todo überdenken, ganzer artikel ist eigentlich nicht änderbar
      */
-    public function setDiscount($discount, $discountType = Calc::CALCULATION_COMPLEMENT)
+    public function setDiscount(float|int $discount, int $discountType = Calc::CALCULATION_COMPLEMENT): void
     {
         switch ($discountType) {
             case Calc::CALCULATION_PERCENTAGE:
@@ -623,9 +623,7 @@ class Article implements ArticleInterface
      */
     public function getDiscount(): ?ArticleDiscount
     {
-        if ($this->Discount) {
-            $this->Discount->setArticle($this);
-        }
+        $this->Discount?->setArticle($this);
 
         return $this->Discount;
     }
@@ -646,13 +644,11 @@ class Article implements ArticleInterface
      * @param null|Calc|QUI\ERP\User $Instance
      * @return self
      */
-    public function calc($Instance = null): Article
+    public function calc(Calc|QUI\ERP\User $Instance = null): Article
     {
         if ($this->calculated) {
             return $this;
         }
-
-        $self = $this;
 
         if ($Instance instanceof QUI\ERP\User) {
             $Calc = Calc::getInstance($Instance);
@@ -666,7 +662,8 @@ class Article implements ArticleInterface
             $Calc->setUser($this->getUser());
         }
 
-        $Calc->calcArticlePrice($this, function ($data) use ($self) {
+        $Calc->calcArticlePrice($this, function ($data) {
+            $self = $this;
             $self->price = $data['price'];
             $self->sum = $data['sum'];
 
@@ -765,12 +762,12 @@ class Article implements ArticleInterface
     //region custom fields
 
     /**
-     * Return a article custom field
+     * Return an article custom field
      *
      * @param string $key
      * @return mixed|null
      */
-    public function getCustomField(string $key)
+    public function getCustomField(string $key): mixed
     {
         if (isset($this->customFields[$key])) {
             return $this->customFields[$key];

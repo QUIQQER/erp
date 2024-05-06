@@ -8,6 +8,7 @@ namespace QUI\ERP;
 
 use QUI;
 use QUI\ERP\Customer\Utils as CustomerUtils;
+use QUI\Interfaces\Users\User as QUIUserInterface;
 
 use function dirname;
 use function is_numeric;
@@ -27,11 +28,18 @@ class Address extends QUI\Users\Address
      */
     public function __construct($data = [], $User = null)
     {
-        $this->User = $User;
+        if ($User) {
+            $this->User = $User;
+        }
+
         $this->setAttributes($data);
 
         if (isset($data['id'])) {
             $this->id = (int)$data['id'];
+        }
+
+        if (isset($data['uuid'])) {
+            $this->uuid = $data['uuid'];
         }
     }
 
@@ -41,15 +49,9 @@ class Address extends QUI\Users\Address
      * @param array $options - options ['mail' => true, 'tel' => true]
      * @return string - HTML <address>
      */
-    public function getDisplay($options = []): string
+    public function getDisplay(array $options = []): string
     {
-        try {
-            $Engine = QUI::getTemplateManager()->getEngine(true);
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::writeDebugException($Exception);
-
-            return '';
-        }
+        $Engine = QUI::getTemplateManager()->getEngine(true);
 
         $contactPerson = '';
         $isCompany = false;
@@ -116,7 +118,7 @@ class Address extends QUI\Users\Address
         return $Engine->fetch(dirname(__FILE__) . '/Address.html');
     }
 
-    public function save($PermissionUser = null)
+    public function save(?QUIUserInterface $PermissionUser = null): void
     {
     }
 

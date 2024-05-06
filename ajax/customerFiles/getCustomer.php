@@ -16,7 +16,7 @@ QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_customerFiles_getCustomer',
     function ($hash) {
         $Entity = (new Processes())->getEntity($hash);
-        return $Entity->getCustomer()->getUniqueId();
+        return $Entity->getCustomer()->getUUID();
     },
     ['hash']
 );

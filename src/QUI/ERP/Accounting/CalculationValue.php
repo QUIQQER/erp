@@ -27,21 +27,21 @@ class CalculationValue
     /**
      * @var int|float
      */
-    protected $number = 0;
+    protected int|float $number = 0;
 
     /**
      * @var int|string
      */
-    protected $precision = 8;
+    protected int|float $precision = 8;
 
     /**
      * CalculationValue constructor.
      *
      * @param $number
      * @param QUI\ERP\Currency\Currency|null $Currency
-     * @param int|bool $precision - The optional number of decimal digits to round to.
+     * @param bool|int $precision - The optional number of decimal digits to round to.
      */
-    public function __construct($number, QUI\ERP\Currency\Currency $Currency = null, $precision = false)
+    public function __construct($number, QUI\ERP\Currency\Currency $Currency = null, bool|int $precision = false)
     {
         if (!is_numeric($number)) {
             return;
@@ -67,9 +67,9 @@ class CalculationValue
     }
 
     /**
-     * @return float|int|string
+     * @return float|int
      */
-    public function value()
+    public function value(): float|int
     {
         return $this->number;
     }

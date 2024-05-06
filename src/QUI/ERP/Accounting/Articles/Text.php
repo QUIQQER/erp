@@ -49,9 +49,9 @@ class Text extends QUI\ERP\Accounting\Article
 
     /**
      * @inheritdoc
-     * @return bool
+     * @return bool|int
      */
-    public function getQuantity()
+    public function getQuantity(): bool|int
     {
         return 1;
     }

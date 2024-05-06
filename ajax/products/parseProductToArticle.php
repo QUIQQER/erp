@@ -37,7 +37,7 @@ QUI::$Ajax->registerFunction(
             $Product = Products::getProduct((int)$productId);
 
             foreach ($attributes as $field => $value) {
-                if (strpos($field, 'field-') === false) {
+                if (!str_contains($field, 'field-')) {
                     continue;
                 }
 
@@ -83,7 +83,7 @@ QUI::$Ajax->registerFunction(
                     $Field = $Product->getField($fieldId);
 
                     $fieldResult[$Field->getId()] = $Field->getValue();
-                } catch (QUI\Exception $Exception) {
+                } catch (QUI\Exception) {
                 }
             }
 

@@ -15,19 +15,19 @@ use function putenv;
 class OutputTemplate
 {
     /**
-     * @var OutputTemplateProviderInterface
+     * @var string|OutputTemplateProviderInterface
      */
-    protected $TemplateProvider;
+    protected string|OutputTemplateProviderInterface $TemplateProvider;
 
     /**
-     * @var OutputProviderInterface
+     * @var string|OutputProviderInterface
      */
-    protected $OutputProvider;
+    protected string|OutputProviderInterface $OutputProvider;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $template;
+    protected string|null $template;
 
     /**
      * @var QUI\Interfaces\Template\EngineInterface
@@ -42,14 +42,14 @@ class OutputTemplate
     /**
      * @var string|int
      */
-    protected $entityId;
+    protected string|int $entityId;
 
     /**
      * The entity the output is created for
      *
      * @var mixed
      */
-    protected $Entity;
+    protected mixed $Entity;
 
     /**
      * @var bool
@@ -61,22 +61,20 @@ class OutputTemplate
      *
      * @param string|OutputTemplateProviderInterface $TemplateProvider - Template provider class
      * @param string|OutputProviderInterface $OutputProvider - Output provider class
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @param string $entityType
      * @param string|null $template (optional) - Template identifier (from template provider)
-     *
-     * @throws QUI\Exception
      */
     public function __construct(
-        $TemplateProvider,
-        $OutputProvider,
-        $entityId,
+        OutputTemplateProviderInterface|string $TemplateProvider,
+        OutputProviderInterface|string $OutputProvider,
+        int|string $entityId,
         string $entityType,
-        $template = null
+        string $template = null
     ) {
-        $this->Engine           = QUI::getTemplateManager()->getEngine();
+        $this->Engine = QUI::getTemplateManager()->getEngine();
         $this->TemplateProvider = $TemplateProvider;
-        $this->OutputProvider   = $OutputProvider;
+        $this->OutputProvider = $OutputProvider;
 
         $templates = $this->TemplateProvider::getTemplates($entityType);
 
@@ -98,16 +96,16 @@ class OutputTemplate
             }
         }
 
-        $this->template   = $template;
+        $this->template = $template;
         $this->entityType = $entityType;
-        $this->entityId   = $entityId;
-        $this->Entity     = $this->OutputProvider::getEntity($entityId);
+        $this->entityId = $entityId;
+        $this->Entity = $this->OutputProvider::getEntity($entityId);
     }
 
     /**
      * @return mixed
      */
-    public function getEntity()
+    public function getEntity(): mixed
     {
         return $this->Entity;
     }
@@ -117,13 +115,14 @@ class OutputTemplate
      *
      * @param bool $preview (optional) -
      * @return string - HTML content
+     * @throws QUI\Exception
      */
-    public function getHTML($preview = false): string
+    public function getHTML(bool $preview = false): string
     {
         $Locale = $this->OutputProvider::getLocale($this->entityId);
         QUI::getLocale()->setTemporaryCurrent($Locale->getCurrent());
 
-        $templateData                    = $this->OutputProvider::getTemplateData($this->entityId);
+        $templateData = $this->OutputProvider::getTemplateData($this->entityId);
         $templateData['erpOutputEntity'] = $this->Entity;
 
         $this->Engine->assign($templateData);
@@ -173,9 +172,9 @@ class OutputTemplate
         QUI::getLocale()->setTemporaryCurrent($Locale->getCurrent());
 
         $Document = new QUI\HtmlToPdf\Document([
-            'marginTop'         => 30, // dies ist variabel durch quiqqerInvoicePdfCreate
-            'filename'          => $this->OutputProvider::getDownloadFileName($this->entityId) . '.pdf',
-            'marginBottom'      => 80,  // dies ist variabel durch quiqqerInvoicePdfCreate,
+            'marginTop' => 30, // dies ist variabel durch quiqqerInvoicePdfCreate
+            'filename' => $this->OutputProvider::getDownloadFileName($this->entityId) . '.pdf',
+            'marginBottom' => 80,  // dies ist variabel durch quiqqerInvoicePdfCreate,
             'pageNumbersPrefix' => $Locale->get('quiqqer/htmltopdf', 'footer.page.prefix')
         ]);
 
@@ -215,7 +214,7 @@ class OutputTemplate
     /**
      * @return OutputTemplateProviderInterface|string
      */
-    public function getTemplateProvider()
+    public function getTemplateProvider(): OutputTemplateProviderInterface|string
     {
         if (is_string($this->TemplateProvider)) {
             return $this->TemplateProvider;

@@ -11,6 +11,7 @@ use Exception;
 use QUI;
 use QUI\ERP\Accounting\Invoice\Handler;
 use QUI\ERP\Accounting\Invoice\Invoice;
+use QUI\ERP\Currency\Currency;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
 
@@ -98,9 +99,9 @@ class Calc
     const TRANSACTION_ATTR_SHOP_CURRENCY_EXCHANGE_RATE = 'tx_shop_currency_exchange_rate';
 
     /**
-     * @var UserInterface
+     * @var ?UserInterface
      */
-    protected $User = null;
+    protected ?UserInterface $User = null;
 
     /**
      * @var null|QUI\ERP\Currency\Currency
@@ -110,9 +111,9 @@ class Calc
     /**
      * Calc constructor.
      *
-     * @param UserInterface|bool $User - calculation user
+     * @param UserInterface|null $User - calculation user
      */
-    public function __construct($User = false)
+    public function __construct(?UserInterface $User = null)
     {
         if (!QUI::getUsers()->isUser($User)) {
             $User = QUI::getUserBySession();
@@ -146,7 +147,7 @@ class Calc
      *
      * @param UserInterface $User
      */
-    public function setUser(UserInterface $User)
+    public function setUser(UserInterface $User): void
     {
         $this->User = $User;
     }
@@ -154,9 +155,9 @@ class Calc
     /**
      * Return the calc user
      *
-     * @return UserInterface
+     * @return UserInterface|null
      */
-    public function getUser()
+    public function getUser(): ?UserInterface
     {
         return $this->User;
     }
@@ -164,7 +165,7 @@ class Calc
     /**
      * Return the currency
      *
-     * @return QUI\ERP\Currency\Currency
+     * @return Currency|null
      */
     public function getCurrency(): ?QUI\ERP\Currency\Currency
     {
