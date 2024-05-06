@@ -92,27 +92,27 @@ class FactorList implements IteratorAggregate, Countable
     }
 
     /**
-     * @param \QUI\ERP\Accounting\PriceFactors\Factor $Factor
+     * @param Factor $Factor
      * @return void
      */
-    public function addFactor(Factor $Factor)
+    public function addFactor(Factor $Factor): void
     {
         $this->factorList[] = $Factor;
     }
 
     /**
      * @param int $index
-     * @param QUI\ERP\Accounting\PriceFactors\Factor $Factor
+     * @param Factor $Factor
      * @return void
      */
-    public function setFactor(int $index, QUI\ERP\Accounting\PriceFactors\Factor $Factor)
+    public function setFactor(int $index, Factor $Factor): void
     {
         if (isset($this->factorList[$index])) {
             $this->factorList[$index] = $Factor;
         }
     }
 
-    public function removeFactor(int $index)
+    public function removeFactor(int $index): void
     {
         if (isset($this->factorList[$index])) {
             unset($this->factorList[$index]);
@@ -122,7 +122,7 @@ class FactorList implements IteratorAggregate, Countable
 
     /**
      * @param int $index
-     * @return \QUI\ERP\Accounting\PriceFactors\Factor|null
+     * @return Factor|null
      */
     public function getFactor(int $index): ?Factor
     {
@@ -138,7 +138,7 @@ class FactorList implements IteratorAggregate, Countable
     /**
      * Iterator helper
      *
-     * @return ArrayIterator|Traversable
+     * @return Traversable
      */
     public function getIterator(): \Traversable
     {

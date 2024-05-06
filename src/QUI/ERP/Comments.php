@@ -7,6 +7,8 @@
 namespace QUI\ERP;
 
 use QUI;
+use QUI\ExceptionStack;
+use QUI\Users\User;
 
 use function is_array;
 use function is_string;
@@ -58,10 +60,10 @@ class Comments
     /**
      * Creates a comment list from a stored representation
      *
-     * @param string|array $data
+     * @param array|string $data
      * @return Comments
      */
-    public static function unserialize($data): Comments
+    public static function unserialize(array|string $data): Comments
     {
         if (is_string($data)) {
             $data = json_decode($data, true);
@@ -123,6 +125,7 @@ class Comments
      * @param string $source - optional, name of the package
      * @param string $sourceIcon - optional, source icon
      * @param bool|string $id - optional, comment id, if needed, it will set one
+     * @param bool|string $objectHash
      */
     public function addComment(
         string $message,
@@ -131,7 +134,7 @@ class Comments
         string $sourceIcon = '',
         bool|string $id = false,
         bool|string $objectHash = false
-    ) {
+    ): void {
         if ($time === false) {
             $time = time();
         }
@@ -219,11 +222,10 @@ class Comments
     /**
      * Get comments by user
      *
-     * @param QUI\Users\User $User
-     * @return Comments
+     * @param User $User
+     * @return Comments|null
      *
-     * @throws QUI\Exception
-     * @throws QUI\ExceptionStack
+     * @throws ExceptionStack
      */
     public static function getCommentsByUser(QUI\Users\User $User): ?Comments
     {

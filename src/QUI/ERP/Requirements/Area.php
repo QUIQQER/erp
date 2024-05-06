@@ -33,7 +33,7 @@ class Area extends Test
                 TestResult::STATUS_FAILED,
                 QUI::getLocale()->get('quiqqer/erp', 'message.default.area.missing')
             );
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             return new TestResult(
                 TestResult::STATUS_OK,
                 QUI::getLocale()->get('quiqqer/erp', 'message.default.area.ok')

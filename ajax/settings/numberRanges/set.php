@@ -5,6 +5,7 @@
  */
 
 use QUI\ERP\Api\Coordinator;
+use QUI\ERP\Api\NumberRangeInterface;
 
 /**
  *
@@ -16,7 +17,7 @@ QUI::$Ajax->registerFunction(
         $ranges = Coordinator::getInstance()->getNumberRanges();
 
         foreach ($ranges as $Range) {
-            /* @var $Range \QUI\ERP\Api\NumberRangeInterface */
+            /* @var $Range NumberRangeInterface */
             if (get_class($Range) === $className) {
                 $Range->setRange((int)$newIndex);
             }

@@ -13,8 +13,6 @@ use function array_map;
 use function array_merge;
 use function class_exists;
 use function count;
-use function get_class;
-use function in_array;
 use function is_callable;
 use function strtotime;
 

@@ -4,6 +4,7 @@ namespace QUI\ERP\Dashboard;
 
 use QUI;
 use QUI\Dashboard\DashboardInterface;
+use QUI\Locale;
 
 /**
  * Class DashboardProvider
@@ -13,10 +14,10 @@ use QUI\Dashboard\DashboardInterface;
 class ErpDashboard implements DashboardInterface
 {
     /**
-     * @param null $Locale
+     * @param Locale|null $Locale
      * @return string
      */
-    public function getTitle($Locale = null): string
+    public function getTitle(QUI\Locale $Locale = null): string
     {
         if ($Locale === null) {
             $Locale = QUI::getLocale();

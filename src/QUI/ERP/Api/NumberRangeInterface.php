@@ -21,17 +21,17 @@ interface NumberRangeInterface
      * @param null|QUI\Locale $Locale
      * @return string
      */
-    public function getTitle($Locale = null);
+    public function getTitle(QUI\Locale $Locale = null): string;
 
     /**
      * Return the current start of the range
      *
      * @return int
      */
-    public function getRange();
+    public function getRange(): int;
 
     /**
-     * @param $range
+     * @param int $range
      */
-    public function setRange($range);
+    public function setRange(int $range);
 }

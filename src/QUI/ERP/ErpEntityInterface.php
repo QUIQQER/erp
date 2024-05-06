@@ -14,11 +14,11 @@ interface ErpEntityInterface
 {
     //region QDOM
 
-    public function getAttribute(string $key);
+    public function getAttribute(string $key): mixed;
 
-    public function getAttributes();
+    public function getAttributes(): array;
 
-    public function setAttribute(string $key, $value);
+    public function setAttribute(string $key, mixed $value): void;
 
     //endregion
 

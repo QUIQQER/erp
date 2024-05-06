@@ -18,7 +18,7 @@ QUI::$Ajax->registerFunction(
             $Group = $Groups->get($groupId);
 
             $groups[] = [
-                'id' => $Group->getId(),
+                'id' => $Group->getUUID(),
                 'name' => $Group->getName()
             ];
         }

@@ -14,8 +14,6 @@ trait ErpEntityCustomerFiles
 
     abstract public function getCustomer(): ?ErpUser;
 
-    abstract public function getId(): int;
-
     abstract public function addCustomDataEntry(string $key, mixed $value): void;
 
     abstract public function getCustomDataEntry(string $key): mixed;
@@ -40,7 +38,7 @@ trait ErpEntityCustomerFiles
     public function addCustomerFile(string $fileHash, array $options = []): void
     {
         $Customer = $this->getCustomer();
-        $file = CustomerFiles::getFileByHash($Customer->getId(), $fileHash);
+        $file = CustomerFiles::getFileByHash($Customer->getUUID(), $fileHash);
 
         if (empty($file)) {
             throw new Exception(
@@ -134,7 +132,7 @@ trait ErpEntityCustomerFiles
         foreach ($customerFiles as $customerFile) {
             try {
                 // check if file is from customer
-                $file = CustomerFiles::getFileByHash($Customer->getId(), $customerFile['hash']);
+                $file = CustomerFiles::getFileByHash($Customer->getUUID(), $customerFile['hash']);
 
                 if ($parsing) {
                     $file['uploadTime_formatted'] = QUI::getLocale()->formatDate($file['uploadTime']);

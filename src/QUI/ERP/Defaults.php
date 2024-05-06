@@ -19,9 +19,9 @@ use function implode;
 class Defaults
 {
     /**
-     * @var null|string
+     * @var array
      */
-    protected static $timestampFormat = [];
+    protected static array $timestampFormat = [];
 
     /**
      * @var null|bool
@@ -29,23 +29,23 @@ class Defaults
     protected static ?bool $userRelatedCurrency = null;
 
     /**
-     * @var null|string
+     * @var array
      */
-    protected static $dateFormat = [];
+    protected static array $dateFormat = [];
 
     /**
      * @param string $section
      * @param string $key
      * @return array|bool|string
      */
-    public static function conf(string $section, string $key)
+    public static function conf(string $section, string $key): bool|array|string
     {
         try {
             $Package = QUI::getPackage('quiqqer/erp');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
 
             return $Config->get($section, $key);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         return false;
@@ -59,21 +59,21 @@ class Defaults
      */
     public static function getArea(): Areas\Area
     {
-        $Areas        = new QUI\ERP\Areas\Handler();
-        $Package      = QUI::getPackage('quiqqer/tax');
-        $Config       = $Package->getConfig();
+        $Areas = new QUI\ERP\Areas\Handler();
+        $Package = QUI::getPackage('quiqqer/tax');
+        $Config = $Package->getConfig();
         $standardArea = $Config->getValue('shop', 'area');
 
         try {
             $Area = $Areas->getChild($standardArea);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             QUI\System\Log::addError(
                 'The ecoyn default area was not found. Please check your ecoyn area settings.'
             );
 
             // use area from default country
             $Country = self::getCountry();
-            $Area    = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+            $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
         }
 
         /* @var $Area QUI\ERP\Areas\Area */
@@ -119,14 +119,14 @@ class Defaults
 
         try {
             $Package = QUI::getPackage('quiqqer/erp');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
 
             self::$userRelatedCurrency = $Config->get('general', 'userRelatedCurrency');
 
             if (!self::$userRelatedCurrency) {
                 return self::getCurrency();
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         return QUI\ERP\Currency\Handler::getUserCurrency($User);
@@ -141,8 +141,8 @@ class Defaults
     {
         try {
             $Package = QUI::getPackage('quiqqer/tax');
-            $Config  = $Package->getConfig();
-        } catch (QUI\Exception $Exception) {
+            $Config = $Package->getConfig();
+        } catch (QUI\Exception) {
             return QUI\ERP\Utils\User::IS_BRUTTO_USER;
         }
 
@@ -164,7 +164,7 @@ class Defaults
     {
         try {
             $Package = QUI::getPackage('quiqqer/erp');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
 
             if (!$Config) {
                 return 8;
@@ -185,10 +185,10 @@ class Defaults
     /**
      * Return the main timestamp format
      *
-     * @param false|string $lang - language of the wanted timestamp
+     * @param bool|string $lang - language of the wanted timestamp
      * @return int|null|string
      */
-    public static function getTimestampFormat($lang = false)
+    public static function getTimestampFormat(bool|string $lang = false): int|string|null
     {
         if ($lang === false) {
             $lang = QUI::getLocale()->getCurrent();
@@ -202,7 +202,7 @@ class Defaults
 
         try {
             $Package = QUI::getPackage('quiqqer/erp');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
@@ -224,7 +224,7 @@ class Defaults
      * @param bool|string $lang
      * @return string
      */
-    public static function getDateFormat($lang = false): string
+    public static function getDateFormat(bool|string $lang = false): string
     {
         if ($lang === false) {
             $lang = QUI::getLocale()->getCurrent();
@@ -238,7 +238,7 @@ class Defaults
 
         try {
             $Package = QUI::getPackage('quiqqer/erp');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
@@ -261,16 +261,16 @@ class Defaults
      * @return false|QUI\Projects\Media\Image|string
      * @throws QUI\Exception
      */
-    public static function getLogo()
+    public static function getLogo(): QUI\Projects\Media\Image|bool|string
     {
         try {
             $Config = QUI::getPackage('quiqqer/erp')->getConfig();
-            $logo   = $Config->get('general', 'logo');
+            $logo = $Config->get('general', 'logo');
 
             if (!empty($logo)) {
                 return QUI\Projects\Media\Utils::getImageByUrl($logo);
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         return QUI::getProjectManager()->getStandard()->getMedia()->getLogoImage();

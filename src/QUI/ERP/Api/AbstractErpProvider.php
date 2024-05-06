@@ -6,7 +6,6 @@
 
 namespace QUI\ERP\Api;
 
-use QUI;
 use QUI\Controls\Sitemap\Map;
 
 /**
@@ -28,7 +27,7 @@ abstract class AbstractErpProvider
     /**
      * @return array
      */
-    public static function getNumberRanges()
+    public static function getNumberRanges(): array
     {
         return [];
     }
@@ -40,7 +39,7 @@ abstract class AbstractErpProvider
      *
      * return [
      *      [
-     *          'title'       => 'Title of theses mail texts',
+     *          'title'       => 'Title of these mail texts',
      *          'description' => 'What are these mail texts for?',
      *          'subject'     => ['locale group', 'locale var'],
      *          'content'     => ['locale group', 'locale var']

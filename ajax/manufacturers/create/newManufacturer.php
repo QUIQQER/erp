@@ -16,8 +16,8 @@ use QUI\Utils\Security\Orthos;
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_manufacturers_create_newManufacturer',
     function ($manufacturerId, $address, $groupIds) {
-        $address = Orthos::clearArray(\json_decode($address, true));
-        $groupIds = Orthos::clearArray(\json_decode($groupIds, true));
+        $address = Orthos::clearArray(json_decode($address, true));
+        $groupIds = Orthos::clearArray(json_decode($groupIds, true));
         $manufacturerId = Orthos::clear($manufacturerId);
 
         try {
@@ -25,7 +25,7 @@ QUI::$Ajax->registerFunction(
         } catch (ERPException $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             throw $Exception;
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
             throw new ERPException([
@@ -44,7 +44,7 @@ QUI::$Ajax->registerFunction(
             )
         );
 
-        return $User->getId();
+        return $User->getUUID();
     },
     ['manufacturerId', 'address', 'groupIds'],
     'Permission::checkAdminUser'

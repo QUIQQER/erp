@@ -20,78 +20,78 @@ interface OutputProviderInterface
      *
      * @return string
      */
-    public static function getEntityType();
+    public static function getEntityType(): string;
 
     /**
      * Get title for the output entity
      *
-     * @param Locale $Locale (optional) - If ommitted use \QUI::getLocale()
+     * @param Locale|null $Locale $Locale (optional) - If omitted use \QUI::getLocale()
      * @return mixed
      */
-    public static function getEntityTypeTitle(Locale $Locale = null);
+    public static function getEntityTypeTitle(Locale $Locale = null): mixed;
 
     /**
      * Get the entity the output is created for
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return mixed
      */
-    public static function getEntity($entityId);
+    public static function getEntity(int|string $entityId): mixed;
 
     /**
      * Get download filename (without file extension)
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return string
      */
-    public static function getDownloadFileName($entityId);
+    public static function getDownloadFileName(int|string $entityId): string;
 
     /**
      * Get output Locale by entity
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return Locale
      */
-    public static function getLocale($entityId);
+    public static function getLocale(int|string $entityId): Locale;
 
     /**
      * Fill the OutputTemplate with appropriate entity data
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return array
      */
-    public static function getTemplateData($entityId);
+    public static function getTemplateData(int|string $entityId): array;
 
     /**
      * Checks if $User has permission to download the document of $entityId
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @param User $User
      * @return bool
      */
-    public static function hasDownloadPermission($entityId, User $User);
+    public static function hasDownloadPermission(int|string $entityId, User $User): bool;
 
     /**
      * Get e-mail address of the document recipient
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return string|false - E-Mail address or false if no e-mail address available
      */
-    public static function getEmailAddress($entityId);
+    public static function getEmailAddress(int|string $entityId): bool|string;
 
     /**
      * Get e-mail subject when document is sent via mail
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return string
      */
-    public static function getMailSubject($entityId);
+    public static function getMailSubject(int|string $entityId): string;
 
     /**
      * Get e-mail body when document is sent via mail
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return string
      */
-    public static function getMailBody($entityId);
+    public static function getMailBody(int|string $entityId): string;
 }

@@ -10,11 +10,11 @@ use QUI;
 use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
 use QUI\ERP\Accounting\Offers\Handler as OfferHandler;
 use QUI\ERP\Accounting\Payments\Transactions\Factory as TransactionFactory;
-use QUI\ERP\Booking\Table as BookingTable;
 use QUI\ERP\Order\Handler as OrderHandler;
-use QUI\ERP\Purchasing\Processes\Handler as PurchasingHandler;
 use QUI\ERP\SalesOrders\Handler as SalesOrdersHandler;
 use QUI\Exception;
+
+use function class_exists;
 
 /**
  *
@@ -369,9 +369,13 @@ class Processes
             return;
         }
 
+        if (!class_exists('QUI\ERP\Purchasing\Processes\Handler')) {
+            return;
+        }
+
         $purchasing = QUI::getDatabase()->fetch([
             'select' => 'hash,global_process_id,date',
-            'from' => PurchasingHandler::getTablePurchasingProcesses()
+            'from' => QUI\ERP\Purchasing\Processes\Handler::getTablePurchasingProcesses()
         ]);
 
         foreach ($purchasing as $entry) {
@@ -406,9 +410,13 @@ class Processes
             return;
         }
 
+        if (!class_exists('QUI\ERP\Booking\Table')) {
+            return;
+        }
+
         $bookings = QUI::getDatabase()->fetch([
             'select' => 'uuid,globalProcessId,createDate',
-            'from' => BookingTable::BOOKINGS->tableName(),
+            'from' => QUI\ERP\Booking\Table::BOOKINGS->tableName(),
         ]);
 
         foreach ($bookings as $booking) {

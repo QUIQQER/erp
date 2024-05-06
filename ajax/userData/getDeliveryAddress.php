@@ -7,8 +7,6 @@
  * @return array
  */
 
-use QUI\Users\Address;
-
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_userData_getDeliveryAddress',
     function ($userId) {

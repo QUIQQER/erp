@@ -12,8 +12,8 @@ use QUI\Utils\Security\Orthos;
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_output_getPreview',
     function ($entity, $template) {
-        $entity = Orthos::clearArray(\json_decode($entity, true));
-        $template = Orthos::clearArray(\json_decode($template, true));
+        $entity = Orthos::clearArray(json_decode($entity, true));
+        $template = Orthos::clearArray(json_decode($template, true));
 
         if (!isset($template['provider'])) {
             return '';
@@ -28,7 +28,7 @@ QUI::$Ajax->registerFunction(
                 $template['id'],
                 true
             );
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
             return '';

@@ -87,7 +87,7 @@ class Manufacturers
      * @param array $address
      * @param array $groupIds - QUIQQER group IDs of manufacturer groups
      *
-     * @return QUI\Users\User
+     * @return QUI\Interfaces\Users\User
      *
      * @throws Exception
      * @throws QUI\Exception
@@ -97,7 +97,7 @@ class Manufacturers
         string $manufacturerId,
         array $address = [],
         array $groupIds = []
-    ): QUI\Users\User {
+    ): QUI\Interfaces\Users\User {
         QUI\Permissions\Permission::checkPermission('quiqqer.erp_manufacturers.create');
 
         $Users = QUI::getUsers();
@@ -196,7 +196,7 @@ class Manufacturers
      * @param bool $countOnly (optional) - get count for search result only [default: false]
      * @return int[]|int - Manufacturer user IDs or count
      */
-    public static function search(array $searchParams, bool $countOnly = false)
+    public static function search(array $searchParams, bool $countOnly = false): array|int
     {
         $Grid = new QUI\Utils\Grid($searchParams);
         $gridParams = $Grid->parseDBParams($searchParams);
@@ -359,7 +359,7 @@ class Manufacturers
             $sql .= " LIMIT " . $gridParams['limit'];
         } else {
             if (!$countOnly) {
-                $sql .= " LIMIT " . (int)20;
+                $sql .= " LIMIT " . 20;
             }
         }
 
