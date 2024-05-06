@@ -16,14 +16,14 @@ QUI::$Ajax->registerFunction(
         $article = json_decode($article, true);
 
         $Brutto = new QUI\ERP\User([
-            'id'        => 'BRUTTO',
-            'country'   => '',
-            'username'  => '',
+            'id' => 'BRUTTO',
+            'country' => '',
+            'username' => '',
             'firstname' => '',
-            'lastname'  => '',
-            'lang'      => QUI::getLocale()->getCurrent(),
+            'lastname' => '',
+            'lang' => QUI::getLocale()->getCurrent(),
             'isCompany' => 0,
-            'isNetto'   => 0
+            'isNetto' => 0
         ]);
 
         $Brutto->setAttribute(
@@ -31,16 +31,14 @@ QUI::$Ajax->registerFunction(
             QUI\ERP\Utils\User::IS_BRUTTO_USER
         );
 
-        $Calc    = QUI\ERP\Accounting\Calc::getInstance($Brutto);
+        $Calc = QUI\ERP\Accounting\Calc::getInstance($Brutto);
         $Article = new QUI\ERP\Accounting\Article($article);
 
         //$Article->setCurrency();
         $Article->setUser($Brutto);
         $Article->calc($Calc);
 
-        $result = $Article->toArray();
-
-        return $result;
+        return $Article->toArray();
     },
     ['article', 'user'],
     'Permission::checkAdminUser'

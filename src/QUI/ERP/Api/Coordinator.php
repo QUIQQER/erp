@@ -6,7 +6,15 @@
 
 namespace QUI\ERP\Api;
 
+use Exception;
 use QUI;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
+
+use function array_merge;
+use function class_exists;
+use function strcmp;
+use function usort;
 
 /**
  * Class Coordinator
@@ -30,7 +38,7 @@ class Coordinator extends QUI\Utils\Singleton
 
         try {
             $collect = QUI\Cache\Manager::get($cache);
-        } catch (QUI\Cache\Exception $Exception) {
+        } catch (QUI\Cache\Exception) {
             $packages = QUI::getPackageManager()->getInstalled();
             $collect  = [];
 
@@ -42,25 +50,25 @@ class Coordinator extends QUI\Utils\Singleton
                         continue;
                     }
 
-                    $collect = \array_merge($collect, $Package->getProvider('erp'));
-                } catch (QUI\Exception $exception) {
+                    $collect = array_merge($collect, $Package->getProvider('erp'));
+                } catch (QUI\Exception) {
                 }
             }
 
             try {
                 QUI\Cache\Manager::set($cache, $collect);
-            } catch (\Exception $Exception) {
+            } catch (Exception $Exception) {
                 QUI\System\Log::writeDebugException($Exception);
             }
         }
 
         // filter provider
-        $collect = new \RecursiveIteratorIterator(
-            new \RecursiveArrayIterator($collect)
+        $collect = new RecursiveIteratorIterator(
+            new RecursiveArrayIterator($collect)
         );
 
         foreach ($collect as $entry) {
-            if (!\class_exists($entry)) {
+            if (!class_exists($entry)) {
                 continue;
             }
 
@@ -87,7 +95,7 @@ class Coordinator extends QUI\Utils\Singleton
 
         try {
             return QUI\Cache\Manager::get($cache);
-        } catch (QUI\Cache\Exception $Exception) {
+        } catch (QUI\Cache\Exception) {
             $provider = $this->getErpApiProvider();
 
             foreach ($provider as $Provider) {
@@ -103,7 +111,7 @@ class Coordinator extends QUI\Utils\Singleton
                 $aLocale = $Locale->get($a['text'][0], $a['text'][1]);
                 $bLocale = $Locale->get($b['text'][0], $b['text'][1]);
 
-                return \strcmp($aLocale, $bLocale);
+                return strcmp($aLocale, $bLocale);
             }
 
             if (!isset($a['priority'])) {
@@ -124,15 +132,15 @@ class Coordinator extends QUI\Utils\Singleton
             return $pa < $pb ? -1 : 1;
         };
 
-        \usort($result['items'], $sorting);
+        usort($result['items'], $sorting);
 
         foreach ($result['items'] as $key => $itemData) {
-            \usort($result['items'][$key]['items'], $sorting);
+            usort($result['items'][$key]['items'], $sorting);
         }
 
         try {
             QUI\Cache\Manager::set($cache, $result);
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
         }
 
@@ -150,7 +158,7 @@ class Coordinator extends QUI\Utils\Singleton
         $provider = $this->getErpApiProvider();
 
         foreach ($provider as $Provider) {
-            $ranges = \array_merge($Provider->getNumberRanges(), $ranges);
+            $ranges = array_merge($Provider->getNumberRanges(), $ranges);
         }
 
         // @todo filter, only NumberRangeInterface are allowed
@@ -169,11 +177,11 @@ class Coordinator extends QUI\Utils\Singleton
         $mailLocale = [];
 
         foreach ($provider as $Provider) {
-            $mailLocale = \array_merge($mailLocale, $Provider->getMailLocale());
+            $mailLocale = array_merge($mailLocale, $Provider->getMailLocale());
         }
 
-        \usort($mailLocale, function ($a, $b) {
-            return \strcmp($a['title'], $b['title']);
+        usort($mailLocale, function ($a, $b) {
+            return strcmp($a['title'], $b['title']);
         });
 
         return $mailLocale;

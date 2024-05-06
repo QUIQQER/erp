@@ -17,7 +17,7 @@ interface OutputTemplateProviderInterface
      *
      * @return string[]
      */
-    public static function getEntityTypes();
+    public static function getEntityTypes(): array;
 
     /**
      * Get all available templates for $entityType
@@ -25,47 +25,62 @@ interface OutputTemplateProviderInterface
      * @param string $entityType
      * @return string[]|int[] - Collection of templateIds
      */
-    public static function getTemplates(string $entityType);
+    public static function getTemplates(string $entityType): array;
 
     /**
      * Get title of Template
      *
-     * @param string|int $templateId
-     * @param Locale $Locale (optional) - If omitted use \QUI::getLocale()
+     * @param int|string $templateId
+     * @param Locale|null $Locale $Locale (optional) - If omitted use \QUI::getLocale()
      * @return string
      */
-    public static function getTemplateTitle($templateId, Locale $Locale = null);
+    public static function getTemplateTitle(int|string $templateId, Locale $Locale = null): string;
 
     /**
      * Get HTML for document header area
      *
-     * @param string|int $templateId
+     * @param int|string $templateId
      * @param string $entityType
      * @param EngineInterface $Engine
      * @param mixed $Entity - The entity the output is created for
      * @return string|false
      */
-    public static function getHeaderHtml($templateId, string $entityType, EngineInterface $Engine, $Entity);
+    public static function getHeaderHtml(
+        int|string $templateId,
+        string $entityType,
+        EngineInterface $Engine,
+        mixed $Entity
+    ): bool|string;
 
     /**
      * Get HTML for document body area
      *
-     * @param string|int $templateId
+     * @param int|string $templateId
      * @param string $entityType
      * @param EngineInterface $Engine
      * @param mixed $Entity - The entity the output is created for
      * @return string|false
      */
-    public static function getBodyHtml($templateId, string $entityType, EngineInterface $Engine, $Entity);
+    public static function getBodyHtml(
+        int|string $templateId,
+        string $entityType,
+        EngineInterface $Engine,
+        mixed $Entity
+    ): bool|string;
 
     /**
      * Get HTML for document footer area
      *
-     * @param string|int $templateId
+     * @param int|string $templateId
      * @param string $entityType
      * @param EngineInterface $Engine
      * @param mixed $Entity - The entity the output is created for
      * @return string|false
      */
-    public static function getFooterHtml($templateId, string $entityType, EngineInterface $Engine, $Entity);
+    public static function getFooterHtml(
+        int|string $templateId,
+        string $entityType,
+        EngineInterface $Engine,
+        mixed $Entity
+    ): bool|string;
 }

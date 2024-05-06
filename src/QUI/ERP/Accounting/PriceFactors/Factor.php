@@ -20,60 +20,17 @@ use function json_encode;
  */
 class Factor
 {
-    /**
-     * @var mixed|string
-     */
-    protected $identifier = '';
-
-    /**
-     * @var string
-     */
-    protected $title = '';
-
-    /**
-     * @var string
-     */
-    protected $description = '';
-
-    /**
-     * @var int|double
-     */
-    protected $sum = 0;
-
-    /**
-     * @var string
-     */
-    protected $sumFormatted = '';
-
-    /**
-     * @var int|double
-     */
-    protected $nettoSum = '';
-
-    /**
-     * @var string
-     */
-    protected $nettoSumFormatted = '';
-
-    /**
-     * @var int
-     */
+    protected string $identifier = '';
+    protected string $title = '';
+    protected mixed $description = '';
+    protected int|float $sum = 0;
+    protected mixed $sumFormatted = '';
+    protected mixed $nettoSum = '';
+    protected string $nettoSumFormatted = '';
     protected int $visible = 1;
-
-    /**
-     * @var bool
-     */
-    protected $vat = false;
-
-    /**
-     * @var bool
-     */
-    protected $valueText = false;
-
-    /**
-     * @var mixed
-     */
-    protected $value;
+    protected float|bool $vat = false;
+    protected string|bool $valueText = false;
+    protected mixed $value;
 
     /**
      * @var integer
@@ -122,14 +79,14 @@ class Factor
             }
         }
 
-        $this->title             = $data['title'];
-        $this->description       = $data['description'];
-        $this->sum               = $data['sum'];
-        $this->sumFormatted      = $data['sumFormatted'];
-        $this->nettoSum          = $data['nettoSum'];
+        $this->title = $data['title'];
+        $this->description = $data['description'];
+        $this->sum = $data['sum'];
+        $this->sumFormatted = $data['sumFormatted'];
+        $this->nettoSum = $data['nettoSum'];
         $this->nettoSumFormatted = $data['nettoSumFormatted'];
-        $this->visible           = (int)$data['visible'];
-        $this->value             = $data['value'];
+        $this->visible = (int)$data['visible'];
+        $this->value = $data['value'];
 
         if (isset($data['calculation'])) {
             $this->calculation = (int)$data['calculation'];
@@ -153,9 +110,9 @@ class Factor
     }
 
     /**
-     * @return mixed|string
+     * @return string
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
@@ -183,7 +140,7 @@ class Factor
     /**
      * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
@@ -191,9 +148,9 @@ class Factor
     /**
      * Return the sum
      *
-     * @return float|int
+     * @return float|int|string
      */
-    public function getSum()
+    public function getSum(): float|int|string
     {
         if ($this->euVat) {
             return $this->getNettoSum();
@@ -215,9 +172,9 @@ class Factor
     /**
      * Return the netto sum
      *
-     * @return float|int
+     * @return float|int|string
      */
-    public function getNettoSum()
+    public function getNettoSum(): float|int|string
     {
         return $this->nettoSum;
     }
@@ -227,7 +184,7 @@ class Factor
      *
      * @return float|int|mixed
      */
-    public function getVatSum()
+    public function getVatSum(): mixed
     {
         if ($this->euVat) {
             return 0;
@@ -243,9 +200,9 @@ class Factor
     /**
      * Return the vat %
      *
-     * @return float
+     * @return float|bool|int
      */
-    public function getVat()
+    public function getVat(): float|bool|int
     {
         if ($this->euVat) {
             return 0;
@@ -255,7 +212,7 @@ class Factor
             return $this->vat;
         }
 
-        $vat      = abs($this->sum - $this->nettoSum);
+        $vat = abs($this->sum - $this->nettoSum);
         $nettoSum = abs($this->nettoSum);
 
         return Math::percent($vat, $nettoSum);
@@ -303,18 +260,18 @@ class Factor
     public function toArray(): array
     {
         return [
-            'identifier'        => $this->identifier,
-            'title'             => $this->getTitle(),
-            'description'       => $this->getDescription(),
-            'sum'               => $this->getSum(),
-            'sumFormatted'      => $this->getSumFormatted(),
-            'nettoSum'          => $this->getNettoSum(),
+            'identifier' => $this->identifier,
+            'title' => $this->getTitle(),
+            'description' => $this->getDescription(),
+            'sum' => $this->getSum(),
+            'sumFormatted' => $this->getSumFormatted(),
+            'nettoSum' => $this->getNettoSum(),
             'nettoSumFormatted' => $this->getNettoSumFormatted(),
-            'visible'           => $this->isVisible(),
-            'value'             => $this->getValue(),
-            'valueText'         => empty($this->valueText) ? '' : $this->valueText,
-            'vat'               => $this->getVat(),
-            'calculation'       => $this->getCalculation(),
+            'visible' => $this->isVisible(),
+            'value' => $this->getValue(),
+            'valueText' => empty($this->valueText) ? '' : $this->valueText,
+            'vat' => $this->getVat(),
+            'calculation' => $this->getCalculation(),
             'calculation_basis' => $this->getCalculationBasis()
         ];
     }
@@ -342,7 +299,7 @@ class Factor
     /**
      * @param bool $status
      */
-    public function setEuVatStatus(bool $status)
+    public function setEuVatStatus(bool $status): void
     {
         $this->euVat = $status;
     }
@@ -350,9 +307,9 @@ class Factor
     //endregion
 
     /**
-     * @param int|float $sum
+     * @param float|int $sum
      */
-    public function setSum($sum)
+    public function setSum(float|int $sum): void
     {
         $this->sum = $sum;
     }
@@ -360,15 +317,15 @@ class Factor
     /**
      * @param string $sumFormatted
      */
-    public function setSumFormatted(string $sumFormatted)
+    public function setSumFormatted(string $sumFormatted): void
     {
         $this->sumFormatted = $sumFormatted;
     }
 
     /**
-     * @param int|float $sum
+     * @param float|int $sum
      */
-    public function setNettoSum($sum)
+    public function setNettoSum(float|int $sum): void
     {
         $this->nettoSum = $sum;
     }
@@ -376,15 +333,15 @@ class Factor
     /**
      * @param string $sumFormatted
      */
-    public function setNettoSumFormatted(string $sumFormatted)
+    public function setNettoSumFormatted(string $sumFormatted): void
     {
         $this->nettoSumFormatted = $sumFormatted;
     }
 
     /**
-     * @param int|float $value
+     * @param float|int $value
      */
-    public function setValue($value)
+    public function setValue(float|int $value): void
     {
         $this->value = $value;
     }
@@ -392,7 +349,7 @@ class Factor
     /**
      * @param string $valueText
      */
-    public function setValueText(string $valueText)
+    public function setValueText(string $valueText): void
     {
         $this->valueText = $valueText;
     }

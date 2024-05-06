@@ -112,7 +112,7 @@ class Installer extends QUI\Utils\Singleton
      * @throws Exception
      * @throws QUI\Exception
      */
-    public function install(string $packageName)
+    public function install(string $packageName): void
     {
         if (!in_array($packageName, $this->getPackageList())) {
             throw new Exception([
@@ -170,7 +170,7 @@ class Installer extends QUI\Utils\Singleton
      * @param $packageName
      * @throws Exception
      */
-    public function setPackageRequirements($packageName)
+    public function setPackageRequirements($packageName): void
     {
         if (!in_array($packageName, $this->getPackageList())) {
             throw new Exception([

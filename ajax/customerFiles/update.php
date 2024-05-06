@@ -16,9 +16,11 @@ QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_customerFiles_update',
     function ($hash, $files) {
         $files = json_decode($files, true);
-
         $Entity = (new Processes())->getEntity($hash);
-        $Entity->setCustomFiles($files);
+
+        if (method_exists($Entity, 'setCustomFiles')) {
+            $Entity->setCustomFiles($files);
+        }
     },
     ['hash', 'files']
 );
