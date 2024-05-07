@@ -1,5 +1,5 @@
 {
-  "name": "quiqqer\/erp",
+  "name": "quiqqer/erp",
   "type": "quiqqer-application",
   "description": "The QUIQQER ERP module bundles all QUIQQER modules which you need for a \nERP (Enterprise Resource Planning) system.",
   "license": [
@@ -10,31 +10,31 @@
     {
       "name": "Henning Leutz",
       "email": "leutz@pcsg.de",
-      "homepage": "http:\/\/www.pcsg.de",
+      "homepage": "https://www.pcsg.de",
       "role": "Developer"
     }
   ],
   "support": {
     "email": "support@pcsg.de",
-    "url": "http:\/\/www.pcsg.de"
+    "url": "https://www.pcsg.de"
   },
   "require": {
     "php": "^8",
-    "quiqqer\/core": "^2",
-    "quiqqer\/utils": "^1.6",
-    "quiqqer\/watcher": "^1|^0.12",
-    "quiqqer\/translator": "^1",
-    "quiqqer\/employee": "^1",
-    "quiqqer\/customer": "^1.0.3",
-    "quiqqer\/qui-php": "^1|^0.11",
-    "quiqqer\/countries": "^1.3",
-    "quiqqer\/frontend-users": "^1",
-    "quiqqer\/erp-accounting-templates": "^1",
-    "quiqqer/areas": "^1.2.1"
+    "quiqqer/core": "^2",
+    "quiqqer/utils": "^2",
+    "quiqqer/watcher": "^2",
+    "quiqqer/translator": "^2",
+    "quiqqer/employee": "^2",
+    "quiqqer/customer": "^2",
+    "quiqqer/qui-php": "^2",
+    "quiqqer/countries": "^2",
+    "quiqqer/frontend-users": "^2",
+    "quiqqer/erp-accounting-templates": "^2",
+    "quiqqer/areas": "^2"
   },
   "autoload": {
     "psr-4": {
-      "QUI\\ERP\\": "src\/QUI\/ERP"
+      "QUI\\ERP\\": "src/QUI/ERP"
     }
   }
 }
