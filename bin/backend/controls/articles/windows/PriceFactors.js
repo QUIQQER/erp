@@ -58,7 +58,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
             this.addButton(
                 new Element('button', {
                     'class': 'qui-button',
-                    html   : QUILocale.get('quiqqer/quiqqer', 'close'),
+                    html   : QUILocale.get('quiqqer/core', 'close'),
                     events : {
                         click: () => {
                             this.close();

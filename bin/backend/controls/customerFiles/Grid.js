@@ -150,17 +150,17 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                             dataType: 'node',
                             width: 50
                         }, {
-                            header: QUILocale.get('quiqqer/quiqqer', 'type'),
+                            header: QUILocale.get('quiqqer/core', 'type'),
                             dataIndex: 'icon',
                             dataType: 'node',
                             width: 40
                         }, {
-                            header: QUILocale.get('quiqqer/quiqqer', 'file'),
+                            header: QUILocale.get('quiqqer/core', 'file'),
                             dataIndex: 'basename',
                             dataType: 'string',
                             width: 300
                         }, {
-                            header: QUILocale.get('quiqqer/quiqqer', 'size'),
+                            header: QUILocale.get('quiqqer/core', 'size'),
                             dataIndex: 'filesize_formatted',
                             dataType: 'string',
                             width: 100

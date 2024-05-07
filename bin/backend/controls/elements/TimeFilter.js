@@ -128,7 +128,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
 
                     var month = ("0" + (this.$Current.getMonth() + 1)).slice(-2);
 
-                    text = QUILocale.get('quiqqer/quiqqer', 'month.' + month);
+                    text = QUILocale.get('quiqqer/core', 'month.' + month);
                     text = text + ' (' + this.$Current.getFullYear() + ')';
                     break;
 
@@ -161,7 +161,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
                 case 'year':
                     this.$type = 'year';
 
-                    text = QUILocale.get('quiqqer/quiqqer', 'year');
+                    text = QUILocale.get('quiqqer/core', 'year');
                     text = text + ' ' + this.$Current.getFullYear();
                     break;
 

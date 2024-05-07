@@ -980,8 +980,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     }).inject(Container);
 
                     require([
-                        URL_OPT_DIR + 'quiqqer/quiqqer/bin/QUI/lib/tippy/tippy.min.js',
-                        'css!' + URL_OPT_DIR + 'quiqqer/quiqqer/bin/QUI/lib/tippy/tippy.css'
+                        URL_OPT_DIR + 'quiqqer/core/bin/QUI/lib/tippy/tippy.min.js',
+                        'css!' + URL_OPT_DIR + 'quiqqer/core/bin/QUI/lib/tippy/tippy.css'
                     ], function(tippy) {
                         tippy(Warning, {
                             animateFill: false,

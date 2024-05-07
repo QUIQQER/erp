@@ -65,7 +65,7 @@ define('package/quiqqer/erp/bin/backend/controls/settings/CustomerRequestWindowS
                     dataType : 'QUI',
                     width    : 60
                 }, {
-                    header   : QUILocale.get('quiqqer/quiqqer', 'id'),
+                    header   : QUILocale.get('quiqqer/core', 'id'),
                     dataIndex: 'id',
                     dataType : 'number',
                     width    : 60
