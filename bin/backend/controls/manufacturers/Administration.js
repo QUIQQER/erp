@@ -165,14 +165,14 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
             });
 
             columnModel.push({
-                header   : QUILocale.get('quiqqer/quiqqer', 'id'),
+                header   : QUILocale.get('quiqqer/core', 'id'),
                 dataIndex: 'id',
                 dataType : 'integer',
                 width    : 100
             });
 
             /*{
-                header   : QUILocale.get('quiqqer/quiqqer', 'username'),
+                header   : QUILocale.get('quiqqer/core', 'username'),
                 dataIndex: 'username',
                 dataType : 'integer',
                 width    : 150,
@@ -181,35 +181,35 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
             }*/
 
             columnModel.push({
-                header   : QUILocale.get('quiqqer/quiqqer', 'company'),
+                header   : QUILocale.get('quiqqer/core', 'company'),
                 dataIndex: 'company',
                 dataType : 'string',
                 width    : 150,
             });
 
             columnModel.push({
-                header   : QUILocale.get('quiqqer/quiqqer', 'firstname'),
+                header   : QUILocale.get('quiqqer/core', 'firstname'),
                 dataIndex: 'firstname',
                 dataType : 'string',
                 width    : 150,
             });
 
             columnModel.push({
-                header   : QUILocale.get('quiqqer/quiqqer', 'lastname'),
+                header   : QUILocale.get('quiqqer/core', 'lastname'),
                 dataIndex: 'lastname',
                 dataType : 'string',
                 width    : 150,
             });
 
             columnModel.push({
-                header   : QUILocale.get('quiqqer/quiqqer', 'email'),
+                header   : QUILocale.get('quiqqer/core', 'email'),
                 dataIndex: 'email',
                 dataType : 'string',
                 width    : 150,
             });
 
             columnModel.push({
-                header   : QUILocale.get('quiqqer/quiqqer', 'group'),
+                header   : QUILocale.get('quiqqer/core', 'group'),
                 dataIndex: 'usergroup_display',
                 dataType : 'string',
                 width    : 150,
@@ -222,7 +222,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
             });
 
             columnModel.push({
-                header   : QUILocale.get('quiqqer/quiqqer', 'c_date'),
+                header   : QUILocale.get('quiqqer/core', 'c_date'),
                 dataIndex: 'regdate',
                 dataType : 'date',
                 width    : 150

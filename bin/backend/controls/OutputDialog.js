@@ -140,7 +140,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     labelEntityId       : QUILocale.get(lg, 'controls.OutputDialog.labelEntityId'),
                     labelTemplate       : QUILocale.get(lg, 'controls.OutputDialog.labelTemplate'),
                     labelOutputType     : QUILocale.get(lg, 'controls.OutputDialog.labelOutputType'),
-                    labelEmail          : QUILocale.get('quiqqer/quiqqer', 'recipient'),
+                    labelEmail          : QUILocale.get('quiqqer/core', 'recipient'),
                     showMarkAsSentOption: !!this.getAttribute('showMarkAsSentOption'),
                     mailEditor          : !!this.getAttribute('mailEditor'),
                     labelOpenMailEditor : QUILocale.get(lg, 'controls.OutputDialog.labelOpenMailEditor'),
