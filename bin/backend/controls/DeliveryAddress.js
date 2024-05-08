@@ -82,15 +82,15 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                     lg,
                     'control.DeliveryAddress.tpl.labelDifferentDeliveryAddress'
                 ),
-                textAddresses: QUILocale.get('quiqqer/quiqqer', 'address'),
-                textCompany: QUILocale.get('quiqqer/quiqqer', 'company'),
-                textStreet: QUILocale.get('quiqqer/quiqqer', 'street_no'),
-                textZip: QUILocale.get('quiqqer/quiqqer', 'zip'),
-                textCity: QUILocale.get('quiqqer/quiqqer', 'city'),
-                textCountry: QUILocale.get('quiqqer/quiqqer', 'country'),
-                textSalutation: QUILocale.get('quiqqer/quiqqer', 'salutation'),
-                textFirstname: QUILocale.get('quiqqer/quiqqer', 'firstname'),
-                textLastname: QUILocale.get('quiqqer/quiqqer', 'lastname')
+                textAddresses: QUILocale.get('quiqqer/core', 'address'),
+                textCompany: QUILocale.get('quiqqer/core', 'company'),
+                textStreet: QUILocale.get('quiqqer/core', 'street_no'),
+                textZip: QUILocale.get('quiqqer/core', 'zip'),
+                textCity: QUILocale.get('quiqqer/core', 'city'),
+                textCountry: QUILocale.get('quiqqer/core', 'country'),
+                textSalutation: QUILocale.get('quiqqer/core', 'salutation'),
+                textFirstname: QUILocale.get('quiqqer/core', 'firstname'),
+                textLastname: QUILocale.get('quiqqer/core', 'lastname')
             }));
 
             // Address select

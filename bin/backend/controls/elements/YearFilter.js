@@ -63,7 +63,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/YearFilter', [
                 '<div class="year-years"></div>' +
                 '<div class="year-cancel">' +
                 '   <button class="qui-button--no-icon qui-button">' +
-                QUILocale.get('quiqqer/quiqqer', 'cancel') +
+                QUILocale.get('quiqqer/core', 'cancel') +
                 '</button>' +
                 '</div>'
             );

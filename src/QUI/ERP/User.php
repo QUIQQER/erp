@@ -324,12 +324,12 @@ class User extends QUI\QDOM implements UserInterface
             switch ($salutation) {
                 case 'Herr':
                 case 'mr':
-                    $salutation = QUI::getLocale()->get('quiqqer/quiqqer', 'address.salutation.male');
+                    $salutation = QUI::getLocale()->get('quiqqer/core', 'address.salutation.male');
                     break;
 
                 case 'Frau':
                 case 'mrs':
-                    $salutation = QUI::getLocale()->get('quiqqer/quiqqer', 'address.salutation.female');
+                    $salutation = QUI::getLocale()->get('quiqqer/core', 'address.salutation.female');
                     break;
             }
 
