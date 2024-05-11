@@ -679,11 +679,9 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * This user has no avatar, it returned the default placeholder image
      *
-     * @return QUI\Projects\Media\Image|false
-     *
      * @throws QUI\Exception
      */
-    public function getAvatar(): QUI\Projects\Media\Image|bool
+    public function getAvatar(): ?QUI\Projects\Media\Image
     {
         return QUI::getProjectManager()
             ->getStandard()
@@ -801,4 +799,8 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     // endregion
+    public function getAuthenticators(): array
+    {
+        return [];
+    }
 }
