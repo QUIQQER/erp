@@ -274,7 +274,7 @@ class User
      * @return false|QUI\Users\Address
      * @throws QUI\Exception
      */
-    public static function getUserERPAddress(UserInterface $User): bool|Address
+    public static function getUserERPAddress(UserInterface $User): null|Address
     {
         if (!QUI::getUsers()->isUser($User)) {
             throw new QUI\Exception([
