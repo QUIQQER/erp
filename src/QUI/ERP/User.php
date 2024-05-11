@@ -437,7 +437,7 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * @return mixed
      */
-    public function getStatus(): bool
+    public function getStatus(): int
     {
         return 0;
     }
