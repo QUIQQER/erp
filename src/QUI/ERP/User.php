@@ -10,7 +10,10 @@ use QUI;
 use QUI\Countries\Country;
 use QUI\ERP\Customer\NumberRange as CustomerNumberRange;
 use QUI\Groups\Group;
+use QUI\Interfaces\Users\User as QUIUserInterface;
 use QUI\Interfaces\Users\User as UserInterface;
+
+use QUI\Users\AuthenticatorInterface;
 
 use function array_filter;
 use function array_flip;
@@ -453,6 +456,12 @@ class User extends QUI\QDOM implements UserInterface
         return new Address($this->address, $this);
     }
 
+    public function getAddressList(): array
+    {
+        $Address = $this->getAddress();
+        return [$Address->getUUID() => $Address];
+    }
+
     /**
      * @param QUI\Users\Address $Address
      */
@@ -567,7 +576,7 @@ class User extends QUI\QDOM implements UserInterface
      * @param User|UserInterface|null $PermissionUser
      * @return bool
      */
-    public function activate(string $code, User|UserInterface|null $PermissionUser = null): bool
+    public function activate(string $code = '', User|UserInterface|null $PermissionUser = null): bool
     {
         return true;
     }
@@ -627,8 +636,9 @@ class User extends QUI\QDOM implements UserInterface
         return $this->getAddress();
     }
 
-    public function addAddress(): void
+    public function addAddress(array $params = [], QUI\Interfaces\Users\User $ParentUser = null): ?Address
     {
+        return null;
     }
 
     /**
@@ -695,6 +705,10 @@ class User extends QUI\QDOM implements UserInterface
      * @param UserInterface|null $PermissionUser
      */
     public function setPassword(string $new, ?UserInterface $PermissionUser = null)
+    {
+    }
+
+    public function changePassword(string $newPassword, string $oldPassword, QUIUserInterface $ParentUser = null): void
     {
     }
 
@@ -799,8 +813,41 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     // endregion
+
+    // region authenticator
+    public function hasAuthenticator(string $authenticator): bool
+    {
+        return false;
+    }
+
     public function getAuthenticators(): array
     {
         return [];
     }
+
+    public function getAuthenticator(string $authenticator): AuthenticatorInterface
+    {
+        throw new QUI\Users\Exception(
+            ['quiqqer/core', 'exception.authenticator.not.found'],
+            404
+        );
+    }
+
+    public function enableAuthenticator(string $authenticator, QUIUserInterface $ParentUser = null): void
+    {
+        throw new QUI\Users\Exception(
+            ['quiqqer/core', 'exception.authenticator.not.found'],
+            404
+        );
+    }
+
+    public function disableAuthenticator(string $authenticator, QUIUserInterface $ParentUser = null): void
+    {
+        throw new QUI\Users\Exception(
+            ['quiqqer/core', 'exception.authenticator.not.found'],
+            404
+        );
+    }
+
+    //endregion
 }
