@@ -10,14 +10,11 @@ use QUI;
 use QUI\Countries\Country;
 use QUI\ERP\Customer\NumberRange as CustomerNumberRange;
 use QUI\Groups\Group;
-use QUI\Interfaces\Users\User as QUIUserInterface;
 use QUI\Interfaces\Users\User as UserInterface;
-
 use QUI\Users\AuthenticatorInterface;
 
 use function array_filter;
 use function array_flip;
-use function array_walk;
 use function explode;
 use function get_class;
 use function is_array;
@@ -708,7 +705,7 @@ class User extends QUI\QDOM implements UserInterface
     {
     }
 
-    public function changePassword(string $newPassword, string $oldPassword, QUIUserInterface $ParentUser = null): void
+    public function changePassword(string $newPassword, string $oldPassword, UserInterface $ParentUser = null): void
     {
     }
 
@@ -833,7 +830,7 @@ class User extends QUI\QDOM implements UserInterface
         );
     }
 
-    public function enableAuthenticator(string $authenticator, QUIUserInterface $ParentUser = null): void
+    public function enableAuthenticator(string $authenticator, UserInterface $ParentUser = null): void
     {
         throw new QUI\Users\Exception(
             ['quiqqer/core', 'exception.authenticator.not.found'],
@@ -841,7 +838,7 @@ class User extends QUI\QDOM implements UserInterface
         );
     }
 
-    public function disableAuthenticator(string $authenticator, QUIUserInterface $ParentUser = null): void
+    public function disableAuthenticator(string $authenticator, UserInterface $ParentUser = null): void
     {
         throw new QUI\Users\Exception(
             ['quiqqer/core', 'exception.authenticator.not.found'],
