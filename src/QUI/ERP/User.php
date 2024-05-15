@@ -34,7 +34,7 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * @var int
      */
-    protected int $id;
+    protected int $id = 0;
 
     /**
      * @var string
@@ -44,27 +44,27 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * @var string
      */
-    protected string $username;
+    protected string $username = '';
 
     /**
      * @var string
      */
-    protected string $firstName;
+    protected string $firstName = '';
 
     /**
      * @var string
      */
-    protected string $lastName;
+    protected string $lastName = '';
 
     /**
      * @var string
      */
-    protected string $lang;
+    protected string $lang = '';
 
     /**
      * @var string
      */
-    protected string $country;
+    protected string $country = '';
 
     /**
      * @var bool
