@@ -470,7 +470,7 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * @return Country|bool
      */
-    public function getCountry(): QUI\Countries\Country|bool
+    public function getCountry(): ?QUI\Countries\Country
     {
         if (!empty($this->address) && isset($this->address['country'])) {
             try {
