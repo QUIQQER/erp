@@ -287,17 +287,21 @@ class Output
      * Get available templates for $entityType (e.g. "Invoice", "InvoiceTemporary" etc.)
      *
      * @param string $package
-     * @return OutputTemplateProviderInterface|false - OutputProvider class (static) or false if
+     * @return OutputTemplateProviderInterface|null - OutputProvider class (static) or false if
      */
-    public static function getOutputTemplateProviderByPackage(string $package): OutputTemplateProviderInterface|bool
+    public static function getOutputTemplateProviderByPackage(string $package): ?OutputTemplateProviderInterface
     {
         foreach (self::getAllOutputTemplateProviders() as $provider) {
             if ($provider['package'] === $package) {
-                return $provider['class'];
+                $Instance = new $provider['class']();
+
+                if ($Instance instanceof OutputTemplateProviderInterface) {
+                    return $Instance;
+                }
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
