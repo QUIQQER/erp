@@ -8,7 +8,6 @@ namespace QUI\ERP;
 
 use QUI;
 use QUI\ExceptionStack;
-use QUI\Users\User;
 
 use function is_array;
 use function is_string;
@@ -222,12 +221,12 @@ class Comments
     /**
      * Get comments by user
      *
-     * @param User $User
+     * @param QUI\Interfaces\Users\User $User
      * @return Comments|null
      *
      * @throws ExceptionStack
      */
-    public static function getCommentsByUser(QUI\Users\User $User): ?Comments
+    public static function getCommentsByUser(QUI\Interfaces\Users\User $User): ?Comments
     {
         $Comments = null;
 
