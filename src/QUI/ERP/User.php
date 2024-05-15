@@ -564,16 +564,16 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Does nothing
      */
-    public function logout()
+    public function logout(): void
     {
     }
 
     /**
      * @param string $code
-     * @param User|UserInterface|null $PermissionUser
+     * @param UserInterface|null $PermissionUser
      * @return bool
      */
-    public function activate(string $code = '', User|UserInterface|null $PermissionUser = null): bool
+    public function activate(string $code = '', ?QUI\Interfaces\Users\User $PermissionUser = null): bool
     {
         return true;
     }
@@ -600,7 +600,7 @@ class User extends QUI\QDOM implements UserInterface
      * Does nothing
      * @param UserInterface|null $PermissionUser
      */
-    public function save(?UserInterface $PermissionUser = null)
+    public function save(?UserInterface $PermissionUser = null): void
     {
     }
 
