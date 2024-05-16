@@ -507,7 +507,7 @@ class User extends QUI\QDOM implements UserInterface
             $Config = $Package->getConfig();
 
             if ($Config->getValue('general', 'businessType') === 'B2B') {
-                return QUI\ERP\Utils\User::IS_NETTO_USER;
+                return true;
             }
         } catch (QUI\Exception) {
         }
@@ -648,7 +648,7 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * @param bool $array
-     * @return int[]|Group[]
+     * @return int[]|string[]|Group[]
      */
     public function getGroups(bool $array = true): array
     {
