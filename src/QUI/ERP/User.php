@@ -122,7 +122,7 @@ class User extends QUI\QDOM implements UserInterface
         }
 
         if (isset($attributes['id'])) {
-            $this->id = $attributes['id'];
+            $this->id = (int)$attributes['id'];
         }
 
         if (isset($attributes['uuid'])) {
