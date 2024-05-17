@@ -76,8 +76,11 @@ class Defaults
             $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
         }
 
-        /* @var $Area QUI\ERP\Areas\Area */
-        return $Area;
+        if ($Area instanceof QUI\ERP\Areas\Area) {
+            return $Area;
+        }
+
+        throw new QUI\Exception('The ecoyn default area was not found. Please check your ecoyn area settings.');
     }
 
     /**
@@ -258,10 +261,10 @@ class Defaults
      * Return the ERP logo
      * - if no logo is set, the default logo of the default project will be used
      *
-     * @return false|QUI\Projects\Media\Image|string
+     * @return ?QUI\Projects\Media\Image
      * @throws QUI\Exception
      */
-    public static function getLogo(): QUI\Projects\Media\Image|bool|string
+    public static function getLogo(): ?QUI\Projects\Media\Image
     {
         try {
             $Config = QUI::getPackage('quiqqer/erp')->getConfig();

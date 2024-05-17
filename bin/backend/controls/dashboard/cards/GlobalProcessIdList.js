@@ -210,7 +210,13 @@ define('package/quiqqer/erp/bin/backend/controls/dashboard/cards/GlobalProcessId
                     for (let hash in result) {
                         entry = result[hash];
                         entry.globalProcessId = hash;
-                        entry.date = DateFormatter.format(new Date(entry.date));
+
+                        try {
+                            entry.date = DateFormatter.format(new Date(entry.date));
+                        } catch (e) {
+                            console.warn('could not convert', entry.date);
+                        }
+
                         data.push(entry);
                     }
 

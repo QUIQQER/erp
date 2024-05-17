@@ -35,9 +35,9 @@ class ArticleDiscount
     /**
      * Discount value
      *
-     * @var int
+     * @var int|float
      */
-    protected $value = 0;
+    protected int|float $value = 0;
 
     /**
      * Return the currency
