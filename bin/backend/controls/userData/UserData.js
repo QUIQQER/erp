@@ -469,6 +469,8 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 this.$BtnContactEmailSelect.disabled = false;
             }).then(() => {
                 this.$fireChange();
+            }).catch((err) => {
+                console.error(err);
             });
         },
 

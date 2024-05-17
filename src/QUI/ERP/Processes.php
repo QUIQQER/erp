@@ -15,6 +15,7 @@ use QUI\ERP\SalesOrders\Handler as SalesOrdersHandler;
 use QUI\Exception;
 
 use function class_exists;
+use function strtotime;
 
 /**
  *
@@ -445,9 +446,6 @@ class Processes
 
     protected function getEarlierDate($date1, $date2)
     {
-        $timestamp1 = strtotime($date1);
-        $timestamp2 = strtotime($date2);
-
         if ($date1 === null && $date2) {
             return $date2;
         }
@@ -455,6 +453,9 @@ class Processes
         if ($date1 && $date2 === null) {
             return $date1;
         }
+
+        $timestamp1 = strtotime($date1);
+        $timestamp2 = strtotime($date2);
 
         return ($timestamp1 < $timestamp2) ? $date1 : $date2;
     }
