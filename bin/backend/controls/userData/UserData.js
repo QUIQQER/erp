@@ -55,6 +55,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
         Binds: [
             'toggleExtras',
             'editCustomer',
+            '$setDataByUserId',
             '$onInject',
             '$fireChange',
             'setValue'
@@ -261,10 +262,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             if ('userId' in data && data.userId) {
                 if (this.$CustomerSelect) {
                     this.$setValues = true;
-                    this.$CustomerSelect.addItem(data.userUuid);
+                    this.$CustomerSelect.addItem(data.userId);
                 }
 
-                dataPromise = this.$setDataByUserId(data.userUuid);
+                dataPromise = this.$setDataByUserId(data.userId);
             }
 
             if ('addressId' in data && data.addressId) {
@@ -345,8 +346,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @param {Object} [address] - Build address label based on given address; if omitted, use attributes.
          * @return {string}
          */
-        $getAddressLabel(address)
-        {
+        $getAddressLabel: function(address) {
             const getVal = (key) => {
                 let val;
 
@@ -401,9 +401,9 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
         $setDataByUserId: function(userId) {
             this.$oldUserId = this.getAttribute('userId');
 
-            this.$clearData();
-
+            //this.$clearData();
             this.setAttribute('userId', userId);
+            this.setAttribute('userUuid', userId);
 
             if (this.$CustomerEdit) {
                 this.$CustomerEdit.setStyle('display', 'inline');
@@ -574,6 +574,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          */
         getAddressList: function(User) {
             return new Promise((resolve, reject) => {
+                if (!User.getId()) {
+                    return resolve([]);
+                }
+
                 return User.getAddressList().then((result) => {
                     if (result.length) {
                         return resolve(result);

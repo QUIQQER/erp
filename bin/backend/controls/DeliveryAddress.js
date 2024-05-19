@@ -399,12 +399,14 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
             if (!this.$userId) {
                 Checkbox.checked = false;
 
+                /*
                 QUI.getMessageHandler().then(function(MH) {
                     MH.addInformation(
                         QUILocale.get('quiqqer/erp', 'controls.DeliveryAddress.msg.select_customer'),
                         self.$Customer.getElm()
                     );
                 });
+                */
 
                 this.$AddressSelectBtn.disable();
                 return;
