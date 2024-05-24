@@ -77,6 +77,12 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
             const self = this,
                 Elm = this.getElm();
 
+            function ignoreAutoFill(node)
+            {
+                node.role = 'presentation';
+                node.autocomplete = 'off';
+            }
+
             Elm.set('html', Mustache.render(template, {
                 labelDifferentDeliveryAddress: QUILocale.get(
                     lg,
@@ -130,6 +136,14 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
             this.$Salutation.disabled = false;
             this.$Firstname.disabled = false;
             this.$Lastname.disabled = false;
+
+            ignoreAutoFill(this.$Salutation);
+            ignoreAutoFill(this.$Firstname);
+            ignoreAutoFill(this.$Lastname);
+            ignoreAutoFill(this.$Company);
+            ignoreAutoFill(this.$Street);
+            ignoreAutoFill(this.$ZIP);
+            ignoreAutoFill(this.$City);
 
             const Panel = QUI.Controls.getById(
                 this.getElm().getParent('.qui-panel').get('data-quiid')

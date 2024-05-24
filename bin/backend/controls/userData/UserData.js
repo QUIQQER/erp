@@ -122,6 +122,12 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
         create: function() {
             const labelUser = this.getAttribute('labelUser');
 
+            function ignoreAutoFill(node)
+            {
+                node.role = 'presentation';
+                node.autocomplete = 'off';
+            }
+
             this.$Elm = new Element('div', {
                 html: Mustache.render(template, {
                     labelTitle: labelUser,
@@ -208,6 +214,11 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             this.$Street = this.$Elm.getElement('[name="street_no"]');
             this.$Zip = this.$Elm.getElement('[name="zip"]');
             this.$City = this.$Elm.getElement('[name="city"]');
+
+            ignoreAutoFill(this.$Company);
+            ignoreAutoFill(this.$Street);
+            ignoreAutoFill(this.$Zip);
+            ignoreAutoFill(this.$City);
 
             this.$Table = this.$Elm.getElement('.quiqqer-erp-userdata--customer');
             this.$rows = this.$Table.getElements('.closable');
