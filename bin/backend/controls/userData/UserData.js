@@ -256,11 +256,26 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             return result;
         },
 
+        getAddress: function() {
+            return {
+                id: this.getAttribute('addressId'),
+                contactEmail: this.getAttribute('contactEmail'),
+                salutation: this.getAttribute('salutation'),
+                firstname: this.getAttribute('firstname'),
+                lastname: this.getAttribute('lastname'),
+                city: this.getAttribute('city'),
+                zip: this.getAttribute('zip'),
+                company: this.getAttribute('company'),
+                street_no: this.getAttribute('street_no'),
+                country: this.getAttribute('country')
+            };
+        },
+
         /**
          * Set the complete data values
          *
          * @param {Object} data
-         * @return {void}
+         * @return {Promise}
          */
         setValue: function(data) {
             if (this.$CustomerEdit) {
@@ -283,7 +298,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 addressPromise = this.setAddressId(data.addressId);
             }
 
-            dataPromise.then(addressPromise).then(() => {
+            return dataPromise.then(addressPromise).then(() => {
                 fields.forEach((field) => {
                     if (typeof data[field] !== 'undefined') {
                         this.setAttribute(field, data[field]);
