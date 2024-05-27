@@ -122,6 +122,12 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
         create: function() {
             const labelUser = this.getAttribute('labelUser');
 
+            function ignoreAutoFill(node)
+            {
+                node.role = 'presentation';
+                node.autocomplete = 'off';
+            }
+
             this.$Elm = new Element('div', {
                 html: Mustache.render(template, {
                     labelTitle: labelUser,
@@ -209,6 +215,11 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             this.$Zip = this.$Elm.getElement('[name="zip"]');
             this.$City = this.$Elm.getElement('[name="city"]');
 
+            ignoreAutoFill(this.$Company);
+            ignoreAutoFill(this.$Street);
+            ignoreAutoFill(this.$Zip);
+            ignoreAutoFill(this.$City);
+
             this.$Table = this.$Elm.getElement('.quiqqer-erp-userdata--customer');
             this.$rows = this.$Table.getElements('.closable');
             this.$AddressRow = this.$Table.getElement('.address-row');
@@ -245,11 +256,26 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             return result;
         },
 
+        getAddress: function() {
+            return {
+                id: this.getAttribute('addressId'),
+                contactEmail: this.getAttribute('contactEmail'),
+                salutation: this.getAttribute('salutation'),
+                firstname: this.getAttribute('firstname'),
+                lastname: this.getAttribute('lastname'),
+                city: this.getAttribute('city'),
+                zip: this.getAttribute('zip'),
+                company: this.getAttribute('company'),
+                street_no: this.getAttribute('street_no'),
+                country: this.getAttribute('country')
+            };
+        },
+
         /**
          * Set the complete data values
          *
          * @param {Object} data
-         * @return {void}
+         * @return {Promise}
          */
         setValue: function(data) {
             if (this.$CustomerEdit) {
@@ -272,7 +298,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 addressPromise = this.setAddressId(data.addressId);
             }
 
-            dataPromise.then(addressPromise).then(() => {
+            return dataPromise.then(addressPromise).then(() => {
                 fields.forEach((field) => {
                     if (typeof data[field] !== 'undefined') {
                         this.setAttribute(field, data[field]);

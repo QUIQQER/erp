@@ -77,6 +77,12 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
             const self = this,
                 Elm = this.getElm();
 
+            function ignoreAutoFill(node)
+            {
+                node.role = 'presentation';
+                node.autocomplete = 'off';
+            }
+
             Elm.set('html', Mustache.render(template, {
                 labelDifferentDeliveryAddress: QUILocale.get(
                     lg,
@@ -131,6 +137,14 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
             this.$Firstname.disabled = false;
             this.$Lastname.disabled = false;
 
+            ignoreAutoFill(this.$Salutation);
+            ignoreAutoFill(this.$Firstname);
+            ignoreAutoFill(this.$Lastname);
+            ignoreAutoFill(this.$Company);
+            ignoreAutoFill(this.$Street);
+            ignoreAutoFill(this.$ZIP);
+            ignoreAutoFill(this.$City);
+
             const Panel = QUI.Controls.getById(
                 this.getElm().getParent('.qui-panel').get('data-quiid')
             );
@@ -159,10 +173,15 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                     this.$userId = this.$Customer.getValue();
 
                     this.$Customer.addEvent('onChange', () => {
+                        // same user needs no change
+                        if (this.$Customer.getValue() === this.$userId) {
+                            return;
+                        }
+
                         this.$userId = this.$Customer.getValue();
 
                         this.$getDeliveryAddressFromUser().then((result) => {
-                             if (!result) {
+                            if (!result) {
                                 this.$Checked.checked = false;
                                 this.$checkBoxChange();
                                 return;
@@ -300,8 +319,8 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
                 firstname: '',
                 lastname: ''
             };
-
             Object.merge(Address, value);
+
             this.$displayAddressData(Address);
 
             this.$Checked.checked = true;
@@ -370,15 +389,13 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
          * @param {DocumentEvent} [event]
          */
         $checkBoxChange: function(event) {
-            const self = this,
-                Checkbox = this.getElm().getElement('[name="differentDeliveryAddress"]'),
-                closables = this.getElm().getElements('.closable');
+            const closables = this.getElm().getElements('.closable');
 
             if (event) {
                 event.stop();
             }
 
-            if (!Checkbox) {
+            if (!this.$Checked) {
                 return;
             }
 
@@ -397,16 +414,7 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
             }
 
             if (!this.$userId) {
-                Checkbox.checked = false;
-
-                /*
-                QUI.getMessageHandler().then(function(MH) {
-                    MH.addInformation(
-                        QUILocale.get('quiqqer/erp', 'controls.DeliveryAddress.msg.select_customer'),
-                        self.$Customer.getElm()
-                    );
-                });
-                */
+                this.$Checked.checked = false;
 
                 this.$AddressSelectBtn.disable();
                 return;
@@ -414,7 +422,7 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
 
             this.$AddressSelectBtn.enable();
 
-            if (Checkbox.checked) {
+            if (this.$Checked.checked) {
                 closables.setStyle('display', null);
                 return;
             }
