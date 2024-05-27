@@ -119,6 +119,14 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                         case 'QUI\\ERP\\SalesOrders\\SalesOrder':
                             Type.setAttribute('title', QUILocale.get(lg, 'processGrid.salesOrder.open'));
                             break;
+
+                        case 'QUI\\ERP\\Accounting\\Offers\\Offer':
+                            Type.setAttribute('title', QUILocale.get(lg, 'processGrid.offer.open'));
+                            break;
+
+                        case 'QUI\\ERP\\Accounting\\Offers\\OfferTemporary':
+                            Type.setAttribute('title', QUILocale.get(lg, 'processGrid.temporaryOffer.open'));
+                            break;
                     }
 
                     if (typeof entry.paid_status === 'undefined') {
@@ -169,6 +177,14 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
 
                 case 'QUI\\ERP\\SalesOrders\\SalesOrder':
                     panel = 'package/quiqqer/salesorders/bin/js/backend/controls/panels/SalesOrder';
+                    break;
+
+                case 'QUI\\ERP\\Accounting\\Offers\\Offer':
+                    panel = 'package/quiqqer/offers/bin/js/backend/controls/panels/Offer';
+                    break;
+
+                case 'QUI\\ERP\\Accounting\\Offers\\OfferTemporary':
+                    panel = 'package/quiqqer/offers/bin/js/backend/controls/panels/TemporaryOffer';
                     break;
 
                 default:
