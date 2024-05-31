@@ -95,17 +95,17 @@ class User extends QUI\QDOM implements UserInterface
 
         foreach ($needle as $attribute) {
             if (!isset($attributes[$attribute])) {
-                throw new QUI\ERP\Exception(
-                    'Missing attribute:' . $attribute
-                );
+                $attributes[$attribute] = '';
             }
         }
 
+        /*
         if (!isset($attributes['id']) && !isset($attributes['uuid'])) {
             throw new QUI\ERP\Exception(
                 'Missing attribute: id or uuid'
             );
         }
+        */
 
         $this->isCompany = !empty($attributes['isCompany']) || !empty($attributes['company']);
         $this->lang = $attributes['lang'];
