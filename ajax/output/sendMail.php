@@ -34,7 +34,8 @@ QUI::$Ajax->registerFunction(
         try {
             $entityType = Orthos::clear($entityType);
 
-            $OutputProvider = ERPOutput::getOutputProviderByEntityType($entityType);
+            $outputProvider = ERPOutput::getOutputProviderByEntityType($entityType);
+            $OutputProvider = new $outputProvider();
             $TemplateProvider = ERPOutput::getOutputTemplateProviderByPackage(Orthos::clear($templateProvider));
 
             if (empty($TemplateProvider)) {
