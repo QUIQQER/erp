@@ -356,6 +356,14 @@
             <de><![CDATA[Auftrag]]></de>
             <en><![CDATA[Sales Order]]></en>
         </locale>
+        <locale name="entity.title.QUI\ERP\Accounting\Offers\OfferTemporary">
+            <de><![CDATA[Angebotsentwurf]]></de>
+            <en><![CDATA[Temporary Offer]]></en>
+        </locale>
+        <locale name="entity.title.QUI\ERP\Accounting\Offers\Offer">
+            <de><![CDATA[Angebot]]></de>
+            <en><![CDATA[Offer]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
