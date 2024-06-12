@@ -536,6 +536,8 @@ class Calc
         }
 
         $nettoPrice = $Article->getUnitPriceUnRounded()->value();
+        $nettoPrice = round($nettoPrice, $Currency->getPrecision());
+
         $vat = $Article->getVat();
         $basisNettoPrice = $nettoPrice;
         $nettoSubSum = $this->round($nettoPrice * $Article->getQuantity());
