@@ -537,6 +537,7 @@ class Calc
 
         $nettoPrice = $Article->getUnitPriceUnRounded()->value();
         $nettoPrice = round($nettoPrice, $Currency->getPrecision());
+        $nettoPriceNotRounded = $Article->getUnitPriceUnRounded()->getValue();
 
         $vat = $Article->getVat();
         $basisNettoPrice = $nettoPrice;
@@ -548,7 +549,6 @@ class Calc
 
         // discounts
         $Discount = $Article->getDiscount();
-        $nettoPriceNotRounded = $Article->getUnitPriceUnRounded()->getValue();
 
         if ($Discount) {
             switch ($Discount->getCalculation()) {
