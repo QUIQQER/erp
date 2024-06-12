@@ -33,7 +33,7 @@
     "quiqqer/areas": "^1.2.1"
   },
   "conflict": {
-    "quiqqer\/quiqqer": "^1.10"
+    "quiqqer\/quiqqer": "1.10.*"
   },
   "autoload": {
     "psr-4": {
