@@ -364,6 +364,10 @@
             <de><![CDATA[Angebot]]></de>
             <en><![CDATA[Offer]]></en>
         </locale>
+        <locale name="entity.title.QUI\ERP\Order\Order">
+            <de><![CDATA[Bestellung]]></de>
+            <en><![CDATA[Order]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">

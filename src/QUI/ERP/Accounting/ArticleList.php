@@ -541,4 +541,18 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     }
 
     //endregion
+
+    //render
+
+    public function renderForMail(): string
+    {
+        return $this->toUniqueList()->renderForMail();
+    }
+
+    public function toHTMLWithCSS(): string
+    {
+        return $this->toUniqueList()->toHTMLWithCSS();
+    }
+
+    //endregion
 }
