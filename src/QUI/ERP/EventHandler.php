@@ -12,6 +12,9 @@ use QUI\ERP\Products\Handler\Fields as ProductFields;
 use QUI\Package\Package;
 use QUI\Smarty\Collector;
 
+use Smarty;
+use SmartyException;
+
 use function array_flip;
 use function class_exists;
 use function dirname;
@@ -386,6 +389,60 @@ class EventHandler
             }
         }
     }
+
+    //region smarty
+
+    /**
+     * register erp smarty functions
+     *
+     * @param Smarty $Smarty - \Smarty
+     * @throws SmartyException
+     */
+    public static function onSmartyInit(Smarty $Smarty): void
+    {
+        // {pace}
+        if (
+            !isset($Smarty->registered_plugins['function']) ||
+            !isset($Smarty->registered_plugins['function']['getPrefixedNumber'])
+        ) {
+            $Smarty->registerPlugin(
+                "function",
+                "erpGetPrefixedNumber",
+                "\\QUI\\ERP\\EventHandler::getPrefixedNumber"
+            );
+        }
+    }
+
+    /**
+     * erp smarty function {getPrefixedNumber}
+     *
+     * @example {erpGetPrefixedNumber assign=prefixedNumber var=$erpUUID}
+     *
+     * @param array $params
+     * @param $smarty
+     * @return string
+     */
+    public static function getPrefixedNumber(array $params, $smarty): string
+    {
+        $prefixedNumber = '';
+
+        if (!empty($params['var'])) {
+            try {
+                $Entity = (new Processes())->getEntity($params['var']);
+                $prefixedNumber = $Entity->getPrefixedNumber();
+            } catch (QUI\Exception) {
+            }
+        }
+
+        if (!isset($params['assign'])) {
+            return $prefixedNumber;
+        }
+
+        $smarty->assign($params['assign'], $prefixedNumber);
+        return '';
+    }
+
+    //endregion
 
     //region user profile extension
 
