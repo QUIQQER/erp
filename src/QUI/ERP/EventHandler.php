@@ -11,7 +11,6 @@ use QUI\ERP\BankAccounts\Handler as BankAccounts;
 use QUI\ERP\Products\Handler\Fields as ProductFields;
 use QUI\Package\Package;
 use QUI\Smarty\Collector;
-
 use Smarty;
 use SmartyException;
 
