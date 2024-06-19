@@ -19,7 +19,27 @@ QUI::$Ajax->registerFunction(
         }
 
         return array_map(function ($Entity) {
-            return $Entity->toArray();
+            $entityData = $Entity->toArray();
+            $entityData['processing_status'] = [
+                'id' => 0,
+                'title' => '---',
+                'color' => '#999999',
+            ];
+
+            if (method_exists($Entity, 'getProcessingStatus')) {
+                /* @var $ProcessingStatus QUI\ERP\Accounting\Invoice\ProcessingStatus\Status */
+                $ProcessingStatus = $Entity->getProcessingStatus();
+
+                if ($ProcessingStatus) {
+                    $entityData['processing_status'] = [
+                        'id' => $ProcessingStatus->getId(),
+                        'title' => $ProcessingStatus->getTitle(),
+                        'color' => $ProcessingStatus->getColor()
+                    ];
+                }
+            }
+
+            return $entityData;
         }, $Process->getEntities());
     },
     ['globalProcessId', 'entityHash'],
