@@ -57,10 +57,11 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                         dataType: 'QUI',
                         width: 60
                     }, {
-                        header: QUILocale.get(lg, 'erp.process.state'),
-                        dataIndex: 'paid_status',
+                        header: QUILocale.get(lg, 'erp.process.status'),
+                        dataIndex: 'status',
                         dataType: 'node',
-                        width: 100
+                        width: 150,
+                        className: 'grid-align-center'
                     }, {
                         header: QUILocale.get(lg, 'erp.process.prefixedNumber'),
                         dataIndex: 'prefixedNumber',
@@ -71,6 +72,12 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                         dataIndex: 'uuid',
                         dataType: 'string',
                         width: 240
+                    }, {
+                        header: QUILocale.get(lg, 'erp.process.paid_status'),
+                        dataIndex: 'paid_status',
+                        dataType: 'node',
+                        width: 100,
+                        className: 'grid-align-center'
                     }
                 ],
                 pagination: false
@@ -129,6 +136,16 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                             break;
                     }
 
+
+                    const Status = new Element('span', {
+                        'class': 'processing-status',
+                        text: entry.processing_status.title,
+                        styles: {
+                            color: entry.processing_status.color !== '---' ? entry.processing_status.color : '',
+                            borderColor: entry.processing_status.color !== '---' ? entry.processing_status.color : ''
+                        }
+                    });
+
                     if (typeof entry.paid_status === 'undefined') {
                         entry.paid_status = 0;
                     }
@@ -140,6 +157,7 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
 
                     data.push({
                         type: Type,
+                        status: Status,
                         paid_status: PaymentStatus,
                         prefixedNumber: entry.prefixedNumber,
                         uuid: entry.uuid

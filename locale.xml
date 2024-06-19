@@ -277,6 +277,10 @@
             <de><![CDATA[Bestellung öffnen]]></de>
             <en><![CDATA[Open order]]></en>
         </locale>
+        <locale name="processGrid.offer.open">
+            <de><![CDATA[Angebot öffnen]]></de>
+            <en><![CDATA[Open offer]]></en>
+        </locale>
         <locale name="processGrid.invoice.open">
             <de><![CDATA[Rechnung öffnen]]></de>
             <en><![CDATA[Open invoice]]></en>
@@ -297,9 +301,13 @@
             <de><![CDATA[Typ]]></de>
             <en><![CDATA[Type]]></en>
         </locale>
-        <locale name="erp.process.state">
+        <locale name="erp.process.status">
             <de><![CDATA[Status]]></de>
-            <en><![CDATA[State]]></en>
+            <en><![CDATA[Status]]></en>
+        </locale>
+        <locale name="erp.process.paid_status">
+            <de><![CDATA[Zahlungsstatus]]></de>
+            <en><![CDATA[Payment status]]></en>
         </locale>
         <locale name="erp.process.prefixedNumber">
             <de><![CDATA[Entitäts-Nr]]></de>
