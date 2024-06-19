@@ -18,8 +18,8 @@ class Utils
         'QUI\ERP\Accounting\Invoice\InvoiceTemporary' => 'fa-file-text-o',
         'QUI\ERP\Accounting\Invoice\Invoice' => 'fa-file-text-o',
         'QUI\ERP\SalesOrders\SalesOrder' => 'fa-suitcase',
-        'QUI\ERP\Accounting\Offers\Offer' => 'fa-file-text-o',
-        'QUI\ERP\Accounting\Offers\OfferTemporary' => 'fa-file-text-o',
+        'QUI\ERP\Accounting\Offers\Offer' => 'fa-regular fa-handshake',
+        'QUI\ERP\Accounting\Offers\OfferTemporary' => 'fa-handshake',
     ];
 
     /**

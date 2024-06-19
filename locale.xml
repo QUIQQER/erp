@@ -277,6 +277,10 @@
             <de><![CDATA[Bestellung öffnen]]></de>
             <en><![CDATA[Open order]]></en>
         </locale>
+        <locale name="processGrid.offer.open">
+            <de><![CDATA[Angebot öffnen]]></de>
+            <en><![CDATA[Open offer]]></en>
+        </locale>
         <locale name="processGrid.invoice.open">
             <de><![CDATA[Rechnung öffnen]]></de>
             <en><![CDATA[Open invoice]]></en>

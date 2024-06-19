@@ -503,7 +503,7 @@ class Process
                 ]),
                 strtotime($Offer->getAttribute('date')),
                 'quiqqer/offer',
-                'fa fa-file-text-o',
+                'fa fa-regular fa-handshake',
                 false,
                 $Offer->getHash()
             );
@@ -516,7 +516,7 @@ class Process
                 }
 
                 if (empty($entry['sourceIcon'])) {
-                    $entry['sourceIcon'] = 'fa fa-file-text-o';
+                    $entry['sourceIcon'] = 'fa fa-regular fa-handshake';
                 }
 
                 $History->addComment(
