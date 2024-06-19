@@ -99,8 +99,6 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                 const hideUuids = this.getAttribute('hideUuids') || [];
 
                 result.forEach((entry) => {
-                    console.log(hideUuids);
-
                     if (hideUuids.indexOf(entry.uuid) !== -1) {
                         return;
                     }
