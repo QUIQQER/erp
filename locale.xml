@@ -1630,6 +1630,10 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <de><![CDATA[Dateien von [entity]: Änderungen der Kundendaten wurden erfolgreich gespeichert]]></de>
             <en><![CDATA[Files from [entity]: Changes to customer data were successfully saved]]></en>
         </locale>
+        <locale name="process.button.title">
+            <de><![CDATA[Vorgangsverlauf]]></de>
+            <en><![CDATA[Process history]]></en>
+        </locale>
 
     </groups>
 </locales>

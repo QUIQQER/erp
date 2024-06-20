@@ -37,7 +37,6 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessWindowButton', [
 
             this.setAttributes({
                 icon: 'fa fa-timeline',
-                alt: QUILocale.get(lg, 'process.button.alt'),
                 title: QUILocale.get(lg, 'process.button.title')
             });
 
