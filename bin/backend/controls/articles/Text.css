@@ -5,6 +5,7 @@
     clear: both;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     float: left;
     min-height: 50px;
     position: relative;
@@ -63,26 +64,26 @@
     text-align: center;
 }
 
+
+
+
 .quiqqer-erp-backend-erpArticleText-buttons {
-    background: #fff;
-    bottom: 0;
-    opacity: 0;
-    padding: 10px;
-    position: absolute;
-    right: 0;
-    text-align: right;
-    transition: opacity 0.2s;
-    width: 75px;
-    z-index: 10;
+    background: #DEDEDE;
+    display: none;
+    width: 100%;
 }
 
 .quiqqer-erp-backend-erpArticleText-buttons button {
-    padding: 0 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
     line-height: 20px;
-    margin-left: 5px;
 }
 
-.quiqqer-erp-backend-erpArticleText:hover .quiqqer-erp-backend-erpArticleText-buttons {
-    opacity: 1;
-    transition: opacity 0.2s;
+.quiqqer-erp-backend-erpArticle-select .quiqqer-erp-backend-erpArticleText-buttons {
+    display: inline-block;
+}
+
+.quiqqer-erp-backend-erpArticleText-buttons button:hover {
+    background: #eaeaea;
 }
