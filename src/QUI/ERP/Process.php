@@ -60,6 +60,11 @@ class Process
         return QUI::getDBTableName('process');
     }
 
+    public function getUUID(): string
+    {
+        return $this->processId;
+    }
+
     /**
      * Return all entities which are connected to this process
      *

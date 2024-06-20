@@ -16,22 +16,22 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
     'text!package/quiqqer/erp/bin/backend/controls/articles/Text.html',
     'css!package/quiqqer/erp/bin/backend/controls/articles/Text.css'
 
-], function (Article, QUIButton, QUILocale, Mustache, template) {
-    "use strict";
+], function(Article, QUIButton, QUILocale, Mustache, template) {
+    'use strict';
 
     const lg = 'quiqqer/erp';
 
     return new Class({
 
         Extends: Article,
-        Type   : 'package/quiqqer/erp/bin/backend/controls/articles/Text',
+        Type: 'package/quiqqer/erp/bin/backend/controls/articles/Text',
 
         Binds: [
             '$onEditTitle',
             '$onEditDescription'
         ],
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.setAttributes({
@@ -44,13 +44,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
          *
          * @returns {HTMLDivElement}
          */
-        create: function () {
+        create: function() {
             this.$Elm = new Element('div');
 
             this.$Elm.addClass('quiqqer-erp-backend-erpArticleText');
 
             this.$Elm.set({
-                html  : Mustache.render(template),
+                html: Mustache.render(template, {
+                    buttonReplace: QUILocale.get(lg, 'articleList.article.button.replace'),
+                    buttonDelete: QUILocale.get(lg, 'articleList.article.button.delete')
+                }),
                 events: {
                     click: this.select
                 }
@@ -61,15 +64,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
             this.$Buttons = this.$Elm.getElement('.quiqqer-erp-backend-erpArticleText-buttons');
 
             this.$Loader = new Element('div', {
-                html  : '<span class="fa fa-spinner fa-spin"></span>',
+                html: '<span class="fa fa-spinner fa-spin"></span>',
                 styles: {
                     background: '#fff',
-                    display   : 'none',
-                    left      : 0,
-                    padding   : 10,
-                    position  : 'absolute',
-                    top       : 0,
-                    width     : '100%'
+                    display: 'none',
+                    left: 0,
+                    padding: 10,
+                    position: 'absolute',
+                    top: 0,
+                    width: '100%'
                 }
             }).inject(this.$Position);
 
@@ -94,28 +97,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
             this.setTitle(this.getAttribute('title'));
             this.setDescription(this.getAttribute('description'));
 
-            // edit buttons
-            new QUIButton({
-                title : QUILocale.get(lg, 'erp.articleList.article.button.replace'),
-                icon  : 'fa fa-retweet',
-                styles: {
-                    'float': 'none'
-                },
-                events: {
-                    onClick: this.$onReplaceClick
-                }
-            }).inject(this.$Buttons);
-
-            new QUIButton({
-                title : QUILocale.get(lg, 'erp.articleList.article.button.delete'),
-                icon  : 'fa fa-trash',
-                styles: {
-                    'float': 'none'
-                },
-                events: {
-                    onClick: this.openDeleteDialog
-                }
-            }).inject(this.$Buttons);
+            this.$Buttons.getElement('[name="replace"]').addEvent('click', this.$onReplaceClick);
+            this.$Buttons.getElement('[name="delete"]').addEvent('click', this.openDeleteDialog);
 
             this.$created = true;
 
@@ -128,7 +111,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
          *
          * @return {Promise}
          */
-        calc: function () {
+        calc: function() {
             return Promise.resolve();
         },
 
@@ -137,7 +120,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
          *
          * @param {String} title
          */
-        setTitle: function (title) {
+        setTitle: function(title) {
             this.setAttribute('title', title);
             this.$Title.set('html', title);
 
@@ -151,7 +134,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
          *
          * @param {String} description
          */
-        setDescription: function (description) {
+        setDescription: function(description) {
             this.setAttribute('description', description);
             this.$Description.set('html', description);
 
@@ -165,7 +148,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
          *
          * @return {Promise}
          */
-        setQuantity: function () {
+        setQuantity: function() {
             return Promise.resolve();
         },
 
@@ -173,28 +156,28 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
          * Set the product unit price
          *
          */
-        setUnitPrice: function () {
+        setUnitPrice: function() {
             return Promise.resolve();
         },
 
         /**
          * Set the product unit price
          **/
-        setVat: function () {
+        setVat: function() {
             return Promise.resolve();
         },
 
         /**
          * Show the loader
          */
-        showLoader: function () {
+        showLoader: function() {
             this.$Loader.setStyle('display', null);
         },
 
         /**
          * Hide the loader
          */
-        hideLoader: function () {
+        hideLoader: function() {
             this.$Loader.setStyle('display', 'none');
         }
     });

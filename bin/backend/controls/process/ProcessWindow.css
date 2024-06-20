@@ -1,0 +1,18 @@
+.quiqqer-erp-process-window-header {
+    background: #f7f7f7;
+    display: inline-block;
+    padding: 20px;
+    width: 100%;
+}
+
+.quiqqer-erp-process-window {
+    display: flex;
+    flex-direction: column;
+}
+
+.quiqqer-erp-process-window-comments {
+    overflow: auto;
+    flex-shrink: 0;
+    flex-grow: 1;
+    height: 200px;
+}

@@ -28,7 +28,8 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
 
         options: {
             globalProcessId: false,
-            entityHash: false
+            entityHash: false,
+            hideUuids: []
         },
 
         initialize: function(options) {
@@ -95,9 +96,13 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
 
             QUIAjax.get('package_quiqqer_erp_ajax_process_getEntities', (result) => {
                 const data = [];
-                console.log(result);
+                const hideUuids = this.getAttribute('hideUuids') || [];
 
                 result.forEach((entry) => {
+                    if (hideUuids.indexOf(entry.uuid) !== -1) {
+                        return;
+                    }
+
                     const Type = new QUIButton({
                         events: {
                             click: this.$click
