@@ -239,7 +239,7 @@ class Process
 
                 if (isset($result[0]['history'])) {
                     $history = $result[0]['history'];
-                } else {
+                } elseif (!isset($result[0])) {
                     QUI::getDataBase()->insert($this->table(), [
                         'id' => $this->processId
                     ]);
