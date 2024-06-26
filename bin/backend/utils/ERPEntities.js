@@ -27,6 +27,15 @@ define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function() {
                 case 'QUI\\ERP\\SalesOrders\\SalesOrder':
                     return 'package/quiqqer/salesorders/bin/js/backend/controls/panels/SalesOrder';
 
+                case 'QUI\\ERP\\Accounting\\Offers\\Offer':
+                    return 'package/quiqqer/offers/bin/js/backend/controls/panels/Offer';
+
+                case 'QUI\\ERP\\Accounting\\Offers\\OfferTemporary':
+                    return 'package/quiqqer/offers/bin/js/backend/controls/panels/TemporaryOffer';
+
+                case 'QUI\\ERP\\Accounting\\Contracts\\Contract':
+                    return 'package/quiqqer/contracts/bin/backend/controls/panels/Contract';
+
                 default:
                     console.error('missing', entityType);
             }
