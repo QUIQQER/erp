@@ -13,6 +13,12 @@ use QUI\Interfaces\Users\User;
  */
 interface ErpCopyInterface
 {
+    /**
+     * @param User|null $PermissionUser
+     * @param bool|string $globalProcessId - false = new process will start
+     *
+     * @return ErpEntityInterface
+     */
     public function copy(
         User $PermissionUser = null,
         bool|string $globalProcessId = false
