@@ -7,11 +7,12 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
     'qui/controls/Control',
     'qui/controls/buttons/Button',
     'qui/controls/loader/Loader',
+    'package/quiqqer/erp/bin/backend/utils/ERPEntities',
     'controls/grid/Grid',
     'Locale',
     'Ajax'
 
-], function(QUI, QUIControl, QUIButton, QUILoader, Grid, QUILocale, QUIAjax) {
+], function(QUI, QUIControl, QUIButton, QUILoader, ERPEntityUtils, Grid, QUILocale, QUIAjax) {
     'use strict';
 
     const lg = 'quiqqer/erp';
@@ -182,38 +183,8 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
         },
 
         $click: function(Btn) {
-            let panel;
             const uuid = Btn.getAttribute('uuid');
-
-            switch (Btn.getAttribute('entityType')) {
-                case 'QUI\\ERP\\Order\\Order':
-                    panel = 'package/quiqqer/order/bin/backend/controls/panels/Order';
-                    break;
-
-                case 'QUI\\ERP\\Accounting\\Invoice\\Invoice':
-                    panel = 'package/quiqqer/invoice/bin/backend/controls/panels/Invoice';
-                    break;
-
-                case 'QUI\\ERP\\Accounting\\Invoice\\InvoiceTemporary':
-                    panel = 'package/quiqqer/invoice/bin/backend/controls/panels/TemporaryInvoice';
-                    break;
-
-                case 'QUI\\ERP\\SalesOrders\\SalesOrder':
-                    panel = 'package/quiqqer/salesorders/bin/js/backend/controls/panels/SalesOrder';
-                    break;
-
-                case 'QUI\\ERP\\Accounting\\Offers\\Offer':
-                    panel = 'package/quiqqer/offers/bin/js/backend/controls/panels/Offer';
-                    break;
-
-                case 'QUI\\ERP\\Accounting\\Offers\\OfferTemporary':
-                    panel = 'package/quiqqer/offers/bin/js/backend/controls/panels/TemporaryOffer';
-                    break;
-
-                default:
-                    console.error('missing', uuid, Btn.getAttribute('entityType'));
-                    return;
-            }
+            const panel = ERPEntityUtils.getPanelByEntity(Btn.getAttribute('entityType'));
 
             require(['utils/Panels', panel], (PanelUtils, Panel) => {
                 PanelUtils.openPanelInTasks(

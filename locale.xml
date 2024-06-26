@@ -1635,5 +1635,65 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <en><![CDATA[Process history]]></en>
         </locale>
 
+
+        <locale name="controls.elements.copyDialog.title">
+            <de><![CDATA[[prefixedNumber] kopieren]]></de>
+            <en><![CDATA[Copy [prefixedNumber]]]></en>
+        </locale>
+        <locale name="controls.elements.copyDialog.text">
+            <de><![CDATA[Soll eine Kopie von [prefixedNumber] erstellt werden?]]></de>
+            <en><![CDATA[Should a copy of [prefixedNumber] be made?]]></en>
+        </locale>
+        <locale name="controls.elements.copyDialog.information" html="true">
+            <de>
+                <![CDATA[Es wird eine Kopie mit den Daten von <b>[prefixedNumber]</b> erstellt.]]></de>
+            <en><![CDATA[A new copy will be created with the data of <b>[prefixedNumber]</b>.]]></en>
+        </locale>
+        <locale name="controls.elements.copyDialog.ok_btn">
+            <de><![CDATA[Kopie erstellen]]></de>
+            <en><![CDATA[Create copy]]></en>
+        </locale>
+
+        <locale name="controls.elements.copyDialog.option.title">
+            <de><![CDATA[Bitte wähle hierzu eine der folgenden Optionen, wie die Daten kopiert werden sollen:]]></de>
+            <en><![CDATA[Please select one of the following options for how the data should be copied:]]></en>
+        </locale>
+        <locale name="controls.elements.copyDialog.option.info" html="true">
+            <de><![CDATA[
+            <ul>
+            <li>
+            Als neuen Vorgang kopieren: Diese Option kopiert alle Daten der Entität, jedoch ohne die Prozess-ID.
+            Die kopierte Entität wird somit nicht dem aktuellen Prozess zugeordnet und kann als unabhängiger Vorgang bearbeitet werden.
+            </li>
+            <li>
+            In vorhandenen Vorgang kopieren: Bei dieser Option werden ebenfalls alle Daten der Entität kopiert,
+            jedoch bleibt die Verbindung zum aktuellen Prozess erhalten. Dies ermöglicht es,
+            die Daten innerhalb desselben Prozesses zu duplizieren, ohne neue Prozess-IDs zu erstellen.
+            </li>
+            </ul>
+            ]]></de>
+            <en><![CDATA[
+            <ul>
+            <li>
+            Copy as new process: Diese Option kopiert alle Daten der Entität, jedoch ohne die Prozess-ID.
+            The copied entity is therefore not assigned to the current process and can be edited as an independent process.
+            </li>
+            <li>
+            Copy to existing process: With this option, all of the entity's data is also copied,
+            but the connection to the current process is retained.
+            This makes it possible to duplicate the data within the same process without creating new process IDs.
+            </li>
+            </ul>
+            ]]></en>
+        </locale>
+        <locale name="controls.elements.copyDialog.option.new">
+            <de><![CDATA[Als neuen Vorgang kopieren]]></de>
+            <en><![CDATA[Copy as new process]]></en>
+        </locale>
+        <locale name="controls.elements.copyDialog.option.existing">
+            <de><![CDATA[In vorhandenen Vorgang kopieren]]></de>
+            <en><![CDATA[Copy to existing process]]></en>
+        </locale>
+
     </groups>
 </locales>

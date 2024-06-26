@@ -47,6 +47,7 @@ class Processes
 
         //'quiqqer/contracts',
         try {
+            return QUI\ERP\Accounting\Contracts\Handler::getInstance()->get($entityHash);
         } catch (\Exception) {
         }
 
