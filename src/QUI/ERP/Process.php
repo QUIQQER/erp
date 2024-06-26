@@ -555,7 +555,7 @@ class Process
                 ]
             ]);
         } catch (\Exception) {
-            return [];
+            $offers = [];
         }
 
         $result = [];
@@ -564,6 +564,27 @@ class Process
         foreach ($offers as $offer) {
             try {
                 $result[] = $Offers->getOffer($offer['id']);
+            } catch (\Exception) {
+            }
+        }
+
+        // temporary
+        try {
+            $temporaryOffers = QUI::getDatabase()->fetch([
+                'select' => 'id,hash,global_process_id,date',
+                'from' => QUI\ERP\Accounting\Offers\Handler::getInstance()->temporaryOffersTable(),
+                'where_or' => [
+                    'global_process_id' => $this->processId,
+                    'hash' => $this->processId
+                ]
+            ]);
+        } catch (\Exception) {
+            $temporaryOffers = [];
+        }
+
+        foreach ($temporaryOffers as $temporaryOffer) {
+            try {
+                $result[] = $Offers->getTemporaryOffer($temporaryOffer['id']);
             } catch (\Exception) {
             }
         }
