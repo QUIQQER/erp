@@ -6,8 +6,8 @@
 
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_copyEntity',
-    function ($uuid, $processKeepStatus) {
-        $Instance = (new QUI\ERP\Processes())->getEntity($uuid);
+    function ($uuid, $processKeepStatus, $entityPlugin) {
+        $Instance = (new QUI\ERP\Processes())->getEntity($uuid, $entityPlugin);
 
         if (!($Instance instanceof QUI\ERP\ErpCopyInterface)) {
             throw new QUI\Exception('This entity can not be copied!');
@@ -24,6 +24,6 @@ QUI::$Ajax->registerFunction(
 
         return $Copy->toArray();
     },
-    ['uuid', 'processKeepStatus'],
+    ['uuid', 'processKeepStatus', 'entityPlugin'],
     'Permission::checkAdminUser'
 );

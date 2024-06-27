@@ -6,11 +6,11 @@
 
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_getEntity',
-    function ($uuid) {
-        $Instance = (new QUI\ERP\Processes())->getEntity($uuid);
+    function ($uuid, $entityPlugin) {
+        $Instance = (new QUI\ERP\Processes())->getEntity($uuid, $entityPlugin);
 
         return $Instance->toArray();
     },
-    ['uuid'],
+    ['uuid', 'entityPlugin'],
     'Permission::checkAdminUser'
 );
