@@ -84,7 +84,12 @@ class Processes
 
         if ($entityPlugin === false || $entityPlugin === 'quiqqer/purchasing') {
             try {
-                // @todo quiqqer/purchasing
+                return QUI\ERP\Purchasing\Processes\Handler::getPurchasingProcess($entityHash);
+            } catch (\Exception) {
+            }
+
+            try {
+                return QUI\ERP\Purchasing\Processes\Handler::getPurchasingProcessDraft($entityHash);
             } catch (\Exception) {
             }
         }

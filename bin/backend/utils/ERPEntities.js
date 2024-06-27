@@ -36,6 +36,12 @@ define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function() {
                 case 'QUI\\ERP\\Accounting\\Contracts\\Contract':
                     return 'package/quiqqer/contracts/bin/backend/controls/panels/Contract';
 
+                case 'QUI\\ERP\\Purchasing\\Processes\\PurchasingProcessDraft':
+                    return 'package/quiqqer/purchasing/bin/js/backend/controls/panels/processes/ProcessDraft';
+
+                case 'QUI\\ERP\\Purchasing\\Processes\\PurchasingProcess':
+                    return 'package/quiqqer/purchasing/bin/js/backend/controls/panels/processes/Process';
+
                 default:
                     console.error('missing', entityType);
             }
