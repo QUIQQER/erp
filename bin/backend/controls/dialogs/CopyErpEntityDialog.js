@@ -30,6 +30,7 @@ define('package/quiqqer/erp/bin/backend/controls/dialogs/CopyErpEntityDialog', [
 
         options: {
             hash: false,
+            entityPlugin: false, // kann übergeben werden um sicherzustellen das die entität auch wirklich aus diesem plugin kommt
 
             maxHeight: 400,
             maxWidth: 700,
@@ -60,6 +61,7 @@ define('package/quiqqer/erp/bin/backend/controls/dialogs/CopyErpEntityDialog', [
                 QUIAjax.get('package_quiqqer_erp_ajax_getEntity', resolve, {
                     'package': 'quiqqer/erp',
                     uuid: this.getAttribute('hash'),
+                    entityPlugin: this.getAttribute('entityPlugin'),
                     onError: reject
                 });
             });
@@ -156,6 +158,7 @@ define('package/quiqqer/erp/bin/backend/controls/dialogs/CopyErpEntityDialog', [
             }, {
                 'package': 'quiqqer/erp',
                 uuid: this.getAttribute('hash'),
+                entityPlugin: this.getAttribute('entityPlugin'),
                 processKeepStatus: Copy.value,
                 onError: () => {
                     this.fireEvent('error', [self]);
