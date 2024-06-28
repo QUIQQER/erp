@@ -51,3 +51,9 @@
     border-color: #004e5a;
     color: #004e5a;
 }
+
+.td.clickable:hover .processing-status,
+.td.clickable:hover .payment-status {
+    border-color: #fff !important;
+    color: #fff !important;
+}
