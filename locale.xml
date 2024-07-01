@@ -1618,6 +1618,10 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <de><![CDATA[Als Mailanhang setzen]]></de>
             <en><![CDATA[Set as mail attachment]]></en>
         </locale>
+        <locale name="customer.grid.download.title">
+            <de><![CDATA[Datei herrunterladen]]></de>
+            <en><![CDATA[Download file]]></en>
+        </locale>
         <locale name="customer.grid.customerFiles">
             <de><![CDATA[Kundendateien]]></de>
             <en><![CDATA[Customer files]]></en>
