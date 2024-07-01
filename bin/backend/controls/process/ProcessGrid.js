@@ -116,6 +116,24 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                         }
                     });
 
+                    const Status = new Element('span', {
+                        'class': 'processing-status',
+                        text: entry.processing_status.title,
+                        styles: {
+                            color: entry.processing_status.color !== '---' ? entry.processing_status.color : '',
+                            borderColor: entry.processing_status.color !== '---' ? entry.processing_status.color : ''
+                        }
+                    });
+
+                    if (typeof entry.paid_status === 'undefined') {
+                        entry.paid_status = 0;
+                    }
+
+                    const PaymentStatus = new Element('span', {
+                        'class': 'payment-status payment-status-' + entry.paid_status,
+                        html: QUILocale.get('quiqqer/erp', 'payment.status.' + entry.paid_status)
+                    });
+
                     switch (entry.entityType) {
                         case 'QUI\\ERP\\Order\\Order':
                             Type.setAttribute('title', QUILocale.get(lg, 'processGrid.order.open'));
@@ -135,31 +153,17 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
 
                         case 'QUI\\ERP\\Accounting\\Offers\\Offer':
                             Type.setAttribute('title', QUILocale.get(lg, 'processGrid.offer.open'));
+                            PaymentStatus.set('class', 'processing-status');
+                            PaymentStatus.set('html', '---');
                             break;
 
                         case 'QUI\\ERP\\Accounting\\Offers\\OfferTemporary':
                             Type.setAttribute('title', QUILocale.get(lg, 'processGrid.temporaryOffer.open'));
+                            PaymentStatus.set('class', 'processing-status');
+                            PaymentStatus.set('html', '---');
                             break;
                     }
 
-
-                    const Status = new Element('span', {
-                        'class': 'processing-status',
-                        text: entry.processing_status.title,
-                        styles: {
-                            color: entry.processing_status.color !== '---' ? entry.processing_status.color : '',
-                            borderColor: entry.processing_status.color !== '---' ? entry.processing_status.color : ''
-                        }
-                    });
-
-                    if (typeof entry.paid_status === 'undefined') {
-                        entry.paid_status = 0;
-                    }
-
-                    const PaymentStatus = new Element('span', {
-                        'class': 'payment-status payment-status-' + entry.paid_status,
-                        html: QUILocale.get('quiqqer/erp', 'payment.status.' + entry.paid_status)
-                    });
 
                     data.push({
                         type: Type,
