@@ -1599,7 +1599,7 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <en><![CDATA[Delivery Notes]]></en>
         </locale>
         <locale name="panel.globalProcess.title">
-            <de><![CDATA[Prozess: [globalProcessId]]]></de>
+            <de><![CDATA[Vorgang: [globalProcessId]]]></de>
             <en><![CDATA[Process: [globalProcessId]]]></en>
         </locale>
         <locale name="window.delete.customer.grid.information">
