@@ -25,6 +25,8 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
             'openCustomerFiles',
             'uploadCustomFile',
             'removeSelectedFiles',
+            'download',
+            '$onDblClick',
             '$onInject'
         ],
 
@@ -170,6 +172,11 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                             dataType: 'string',
                             width: 100
                         }, {
+                            header: '',
+                            dataIndex: 'download',
+                            dataType: 'node',
+                            width: 100
+                        }, {
                             dataIndex: 'hash',
                             dataType: 'string',
                             hidden: true
@@ -188,7 +195,8 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                         if (selected.length) {
                             Remove.enable();
                         }
-                    }
+                    },
+                    dblClick: this.$onDblClick
                 });
 
                 this.$Grid.showLoader();
@@ -227,7 +235,24 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                             }),
                             mail: new Element('input', {
                                 type: 'checkbox',
-                                checked: entry.options.attachToEmail
+                                checked: entry.options.attachToEmail,
+                                title: QUILocale.get(lg, 'customer.grid.mail.checkbox.title')
+                            }),
+                            download: new Element('button', {
+                                type: 'button',
+                                'class': 'qui-button qui-utils-noselect',
+                                html: '<span class="fa fa-download"></span>',
+                                title: QUILocale.get(lg, 'customer.grid.download.title'),
+                                events: {
+                                    click: (e) => {
+                                        e.stop();
+
+                                        const Row = e.target.getParent('li.tr');
+                                        const data = this.$Grid.getDataByRow(Row.get('data-row'));
+
+                                        this.download(data.hash);
+                                    }
+                                }
                             })
                         });
                     });
@@ -343,7 +368,7 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                     if (files instanceof FileList) {
                         files = Array.from(files);
                     }
-                    
+
                     Instance.upload(files);
                 });
             });
@@ -453,6 +478,40 @@ define('package/quiqqer/erp/bin/backend/controls/customerFiles/Grid', [
                     onError: reject
                 });
             });
+        },
+
+        $onDblClick: function() {
+            const selected = this.$Grid.getSelectedData();
+
+            if (!selected.length) {
+                return;
+            }
+
+            this.download(selected[0].hash);
+        },
+
+        download: function(hash) {
+            const uid = String.uniqueID();
+            const id = 'download-customer-file-' + uid;
+
+            new Element('iframe', {
+                src: URL_OPT_DIR + 'quiqqer/customer/bin/backend/download.php?' + Object.toQueryString({
+                    hash: hash,
+                    customerId: this.getAttribute('customerId')
+                }),
+                id: id,
+                styles: {
+                    position: 'absolute',
+                    top: -200,
+                    left: -200,
+                    width: 50,
+                    height: 50
+                }
+            }).inject(document.body);
+
+            (function() {
+                document.getElements('#' + id).destroy();
+            }).delay(20000, this);
         }
     });
 });

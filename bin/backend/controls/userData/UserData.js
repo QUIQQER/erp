@@ -452,7 +452,11 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                     return;
                 }
 
-                this.setAttribute('isCommercial', parseInt(User.getAttribute('quiqqer.erp.isNettoUser')) === 1);
+                this.setAttribute('isCommercial', 0);
+
+                if (parseInt(User.getAttribute('quiqqer.erp.isNettoUser')) === 1 || this.getAttribute('company')) {
+                    this.setAttribute('isCommercial', 1);
+                }
 
                 return this.getAddressList(User).then((addresses) => {
                     return [User, addresses];
