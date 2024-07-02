@@ -516,6 +516,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 this.$BtnContactEmailSelect.disabled = false;
 
                 return new Promise((resolve) => {
+                    if (!contactPersonAddress) {
+                        return resolve();
+                    }
+
                     QUIAjax.get('ajax_users_address_get', (address) => {
                         this.$setContactPersonByAddress(address);
                         resolve();
