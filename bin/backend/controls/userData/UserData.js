@@ -33,6 +33,8 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
         'addressId',
         'contactPerson',
         'contactEmail',
+        'quiqqer.erp.standard.payment',
+        'quiqqer.erp.customer.payment.term',
 
         'suffix',
         'firstname',
@@ -163,7 +165,6 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
 
             this.$ContactPerson.addEvent('keyup', () => {
                 this.setAttribute('contactPerson', this.$ContactPerson.value);
-                this.$fireChange();
             });
 
             this.$BtnContactPersonSelect.addEvent('click', () => {
@@ -190,7 +191,6 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             this.$BtnContactEmailSelect = this.$Elm.getElement('button[name="select-contact-email"]');
             this.$ContactEmail.addEvent('keyup', () => {
                 this.setAttribute('contactEmail', this.$ContactEmail.value);
-                this.$fireChange();
             });
 
             this.$BtnContactEmailSelect.addEvent('click', () => {
@@ -309,6 +309,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             });
         },
 
+        refresh: function() {
+            this.$refreshValues();
+        },
+
         /**
          * Refresh the displayed address values.
          *
@@ -351,10 +355,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 this.$RowContactPerson.setStyle('display', 'none');
             }
 
-            if (this.getAttribute('contactEmail') !== false && this.getAttribute('contactEmail') !== '') {
+            if (this.getAttribute('contactEmail') !== false) {
                 this.$ContactEmail.value = this.getAttribute('contactEmail');
             } else {
-                if (this.getAttribute('contact_email') !== false && this.getAttribute('contact_email') !== '') {
+                if (this.getAttribute('contact_email') !== false) {
                     this.$ContactEmail.value = this.getAttribute('contact_email');
                     this.setAttribute('contactEmail', this.getAttribute('contact_email'));
                 }
@@ -462,6 +466,16 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 }
 
                 contactPersonAddress = User.getAttribute('quiqqer.erp.customer.contact.person');
+
+                this.setAttribute(
+                    'quiqqer.erp.standard.payment',
+                    User.getAttribute('quiqqer.erp.standard.payment')
+                );
+
+                this.setAttribute(
+                    'quiqqer.erp.customer.payment.term',
+                    User.getAttribute('quiqqer.erp.customer.payment.term')
+                );
 
                 return this.getAddressList(User).then((addresses) => {
                     return [User, addresses];
@@ -710,6 +724,12 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                             this.$setValues = false;
                             return;
                         }
+
+                        this.setAttribute('contactPerson', '');
+                        this.setAttribute('contactEmail', '');
+
+                        this.$ContactPerson.value = '';
+                        this.$ContactEmail.value = '';
 
                         this.$setDataByUserId(Control.getValue());
                     },
