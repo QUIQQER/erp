@@ -380,6 +380,10 @@
             <de><![CDATA[Bestellung]]></de>
             <en><![CDATA[Order]]></en>
         </locale>
+        <locale name="entity.title.QUI\ERP\Accounting\Contracts\Contract">
+            <de><![CDATA[Vertrag]]></de>
+            <en><![CDATA[Contract]]></en>
+        </locale>
         <locale name="process.history.empty.info">
             <de><![CDATA[Hier werden nur Einträge aufgelistet, die nach dem 01.07.2024 erstellt wurden.]]></de>
             <en><![CDATA[Only entries created after 01/07/2024 are listed here.]]></en>
