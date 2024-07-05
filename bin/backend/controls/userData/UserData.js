@@ -759,7 +759,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                     }
                 });
 
-                if (this.getAttribute('userId')) {
+                if (this.getAttribute('userId') && parseInt(this.getAttribute('userId')) !== 0) {
                     this.$CustomerSelect.addItem(this.getAttribute('userId'));
                 } else {
                     this.$loading = false;
