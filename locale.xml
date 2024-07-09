@@ -94,6 +94,10 @@
             <de><![CDATA[POS]]></de>
             <en><![CDATA[POS]]></en>
         </locale>
+        <locale name="article.list.articles.header.image">
+            <de><![CDATA[Bild]]></de>
+            <en><![CDATA[Image]]></en>
+        </locale>
         <locale name="article.list.articles.header.description">
             <de><![CDATA[Beschreibung]]></de>
             <en><![CDATA[Description]]></en>
