@@ -173,6 +173,14 @@ class ArticleView extends QUI\QDOM
     }
 
     /**
+     * @return string
+     */
+    public function getImageUrl(): string
+    {
+        return $this->Article->getImage()->getUrl();
+    }
+
+    /**
      * Create the html
      *
      * @return string
