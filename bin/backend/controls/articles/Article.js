@@ -1352,6 +1352,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     }
                 }).inject(Container);
 
+                if (typeOf(self) === 'package/quiqqer/erp/bin/backend/controls/articles/Text') {
+                    Edit.setStyle('textAlign', 'left');
+                }
+
                 if (Container === self.$Title) {
                     Edit.setStyle('top', -10);
                 }
