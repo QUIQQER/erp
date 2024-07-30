@@ -12,6 +12,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
     'qui/controls/elements/Sandbox',
 
     'package/quiqqer/erp/bin/backend/controls/Comments',
+    'package/quiqqer/erp/bin/backend/utils/ERPEntities',
 
     'qui/utils/Form',
 
@@ -22,7 +23,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
     'text!package/quiqqer/erp/bin/backend/controls/OutputDialog.html',
     'css!package/quiqqer/erp/bin/backend/controls/OutputDialog.css'
 
-], function(QUI, QUIConfirm, QUISelect, QUISandbox, ERPComments, QUIFormUtils, QUIAjax, QUILocale, Mustache, template) {
+], function(QUI, QUIConfirm, QUISelect, QUISandbox, ERPComments, ERPEntities, QUIFormUtils, QUIAjax, QUILocale, Mustache, template) {
     'use strict';
 
     const lg = 'quiqqer/erp';
@@ -216,6 +217,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
                 const Form = Content.getElement('form');
                 let Selected = false;
+
+                Content.getElement('.quiqqer-erp-outputDialog-options-entityId').set('html', EntityData.prefixedNumber);
 
                 if (!templates.length) {
                     new Element('option', {
