@@ -29,7 +29,7 @@ class Process
      * this date determines when the global process ids start to work.
      * also the relationships.
      */
-    const PROCESS_ACTIVE_DATE = '2024-07-01 00:00:00';
+    const PROCESS_ACTIVE_DATE = '2024-08-01 00:00:00';
 
     /**
      * @var string
@@ -278,15 +278,6 @@ class Process
         $this->parseSalesOrders($History);
         $this->parseTransactions($History);
 
-        if ($History->isEmpty()) {
-            $History->addComment(
-                QUI::getLocale()->get('quiqqer/erp', 'process.history.empty.info'),
-                strtotime(self::PROCESS_ACTIVE_DATE),
-                'quiqqer/erp',
-                'fa fa-info'
-            );
-        }
-
         try {
             QUI::getEvents()->fireEvent('quiqqerErpGetCompleteHistory', [$this, $this->processId]);
         } catch (\Exception $exception) {
@@ -297,6 +288,35 @@ class Process
             QUI::getEvents()->fireEvent('quiqqerErpProcessHistory', [$this, $this->processId]);
         } catch (\Exception $exception) {
             QUI\System\Log::addError($exception->getMessage());
+        }
+
+        // filter comments
+        /**
+         * this date determines when the global process ids start to work.
+         * also the relationships.
+         */
+        $processDate = strtotime(self::PROCESS_ACTIVE_DATE);
+        $comments = $History->toArray();
+
+        $comments = array_filter($comments, function ($comment) use ($processDate) {
+            $createDate = $comment['time'];
+
+            if ($createDate > $processDate) {
+                return true;
+            }
+
+            return false;
+        });
+
+        $History = QUI\ERP\Comments::unserialize($comments);
+
+        if ($History->isEmpty()) {
+            $History->addComment(
+                QUI::getLocale()->get('quiqqer/erp', 'process.history.empty.info'),
+                strtotime(self::PROCESS_ACTIVE_DATE),
+                'quiqqer/erp',
+                'fa fa-info'
+            );
         }
 
         return $History;
@@ -313,7 +333,7 @@ class Process
         foreach ($invoices as $Invoice) {
             $History->addComment(
                 QUI::getLocale()->get('quiqqer/erp', 'process.history.invoice.created', [
-                    'hash' => $Invoice->getUUID()
+                    'hash' => $Invoice->getPrefixedNumber()
                 ]),
                 strtotime($Invoice->getAttribute('date')),
                 'quiqqer/invoice',
@@ -391,22 +411,9 @@ class Process
         }
 
         try {
-            $invoices = QUI\ERP\Accounting\Invoice\Handler::getInstance()->getInvoicesByGlobalProcessId(
+            return QUI\ERP\Accounting\Invoice\Handler::getInstance()->getInvoicesByGlobalProcessId(
                 $this->processId
             );
-
-            $processDate = strtotime(self::PROCESS_ACTIVE_DATE);
-
-            return array_filter($invoices, function ($Invoice) use ($processDate) {
-                $createDate = $Invoice->getAttribute('c_date');
-                $createDate = strtotime($createDate);
-
-                if ($createDate > $processDate) {
-                    return true;
-                }
-
-                return false;
-            });
         } catch (\QUI\Exception) {
             return [];
         }
@@ -425,7 +432,7 @@ class Process
             $history = $Order->getHistory()->toArray();
             $hasCreateMessage = false;
             $createMessage = QUI::getLocale()->get('quiqqer/erp', 'process.history.order.created', [
-                'hash' => $Order->getUUID()
+                'hash' => $Order->getPrefixedNumber()
             ]);
 
             foreach ($history as $entry) {
@@ -513,19 +520,7 @@ class Process
         }
 
         try {
-            $orders = QUI\ERP\Order\Handler::getInstance()->getOrdersByGlobalProcessId($this->processId);
-            $processDate = strtotime(self::PROCESS_ACTIVE_DATE);
-
-            return array_filter($orders, function ($Order) use ($processDate) {
-                $createDate = $Order->getAttribute('c_date');
-                $createDate = strtotime($createDate);
-
-                if ($createDate > $processDate) {
-                    return true;
-                }
-
-                return false;
-            });
+            return QUI\ERP\Order\Handler::getInstance()->getOrdersByGlobalProcessId($this->processId);
         } catch (QUI\Exception) {
             return [];
         }
@@ -631,18 +626,7 @@ class Process
             }
         }
 
-        $processDate = strtotime(self::PROCESS_ACTIVE_DATE);
-
-        return array_filter($result, function ($Offer) use ($processDate) {
-            $createDate = $Offer->getAttribute('c_date');
-            $createDate = strtotime($createDate);
-
-            if ($createDate > $processDate) {
-                return true;
-            }
-
-            return false;
-        });
+        return $result;
     }
 
     //endregion
@@ -656,7 +640,7 @@ class Process
         foreach ($bookings as $Booking) {
             $History->addComment(
                 QUI::getLocale()->get('quiqqer/erp', 'process.history.booking.created', [
-                    'hash' => $Booking->getUuid()
+                    'hash' => $Booking->getPrefixedNumber()
                 ]),
                 $Booking->getCreateDate()->getTimestamp(),
                 'quiqqer/booking',
@@ -728,19 +712,7 @@ class Process
             }
         }
 
-        $processDate = strtotime(self::PROCESS_ACTIVE_DATE);
-
-        return array_filter($result, function ($Booking) use ($processDate) {
-            // @todo c_date??
-            $createDate = $Booking->getAttribute('c_date');
-            $createDate = strtotime($createDate);
-
-            if ($createDate > $processDate) {
-                return true;
-            }
-
-            return false;
-        });
+        return $result;
     }
 
     //endregion
@@ -825,18 +797,7 @@ class Process
             }
         }
 
-        $processDate = strtotime(self::PROCESS_ACTIVE_DATE);
-
-        return array_filter($result, function ($Purchase) use ($processDate) {
-            $createDate = $Purchase->getAttribute('c_date');
-            $createDate = strtotime($createDate);
-
-            if ($createDate > $processDate) {
-                return true;
-            }
-
-            return false;
-        });
+        return $result;
     }
 
     //endregion
@@ -913,19 +874,7 @@ class Process
             }
         }
 
-
-        $processDate = strtotime(self::PROCESS_ACTIVE_DATE);
-
-        return array_filter($result, function ($SalesOrder) use ($processDate) {
-            $createDate = $SalesOrder->getAttribute('c_date');
-            $createDate = strtotime($createDate);
-
-            if ($createDate > $processDate) {
-                return true;
-            }
-
-            return false;
-        });
+        return $result;
     }
 
     //endregion
@@ -977,21 +926,8 @@ class Process
         }
 
         $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
-        $transactions = $Transactions->getTransactionsByProcessId($this->processId);
-        $processDate = strtotime(self::PROCESS_ACTIVE_DATE);
 
-        $this->transactions = array_filter($transactions, function ($Transaction) use ($processDate) {
-            $createDate = $Transaction->getDate();
-            $createDate = strtotime($createDate);
-
-            if ($createDate > $processDate) {
-                return true;
-            }
-
-            return false;
-        });
-
-        return $this->transactions;
+        return $Transactions->getTransactionsByProcessId($this->processId);
     }
 
     //endregion
