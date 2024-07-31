@@ -389,8 +389,8 @@
             <en><![CDATA[Contract]]></en>
         </locale>
         <locale name="process.history.empty.info">
-            <de><![CDATA[Hier werden nur Einträge aufgelistet, die nach dem 01.07.2024 erstellt wurden.]]></de>
-            <en><![CDATA[Only entries created after 01/07/2024 are listed here.]]></en>
+            <de><![CDATA[Hier werden nur Einträge aufgelistet, die nach dem 01.08.2024 erstellt wurden.]]></de>
+            <en><![CDATA[Only entries created after 01/08/2024 are listed here.]]></en>
         </locale>
     </groups>
 
@@ -799,37 +799,37 @@
             <en><![CDATA[[startCurrency] = [rate]]]></en>
         </locale>
         <locale name="created.invoice">
-            <de><![CDATA[Rechnung #[invoiceId] erstellt]]></de>
-            <en><![CDATA[Created invoice #[invoiceId]]]></en>
+            <de><![CDATA[Rechnung [invoiceId] erstellt]]></de>
+            <en><![CDATA[Created invoice [invoiceId]]]></en>
         </locale>
         <locale name="created.order">
-            <de><![CDATA[Bestellung #[orderId] erstellt]]></de>
-            <en><![CDATA[Created order #[orderId]]]></en>
+            <de><![CDATA[Bestellung [orderId] erstellt]]></de>
+            <en><![CDATA[Created order [orderId]]]></en>
         </locale>
 
         <locale name="process.history.invoice.created">
-            <de><![CDATA[Rechnung #[hash] erstellt]]></de>
-            <en><![CDATA[Invoice #[hash] created]]></en>
+            <de><![CDATA[Rechnung [hash] erstellt]]></de>
+            <en><![CDATA[Invoice [hash] created]]></en>
         </locale>
         <locale name="process.history.order.created">
-            <de><![CDATA[Bestellung #[hash] erstellt]]></de>
-            <en><![CDATA[Order #[hash] created]]></en>
+            <de><![CDATA[Bestellung [hash] erstellt]]></de>
+            <en><![CDATA[Order [hash] created]]></en>
         </locale>
         <locale name="process.history.offer.created">
-            <de><![CDATA[Angebot #[hash] erstellt]]></de>
-            <en><![CDATA[Offer #[hash] created]]></en>
+            <de><![CDATA[Angebot [hash] erstellt]]></de>
+            <en><![CDATA[Offer [hash] created]]></en>
         </locale>
         <locale name="process.history.purchasing.created">
-            <de><![CDATA[Einkauf #[hash] erstellt]]></de>
-            <en><![CDATA[Purchase #[hash] created]]></en>
+            <de><![CDATA[Einkauf [hash] erstellt]]></de>
+            <en><![CDATA[Purchase [hash] created]]></en>
         </locale>
         <locale name="process.history.salesorders.created">
-            <de><![CDATA[Auftrag #[hash] erstellt]]></de>
-            <en><![CDATA[Sales order #[hash] created]]></en>
+            <de><![CDATA[Auftrag [hash] erstellt]]></de>
+            <en><![CDATA[Sales order [hash] created]]></en>
         </locale>
         <locale name="process.history.booking.created">
-            <de><![CDATA[Buchung #[hash] erstellt]]></de>
-            <en><![CDATA[Booking #[hash] created]]></en>
+            <de><![CDATA[Buchung [hash] erstellt]]></de>
+            <en><![CDATA[Booking [hash] created]]></en>
         </locale>
         <locale name="process.history.transaction.created">
             <de><![CDATA[Zahlung von [amount] eingegangen / gebucht. (#[hash])]]></de>
