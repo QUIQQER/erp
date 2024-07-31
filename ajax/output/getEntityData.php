@@ -37,9 +37,14 @@ QUI::$Ajax->registerFunction(
             QUI\System\Log::writeException($Exception);
         }
 
+        $Processes = new QUI\ERP\Processes();
+        $Entity = $Processes->getEntity($entityId);
+
         return [
             'email' => $OutputProvider::getEmailAddress(Orthos::clear($entityId)),
-            'hideSystemDefaultTemplate' => $hideSystemDefaultTemplate
+            'hideSystemDefaultTemplate' => $hideSystemDefaultTemplate,
+            'uuid' => $Entity->getUUID(),
+            'prefixedNumber' => $Entity->getPrefixedNumber()
         ];
     },
     ['entityId', 'entityType'],
