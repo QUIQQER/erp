@@ -60,6 +60,22 @@ define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function() {
             });
         },
 
+        getEntity: function(uuid, entityPlugin) {
+            if (typeof entityPlugin === 'undefined') {
+                entityPlugin = false;
+            }
+
+            return new Promise(function(resolve) {
+                require(['Ajax'], function(QUIAjax) {
+                    QUIAjax.get('package_quiqqer_erp_ajax_getEntity', resolve, {
+                        'package': 'quiqqer/erp',
+                        uuid: uuid,
+                        entityPlugin: entityPlugin
+                    });
+                });
+            });
+        },
+
         openPanelByUUID: function(uuid) {
             return this.getTypeByUUID(uuid).then((entityType) => {
                 const panel = this.getPanelByEntity(entityType);
