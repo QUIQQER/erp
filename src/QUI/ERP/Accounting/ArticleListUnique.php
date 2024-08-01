@@ -10,6 +10,7 @@ use ArrayIterator;
 use IteratorAggregate;
 use QUI;
 use QUI\ERP\Accounting\PriceFactors\FactorList as ErpFactorList;
+use QUI\Exception;
 use Traversable;
 
 use function array_map;
@@ -549,29 +550,39 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Return the Article List as HTML, with CSS
      *
+     * @param bool|string $template
+     * @param bool|string $articleTemplate
      * @return string
      *
-     * @throws QUI\Exception
+     * @throws Exception
      */
-    public function toHTMLWithCSS(): string
+    public function toHTMLWithCSS(
+        bool|string $template = false,
+        bool|string $articleTemplate = false
+    ): string
     {
         $style = '<style>';
         $style .= file_get_contents(dirname(__FILE__) . '/ArticleList.css');
         $style .= '</style>';
 
-        return $style . $this->toHTML();
+        return $style . $this->toHTML($template, $articleTemplate);
     }
 
     /**
      * Alias for toHTMLWithCSS
      *
+     * @param bool|string $template
+     * @param bool|string $articleTemplate
      * @return string
      *
-     * @throws QUI\Exception
+     * @throws Exception
      */
-    public function render(): string
+    public function render(
+        bool|string $template = false,
+        bool|string $articleTemplate = false
+    ): string
     {
-        return $this->toHTMLWithCSS();
+        return $this->toHTMLWithCSS($template, $articleTemplate);
     }
 
     /**
