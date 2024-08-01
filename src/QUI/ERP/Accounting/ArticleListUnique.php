@@ -389,9 +389,10 @@ class ArticleListUnique implements IteratorAggregate
      * Return the Article List as HTML, without CSS
      *
      * @param bool|string $template - custom template
+     * @param bool|string $articleTemplate
      * @return string
      *
-     * @throws QUI\Exception
+     * @throws Exception
      */
     public function toHTML(
         bool|string $template = false,
