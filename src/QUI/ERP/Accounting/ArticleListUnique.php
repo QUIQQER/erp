@@ -393,7 +393,10 @@ class ArticleListUnique implements IteratorAggregate
      *
      * @throws QUI\Exception
      */
-    public function toHTML($template = false): string
+    public function toHTML(
+        $template = false,
+        $articleTemplate = false
+    ): string
     {
         $Engine = QUI::getTemplateManager()->getEngine();
         $vatArray = [];
@@ -513,6 +516,7 @@ class ArticleListUnique implements IteratorAggregate
             'showHeader' => $this->showHeader,
             'this' => $this,
             'articles' => $articles,
+            'articleTemplate' => $articleTemplate,
             'calculations' => $this->calculations,
             'vatArray' => $vatArray,
             'Locale' => $this->Locale,
@@ -546,13 +550,16 @@ class ArticleListUnique implements IteratorAggregate
      *
      * @throws Exception
      */
-    public function toHTMLWithCSS($template = false): string
+    public function toHTMLWithCSS(
+        $template = false,
+        $articleTemplate = false
+    ): string
     {
         $style = '<style>';
         $style .= file_get_contents(dirname(__FILE__) . '/ArticleList.css');
         $style .= '</style>';
 
-        return $style . $this->toHTML($template);
+        return $style . $this->toHTML($template, $articleTemplate);
     }
 
     /**
@@ -563,9 +570,12 @@ class ArticleListUnique implements IteratorAggregate
      *
      * @throws Exception
      */
-    public function render($template = false): string
+    public function render(
+        $template = false,
+        $articleTemplate = false
+    ): string
     {
-        return $this->toHTMLWithCSS($template);
+        return $this->toHTMLWithCSS($template, $articleTemplate);
     }
 
     /**

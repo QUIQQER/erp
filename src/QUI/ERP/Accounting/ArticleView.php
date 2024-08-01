@@ -187,7 +187,7 @@ class ArticleView extends QUI\QDOM
      *
      * @throws QUI\Exception
      */
-    public function toHTML(): string
+    public function toHTML($template = false): string
     {
         $Engine = QUI::getTemplateManager()->getEngine();
         $Currency = $this->getCurrency();
@@ -244,6 +244,10 @@ class ArticleView extends QUI\QDOM
             'customFields' => $customFields,
             'hasAppliedVat' => !empty($articleData['calculated']['vatArray']['vat'])
         ]);
+
+        if ($template && file_exists($template)) {
+            return $Engine->fetch($template);
+        }
 
         if ($this->Article instanceof QUI\ERP\Accounting\Articles\Text) {
             return $Engine->fetch(\dirname(__FILE__) . '/ArticleViewText.html');
