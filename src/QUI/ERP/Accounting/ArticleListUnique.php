@@ -244,10 +244,10 @@ class ArticleListUnique implements IteratorAggregate
      * placeholder. unique list cant be calc
      * calc makes the unique article list compatible to the article list
      *
-     * @param $Calc
+     * @param ?QUI\ERP\Accounting\Calc $Calc
      * @return ArticleListUnique
      */
-    public function calc($Calc = null): ArticleListUnique
+    public function calc(?QUI\ERP\Accounting\Calc $Calc = null): ArticleListUnique
     {
         // placeholder. unique list cant be calc
         return $this;

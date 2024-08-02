@@ -341,10 +341,10 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     }
 
     /**
-     * @param null $Calc $Calc
+     * @param null|QUI\ERP\Accounting\Calc $Calc $Calc
      * @return ArticleList
      */
-    public function calc($Calc = null): ArticleList
+    public function calc(?QUI\ERP\Accounting\Calc $Calc = null): ArticleList
     {
         if ($this->calculated) {
             return $this;
