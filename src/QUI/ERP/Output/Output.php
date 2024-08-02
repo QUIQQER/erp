@@ -180,7 +180,7 @@ class Output
      * @param string|null $recipientEmail (optional)
      * @param string|null $mailSubject (optional)
      * @param string|null $mailContent (optional)
-     * @param <QUI\Projects\Media\File|QUI\Projects\Media\Image>[] $attachedMediaFiles (optional)
+     * @param QUI\Projects\Media\File[]|QUI\Projects\Media\Image[] $attachedMediaFiles (optional)
      *
      * @return void
      *
