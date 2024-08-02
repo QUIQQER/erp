@@ -19,19 +19,10 @@ use function round;
  */
 class CalculationValue
 {
-    /**
-     * @var QUI\ERP\Currency\Currency
-     */
     protected QUI\ERP\Currency\Currency $Currency;
 
-    /**
-     * @var int|float
-     */
     protected int|float $number = 0;
 
-    /**
-     * @var int|string
-     */
     protected int|float $precision = 8;
 
     /**
