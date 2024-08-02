@@ -15,6 +15,8 @@ use QUI\ERP\Currency\Currency;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
 
+use QUI\Locale;
+
 use function array_map;
 use function array_sum;
 use function class_exists;
@@ -393,7 +395,7 @@ class Calc
         $bruttoSum = round($bruttoSum, $precision);
 
         foreach ($vatLists as $vat => $bool) {
-            $vatText[(string)$vat] = self::getVatText($vat, $this->getUser());
+            $vatText[(string)$vat] = self::getVatText((float)$vat, $this->getUser());
         }
 
         // delete 0 % vat, 0% vat is allowed to calculate more easily
@@ -460,7 +462,7 @@ class Calc
             // works only for one vat entry
             if (count($vatArray) === 1) {
                 $vat = key($vatArray);
-                $netto = $bruttoSum / ($vat / 100 + 1);
+                $netto = $bruttoSum / ((float)$vat / 100 + 1);
 
                 $vatSum = $bruttoSum - $netto;
                 $vatSum = round($vatSum, $Currency->getPrecision());
@@ -472,7 +474,7 @@ class Calc
             }
         }
 
-        if ($bruttoSum === 0 || $nettoSum === 0) {
+        if (empty($bruttoSum) || empty($nettoSum)) {
             $bruttoSum = 0;
             $nettoSum = 0;
 
@@ -647,7 +649,7 @@ class Calc
      * Rounds the value via shop config
      *
      * @param string|int|float $value
-     * @return float|mixed
+     * @return float
      */
     public function round($value): float
     {
@@ -671,11 +673,11 @@ class Calc
      *
      * @return string
      */
-    public function getVatTextByUser()
+    public function getVatTextByUser(): string
     {
         try {
             $Tax = QUI\ERP\Tax\Utils::getTaxByUser($this->getUser());
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             return '';
         }
 
@@ -686,13 +688,13 @@ class Calc
      * Return tax text
      * eq: incl or zzgl
      *
-     * @param integer $vat
+     * @param float|int $vat
      * @param UserInterface $User
-     * @param null|QUI\Locale $Locale - optional
+     * @param null|Locale $Locale - optional
      *
-     * @return array|string
+     * @return string
      */
-    public static function getVatText(float $vat, UserInterface $User, QUI\Locale $Locale = null)
+    public static function getVatText(float|int $vat, UserInterface $User, QUI\Locale $Locale = null): string
     {
         if ($Locale === null) {
             $Locale = $User->getLocale();
@@ -1014,16 +1016,9 @@ class Calc
      * @param mixed $ToCalculate
      * @return bool
      */
-    public static function isAllowedForCalculation($ToCalculate): bool
+    public static function isAllowedForCalculation(mixed $ToCalculate): bool
     {
         if ($ToCalculate instanceof QUI\ERP\ErpEntityInterface) {
-            return true;
-        }
-
-        if (
-            class_exists('QUI\ERP\Purchasing\Processes\PurchasingProcess')
-            && $ToCalculate instanceof QUI\ERP\Purchasing\Processes\PurchasingProcess
-        ) {
             return true;
         }
 
