@@ -233,9 +233,9 @@ class ArticleListUnique implements IteratorAggregate
      * placeholder. unique list cant be recalculate
      * recalculate makes the unique article list compatible to the article list
      *
-     * @param $Calc
+     * @param ?QUI\ERP\Accounting\Calc $Calc
      */
-    public function recalculate($Calc = null)
+    public function recalculate(?QUI\ERP\Accounting\Calc $Calc = null)
     {
         // placeholder. unique list cant be recalculate
     }
