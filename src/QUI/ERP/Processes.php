@@ -47,7 +47,10 @@ class Processes
             }
         }
 
-        if ($entityPlugin === false || $entityPlugin === 'quiqqer/contracts') {
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/contracts')
+            && class_exists('QUI\ERP\Accounting\Contracts\Handler')
+        ) {
             try {
                 return QUI\ERP\Accounting\Contracts\Handler::getInstance()->get($entityHash);
             } catch (\Exception) {
@@ -61,28 +64,40 @@ class Processes
             }
         }
 
-        if ($entityPlugin === false || $entityPlugin === 'quiqqer/invoice') {
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/invoice')
+            && class_exists('QUI\ERP\Accounting\Invoice\Handle')
+        ) {
             try {
                 return QUI\ERP\Accounting\Invoice\Handler::getInstance()->getInvoiceByHash($entityHash);
             } catch (\Exception) {
             }
         }
 
-        if ($entityPlugin === false || $entityPlugin === 'quiqqer/offers') {
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/offers')
+            && class_exists('QUI\ERP\Accounting\Offers\Handler')
+        ) {
             try {
                 return QUI\ERP\Accounting\Offers\Handler::getInstance()->getOfferByHash($entityHash);
             } catch (\Exception) {
             }
         }
 
-        if ($entityPlugin === false || $entityPlugin === 'quiqqer/order') {
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/order')
+            && class_exists('QUI\ERP\Order\Handler')
+        ) {
             try {
                 return QUI\ERP\Order\Handler::getInstance()->getOrderByHash($entityHash);
             } catch (\Exception) {
             }
         }
 
-        if ($entityPlugin === false || $entityPlugin === 'quiqqer/purchasing') {
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/purchasing')
+            && class_exists('QUI\ERP\Purchasing\Processes\Handler')
+        ) {
             try {
                 return QUI\ERP\Purchasing\Processes\Handler::getPurchasingProcess($entityHash);
             } catch (\Exception) {
@@ -94,7 +109,10 @@ class Processes
             }
         }
 
-        if ($entityPlugin === false || $entityPlugin === 'quiqqer/salesorders') {
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/salesorders')
+            && class_exists('QUI\ERP\SalesOrders\Handler')
+        ) {
             try {
                 return QUI\ERP\SalesOrders\Handler::getSalesOrderByHash($entityHash);
             } catch (\Exception) {
