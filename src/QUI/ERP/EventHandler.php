@@ -153,7 +153,7 @@ class EventHandler
         $companyName = $Conf->get('company', 'name');
 
         if (empty($bankIban) || empty($bankBic) || empty($companyName)) {
-            $Conf->setValue('bankAccounts', 'isPatched', true);
+            $Conf->setValue('bankAccounts', 'isPatched', 1);
             $Conf->save();
 
             return;
@@ -188,7 +188,7 @@ class EventHandler
             );
         }
 
-        $Conf->setValue('bankAccounts', 'isPatched', true);
+        $Conf->setValue('bankAccounts', 'isPatched', 1);
         $Conf->save();
     }
 

@@ -10,6 +10,7 @@ use ArrayIterator;
 use IteratorAggregate;
 use QUI;
 use QUI\ERP\Accounting\PriceFactors\FactorList as ErpFactorList;
+use QUI\Exception;
 use Traversable;
 
 use function array_map;
@@ -232,9 +233,9 @@ class ArticleListUnique implements IteratorAggregate
      * placeholder. unique list cant be recalculate
      * recalculate makes the unique article list compatible to the article list
      *
-     * @param $Calc
+     * @param ?QUI\ERP\Accounting\Calc $Calc
      */
-    public function recalculate($Calc = null)
+    public function recalculate(?QUI\ERP\Accounting\Calc $Calc = null)
     {
         // placeholder. unique list cant be recalculate
     }
@@ -243,10 +244,10 @@ class ArticleListUnique implements IteratorAggregate
      * placeholder. unique list cant be calc
      * calc makes the unique article list compatible to the article list
      *
-     * @param $Calc
+     * @param ?QUI\ERP\Accounting\Calc $Calc
      * @return ArticleListUnique
      */
-    public function calc($Calc = null): ArticleListUnique
+    public function calc(?QUI\ERP\Accounting\Calc $Calc = null): ArticleListUnique
     {
         // placeholder. unique list cant be calc
         return $this;
@@ -388,9 +389,10 @@ class ArticleListUnique implements IteratorAggregate
      * Return the Article List as HTML, without CSS
      *
      * @param bool|string $template - custom template
+     * @param bool|string $articleTemplate
      * @return string
      *
-     * @throws QUI\Exception
+     * @throws Exception
      */
     public function toHTML(
         bool|string $template = false,
@@ -549,29 +551,39 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Return the Article List as HTML, with CSS
      *
+     * @param bool|string $template
+     * @param bool|string $articleTemplate
      * @return string
      *
-     * @throws QUI\Exception
+     * @throws Exception
      */
-    public function toHTMLWithCSS(): string
+    public function toHTMLWithCSS(
+        bool|string $template = false,
+        bool|string $articleTemplate = false
+    ): string
     {
         $style = '<style>';
         $style .= file_get_contents(dirname(__FILE__) . '/ArticleList.css');
         $style .= '</style>';
 
-        return $style . $this->toHTML();
+        return $style . $this->toHTML($template, $articleTemplate);
     }
 
     /**
      * Alias for toHTMLWithCSS
      *
+     * @param bool|string $template
+     * @param bool|string $articleTemplate
      * @return string
      *
-     * @throws QUI\Exception
+     * @throws Exception
      */
-    public function render(): string
+    public function render(
+        bool|string $template = false,
+        bool|string $articleTemplate = false
+    ): string
     {
-        return $this->toHTMLWithCSS();
+        return $this->toHTMLWithCSS($template, $articleTemplate);
     }
 
     /**

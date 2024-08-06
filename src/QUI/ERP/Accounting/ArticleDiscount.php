@@ -15,6 +15,7 @@ use function is_array;
 use function is_numeric;
 use function json_decode;
 use function json_encode;
+use function method_exists;
 use function str_replace;
 use function strpos;
 
@@ -225,11 +226,11 @@ class ArticleDiscount
         }
 
         if ($this->type === Calc::CALCULATION_COMPLEMENT) {
-            if ($this->Article && $this->Article->getUser()) {
+            if ($this->Article && method_exists($this->Article, 'getUser') && $this->Article->getUser()) {
                 $User = $this->Article->getUser();
                 $isNetto = QUI\ERP\Utils\User::isNettoUser($User);
 
-                if (!$isNetto) {
+                if (!$isNetto && method_exists($this->Article, 'getVat')) {
                     $value = $value * ($this->Article->getVat() / 100 + 1);
                 }
             }

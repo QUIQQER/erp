@@ -273,7 +273,6 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
-     * @return int|false
      * @deprecated use getUUID()
      */
     public function getId(): int|false
@@ -282,7 +281,6 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
-     * @return string
      * @deprecated use getUUID()
      */
     public function getUniqueId(): string
@@ -290,17 +288,11 @@ class User extends QUI\QDOM implements UserInterface
         return $this->getUUID();
     }
 
-    /**
-     * @return string
-     */
     public function getUUID(): string
     {
         return $this->uuid;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         $Address = $this->getAddress();
@@ -342,8 +334,6 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Return the company if the customer has a company
      * if not, the user will be returned
-     *
-     * @return mixed
      */
     public function getInvoiceName(): string
     {
@@ -359,25 +349,16 @@ class User extends QUI\QDOM implements UserInterface
         return $this->getName();
     }
 
-    /**
-     * @return string
-     */
     public function getUsername(): string
     {
         return $this->username;
     }
 
-    /**
-     * @return string
-     */
     public function getLang(): string
     {
         return $this->lang;
     }
 
-    /**
-     * @return QUI\Locale
-     */
     public function getLocale(): QUI\Locale
     {
         $Locale = new QUI\Locale();
@@ -386,9 +367,6 @@ class User extends QUI\QDOM implements UserInterface
         return $Locale;
     }
 
-    /**
-     * @return array
-     */
     public function getAttributes(): array
     {
         $attributes = parent::getAttributes();
@@ -412,10 +390,6 @@ class User extends QUI\QDOM implements UserInterface
         return $attributes;
     }
 
-    /**
-     * @param string $name
-     * @return string
-     */
     public function getAttribute(string $name): mixed
     {
         return match ($name) {
@@ -426,17 +400,11 @@ class User extends QUI\QDOM implements UserInterface
         };
     }
 
-    /**
-     * @return mixed
-     */
     public function getType(): string
     {
         return get_class($this);
     }
 
-    /**
-     * @return mixed
-     */
     public function getStatus(): int
     {
         return 0;
@@ -467,9 +435,6 @@ class User extends QUI\QDOM implements UserInterface
         $this->address = json_decode($Address->toJSON(), true);
     }
 
-    /**
-     * @return Country|bool
-     */
     public function getCountry(): ?QUI\Countries\Country
     {
         if (!empty($this->address) && isset($this->address['country'])) {
@@ -489,17 +454,11 @@ class User extends QUI\QDOM implements UserInterface
         return QUI\ERP\Defaults::getCountry();
     }
 
-    /**
-     * @return bool
-     */
     public function isCompany(): bool
     {
         return $this->isCompany;
     }
 
-    /**
-     * @return bool
-     */
     public function isNetto(): bool
     {
         try {
@@ -528,34 +487,21 @@ class User extends QUI\QDOM implements UserInterface
         return $this->isNetto;
     }
 
-    /**
-     * @return bool
-     */
     public function hasBruttoNettoStatus(): bool
     {
         return is_bool($this->isNetto);
     }
 
-    /**
-     * @return mixed
-     */
     public function isSU(): bool
     {
         return false;
     }
 
-    /**
-     * @param int|string $groupId
-     * @return mixed
-     */
     public function isInGroup(int|string $groupId): bool
     {
         return false;
     }
 
-    /**
-     * @return mixed
-     */
     public function canUseBackend(): bool
     {
         return false;
@@ -568,29 +514,16 @@ class User extends QUI\QDOM implements UserInterface
     {
     }
 
-    /**
-     * @param string $code
-     * @param UserInterface|null $PermissionUser
-     * @return bool
-     */
     public function activate(string $code = '', ?QUI\Interfaces\Users\User $PermissionUser = null): bool
     {
         return true;
     }
 
-    /**
-     * @param UserInterface|null $PermissionUser
-     * @return bool
-     */
     public function deactivate(?UserInterface $PermissionUser = null): bool
     {
         return true;
     }
 
-    /**
-     * @param UserInterface|null $PermissionUser
-     * @return true
-     */
     public function disable(UserInterface|null $PermissionUser = null): bool
     {
         return true;
@@ -598,16 +531,11 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Does nothing
-     * @param UserInterface|null $PermissionUser
      */
     public function save(?UserInterface $PermissionUser = null): void
     {
     }
 
-    /**
-     * @param UserInterface|null $PermissionUser
-     * @return bool
-     */
     public function delete(?UserInterface $PermissionUser = null): bool
     {
         return false;
@@ -615,19 +543,12 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * This user has nowhere permissions
-     *
-     * @param string $right
-     * @param bool|array $ruleset
-     * @return bool
      */
     public function getPermission(string $right, bool|array|string|callable $ruleset = false): bool
     {
         return false;
     }
 
-    /**
-     * @return Address
-     */
     public function getStandardAddress(): Address
     {
         return $this->getAddress();
@@ -640,16 +561,11 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Does nothing
-     * @param array|string $groups
      */
     public function setGroups(array|string $groups)
     {
     }
 
-    /**
-     * @param bool $array
-     * @return int[]|string[]|Group[]
-     */
     public function getGroups(bool $array = true): array
     {
         $groupIds = $this->getAttribute('usergroup');
@@ -698,8 +614,6 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Does nothing
-     * @param string $new
-     * @param UserInterface|null $PermissionUser
      */
     public function setPassword(string $new, ?UserInterface $PermissionUser = null)
     {
@@ -711,32 +625,21 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Does nothing
-     * @param string $pass
-     * @param bool $encrypted
      */
     public function checkPassword(string $pass, bool $encrypted = false)
     {
     }
 
-    /**
-     * @return bool
-     */
     public function isDeleted(): bool
     {
         return false;
     }
 
-    /**
-     * @return bool
-     */
     public function isActive(): bool
     {
         return true;
     }
 
-    /**
-     * @return bool
-     */
     public function isOnline(): bool
     {
         return false;
@@ -744,7 +647,6 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Does nothing
-     * @param bool $status
      */
     public function setCompanyStatus(bool $status)
     {
@@ -752,7 +654,6 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Does nothing
-     * @param int $groupId
      */
     public function addToGroup(int $groupId)
     {
@@ -760,7 +661,6 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Does nothing
-     * @param int|Group $Group
      */
     public function removeGroup(Group|int $Group)
     {
@@ -777,8 +677,6 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Get customer no. of this ERP User.
-     *
-     * @return string
      */
     public function getCustomerNo(): string
     {
@@ -795,8 +693,6 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Get supplier no. of this ERP User.
-     *
-     * @return string
      */
     public function getSupplierNo(): string
     {
