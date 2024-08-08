@@ -560,8 +560,7 @@ class ArticleListUnique implements IteratorAggregate
     public function toHTMLWithCSS(
         bool|string $template = false,
         bool|string $articleTemplate = false
-    ): string
-    {
+    ): string {
         $style = '<style>';
         $style .= file_get_contents(dirname(__FILE__) . '/ArticleList.css');
         $style .= '</style>';
@@ -581,8 +580,7 @@ class ArticleListUnique implements IteratorAggregate
     public function render(
         bool|string $template = false,
         bool|string $articleTemplate = false
-    ): string
-    {
+    ): string {
         return $this->toHTMLWithCSS($template, $articleTemplate);
     }
 
