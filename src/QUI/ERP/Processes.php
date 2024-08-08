@@ -66,7 +66,7 @@ class Processes
 
         if (
             ($entityPlugin === false || $entityPlugin === 'quiqqer/invoice')
-            && class_exists('QUI\ERP\Accounting\Invoice\Handle')
+            && class_exists('QUI\ERP\Accounting\Invoice\Handler')
         ) {
             try {
                 return QUI\ERP\Accounting\Invoice\Handler::getInstance()->getInvoiceByHash($entityHash);

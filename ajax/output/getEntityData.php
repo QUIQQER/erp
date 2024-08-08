@@ -13,11 +13,15 @@ use QUI\Utils\Security\Orthos;
 
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_output_getEntityData',
-    function ($entityId, $entityType) {
+    function ($entityId, $entityType, $entityPlugin) {
         $OutputProvider = ERPOutput::getOutputProviderByEntityType(Orthos::clear($entityType));
 
         if (empty($OutputProvider)) {
             return false;
+        }
+
+        if (empty($entityPlugin)) {
+            $entityPlugin = false;
         }
 
         $hideSystemDefaultTemplate = false;
@@ -38,7 +42,7 @@ QUI::$Ajax->registerFunction(
         }
 
         $Processes = new QUI\ERP\Processes();
-        $Entity = $Processes->getEntity($entityId);
+        $Entity = $Processes->getEntity($entityId, $entityPlugin);
 
         return [
             'email' => $OutputProvider::getEmailAddress(Orthos::clear($entityId)),
@@ -47,6 +51,6 @@ QUI::$Ajax->registerFunction(
             'prefixedNumber' => $Entity->getPrefixedNumber()
         ];
     },
-    ['entityId', 'entityType'],
+    ['entityId', 'entityType', 'entityPlugin'],
     'Permission::checkAdminUser'
 );

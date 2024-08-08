@@ -48,6 +48,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
         options: {
             entityId: false,  // Clean entity ID WITHOUT prefix and suffix
             entityType: false,  // Entity type (e.g. "Invoice")
+            entityPlugin: false,
 
             comments: false,    // Comments as array [must be readble by package/quiqqer/erp/bin/backend/controls/Comments]
 
@@ -161,6 +162,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                         new OutputMailEditor({
                             entityId: self.getAttribute('entityId'),
                             entityType: self.getAttribute('entityType'),
+                            entityPlugin: self.getAttribute('entityPlugin'),
 
                             mailSubject: self.$Mail.subject,
                             mailContent: self.$Mail.content,
@@ -453,6 +455,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     src: URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/print.php?' + Object.toQueryString({
                         id: entityId,
                         t: self.getAttribute('entityType'),
+                        ep: self.getAttribute('entityPlugin'),
                         oid: self.getId(),
                         tpl: self.$Template.id,
                         tplpr: self.$Template.provider
@@ -510,6 +513,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     src: URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/download.php?' + Object.toQueryString({
                         id: entityId,
                         t: self.getAttribute('entityType'),
+                        ep: self.getAttribute('entityPlugin'),
                         oid: self.getId(),
                         tpl: self.$Template.id,
                         tplpr: self.$Template.provider
@@ -629,6 +633,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     'package': 'quiqqer/erp',
                     entityId: self.getAttribute('entityId'),
                     entityType: self.getAttribute('entityType'),
+                    entityPlugin: self.getAttribute('entityPlugin'),
                     onError: reject
                 });
             });
@@ -646,6 +651,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 QUIAjax.get('package_quiqqer_erp_ajax_output_getTemplates', resolve, {
                     'package': 'quiqqer/erp',
                     entityType: self.getAttribute('entityType'),
+                    entityPlugin: self.getAttribute('entityPlugin'),
                     onError: reject
                 });
             });
@@ -664,7 +670,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     'package': 'quiqqer/erp',
                     entity: JSON.encode({
                         id: self.getAttribute('entityId'),
-                        type: self.getAttribute('entityType')
+                        type: self.getAttribute('entityType'),
+                        plugin: self.getAttribute('entityPlugin')
                     }),
                     template: JSON.encode(self.$Template),
                     onError: reject
@@ -686,6 +693,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                     'package': 'quiqqer/erp',
                     entityId: self.getAttribute('entityId'),
                     entityType: self.getAttribute('entityType'),
+                    entityPlugin: self.getAttribute('entityPlugin'),
                     template: self.$Template.id,
                     templateProvider: self.$Template.provider,
                     mailSubject: self.$Mail.subject,
