@@ -415,17 +415,31 @@ class EventHandler
     /**
      * erp smarty function {getPrefixedNumber}
      *
-     * @example {erpGetPrefixedNumber assign=prefixedNumber var=$erpUUID}
-     *
      * @param array $params
      * @param $smarty
      * @return string
+     * @example {erpGetPrefixedNumber assign=prefixedNumber var=$erpUUID}
+     *
      */
     public static function getPrefixedNumber(array $params, $smarty): string
     {
         $prefixedNumber = '';
 
-        if (!empty($params['var'])) {
+        if (empty($params['var'])) {
+            return '';
+        }
+
+        $var = $params['var'];
+
+        if (is_array($var) && isset($var['prefixedNumber'])) {
+            $prefixedNumber = $var['prefixedNumber'];
+        } elseif (is_array($var) && isset($var['hash'])) {
+            try {
+                $Entity = (new Processes())->getEntity($var['hash']);
+                $prefixedNumber = $Entity->getPrefixedNumber();
+            } catch (QUI\Exception) {
+            }
+        } else {
             try {
                 $Entity = (new Processes())->getEntity($params['var']);
                 $prefixedNumber = $Entity->getPrefixedNumber();
