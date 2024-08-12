@@ -891,6 +891,10 @@ class Process
             return [];
         }
 
+        if (!class_exists('QUI\ERP\SalesOrders\Handler')) {
+            return [];
+        }
+
         $result = [];
 
         try {
