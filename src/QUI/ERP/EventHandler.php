@@ -19,9 +19,11 @@ use function class_exists;
 use function dirname;
 use function explode;
 use function is_array;
+use function is_object;
 use function is_string;
 use function json_decode;
 use function json_encode;
+use function method_exists;
 
 /**
  * Class EventHandler
@@ -431,8 +433,18 @@ class EventHandler
 
         $var = $params['var'];
 
-        if (is_array($var) && isset($var['prefixedNumber'])) {
+        if (is_object($var)) {
+            if ($var instanceof ErpEntityInterface) {
+                $prefixedNumber = $var->getPrefixedNumber();
+            } elseif (method_exists($var, 'getPrefixedNumber')) {
+                $prefixedNumber = $var->getPrefixedNumber();
+            } elseif (method_exists($var, 'getId')) {
+                $prefixedNumber = $var->getId();
+            }
+        } elseif (is_array($var) && isset($var['prefixedNumber'])) {
             $prefixedNumber = $var['prefixedNumber'];
+        } elseif (is_array($var) && isset($var['id_str'])) {
+            $prefixedNumber = $var['id_str'];
         } elseif (is_array($var) && isset($var['hash'])) {
             try {
                 $Entity = (new Processes())->getEntity($var['hash']);
