@@ -141,7 +141,7 @@ class Process
                     }
                 }
 
-                if (class_exists('QUI\ERP\SalesOrders\SalesOrder')) {
+                if (class_exists('QUI\ERP\SalesOrders\Handler')) {
                     $salesOrder = $Entity->getPaymentData('salesOrder');
 
                     if ($salesOrder) {
@@ -165,7 +165,7 @@ class Process
 
                     $groups[$uuid][] = $Entity;
 
-                    if (class_exists('QUI\ERP\SalesOrders\SalesOrder')) {
+                    if (class_exists('QUI\ERP\SalesOrders\Handler')) {
                         $salesOrder = $Entity->getPaymentData('salesOrder');
 
                         if ($salesOrder) {
