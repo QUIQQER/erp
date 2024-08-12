@@ -154,6 +154,45 @@ class Process
             }
         }
 
+        if (empty($groups)) {
+            if (class_exists('QUI\ERP\Order\Order')) {
+                foreach ($entities as $Entity) {
+                    if (!($Entity instanceof QUI\ERP\Order\Order)) {
+                        continue;
+                    }
+
+                    $uuid = $Entity->getUUID();
+
+                    $groups[$uuid][] = $Entity;
+
+                    if (class_exists('QUI\ERP\SalesOrders\SalesOrder')) {
+                        $salesOrder = $Entity->getPaymentData('salesOrder');
+
+                        if ($salesOrder) {
+                            try {
+                                $groups[$uuid][] = QUI\ERP\SalesOrders\Handler::getSalesOrder($salesOrder['hash']);
+                            } catch (QUI\Exception) {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (empty($groups)) {
+            if (class_exists('QUI\ERP\SalesOrders\SalesOrder')) {
+                foreach ($entities as $Entity) {
+                    if (!($Entity instanceof QUI\ERP\SalesOrders\SalesOrder)) {
+                        continue;
+                    }
+
+                    $uuid = $Entity->getUUID();
+                    $groups[$uuid][] = $Entity;
+                }
+            }
+        }
+
+
         // not group
         $notGroup = [];
         $isInGroups = function (ErpEntityInterface $Entity) use ($groups) {
@@ -852,6 +891,8 @@ class Process
             return [];
         }
 
+        $result = [];
+
         try {
             $salesOrders = QUI::getDatabase()->fetch([
                 'select' => 'id,hash,global_process_id,date',
@@ -865,9 +906,28 @@ class Process
             return [];
         }
 
-        $result = [];
-
         foreach ($salesOrders as $salesOrder) {
+            try {
+                $result[] = QUI\ERP\SalesOrders\Handler::getSalesOrder($salesOrder['id']);
+            } catch (\Exception) {
+            }
+        }
+
+        // drafts
+        try {
+            $salesOrderDrafts = QUI::getDatabase()->fetch([
+                'select' => 'id,hash,global_process_id,date',
+                'from' => QUI\ERP\SalesOrders\Handler::getTableSalesOrderDrafts(),
+                'where_or' => [
+                    'global_process_id' => $this->processId,
+                    'hash' => $this->processId
+                ]
+            ]);
+        } catch (\Exception) {
+            return [];
+        }
+
+        foreach ($salesOrderDrafts as $salesOrder) {
             try {
                 $result[] = QUI\ERP\SalesOrders\Handler::getSalesOrder($salesOrder['id']);
             } catch (\Exception) {
