@@ -14,7 +14,6 @@ use QUI\ERP\Accounting\Invoice\Invoice;
 use QUI\ERP\Currency\Currency;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
-
 use QUI\Locale;
 
 use function array_map;

@@ -10,6 +10,7 @@ parameters:
         - tests/phpstan-bootstrap.php
     treatPhpDocTypesAsCertain: false
     customRulesetUsed: true
+    reportUnmatchedIgnoredErrors: false
 services:
     -
         class: \PHPStan\Rules\Properties\TypesAssignedToPropertiesRule

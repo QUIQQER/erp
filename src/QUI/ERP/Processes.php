@@ -57,6 +57,16 @@ class Processes
             }
         }
 
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/dunning')
+            && class_exists('QUI\ERP\Accounting\Dunning\Handler')
+        ) {
+            try {
+                return QUI\ERP\Accounting\Dunning\Handler::getInstance()->getDunningProcess($entityHash);
+            } catch (\Exception) {
+            }
+        }
+
         if ($entityPlugin === false || $entityPlugin === 'quiqqer/delivery-notes') {
             try {
                 // @todo quiqqer/delivery-notes
