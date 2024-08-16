@@ -655,14 +655,14 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Does nothing
      */
-    public function addToGroup(int $groupId)
+    public function addToGroup(int|string $groupId)
     {
     }
 
     /**
      * Does nothing
      */
-    public function removeGroup(Group|int $Group)
+    public function removeGroup(Group|int|string $Group)
     {
     }
 
