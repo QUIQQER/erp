@@ -7,7 +7,6 @@
 namespace QUI\ERP;
 
 use QUI;
-use QUI\Countries\Country;
 use QUI\ERP\Customer\NumberRange as CustomerNumberRange;
 use QUI\Groups\Group;
 use QUI\Interfaces\Users\User as UserInterface;
@@ -87,7 +86,6 @@ class User extends QUI\QDOM implements UserInterface
      * User constructor.
      *
      * @param array $attributes
-     * @throws QUI\ERP\Exception
      */
     public function __construct(array $attributes)
     {
@@ -152,6 +150,24 @@ class User extends QUI\QDOM implements UserInterface
         }
 
         $this->isNetto = $this->isNetto();
+
+        // if no customer number exists, check whether a customer exists and the customer has a customer number
+        // this is a fallback (by hen & mor)
+        if (!$this->getAttribute('customerId')) {
+            if ($this->uuid) {
+                try {
+                    $User = QUI::getUsers()->get($this->uuid);
+                    $this->setAttribute('customerId', $User->getAttribute('customerId'));
+                } catch (QUI\Exception) {
+                }
+            } elseif ($this->id) {
+                try {
+                    $User = QUI::getUsers()->get($this->id);
+                    $this->setAttribute('customerId', $User->getAttribute('customerId'));
+                } catch (QUI\Exception) {
+                }
+            }
+        }
     }
 
     /**
@@ -221,6 +237,7 @@ class User extends QUI\QDOM implements UserInterface
 
         return new self([
             'id' => $User->getId(),
+            'customerId' => $User->getAttribute('customerId'),
             'uuid' => $User->getUUID(),
             'country' => $country,
             'username' => $User->getUsername(),

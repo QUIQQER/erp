@@ -324,6 +324,7 @@ class User
         $needle = [
             'uuid',
             'id',
+            'customerId',
             'email',
             'lang',
             'usergroup',
