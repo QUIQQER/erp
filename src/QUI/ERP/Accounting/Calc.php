@@ -446,21 +446,12 @@ class Calc
                     // netto check 1cent check
                     $bruttoVatSum = 0;
 
-                    foreach ($vatArray as $vat => $data) {
+                    foreach ($vatArray as $data) {
                         $bruttoVatSum = $bruttoVatSum + $data['sum'];
                     }
 
                     if ($bruttoSum - $bruttoVatSum !== $nettoSum) {
                         $nettoSum = $nettoSum + $diff;
-                    }
-
-                    // doof aber -> pcsg/buero#344
-                    if (
-                        !$priceFactors->count()
-                        && count($articles) === 1
-                        && $nettoSubSum !== $nettoSum
-                    ) {
-                        $nettoSum = $nettoSubSum;
                     }
                 }
             }
@@ -579,6 +570,8 @@ class Calc
 
         $vatSum = $nettoPrice * ($vat / 100);
         $precision = $Currency->getPrecision();
+        $vatSum = round($vatSum, $precision);
+
         $priceSum = $nettoPrice + $vatSum;
         $bruttoPrice = round($priceSum, $precision);
 
@@ -598,6 +591,15 @@ class Calc
             if ($checkBrutto !== $bruttoPrice) {
                 $bruttoPrice = $checkBrutto;
                 $vatSum = $checkVat;
+            }
+
+            // Related: pcsg/buero#344
+            // Related: pcsg/buero#436
+            if ($nettoSum + $checkVat !== $bruttoPrice) {
+                $diff = $nettoSum + $checkVat - $bruttoPrice;
+
+                $vatSum = $vatSum - $diff;
+                $vatSum = round($vatSum, $precision);
             }
 
             // if the user is brutto
