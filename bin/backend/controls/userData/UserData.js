@@ -289,7 +289,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 if (this.$CustomerSelect) {
                     this.$setValues = true;
                     this.$CustomerSelect.addItem(data.userId);
-                    this.$setValues = false;
+
+                    (() => {
+                        this.$setValues = false;
+                    }).delay(200);
                 }
 
                 dataPromise = this.$setDataByUserId(data.userId);
