@@ -453,6 +453,15 @@ class Calc
                     if ($bruttoSum - $bruttoVatSum !== $nettoSum) {
                         $nettoSum = $nettoSum + $diff;
                     }
+
+                    // doof aber -> pcsg/buero#344
+                    if (
+                        !$priceFactors->count()
+                        && count($articles) === 1
+                        && $nettoSubSum !== $nettoSum
+                    ) {
+                        $nettoSum = $nettoSubSum;
+                    }
                 }
             }
 

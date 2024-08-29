@@ -415,8 +415,11 @@ class Article implements ArticleInterface
             return new Price($this->nettoPriceNotRounded, $this->Currency);
         }
 
-        return $this->getUnitPrice();
-    }
+        if (isset($this->attributes['unitPrice'])) {
+            $this->nettoPriceNotRounded = $this->attributes['unitPrice'];
+        }
+
+        return new Price($this->nettoPriceNotRounded, $this->Currency);    }
 
     /**
      * Returns the article total sum
