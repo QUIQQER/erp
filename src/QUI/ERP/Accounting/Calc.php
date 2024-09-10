@@ -541,6 +541,8 @@ class Calc
         $nettoPriceNotRounded = $Article->getUnitPriceUnRounded()->getValue();
 
         $vat = $Article->getVat();
+        $quantity = $Article->getQuantity();
+
         $basisNettoPrice = $nettoPrice;
         $nettoSubSum = $this->round($nettoPrice * $Article->getQuantity());
 
@@ -595,8 +597,8 @@ class Calc
 
             // Related: pcsg/buero#344
             // Related: pcsg/buero#436
-            if ($nettoSum + $checkVat !== $bruttoPrice) {
-                $diff = $nettoSum + $checkVat - $bruttoPrice;
+            if ($nettoSum + $checkVat !== $bruttoPrice * $quantity) {
+                $diff = $nettoSum + $checkVat - ($bruttoPrice * $quantity);
 
                 $vatSum = $vatSum - $diff;
                 $vatSum = round($vatSum, $precision);
