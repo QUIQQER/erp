@@ -459,7 +459,7 @@ class Calc
 
             // counterbalance - gegenrechnung
             // works only for one vat entry
-            if (count($vatArray) === 1) {
+            if (count($vatArray) === 1 && $isNetto) {
                 $vat = key($vatArray);
                 $netto = $bruttoSum / ((float)$vat / 100 + 1);
 
@@ -584,6 +584,15 @@ class Calc
 
             $checkVat = $checkBrutto - $nettoPriceNotRounded;
             $checkVat = round($checkVat * $Article->getQuantity(), $Currency->getPrecision());
+
+            if ($nettoPrice + $checkVat !== $checkBrutto) {
+                $diff = round(
+                    $nettoPrice + $checkVat - $checkBrutto,
+                    $Currency->getPrecision()
+                );
+
+                $checkVat = $checkVat - $diff;
+            }
 
             // sum
             $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
