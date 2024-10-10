@@ -22,6 +22,14 @@ QUI::$Ajax->registerFunction(
     function ($price, $formatted, $vat) {
         $price = QUI\ERP\Money\Price::validatePrice($price);
 
+        if (empty($price)) {
+            if (isset($formatted) && $formatted) {
+                return QUI\ERP\Defaults::getCurrency()->format(0);
+            }
+
+            return 0;
+        }
+
         if (empty($vat) && !is_numeric($vat)) {
             $Area = QUI\ERP\Defaults::getArea();
 
