@@ -64,6 +64,10 @@ class Price
      */
     public function __construct($price, QUI\ERP\Currency\Currency $Currency, $User = false)
     {
+        if ($price instanceof Price) {
+            $price = $price->getPrice();
+        }
+
         $this->price    = $price;
         $this->Currency = $Currency;
 
@@ -192,8 +196,12 @@ class Price
      */
     public static function validatePrice($value, $Locale = null)
     {
-        if (is_float($value)) {
+        if (is_float($value) || is_int($value)) {
             return round($value, QUI\ERP\Defaults::getPrecision());
+        }
+
+        if ($value instanceof Price) {
+            $value = $value->getPrice();
         }
 
         $value      = (string)$value;
