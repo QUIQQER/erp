@@ -51,16 +51,18 @@ QUI::$Ajax->registerFunction(
             $uuid = $Entity->getUUID();
             $prefixedNumber = $Entity->getPrefixedNumber();
         } catch (QUI\Exception) {
-            if ($OutputProvider instanceof OutputProviderInterface) {
-                $Entity = $OutputProvider->getEntity($entityId);
+            $OutputProviderInstance = new $OutputProvider();
 
-                if (method_exists($Entity, 'getUUID')) {
+            if ($OutputProviderInstance instanceof OutputProviderInterface) {
+                $Entity = $OutputProviderInstance->getEntity($entityId);
+
+                if ($Entity && method_exists($Entity, 'getUUID')) {
                     $uuid = $Entity->getUUID();
-                } elseif (method_exists($Entity, 'getId')) {
+                } elseif ($Entity && method_exists($Entity, 'getId')) {
                     $uuid = $Entity->getID();
                 }
 
-                if (method_exists($Entity, 'getPrefixedNumber')) {
+                if ($Entity && method_exists($Entity, 'getPrefixedNumber')) {
                     $prefixedNumber = $Entity->getPrefixedNumber();
                 }
             }
