@@ -9,6 +9,7 @@
  */
 
 use QUI\ERP\Output\Output as ERPOutput;
+use QUI\ERP\Output\OutputProviderInterface;
 use QUI\Utils\Security\Orthos;
 
 QUI::$Ajax->registerFunction(
@@ -41,14 +42,35 @@ QUI::$Ajax->registerFunction(
             QUI\System\Log::writeException($Exception);
         }
 
-        $Processes = new QUI\ERP\Processes();
-        $Entity = $Processes->getEntity($entityId, $entityPlugin);
+        $uuid = '';
+        $prefixedNumber = '';
+
+        try {
+            $Processes = new QUI\ERP\Processes();
+            $Entity = $Processes->getEntity($entityId, $entityPlugin);
+            $uuid = $Entity->getUUID();
+            $prefixedNumber = $Entity->getPrefixedNumber();
+        } catch (QUI\Exception) {
+            if ($OutputProvider instanceof OutputProviderInterface) {
+                $Entity = $OutputProvider->getEntity($entityId);
+
+                if (method_exists($Entity, 'getUUID')) {
+                    $uuid = $Entity->getUUID();
+                } elseif (method_exists($Entity, 'getId')) {
+                    $uuid = $Entity->getID();
+                }
+
+                if (method_exists($Entity, 'getPrefixedNumber')) {
+                    $prefixedNumber = $Entity->getPrefixedNumber();
+                }
+            }
+        }
 
         return [
             'email' => $OutputProvider::getEmailAddress(Orthos::clear($entityId)),
             'hideSystemDefaultTemplate' => $hideSystemDefaultTemplate,
-            'uuid' => $Entity->getUUID(),
-            'prefixedNumber' => $Entity->getPrefixedNumber()
+            'uuid' => $uuid,
+            'prefixedNumber' => $prefixedNumber
         ];
     },
     ['entityId', 'entityType', 'entityPlugin'],
