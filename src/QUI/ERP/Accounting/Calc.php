@@ -99,14 +99,10 @@ class Calc
     const TRANSACTION_ATTR_TARGET_CURRENCY_EXCHANGE_RATE = 'tx_target_currency_exchange_rate';
     const TRANSACTION_ATTR_SHOP_CURRENCY_EXCHANGE_RATE = 'tx_shop_currency_exchange_rate';
 
-    /**
-     * @var ?UserInterface
-     */
     protected ?UserInterface $User = null;
 
-    /**
-     * @var null|QUI\ERP\Currency\Currency
-     */
+    protected ?QUI\Locale $Locale = null;
+
     protected ?QUI\ERP\Currency\Currency $Currency = null;
 
     /**
@@ -121,6 +117,7 @@ class Calc
         }
 
         $this->User = $User;
+        $this->Locale = QUI::getLocale();
     }
 
     /**
@@ -163,6 +160,25 @@ class Calc
         return $this->User;
     }
 
+    //region locale
+
+    public function getLocale(): ?Locale
+    {
+        return $this->Locale;
+    }
+
+    public function setLocale(QUI\Locale $Locale): void
+    {
+        $this->Locale = $Locale;
+    }
+
+    public function resetLocale(): void
+    {
+        $this->Locale = QUI::getLocale();
+    }
+
+    //endregion
+
     /**
      * Return the currency
      *
@@ -184,7 +200,7 @@ class Calc
      * @param callable|boolean $callback - optional, callback function for the data array
      * @return ArticleList
      */
-    public function calcArticleList(ArticleList $List, $callback = false): ArticleList
+    public function calcArticleList(ArticleList $List, callable|bool $callback = false): ArticleList
     {
         // calc data
         if (!is_callable($callback)) {
@@ -360,7 +376,7 @@ class Calc
             if (!isset($vatArray[(string)$vat])) {
                 $vatArray[(string)$vat] = [
                     'vat' => $vat,
-                    'text' => self::getVatText($vat, $this->getUser())
+                    'text' => $this->getVatText($vat, $this->getUser(), $this->Locale)
                 ];
 
                 $vatArray[(string)$vat]['sum'] = 0;
@@ -394,7 +410,7 @@ class Calc
         $bruttoSum = round($bruttoSum, $precision);
 
         foreach ($vatLists as $vat => $bool) {
-            $vatText[(string)$vat] = self::getVatText((float)$vat, $this->getUser());
+            $vatText[(string)$vat] = $this->getVatText((float)$vat, $this->getUser(), $this->Locale);
         }
 
         // delete 0 % vat, 0% vat is allowed to calculate more easily
@@ -634,7 +650,7 @@ class Calc
         $vatArray = [
             'vat' => $vat,
             'sum' => $vatSum,
-            'text' => $this->getVatText($vat, $this->getUser())
+            'text' => $this->getVatText($vat, $this->getUser(), $this->Locale)
         ];
 
         QUI\ERP\Debug::getInstance()->log(
@@ -702,7 +718,7 @@ class Calc
             return '';
         }
 
-        return $this->getVatText($Tax->getValue(), $this->getUser());
+        return $this->getVatText($Tax->getValue(), $this->getUser(), $this->Locale);
     }
 
     /**
@@ -715,10 +731,13 @@ class Calc
      *
      * @return string
      */
-    public static function getVatText(float|int $vat, UserInterface $User, QUI\Locale $Locale = null): string
-    {
+    public static function getVatText(
+        float|int $vat,
+        UserInterface $User,
+        QUI\Locale $Locale = null
+    ): string {
         if ($Locale === null) {
-            $Locale = $User->getLocale();
+            $Locale = QUI::getLocale();
         }
 
         if (QUI\ERP\Utils\User::isNettoUser($User)) {
