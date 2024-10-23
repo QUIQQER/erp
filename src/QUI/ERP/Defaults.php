@@ -201,7 +201,7 @@ class Defaults
             return self::$timestampFormat[$lang];
         }
 
-        self::$timestampFormat[$lang] = '%c';
+        self::$timestampFormat[$lang] = 'MMM dd, yyyy, hh:mm:ss';
 
         try {
             $Package = QUI::getPackage('quiqqer/erp');
@@ -237,7 +237,7 @@ class Defaults
             return self::$dateFormat[$lang];
         }
 
-        self::$dateFormat[$lang] = '%D';
+        self::$dateFormat[$lang] = 'MMM dd, yyyy';
 
         try {
             $Package = QUI::getPackage('quiqqer/erp');
@@ -249,6 +249,7 @@ class Defaults
         }
 
         $value = $Config->get('dateFormat', $lang);
+        $value = trim($value);
 
         if (!empty($value)) {
             self::$dateFormat[$lang] = $value;
