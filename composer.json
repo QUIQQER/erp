@@ -22,7 +22,6 @@
         "php": "^8",
         "quiqqer/core": "^2",
         "quiqqer/utils": "^2",
-        "quiqqer/watcher": "^2",
         "quiqqer/translator": "^2",
         "quiqqer/employee": "^2",
         "quiqqer/customer": "^2",
@@ -31,6 +30,9 @@
         "quiqqer/frontend-users": "^2",
         "quiqqer/erp-accounting-templates": "^2",
         "quiqqer/areas": "^2"
+    },
+    "suggest": {
+        "quiqqer/watcher": "QUIQQER Watcher module (kind of logger)"
     },
     "autoload": {
         "psr-4": {

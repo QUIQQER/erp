@@ -567,7 +567,7 @@ class Article implements ArticleInterface
             if (isset($options['entries'][$unitId])) {
                 $titles = $options['entries'][$unitId]['title'];
 
-                if ($titles[$current]) {
+                if (!empty($titles[$current])) {
                     return $titles[$current];
                 }
             }
