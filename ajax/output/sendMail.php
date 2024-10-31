@@ -48,18 +48,26 @@ QUI::$Ajax->registerFunction(
                 !empty($mailAttachmentMediaFileIds) &&
                 Permission::hasPermission(ERPOutput::PERMISSION_ATTACH_EMAIL_FILES)
             ) {
-                $Media = QUI::getRewrite()->getProject()->getMedia();
-                $mailAttachmentMediaFileIds = json_decode($mailAttachmentMediaFileIds, true);
+                $Project = QUI::getRewrite()->getProject();
 
-                foreach ($mailAttachmentMediaFileIds as $fileId) {
-                    if (empty($fileId)) {
-                        continue;
-                    }
+                if ($Project) {
+                    $Project = QUI::getProjectManager()->getStandard();
+                }
 
-                    try {
-                        $attachedMediaFiles[] = $Media->get((int)$fileId);
-                    } catch (Exception $Exception) {
-                        QUI\System\Log::writeException($Exception);
+                if ($Project) {
+                    $Media = $Project->getMedia();
+                    $mailAttachmentMediaFileIds = json_decode($mailAttachmentMediaFileIds, true);
+
+                    foreach ($mailAttachmentMediaFileIds as $fileId) {
+                        if (empty($fileId)) {
+                            continue;
+                        }
+
+                        try {
+                            $attachedMediaFiles[] = $Media->get((int)$fileId);
+                        } catch (Exception $Exception) {
+                            QUI\System\Log::writeException($Exception);
+                        }
                     }
                 }
             }
