@@ -322,6 +322,7 @@ define(
 
                     // Customer data
                     self.$customerMail = EntityData.email;
+                    CURRENT_VIEW = null;
                     self.$onOutputChange();
 
                     self.Loader.hide();
