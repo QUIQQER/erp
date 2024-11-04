@@ -1182,6 +1182,10 @@
             <de><![CDATA[Beleg PDF heruntergeladen]]></de>
             <en><![CDATA[Document PDF downloaded]]></en>
         </locale>
+        <locale name="controls.OutputDialog.labelPDFView">
+            <de><![CDATA[PDF Vorschau]]></de>
+            <en><![CDATA[PDF Preview]]></en>
+        </locale>
 
         <locale name="controls.OutputMailEditor.title">
             <de><![CDATA[E-Mail für Beleg bearbeiten]]></de>
