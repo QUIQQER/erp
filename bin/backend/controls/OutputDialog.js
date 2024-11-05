@@ -202,18 +202,6 @@ define(
                     });
                 }
 
-                if (this.checkPdfSupport()) {
-                    this.$PDFView = new QUISwitch({
-                        name: 'pdfView',
-                        status: 0,
-                        events: {
-                            onChange: () => {
-                                this.$renderPreview();
-                            }
-                        }
-                    }).inject(this.getElm().getElement('.quiqqer-erp-outputDialog-pdfView'));
-                }
-
                 this.$Output = new QUISelect({
                     localeStorage: 'quiqqer-erp-output-dialog',
                     name: 'output',
@@ -248,10 +236,35 @@ define(
 
                 Promise.all([
                     this.$getTemplates(),
-                    this.$getEntityData()
+                    this.$getEntityData(),
+                    this.checkPdfSupport()
                 ]).then(function(result) {
                     const templates = result[0];
                     const EntityData = result[1];
+                    const pdfSupport = result[2];
+
+                    if (!pdfSupport) {
+                        if (typeof window.QUIQQER_OUTPUT_PDF === 'undefined') {
+                            window.QUIQQER_OUTPUT_PDF = false;
+                        }
+
+                        this.getElm().getElement('.quiqqer-erp-outputDialog-pdfView').setStyle('display', 'none');
+                    } else {
+                        if (typeof window.QUIQQER_OUTPUT_PDF === 'undefined') {
+                            window.QUIQQER_OUTPUT_PDF = true;
+                        }
+
+                        self.$PDFView = new QUISwitch({
+                            name: 'pdfView',
+                            status: window.QUIQQER_OUTPUT_PDF,
+                            events: {
+                                onChange: () => {
+                                    window.QUIQQER_OUTPUT_PDF = self.$PDFView.getStatus();
+                                    self.$renderPreview();
+                                }
+                            }
+                        }).inject(self.getElm().getElement('.quiqqer-erp-outputDialog-pdfView'));
+                    }
 
                     const Form = Content.getElement('form');
                     let Selected = false;
@@ -490,9 +503,7 @@ define(
                     entityId = this.getAttribute('entityId');
 
                 return new Promise(function(resolve) {
-                    const id = 'print-document-' + entityId,
-                        Content = self.getContent(),
-                        Form = Content.getElement('form');
+                    const id = 'print-document-' + entityId;
 
                     self.Loader.show();
 
@@ -630,11 +641,9 @@ define(
                 }
 
                 const Recipient = this.getElm().getElement('[name="recipient"]');
-                const PDFView = this.getElm().getElement('.quiqqer-erp-outputDialog-pdfView');
-
                 Recipient.getParent('tr').setStyle('display', 'none');
-                PDFView.getParent('tr').setStyle('display', 'none');
 
+                /*
                 if (this.$PDFView && this.$PDFView.getStatus() === 1) {
                     if (this.$Output.getValue() === 'pdf') {
                         this.$PDFView.setSilentOff();
@@ -646,6 +655,7 @@ define(
                         this.$PDFView.setSilentOff();
                     }).delay(100);
                 }
+                */
 
                 switch (this.$Output.getValue()) {
                     case 'print':
@@ -684,9 +694,6 @@ define(
 
                 Submit.setAttribute('text', QUILocale.get(lg, 'controls.OutputDialog.data.output.pdf.btn'));
                 Submit.setAttribute('textimage', 'fa fa-file-pdf-o');
-
-                const PDFView = this.getElm().getElement('.quiqqer-erp-outputDialog-pdfView');
-                PDFView.getParent('tr').setStyle('display', null);
             },
 
             /**
@@ -858,6 +865,8 @@ define(
                             // document.getElementById('pdfFallback').style.display = 'block';
                             PDF_SUPPORT = false;
                         }
+
+                        resolve(PDF_SUPPORT);
                     };
 
                     PDFFrame.onerror = function() {
@@ -865,8 +874,8 @@ define(
                         // pdfFrame.style.display = 'none';
                         // document.getElementById('pdfFallback').style.display = 'block';
                         PDF_SUPPORT = false;
+                        resolve(PDF_SUPPORT);
                     };
-
                 });
             }
         });
