@@ -601,6 +601,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
             const PreviewContent = this.getContent().getElement('.quiqqer-erp-outputDialog-preview');
             const entityId = this.getAttribute('entityId');
+
             const pdfUrl = URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/download.php?' + Object.toQueryString({
                 id: entityId,
                 t: this.getAttribute('entityType'),
@@ -617,30 +618,37 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 (async () => {
                     try {
                         const module = await import(URL_OPT_DIR + 'bin/quiqqer-asset/pdfjs-dist/pdfjs-dist/build/pdf.mjs');
-                        console.log(module);
-
-                        PreviewContent.set('html', '<canvas id="pdf-canvas"></canvas>');
                         module.GlobalWorkerOptions.workerSrc = URL_OPT_DIR + 'bin/quiqqer-asset/pdfjs-dist/pdfjs-dist/build/pdf.worker.min.mjs';
 
-                        module.getDocument(pdfUrl).promise.then((pdf) => {
-                            pdf.getPage(1).then(page => {
-                                const scale = 1.5;
-                                const viewport = page.getViewport({scale});
-                                const canvas = document.getElementById('pdf-canvas');
-                                const context = canvas.getContext('2d');
-                                canvas.height = viewport.height;
-                                canvas.width = viewport.width;
+                        const pdf = await module.getDocument(pdfUrl).promise;
+                        PreviewContent.setStyle('backgroundColor', '#232721');
+                        PreviewContent.setStyle('textAlign', 'center');
 
-                                page.render({
-                                    canvasContext: context,
-                                    viewport: viewport
-                                });
+                        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                            const page = await pdf.getPage(pageNum);
 
-                                this.Loader.hide();
-                                resolve();
-                            });
-                        });
+                            // Canvas für die Seite erstellen
+                            const canvas = document.createElement('canvas');
+                            canvas.id = `pdf-page-${pageNum}`;
+                            canvas.style.color = '#ffffff';
+                            canvas.style.marginTop = '20px';
+                            PreviewContent.appendChild(canvas);
 
+                            const scale = 1.5;
+                            const viewport = page.getViewport({scale});
+
+                            const context = canvas.getContext('2d');
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
+
+                            await page.render({
+                                canvasContext: context,
+                                viewport: viewport
+                            }).promise;
+                        }
+
+                        this.Loader.hide();
+                        resolve();
                     } catch (error) {
                         console.error('Fehler beim Laden des Moduls:', error);
                         this.Loader.hide();
