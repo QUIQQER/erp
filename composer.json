@@ -29,7 +29,8 @@
         "quiqqer/countries": "^2",
         "quiqqer/frontend-users": "^2",
         "quiqqer/erp-accounting-templates": "^2",
-        "quiqqer/areas": "^2"
+        "quiqqer/areas": "^2",
+        "quiqqer-asset/pdfjs-dist": "^4.8"
     },
     "suggest": {
         "quiqqer/watcher": "QUIQQER Watcher module (kind of logger)"
