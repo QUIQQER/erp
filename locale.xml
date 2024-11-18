@@ -1156,6 +1156,10 @@
             <de><![CDATA[Keine Vorlagen gefunden]]></de>
             <en><![CDATA[No templates found]]></en>
         </locale>
+        <locale name="controls.OutputDialog.no_pdf_preview_support">
+            <de><![CDATA[PDF Vorschau wird nicht unterstützt]]></de>
+            <en><![CDATA[PDF preview is not supported]]></en>
+        </locale>
         <locale name="controls.OutputDialog.no_preview">
             <de>
                 <![CDATA[Das Dokument ist aktuell nicht verfügbar, da keine Vorlage ausgewählt oder gefunden wurde.]]></de>
