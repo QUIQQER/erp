@@ -238,7 +238,7 @@ define(
                     this.$getTemplates(),
                     this.$getEntityData(),
                     this.checkPdfSupport()
-                ]).then(function(result) {
+                ]).then((result) => {
                     const templates = result[0];
                     const EntityData = result[1];
                     const pdfSupport = result[2];
@@ -248,7 +248,14 @@ define(
                             window.QUIQQER_OUTPUT_PDF = false;
                         }
 
-                        this.getElm().getElement('.quiqqer-erp-outputDialog-pdfView').setStyle('display', 'none');
+                        const PdfView = this.getElm().getElement('.quiqqer-erp-outputDialog-pdfView');
+                        const Cell = PdfView.getParent('.field-container-field');
+                        PdfView.setStyle('display', 'none');
+
+                        Cell.set(
+                            'html',
+                            QUILocale.get(lg, 'controls.OutputDialog.no_pdf_preview_support')
+                        );
                     } else {
                         if (typeof window.QUIQQER_OUTPUT_PDF === 'undefined') {
                             window.QUIQQER_OUTPUT_PDF = true;
