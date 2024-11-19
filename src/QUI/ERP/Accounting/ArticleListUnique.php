@@ -388,17 +388,17 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Return the Article List as HTML, without CSS
      *
-     * @param bool|string $template - custom template
-     * @param bool|string $articleTemplate
-     * @return string
-     *
      * @throws Exception
      */
     public function toHTML(
         bool|string $template = false,
-        bool|string $articleTemplate = false
+        bool|string $articleTemplate = false,
+        ?QUI\Interfaces\Template\EngineInterface $Engine = null
     ): string {
-        $Engine = QUI::getTemplateManager()->getEngine();
+        if ($Engine === null) {
+            $Engine = QUI::getTemplateManager()->getEngine();
+        }
+
         $vatArray = [];
 
         if (!$this->count()) {
@@ -551,21 +551,18 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Return the Article List as HTML, with CSS
      *
-     * @param bool|string $template
-     * @param bool|string $articleTemplate
-     * @return string
-     *
      * @throws Exception
      */
     public function toHTMLWithCSS(
         bool|string $template = false,
-        bool|string $articleTemplate = false
+        bool|string $articleTemplate = false,
+        ?QUI\Interfaces\Template\EngineInterface $Engine = null
     ): string {
         $style = '<style>';
         $style .= file_get_contents(dirname(__FILE__) . '/ArticleList.css');
         $style .= '</style>';
 
-        return $style . $this->toHTML($template, $articleTemplate);
+        return $style . $this->toHTML($template, $articleTemplate, $Engine);
     }
 
     /**
