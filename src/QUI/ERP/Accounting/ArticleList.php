@@ -551,9 +551,10 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
 
     public function toHTMLWithCSS(
         bool|string $template = false,
-        bool|string $articleTemplate = false
+        bool|string $articleTemplate = false,
+        ?QUI\Interfaces\Template\EngineInterface $Engine = null,
     ): string {
-        return $this->toUniqueList()->toHTMLWithCSS($template, $articleTemplate);
+        return $this->toUniqueList()->toHTMLWithCSS($template, $articleTemplate, $Engine);
     }
 
     //endregion
