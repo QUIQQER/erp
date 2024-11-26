@@ -597,9 +597,7 @@ class Calc
             // korrektur rechnung / 1 cent problem
             $checkBrutto = $nettoPriceNotRounded * ($vat / 100 + 1);
             $checkBrutto = round($checkBrutto, $Currency->getPrecision());
-
             $checkVat = $checkBrutto - $nettoPriceNotRounded;
-            $checkVat = round($checkVat * $Article->getQuantity(), $Currency->getPrecision());
 
             if ($nettoPrice + $checkVat !== $checkBrutto) {
                 $diff = round(
@@ -611,6 +609,7 @@ class Calc
             }
 
             // sum
+            $checkVat = round($checkVat * $Article->getQuantity(), $Currency->getPrecision());
             $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
             $vatSum = $nettoSum * ($vat / 100);
 
