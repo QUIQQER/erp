@@ -630,7 +630,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                             // Canvas für die Seite erstellen
                             const canvas = document.createElement('canvas');
                             canvas.id = `pdf-page-${pageNum}`;
-                            canvas.style.color = '#ffffff';
+                            canvas.style.backgroundColor = '#ffffff';
                             canvas.style.marginTop = '20px';
                             PreviewContent.appendChild(canvas);
 
