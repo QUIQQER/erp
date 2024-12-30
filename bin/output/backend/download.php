@@ -5,8 +5,13 @@
  * It opens the native download dialog
  */
 
-define('QUIQQER_SYSTEM', true);
-define('QUIQQER_AJAX', true);
+if (!defined('QUIQQER_SYSTEM')) {
+    define('QUIQQER_SYSTEM', true);
+}
+
+if (!defined('QUIQQER_AJAX')) {
+    define('QUIQQER_AJAX', true);
+}
 
 require_once dirname(__FILE__, 6) . '/header.php';
 
