@@ -122,8 +122,8 @@ class Process
         ) {
             foreach ($entities as $Entity) {
                 if (
-                    !($Entity instanceof QUI\ERP\Accounting\Invoice\Invoice
-                        || $Entity instanceof QUI\ERP\Accounting\Invoice\InvoiceTemporary)
+                    !($Entity instanceof QUI\ERP\Accounting\Invoice\Invoice)
+                    && !($Entity instanceof QUI\ERP\Accounting\Invoice\InvoiceTemporary)
                 ) {
                     continue;
                 }
@@ -245,7 +245,7 @@ class Process
      * @param string $message
      * @param bool|int $time - optional, unix timestamp
      */
-    public function addHistory(string $message, bool|int $time = false): void
+    public function addHistory(string $message, bool | int $time = false): void
     {
         $this->getHistory()->addComment($message, $time);
 
@@ -524,7 +524,7 @@ class Process
      *
      * @return null|Order\Order|Order\OrderInProcess
      */
-    public function getOrder(): Order\OrderInProcess|Order\Order|null
+    public function getOrder(): Order\OrderInProcess | Order\Order | null
     {
         if (!QUI::getPackageManager()->isInstalled('quiqqer/order')) {
             return null;
