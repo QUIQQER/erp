@@ -38,62 +38,102 @@ class Processes
     /**
      * @throws Exception
      */
-    public function getEntity($entityHash): ErpEntityInterface
+    public function getEntity($entityHash, $entityPlugin = false): ErpEntityInterface
     {
-        //'quiqqer/booking',
-        try {
-        } catch (\Exception) {
+        if ($entityPlugin === false || $entityPlugin === 'quiqqer/booking') {
+            try {
+                // @todo quiqqer/booking
+            } catch (\Exception) {
+            }
         }
 
-        //'quiqqer/contracts',
-        try {
-        } catch (\Exception) {
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/contracts')
+            && class_exists('QUI\ERP\Accounting\Contracts\Handler')
+        ) {
+            try {
+                return QUI\ERP\Accounting\Contracts\Handler::getInstance()->get($entityHash);
+            } catch (\Exception) {
+            }
         }
 
-        //'quiqqer/delivery-notes',
-        try {
-        } catch (\Exception) {
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/dunning')
+            && class_exists('QUI\ERP\Accounting\Dunning\Handler')
+        ) {
+            try {
+                return QUI\ERP\Accounting\Dunning\Handler::getInstance()->getDunningProcess($entityHash);
+            } catch (\Exception) {
+            }
         }
 
-        //'quiqqer/invoice',
-        try {
-            return QUI\ERP\Accounting\Invoice\Handler::getInstance()->getInvoiceByHash($entityHash);
-        } catch (\Exception) {
+        if ($entityPlugin === false || $entityPlugin === 'quiqqer/delivery-notes') {
+            try {
+                // @todo quiqqer/delivery-notes
+            } catch (\Exception) {
+            }
         }
 
-        //'quiqqer/offers',
-        try {
-            return QUI\ERP\Accounting\Offers\Handler::getInstance()->getOfferByHash($entityHash);
-        } catch (\Exception) {
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/invoice')
+            && class_exists('QUI\ERP\Accounting\Invoice\Handler')
+        ) {
+            try {
+                return QUI\ERP\Accounting\Invoice\Handler::getInstance()->getInvoiceByHash($entityHash);
+            } catch (\Exception) {
+            }
         }
 
-        //'quiqqer/order',
-        try {
-            return QUI\ERP\Order\Handler::getInstance()->getOrderByHash($entityHash);
-        } catch (\Exception) {
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/offers')
+            && class_exists('QUI\ERP\Accounting\Offers\Handler')
+        ) {
+            try {
+                return QUI\ERP\Accounting\Offers\Handler::getInstance()->getOfferByHash($entityHash);
+            } catch (\Exception) {
+            }
         }
 
-        //'quiqqer/purchasing',
-        try {
-        } catch (\Exception) {
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/order')
+            && class_exists('QUI\ERP\Order\Handler')
+        ) {
+            try {
+                return QUI\ERP\Order\Handler::getInstance()->getOrderByHash($entityHash);
+            } catch (\Exception) {
+            }
         }
 
-        //'quiqqer/salesorders'
-        try {
-            return QUI\ERP\SalesOrders\Handler::getSalesOrderByHash($entityHash);
-        } catch (\Exception) {
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/purchasing')
+            && class_exists('QUI\ERP\Purchasing\Processes\Handler')
+        ) {
+            try {
+                return QUI\ERP\Purchasing\Processes\Handler::getPurchasingProcess($entityHash);
+            } catch (\Exception) {
+            }
+
+            try {
+                return QUI\ERP\Purchasing\Processes\Handler::getPurchasingProcessDraft($entityHash);
+            } catch (\Exception) {
+            }
         }
 
-        throw new Exception(
-            [
-                'quiqqer/erp',
-                'exception.entity.not.found',
-                [
-                    'hash' => $entityHash
-                ]
-            ],
-            404
-        );
+        if (
+            ($entityPlugin === false || $entityPlugin === 'quiqqer/salesorders')
+            && class_exists('QUI\ERP\SalesOrders\Handler')
+        ) {
+            try {
+                return QUI\ERP\SalesOrders\Handler::getSalesOrderByHash($entityHash);
+            } catch (\Exception) {
+            }
+        }
+
+        throw new Exception([
+            'quiqqer/erp',
+            'exception.entity.not.found',
+            ['hash' => $entityHash]
+        ], 404);
     }
 
     /**

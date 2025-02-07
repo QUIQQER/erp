@@ -200,8 +200,12 @@ class Price
      */
     public static function validatePrice(mixed $value, QUI\Locale $Locale = null): float|int|null
     {
-        if (is_float($value)) {
+        if (is_float($value) || is_int($value)) {
             return round($value, QUI\ERP\Defaults::getPrecision());
+        }
+
+        if ($value instanceof Price) {
+            $value = $value->getPrice();
         }
 
         $value = (string)$value;

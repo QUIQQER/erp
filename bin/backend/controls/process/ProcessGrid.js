@@ -7,11 +7,12 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
     'qui/controls/Control',
     'qui/controls/buttons/Button',
     'qui/controls/loader/Loader',
+    'package/quiqqer/erp/bin/backend/utils/ERPEntities',
     'controls/grid/Grid',
     'Locale',
     'Ajax'
 
-], function(QUI, QUIControl, QUIButton, QUILoader, Grid, QUILocale, QUIAjax) {
+], function(QUI, QUIControl, QUIButton, QUILoader, ERPEntityUtils, Grid, QUILocale, QUIAjax) {
     'use strict';
 
     const lg = 'quiqqer/erp';
@@ -28,7 +29,8 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
 
         options: {
             globalProcessId: false,
-            entityHash: false
+            entityHash: false,
+            hideUuids: []
         },
 
         initialize: function(options) {
@@ -57,10 +59,11 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                         dataType: 'QUI',
                         width: 60
                     }, {
-                        header: QUILocale.get(lg, 'erp.process.state'),
-                        dataIndex: 'paid_status',
+                        header: QUILocale.get(lg, 'erp.process.status'),
+                        dataIndex: 'status',
                         dataType: 'node',
-                        width: 100
+                        width: 150,
+                        className: 'grid-align-center'
                     }, {
                         header: QUILocale.get(lg, 'erp.process.prefixedNumber'),
                         dataIndex: 'prefixedNumber',
@@ -71,6 +74,12 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                         dataIndex: 'uuid',
                         dataType: 'string',
                         width: 240
+                    }, {
+                        header: QUILocale.get(lg, 'erp.process.paid_status'),
+                        dataIndex: 'paid_status',
+                        dataType: 'node',
+                        width: 100,
+                        className: 'grid-align-center'
                     }
                 ],
                 pagination: false
@@ -88,9 +97,13 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
 
             QUIAjax.get('package_quiqqer_erp_ajax_process_getEntities', (result) => {
                 const data = [];
-                console.log(result);
+                const hideUuids = this.getAttribute('hideUuids') || [];
 
                 result.forEach((entry) => {
+                    if (hideUuids.indexOf(entry.uuid) !== -1) {
+                        return;
+                    }
+
                     const Type = new QUIButton({
                         events: {
                             click: this.$click
@@ -101,6 +114,24 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                         styles: {
                             width: 40
                         }
+                    });
+
+                    const Status = new Element('span', {
+                        'class': 'processing-status',
+                        text: entry.processing_status.title,
+                        styles: {
+                            color: entry.processing_status.color !== '---' ? entry.processing_status.color : '',
+                            borderColor: entry.processing_status.color !== '---' ? entry.processing_status.color : ''
+                        }
+                    });
+
+                    if (typeof entry.paid_status === 'undefined') {
+                        entry.paid_status = 0;
+                    }
+
+                    const PaymentStatus = new Element('span', {
+                        'class': 'payment-status payment-status-' + entry.paid_status,
+                        html: QUILocale.get('quiqqer/erp', 'payment.status.' + entry.paid_status)
                     });
 
                     switch (entry.entityType) {
@@ -119,19 +150,24 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                         case 'QUI\\ERP\\SalesOrders\\SalesOrder':
                             Type.setAttribute('title', QUILocale.get(lg, 'processGrid.salesOrder.open'));
                             break;
+
+                        case 'QUI\\ERP\\Accounting\\Offers\\Offer':
+                            Type.setAttribute('title', QUILocale.get(lg, 'processGrid.offer.open'));
+                            PaymentStatus.set('class', 'processing-status');
+                            PaymentStatus.set('html', '---');
+                            break;
+
+                        case 'QUI\\ERP\\Accounting\\Offers\\OfferTemporary':
+                            Type.setAttribute('title', QUILocale.get(lg, 'processGrid.temporaryOffer.open'));
+                            PaymentStatus.set('class', 'processing-status');
+                            PaymentStatus.set('html', '---');
+                            break;
                     }
 
-                    if (typeof entry.paid_status === 'undefined') {
-                        entry.paid_status = 0;
-                    }
-
-                    const PaymentStatus = new Element('span', {
-                        'class': 'payment-status payment-status-' + entry.paid_status,
-                        html: QUILocale.get('quiqqer/erp', 'payment.status.' + entry.paid_status)
-                    });
 
                     data.push({
                         type: Type,
+                        status: Status,
                         paid_status: PaymentStatus,
                         prefixedNumber: entry.prefixedNumber,
                         uuid: entry.uuid
@@ -151,30 +187,8 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
         },
 
         $click: function(Btn) {
-            let panel;
             const uuid = Btn.getAttribute('uuid');
-
-            switch (Btn.getAttribute('entityType')) {
-                case 'QUI\\ERP\\Order\\Order':
-                    panel = 'package/quiqqer/order/bin/backend/controls/panels/Order';
-                    break;
-
-                case 'QUI\\ERP\\Accounting\\Invoice\\Invoice':
-                    panel = 'package/quiqqer/invoice/bin/backend/controls/panels/Invoice';
-                    break;
-
-                case 'QUI\\ERP\\Accounting\\Invoice\\InvoiceTemporary':
-                    panel = 'package/quiqqer/invoice/bin/backend/controls/panels/TemporaryInvoice';
-                    break;
-
-                case 'QUI\\ERP\\SalesOrders\\SalesOrder':
-                    panel = 'package/quiqqer/salesorders/bin/js/backend/controls/panels/SalesOrder';
-                    break;
-
-                default:
-                    console.error('missing', uuid, Btn.getAttribute('entityType'));
-                    return;
-            }
+            const panel = ERPEntityUtils.getPanelByEntity(Btn.getAttribute('entityType'));
 
             require(['utils/Panels', panel], (PanelUtils, Panel) => {
                 PanelUtils.openPanelInTasks(

@@ -325,9 +325,9 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     }
 
     /**
-     * @param null $Calc
+     * @param ?QUI\ERP\Accounting\Calc $Calc
      */
-    public function recalculate($Calc = null): void
+    public function recalculate(?QUI\ERP\Accounting\Calc $Calc = null): void
     {
         $this->calculated = false;
 
@@ -341,10 +341,10 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     }
 
     /**
-     * @param null $Calc $Calc
+     * @param null|QUI\ERP\Accounting\Calc $Calc $Calc
      * @return ArticleList
      */
-    public function calc($Calc = null): ArticleList
+    public function calc(?QUI\ERP\Accounting\Calc $Calc = null): ArticleList
     {
         if ($this->calculated) {
             return $this;
@@ -538,6 +538,23 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     public function getOrder(): ?QUI\ERP\Order\AbstractOrder
     {
         return $this->Order;
+    }
+
+    //endregion
+
+    //render
+
+    public function renderForMail(): string
+    {
+        return $this->toUniqueList()->renderForMail();
+    }
+
+    public function toHTMLWithCSS(
+        bool|string $template = false,
+        bool|string $articleTemplate = false,
+        ?QUI\Interfaces\Template\EngineInterface $Engine = null,
+    ): string {
+        return $this->toUniqueList()->toHTMLWithCSS($template, $articleTemplate, $Engine);
     }
 
     //endregion

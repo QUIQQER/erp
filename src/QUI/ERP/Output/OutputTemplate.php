@@ -178,6 +178,8 @@ class OutputTemplate
             'pageNumbersPrefix' => $Locale->get('quiqqer/htmltopdf', 'footer.page.prefix')
         ]);
 
+        $Document->setAttribute('Entity', $this->Entity);
+
         QUI::getEvents()->fireEvent(
             'quiqqerErpOutputPdfCreate',
             [$this, $Document]

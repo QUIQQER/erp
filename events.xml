@@ -8,6 +8,7 @@
     <event on="onUserAddressSave" fire="\QUI\ERP\EventHandler::onUserAddressSave"/>
     <event on="onPackageConfigSave" fire="\QUI\ERP\EventHandler::onPackageConfigSave"/>
     <event on="onTemplateGetHeader" fire="\QUI\ERP\EventHandler::onTemplateGetHeader"/>
+    <event on="onSmartyInit" fire="\QUI\ERP\EventHandler::onSmartyInit"/>
 
     <event on="onQuiqqer::frontend-users::profile::customer-data-begin"
            fire="\QUI\ERP\EventHandler::onFrontendUserCustomerBegin"

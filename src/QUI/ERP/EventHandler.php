@@ -11,15 +11,19 @@ use QUI\ERP\BankAccounts\Handler as BankAccounts;
 use QUI\ERP\Products\Handler\Fields as ProductFields;
 use QUI\Package\Package;
 use QUI\Smarty\Collector;
+use Smarty;
+use SmartyException;
 
 use function array_flip;
 use function class_exists;
 use function dirname;
 use function explode;
 use function is_array;
+use function is_object;
 use function is_string;
 use function json_decode;
 use function json_encode;
+use function method_exists;
 
 /**
  * Class EventHandler
@@ -151,7 +155,7 @@ class EventHandler
         $companyName = $Conf->get('company', 'name');
 
         if (empty($bankIban) || empty($bankBic) || empty($companyName)) {
-            $Conf->setValue('bankAccounts', 'isPatched', true);
+            $Conf->setValue('bankAccounts', 'isPatched', 1);
             $Conf->save();
 
             return;
@@ -186,7 +190,7 @@ class EventHandler
             );
         }
 
-        $Conf->setValue('bankAccounts', 'isPatched', true);
+        $Conf->setValue('bankAccounts', 'isPatched', 1);
         $Conf->save();
     }
 
@@ -386,6 +390,84 @@ class EventHandler
             }
         }
     }
+
+    //region smarty
+
+    /**
+     * register erp smarty functions
+     *
+     * @param Smarty $Smarty - \Smarty
+     * @throws SmartyException
+     */
+    public static function onSmartyInit(Smarty $Smarty): void
+    {
+        // {pace}
+        if (
+            !isset($Smarty->registered_plugins['function']) ||
+            !isset($Smarty->registered_plugins['function']['getPrefixedNumber'])
+        ) {
+            $Smarty->registerPlugin(
+                "function",
+                "erpGetPrefixedNumber",
+                "\\QUI\\ERP\\EventHandler::getPrefixedNumber"
+            );
+        }
+    }
+
+    /**
+     * erp smarty function {getPrefixedNumber}
+     *
+     * @param array $params
+     * @param $smarty
+     * @return string
+     * @example {erpGetPrefixedNumber assign=prefixedNumber var=$erpUUID}
+     *
+     */
+    public static function getPrefixedNumber(array $params, $smarty): string
+    {
+        $prefixedNumber = '';
+
+        if (empty($params['var'])) {
+            return '';
+        }
+
+        $var = $params['var'];
+
+        if (is_object($var)) {
+            if ($var instanceof ErpEntityInterface) {
+                $prefixedNumber = $var->getPrefixedNumber();
+            } elseif (method_exists($var, 'getPrefixedNumber')) {
+                $prefixedNumber = $var->getPrefixedNumber();
+            } elseif (method_exists($var, 'getId')) {
+                $prefixedNumber = $var->getId();
+            }
+        } elseif (is_array($var) && isset($var['prefixedNumber'])) {
+            $prefixedNumber = $var['prefixedNumber'];
+        } elseif (is_array($var) && isset($var['id_str'])) {
+            $prefixedNumber = $var['id_str'];
+        } elseif (is_array($var) && isset($var['hash'])) {
+            try {
+                $Entity = (new Processes())->getEntity($var['hash']);
+                $prefixedNumber = $Entity->getPrefixedNumber();
+            } catch (QUI\Exception) {
+            }
+        } else {
+            try {
+                $Entity = (new Processes())->getEntity($params['var']);
+                $prefixedNumber = $Entity->getPrefixedNumber();
+            } catch (QUI\Exception) {
+            }
+        }
+
+        if (!isset($params['assign'])) {
+            return $prefixedNumber;
+        }
+
+        $smarty->assign($params['assign'], $prefixedNumber);
+        return '';
+    }
+
+    //endregion
 
     //region user profile extension
 

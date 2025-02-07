@@ -2,7 +2,7 @@ includes:
 	- phpstan-baseline.neon
 
 parameters:
-    level: 1
+    level: 5
     paths:
         - src
         - ajax
@@ -10,6 +10,7 @@ parameters:
         - tests/phpstan-bootstrap.php
     treatPhpDocTypesAsCertain: false
     customRulesetUsed: true
+    reportUnmatchedIgnoredErrors: false
 services:
     -
         class: \PHPStan\Rules\Properties\TypesAssignedToPropertiesRule

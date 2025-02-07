@@ -7,6 +7,7 @@
 namespace QUI\ERP\Utils;
 
 use QUI;
+use QUI\Exception;
 use QUI\Interfaces\Users\User as UserInterface;
 use QUI\Users\Address;
 
@@ -141,7 +142,7 @@ class User
         try {
             $Address = self::getUserERPAddress($User);
 
-            if (is_object($Address) && $Address) {
+            if (is_object($Address)) {
                 $company = $Address->getAttribute('company');
 
                 if (!empty($company)) {
@@ -271,10 +272,11 @@ class User
      * Return the user ERP address (Rechnungsaddresse, Accounting Address)
      *
      * @param UserInterface $User
-     * @return false|QUI\Users\Address
-     * @throws QUI\Exception
+     * @return Address|array|null
+     * @throws Exception
+     * @throws QUI\Permissions\Exception
      */
-    public static function getUserERPAddress(UserInterface $User): null|Address
+    public static function getUserERPAddress(UserInterface $User): null|Address|array
     {
         if (!QUI::getUsers()->isUser($User)) {
             throw new QUI\Exception([
@@ -322,6 +324,7 @@ class User
         $needle = [
             'uuid',
             'id',
+            'customerId',
             'email',
             'lang',
             'usergroup',

@@ -57,7 +57,6 @@ class Manufacturers
         }
 
         // If quiqqer/products is installed also check groups of default product field "Manufacturer"
-        /** @var QUI\ERP\Products\Field\Types\GroupList $ManufacturerField */
         try {
             $ManufacturerField = Fields::getField(Fields::FIELD_MANUFACTURER);
         } catch (\Exception $Exception) {

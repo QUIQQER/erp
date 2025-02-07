@@ -14,10 +14,12 @@ use function trim;
 class Utils
 {
     public static array $entityIcons = [
-        'QUI\\ERP\\Order\\Order' => 'fa-shopping-basket',
-        'QUI\\ERP\\Accounting\\Invoice\\InvoiceTemporary' => 'fa-file-text-o',
-        'QUI\\ERP\\Accounting\\Invoice\\Invoice' => 'fa-file-text-o',
-        'QUI\\ERP\\SalesOrders\\SalesOrder' => 'fa-suitcase',
+        'QUI\ERP\Order\Order' => 'fa-shopping-basket',
+        'QUI\ERP\Accounting\Invoice\InvoiceTemporary' => 'fa-file-text-o',
+        'QUI\ERP\Accounting\Invoice\Invoice' => 'fa-file-text-o',
+        'QUI\ERP\SalesOrders\SalesOrder' => 'fa-suitcase',
+        'QUI\ERP\Accounting\Offers\Offer' => 'fa-regular fa-handshake',
+        'QUI\ERP\Accounting\Offers\OfferTemporary' => 'fa-handshake',
     ];
 
     /**

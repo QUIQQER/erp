@@ -9,15 +9,20 @@
  */
 
 use QUI\ERP\Output\Output as ERPOutput;
+use QUI\ERP\Output\OutputProviderInterface;
 use QUI\Utils\Security\Orthos;
 
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_output_getEntityData',
-    function ($entityId, $entityType) {
+    function ($entityId, $entityType, $entityPlugin) {
         $OutputProvider = ERPOutput::getOutputProviderByEntityType(Orthos::clear($entityType));
 
         if (empty($OutputProvider)) {
             return false;
+        }
+
+        if (empty($entityPlugin)) {
+            $entityPlugin = false;
         }
 
         $hideSystemDefaultTemplate = false;
@@ -37,11 +42,39 @@ QUI::$Ajax->registerFunction(
             QUI\System\Log::writeException($Exception);
         }
 
+        $uuid = '';
+        $prefixedNumber = '';
+
+        try {
+            $Processes = new QUI\ERP\Processes();
+            $Entity = $Processes->getEntity($entityId, $entityPlugin);
+            $uuid = $Entity->getUUID();
+            $prefixedNumber = $Entity->getPrefixedNumber();
+        } catch (QUI\Exception) {
+            $OutputProviderInstance = new $OutputProvider();
+
+            if ($OutputProviderInstance instanceof OutputProviderInterface) {
+                $Entity = $OutputProviderInstance->getEntity($entityId);
+
+                if ($Entity && method_exists($Entity, 'getUUID')) {
+                    $uuid = $Entity->getUUID();
+                } elseif ($Entity && method_exists($Entity, 'getId')) {
+                    $uuid = $Entity->getID();
+                }
+
+                if ($Entity && method_exists($Entity, 'getPrefixedNumber')) {
+                    $prefixedNumber = $Entity->getPrefixedNumber();
+                }
+            }
+        }
+
         return [
             'email' => $OutputProvider::getEmailAddress(Orthos::clear($entityId)),
-            'hideSystemDefaultTemplate' => $hideSystemDefaultTemplate
+            'hideSystemDefaultTemplate' => $hideSystemDefaultTemplate,
+            'uuid' => $uuid,
+            'prefixedNumber' => $prefixedNumber
         ];
     },
-    ['entityId', 'entityType'],
+    ['entityId', 'entityType', 'entityPlugin'],
     'Permission::checkAdminUser'
 );

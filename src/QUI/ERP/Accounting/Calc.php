@@ -14,6 +14,7 @@ use QUI\ERP\Accounting\Invoice\Invoice;
 use QUI\ERP\Currency\Currency;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
+use QUI\Locale;
 
 use function array_map;
 use function array_sum;
@@ -98,14 +99,10 @@ class Calc
     const TRANSACTION_ATTR_TARGET_CURRENCY_EXCHANGE_RATE = 'tx_target_currency_exchange_rate';
     const TRANSACTION_ATTR_SHOP_CURRENCY_EXCHANGE_RATE = 'tx_shop_currency_exchange_rate';
 
-    /**
-     * @var ?UserInterface
-     */
     protected ?UserInterface $User = null;
 
-    /**
-     * @var null|QUI\ERP\Currency\Currency
-     */
+    protected ?QUI\Locale $Locale = null;
+
     protected ?QUI\ERP\Currency\Currency $Currency = null;
 
     /**
@@ -120,6 +117,7 @@ class Calc
         }
 
         $this->User = $User;
+        $this->Locale = QUI::getLocale();
     }
 
     /**
@@ -162,6 +160,25 @@ class Calc
         return $this->User;
     }
 
+    //region locale
+
+    public function getLocale(): ?Locale
+    {
+        return $this->Locale;
+    }
+
+    public function setLocale(QUI\Locale $Locale): void
+    {
+        $this->Locale = $Locale;
+    }
+
+    public function resetLocale(): void
+    {
+        $this->Locale = QUI::getLocale();
+    }
+
+    //endregion
+
     /**
      * Return the currency
      *
@@ -183,7 +200,7 @@ class Calc
      * @param callable|boolean $callback - optional, callback function for the data array
      * @return ArticleList
      */
-    public function calcArticleList(ArticleList $List, $callback = false): ArticleList
+    public function calcArticleList(ArticleList $List, callable|bool $callback = false): ArticleList
     {
         // calc data
         if (!is_callable($callback)) {
@@ -359,7 +376,7 @@ class Calc
             if (!isset($vatArray[(string)$vat])) {
                 $vatArray[(string)$vat] = [
                     'vat' => $vat,
-                    'text' => self::getVatText($vat, $this->getUser())
+                    'text' => $this->getVatText($vat, $this->getUser(), $this->Locale)
                 ];
 
                 $vatArray[(string)$vat]['sum'] = 0;
@@ -393,7 +410,7 @@ class Calc
         $bruttoSum = round($bruttoSum, $precision);
 
         foreach ($vatLists as $vat => $bool) {
-            $vatText[(string)$vat] = self::getVatText($vat, $this->getUser());
+            $vatText[(string)$vat] = $this->getVatText((float)$vat, $this->getUser(), $this->Locale);
         }
 
         // delete 0 % vat, 0% vat is allowed to calculate more easily
@@ -445,7 +462,7 @@ class Calc
                     // netto check 1cent check
                     $bruttoVatSum = 0;
 
-                    foreach ($vatArray as $vat => $data) {
+                    foreach ($vatArray as $data) {
                         $bruttoVatSum = $bruttoVatSum + $data['sum'];
                     }
 
@@ -458,9 +475,9 @@ class Calc
 
             // counterbalance - gegenrechnung
             // works only for one vat entry
-            if (count($vatArray) === 1) {
+            if (count($vatArray) === 1 && $isNetto) {
                 $vat = key($vatArray);
-                $netto = $bruttoSum / ($vat / 100 + 1);
+                $netto = $bruttoSum / ((float)$vat / 100 + 1);
 
                 $vatSum = $bruttoSum - $netto;
                 $vatSum = round($vatSum, $Currency->getPrecision());
@@ -472,7 +489,7 @@ class Calc
             }
         }
 
-        if ($bruttoSum === 0 || $nettoSum === 0) {
+        if (empty($bruttoSum) || empty($nettoSum)) {
             $bruttoSum = 0;
             $nettoSum = 0;
 
@@ -536,7 +553,12 @@ class Calc
         }
 
         $nettoPrice = $Article->getUnitPriceUnRounded()->value();
+        $nettoPrice = round($nettoPrice, $Currency->getPrecision());
+        $nettoPriceNotRounded = $Article->getUnitPriceUnRounded()->getValue();
+
         $vat = $Article->getVat();
+        $quantity = $Article->getQuantity();
+
         $basisNettoPrice = $nettoPrice;
         $nettoSubSum = $this->round($nettoPrice * $Article->getQuantity());
 
@@ -546,7 +568,6 @@ class Calc
 
         // discounts
         $Discount = $Article->getDiscount();
-        $nettoPriceNotRounded = $Article->getUnitPriceUnRounded()->getValue();
 
         if ($Discount) {
             switch ($Discount->getCalculation()) {
@@ -567,6 +588,8 @@ class Calc
 
         $vatSum = $nettoPrice * ($vat / 100);
         $precision = $Currency->getPrecision();
+        $vatSum = round($vatSum, $precision);
+
         $priceSum = $nettoPrice + $vatSum;
         $bruttoPrice = round($priceSum, $precision);
 
@@ -574,11 +597,19 @@ class Calc
             // korrektur rechnung / 1 cent problem
             $checkBrutto = $nettoPriceNotRounded * ($vat / 100 + 1);
             $checkBrutto = round($checkBrutto, $Currency->getPrecision());
-
             $checkVat = $checkBrutto - $nettoPriceNotRounded;
-            $checkVat = round($checkVat * $Article->getQuantity(), $Currency->getPrecision());
+
+            if ($nettoPrice + $checkVat !== $checkBrutto) {
+                $diff = round(
+                    $nettoPrice + $checkVat - $checkBrutto,
+                    $Currency->getPrecision()
+                );
+
+                $checkVat = $checkVat - $diff;
+            }
 
             // sum
+            $checkVat = round($checkVat * $Article->getQuantity(), $Currency->getPrecision());
             $nettoSum = $this->round($nettoPrice * $Article->getQuantity());
             $vatSum = $nettoSum * ($vat / 100);
 
@@ -586,6 +617,15 @@ class Calc
             if ($checkBrutto !== $bruttoPrice) {
                 $bruttoPrice = $checkBrutto;
                 $vatSum = $checkVat;
+            }
+
+            // Related: pcsg/buero#344
+            // Related: pcsg/buero#436
+            if ($nettoSum + $checkVat !== $bruttoPrice * $quantity) {
+                $diff = $nettoSum + $checkVat - ($bruttoPrice * $quantity);
+
+                $vatSum = $vatSum - $diff;
+                $vatSum = round($vatSum, $precision);
             }
 
             // if the user is brutto
@@ -609,7 +649,7 @@ class Calc
         $vatArray = [
             'vat' => $vat,
             'sum' => $vatSum,
-            'text' => $this->getVatText($vat, $this->getUser())
+            'text' => $this->getVatText($vat, $this->getUser(), $this->Locale)
         ];
 
         QUI\ERP\Debug::getInstance()->log(
@@ -645,7 +685,7 @@ class Calc
      * Rounds the value via shop config
      *
      * @param string|int|float $value
-     * @return float|mixed
+     * @return float
      */
     public function round($value): float
     {
@@ -669,31 +709,34 @@ class Calc
      *
      * @return string
      */
-    public function getVatTextByUser()
+    public function getVatTextByUser(): string
     {
         try {
             $Tax = QUI\ERP\Tax\Utils::getTaxByUser($this->getUser());
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             return '';
         }
 
-        return $this->getVatText($Tax->getValue(), $this->getUser());
+        return $this->getVatText($Tax->getValue(), $this->getUser(), $this->Locale);
     }
 
     /**
      * Return tax text
      * eq: incl or zzgl
      *
-     * @param integer $vat
+     * @param float|int $vat
      * @param UserInterface $User
-     * @param null|QUI\Locale $Locale - optional
+     * @param null|Locale $Locale - optional
      *
-     * @return array|string
+     * @return string
      */
-    public static function getVatText(float $vat, UserInterface $User, QUI\Locale $Locale = null)
-    {
+    public static function getVatText(
+        float|int $vat,
+        UserInterface $User,
+        QUI\Locale $Locale = null
+    ): string {
         if ($Locale === null) {
-            $Locale = $User->getLocale();
+            $Locale = QUI::getLocale();
         }
 
         if (QUI\ERP\Utils\User::isNettoUser($User)) {
@@ -1012,16 +1055,9 @@ class Calc
      * @param mixed $ToCalculate
      * @return bool
      */
-    public static function isAllowedForCalculation($ToCalculate): bool
+    public static function isAllowedForCalculation(mixed $ToCalculate): bool
     {
         if ($ToCalculate instanceof QUI\ERP\ErpEntityInterface) {
-            return true;
-        }
-
-        if (
-            class_exists('QUI\ERP\Purchasing\Processes\PurchasingProcess')
-            && $ToCalculate instanceof QUI\ERP\Purchasing\Processes\PurchasingProcess
-        ) {
             return true;
         }
 

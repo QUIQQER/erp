@@ -281,6 +281,14 @@
             <de><![CDATA[Bestellung öffnen]]></de>
             <en><![CDATA[Open order]]></en>
         </locale>
+        <locale name="processGrid.offer.open">
+            <de><![CDATA[Angebot öffnen]]></de>
+            <en><![CDATA[Open offer]]></en>
+        </locale>
+        <locale name="processGrid.temporaryOffer.open">
+            <de><![CDATA[Angebotsentwurf öffnen]]></de>
+            <en><![CDATA[Open temporary offer]]></en>
+        </locale>
         <locale name="processGrid.invoice.open">
             <de><![CDATA[Rechnung öffnen]]></de>
             <en><![CDATA[Open invoice]]></en>
@@ -301,9 +309,13 @@
             <de><![CDATA[Typ]]></de>
             <en><![CDATA[Type]]></en>
         </locale>
-        <locale name="erp.process.state">
+        <locale name="erp.process.status">
             <de><![CDATA[Status]]></de>
-            <en><![CDATA[State]]></en>
+            <en><![CDATA[Status]]></en>
+        </locale>
+        <locale name="erp.process.paid_status">
+            <de><![CDATA[Zahlungsstatus]]></de>
+            <en><![CDATA[Payment status]]></en>
         </locale>
         <locale name="erp.process.prefixedNumber">
             <de><![CDATA[Entitäts-Nr]]></de>
@@ -359,6 +371,26 @@
         <locale name="entity.title.QUI\ERP\SalesOrders\SalesOrder">
             <de><![CDATA[Auftrag]]></de>
             <en><![CDATA[Sales Order]]></en>
+        </locale>
+        <locale name="entity.title.QUI\ERP\Accounting\Offers\OfferTemporary">
+            <de><![CDATA[Angebotsentwurf]]></de>
+            <en><![CDATA[Temporary Offer]]></en>
+        </locale>
+        <locale name="entity.title.QUI\ERP\Accounting\Offers\Offer">
+            <de><![CDATA[Angebot]]></de>
+            <en><![CDATA[Offer]]></en>
+        </locale>
+        <locale name="entity.title.QUI\ERP\Order\Order">
+            <de><![CDATA[Bestellung]]></de>
+            <en><![CDATA[Order]]></en>
+        </locale>
+        <locale name="entity.title.QUI\ERP\Accounting\Contracts\Contract">
+            <de><![CDATA[Vertrag]]></de>
+            <en><![CDATA[Contract]]></en>
+        </locale>
+        <locale name="process.history.empty.info">
+            <de><![CDATA[Hier werden nur Einträge aufgelistet, die nach dem 01.08.2024 erstellt wurden.]]></de>
+            <en><![CDATA[Only entries created after 01/08/2024 are listed here.]]></en>
         </locale>
     </groups>
 
@@ -767,37 +799,37 @@
             <en><![CDATA[[startCurrency] = [rate]]]></en>
         </locale>
         <locale name="created.invoice">
-            <de><![CDATA[Rechnung #[invoiceId] erstellt]]></de>
-            <en><![CDATA[Created invoice #[invoiceId]]]></en>
+            <de><![CDATA[Rechnung [invoiceId] erstellt]]></de>
+            <en><![CDATA[Created invoice [invoiceId]]]></en>
         </locale>
         <locale name="created.order">
-            <de><![CDATA[Bestellung #[orderId] erstellt]]></de>
-            <en><![CDATA[Created order #[orderId]]]></en>
+            <de><![CDATA[Bestellung [orderId] erstellt]]></de>
+            <en><![CDATA[Created order [orderId]]]></en>
         </locale>
 
         <locale name="process.history.invoice.created">
-            <de><![CDATA[Rechnung #[hash] erstellt]]></de>
-            <en><![CDATA[Invoice #[hash] created]]></en>
+            <de><![CDATA[Rechnung [hash] erstellt]]></de>
+            <en><![CDATA[Invoice [hash] created]]></en>
         </locale>
         <locale name="process.history.order.created">
-            <de><![CDATA[Bestellung #[hash] erstellt]]></de>
-            <en><![CDATA[Order #[hash] created]]></en>
+            <de><![CDATA[Bestellung [hash] erstellt]]></de>
+            <en><![CDATA[Order [hash] created]]></en>
         </locale>
         <locale name="process.history.offer.created">
-            <de><![CDATA[Angebot #[hash] erstellt]]></de>
-            <en><![CDATA[Offer #[hash] created]]></en>
+            <de><![CDATA[Angebot [hash] erstellt]]></de>
+            <en><![CDATA[Offer [hash] created]]></en>
         </locale>
         <locale name="process.history.purchasing.created">
-            <de><![CDATA[Einkauf #[hash] erstellt]]></de>
-            <en><![CDATA[Purchase #[hash] created]]></en>
+            <de><![CDATA[Einkauf [hash] erstellt]]></de>
+            <en><![CDATA[Purchase [hash] created]]></en>
         </locale>
         <locale name="process.history.salesorders.created">
-            <de><![CDATA[Auftrag #[hash] erstellt]]></de>
-            <en><![CDATA[Sales order #[hash] created]]></en>
+            <de><![CDATA[Auftrag [hash] erstellt]]></de>
+            <en><![CDATA[Sales order [hash] created]]></en>
         </locale>
         <locale name="process.history.booking.created">
-            <de><![CDATA[Buchung #[hash] erstellt]]></de>
-            <en><![CDATA[Booking #[hash] created]]></en>
+            <de><![CDATA[Buchung [hash] erstellt]]></de>
+            <en><![CDATA[Booking [hash] created]]></en>
         </locale>
         <locale name="process.history.transaction.created">
             <de><![CDATA[Zahlung von [amount] eingegangen / gebucht. (#[hash])]]></de>
@@ -1124,6 +1156,10 @@
             <de><![CDATA[Keine Vorlagen gefunden]]></de>
             <en><![CDATA[No templates found]]></en>
         </locale>
+        <locale name="controls.OutputDialog.no_pdf_preview_support">
+            <de><![CDATA[PDF Vorschau wird nicht unterstützt]]></de>
+            <en><![CDATA[PDF preview is not supported]]></en>
+        </locale>
         <locale name="controls.OutputDialog.no_preview">
             <de>
                 <![CDATA[Das Dokument ist aktuell nicht verfügbar, da keine Vorlage ausgewählt oder gefunden wurde.]]></de>
@@ -1149,6 +1185,10 @@
         <locale name="controls.OutputDialog.msg.output_pdf">
             <de><![CDATA[Beleg PDF heruntergeladen]]></de>
             <en><![CDATA[Document PDF downloaded]]></en>
+        </locale>
+        <locale name="controls.OutputDialog.labelPDFView">
+            <de><![CDATA[PDF Vorschau]]></de>
+            <en><![CDATA[PDF Preview]]></en>
         </locale>
 
         <locale name="controls.OutputMailEditor.title">
@@ -1575,7 +1615,7 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
             <en><![CDATA[Delivery Notes]]></en>
         </locale>
         <locale name="panel.globalProcess.title">
-            <de><![CDATA[Prozess: [globalProcessId]]]></de>
+            <de><![CDATA[Vorgang: [globalProcessId]]]></de>
             <en><![CDATA[Process: [globalProcessId]]]></en>
         </locale>
         <locale name="window.delete.customer.grid.information">
@@ -1593,6 +1633,10 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
         <locale name="customer.grid.mail.checkbox.title">
             <de><![CDATA[Als Mailanhang setzen]]></de>
             <en><![CDATA[Set as mail attachment]]></en>
+        </locale>
+        <locale name="customer.grid.download.title">
+            <de><![CDATA[Datei herrunterladen]]></de>
+            <en><![CDATA[Download file]]></en>
         </locale>
         <locale name="customer.grid.customerFiles">
             <de><![CDATA[Kundendateien]]></de>
@@ -1613,6 +1657,70 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
         <locale name="customer.grid.saved">
             <de><![CDATA[Dateien von [entity]: Änderungen der Kundendaten wurden erfolgreich gespeichert]]></de>
             <en><![CDATA[Files from [entity]: Changes to customer data were successfully saved]]></en>
+        </locale>
+        <locale name="process.button.title">
+            <de><![CDATA[Vorgangsverlauf]]></de>
+            <en><![CDATA[Process history]]></en>
+        </locale>
+
+
+        <locale name="controls.elements.copyDialog.title">
+            <de><![CDATA[[prefixedNumber] kopieren]]></de>
+            <en><![CDATA[Copy [prefixedNumber]]]></en>
+        </locale>
+        <locale name="controls.elements.copyDialog.text">
+            <de><![CDATA[Soll eine Kopie von [prefixedNumber] erstellt werden?]]></de>
+            <en><![CDATA[Should a copy of [prefixedNumber] be made?]]></en>
+        </locale>
+        <locale name="controls.elements.copyDialog.information" html="true">
+            <de>
+                <![CDATA[Es wird eine Kopie mit den Daten von <b>[prefixedNumber]</b> erstellt.]]></de>
+            <en><![CDATA[A new copy will be created with the data of <b>[prefixedNumber]</b>.]]></en>
+        </locale>
+        <locale name="controls.elements.copyDialog.ok_btn">
+            <de><![CDATA[Kopie erstellen]]></de>
+            <en><![CDATA[Create copy]]></en>
+        </locale>
+
+        <locale name="controls.elements.copyDialog.option.title">
+            <de><![CDATA[Bitte wähle hierzu eine der folgenden Optionen, wie die Daten kopiert werden sollen:]]></de>
+            <en><![CDATA[Please select one of the following options for how the data should be copied:]]></en>
+        </locale>
+        <locale name="controls.elements.copyDialog.option.info" html="true">
+            <de><![CDATA[
+            <ul>
+            <li>
+            Als neuen Vorgang kopieren: Diese Option kopiert alle Daten der Entität, jedoch ohne die Prozess-ID.
+            Die kopierte Entität wird somit nicht dem aktuellen Prozess zugeordnet und kann als unabhängiger Vorgang bearbeitet werden.
+            </li>
+            <li>
+            In vorhandenen Vorgang kopieren: Bei dieser Option werden ebenfalls alle Daten der Entität kopiert,
+            jedoch bleibt die Verbindung zum aktuellen Prozess erhalten. Dies ermöglicht es,
+            die Daten innerhalb desselben Prozesses zu duplizieren, ohne neue Prozess-IDs zu erstellen.
+            </li>
+            </ul>
+            ]]></de>
+            <en><![CDATA[
+            <ul>
+            <li>
+            Copy as new process: Diese Option kopiert alle Daten der Entität, jedoch ohne die Prozess-ID.
+            The copied entity is therefore not assigned to the current process and can be edited as an independent process.
+            </li>
+            <li>
+            Copy to existing process: With this option, all of the entity's data is also copied,
+            but the connection to the current process is retained.
+            This makes it possible to duplicate the data within the same process without creating new process IDs.
+            </li>
+            </ul>
+            ]]></en>
+        </locale>
+        <locale name="controls.elements.copyDialog.option.new">
+            <de><![CDATA[Als neuen Vorgang kopieren]]></de>
+            <en><![CDATA[Copy as new process]]></en>
+        </locale>
+        <locale name="controls.elements.copyDialog.option.existing">
+            <de><![CDATA[In vorhandenen Vorgang kopieren]]></de>
+            <en><![CDATA[Copy to existing process]]></en>
         </locale>
 
     </groups>

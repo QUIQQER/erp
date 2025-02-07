@@ -10,6 +10,7 @@ use ArrayIterator;
 use IteratorAggregate;
 use QUI;
 use QUI\ERP\Accounting\PriceFactors\FactorList as ErpFactorList;
+use QUI\Exception;
 use Traversable;
 
 use function array_map;
@@ -232,9 +233,9 @@ class ArticleListUnique implements IteratorAggregate
      * placeholder. unique list cant be recalculate
      * recalculate makes the unique article list compatible to the article list
      *
-     * @param $Calc
+     * @param ?QUI\ERP\Accounting\Calc $Calc
      */
-    public function recalculate($Calc = null)
+    public function recalculate(?QUI\ERP\Accounting\Calc $Calc = null)
     {
         // placeholder. unique list cant be recalculate
     }
@@ -243,10 +244,10 @@ class ArticleListUnique implements IteratorAggregate
      * placeholder. unique list cant be calc
      * calc makes the unique article list compatible to the article list
      *
-     * @param $Calc
+     * @param ?QUI\ERP\Accounting\Calc $Calc
      * @return ArticleListUnique
      */
-    public function calc($Calc = null): ArticleListUnique
+    public function calc(?QUI\ERP\Accounting\Calc $Calc = null): ArticleListUnique
     {
         // placeholder. unique list cant be calc
         return $this;
@@ -387,16 +388,17 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Return the Article List as HTML, without CSS
      *
-     * @param bool|string $template - custom template
-     * @return string
-     *
-     * @throws QUI\Exception
+     * @throws Exception
      */
     public function toHTML(
         bool|string $template = false,
-        bool|string $articleTemplate = false
+        bool|string $articleTemplate = false,
+        ?QUI\Interfaces\Template\EngineInterface $Engine = null
     ): string {
-        $Engine = QUI::getTemplateManager()->getEngine();
+        if ($Engine === null) {
+            $Engine = QUI::getTemplateManager()->getEngine();
+        }
+
         $vatArray = [];
 
         if (!$this->count()) {
@@ -416,21 +418,23 @@ class ArticleListUnique implements IteratorAggregate
         }
 
         // price display
-        foreach ($vatArray as $key => $vat) {
-            $vatArray[$key]['sum'] = $Currency->format($vat['sum']);
+        if (is_numeric($this->calculations['sum'])) {
+            foreach ($vatArray as $key => $vat) {
+                $vatArray[$key]['sum'] = $Currency->format($vat['sum']);
+            }
+
+            $this->calculations['sum'] = $Currency->format($this->calculations['sum']);
+            $this->calculations['subSum'] = $Currency->format($this->calculations['subSum']);
+
+            // Fallback for older unique article lists
+            if (!isset($this->calculations['grandSubSum'])) {
+                $this->calculations['grandSubSum'] = $this->calculations['sum'];
+            }
+
+            $this->calculations['grandSubSum'] = $Currency->format($this->calculations['grandSubSum']);
+            $this->calculations['nettoSum'] = $Currency->format($this->calculations['nettoSum']);
+            $this->calculations['nettoSubSum'] = $Currency->format($this->calculations['nettoSubSum']);
         }
-
-        $this->calculations['sum'] = $Currency->format($this->calculations['sum']);
-        $this->calculations['subSum'] = $Currency->format($this->calculations['subSum']);
-
-        // Fallback for older unique article lists
-        if (!isset($this->calculations['grandSubSum'])) {
-            $this->calculations['grandSubSum'] = $this->calculations['sum'];
-        }
-
-        $this->calculations['grandSubSum'] = $Currency->format($this->calculations['grandSubSum']);
-        $this->calculations['nettoSum'] = $Currency->format($this->calculations['nettoSum']);
-        $this->calculations['nettoSubSum'] = $Currency->format($this->calculations['nettoSubSum']);
 
         $articles = [];
 
@@ -549,29 +553,34 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Return the Article List as HTML, with CSS
      *
-     * @return string
-     *
-     * @throws QUI\Exception
+     * @throws Exception
      */
-    public function toHTMLWithCSS(): string
-    {
+    public function toHTMLWithCSS(
+        bool|string $template = false,
+        bool|string $articleTemplate = false,
+        ?QUI\Interfaces\Template\EngineInterface $Engine = null
+    ): string {
         $style = '<style>';
         $style .= file_get_contents(dirname(__FILE__) . '/ArticleList.css');
         $style .= '</style>';
 
-        return $style . $this->toHTML();
+        return $style . $this->toHTML($template, $articleTemplate, $Engine);
     }
 
     /**
      * Alias for toHTMLWithCSS
      *
+     * @param bool|string $template
+     * @param bool|string $articleTemplate
      * @return string
      *
-     * @throws QUI\Exception
+     * @throws Exception
      */
-    public function render(): string
-    {
-        return $this->toHTMLWithCSS();
+    public function render(
+        bool|string $template = false,
+        bool|string $articleTemplate = false
+    ): string {
+        return $this->toHTMLWithCSS($template, $articleTemplate);
     }
 
     /**

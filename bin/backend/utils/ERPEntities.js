@@ -27,6 +27,21 @@ define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function() {
                 case 'QUI\\ERP\\SalesOrders\\SalesOrder':
                     return 'package/quiqqer/salesorders/bin/js/backend/controls/panels/SalesOrder';
 
+                case 'QUI\\ERP\\Accounting\\Offers\\Offer':
+                    return 'package/quiqqer/offers/bin/js/backend/controls/panels/Offer';
+
+                case 'QUI\\ERP\\Accounting\\Offers\\OfferTemporary':
+                    return 'package/quiqqer/offers/bin/js/backend/controls/panels/TemporaryOffer';
+
+                case 'QUI\\ERP\\Accounting\\Contracts\\Contract':
+                    return 'package/quiqqer/contracts/bin/backend/controls/panels/Contract';
+
+                case 'QUI\\ERP\\Purchasing\\Processes\\PurchasingProcessDraft':
+                    return 'package/quiqqer/purchasing/bin/js/backend/controls/panels/processes/ProcessDraft';
+
+                case 'QUI\\ERP\\Purchasing\\Processes\\PurchasingProcess':
+                    return 'package/quiqqer/purchasing/bin/js/backend/controls/panels/processes/Process';
+
                 default:
                     console.error('missing', entityType);
             }
@@ -40,6 +55,22 @@ define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function() {
                     QUIAjax.get('package_quiqqer_erp_ajax_getEntityTitle', resolve, {
                         'package': 'quiqqer/erp',
                         uuid: uuid
+                    });
+                });
+            });
+        },
+
+        getEntity: function(uuid, entityPlugin) {
+            if (typeof entityPlugin === 'undefined') {
+                entityPlugin = false;
+            }
+
+            return new Promise(function(resolve) {
+                require(['Ajax'], function(QUIAjax) {
+                    QUIAjax.get('package_quiqqer_erp_ajax_getEntity', resolve, {
+                        'package': 'quiqqer/erp',
+                        uuid: uuid,
+                        entityPlugin: entityPlugin
                     });
                 });
             });

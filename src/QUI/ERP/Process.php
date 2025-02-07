@@ -26,6 +26,12 @@ use function strtotime;
 class Process
 {
     /**
+     * this date determines when the global process ids start to work.
+     * also the relationships.
+     */
+    const PROCESS_ACTIVE_DATE = '2024-08-01 00:00:00';
+
+    /**
      * @var string
      */
     protected string $processId;
@@ -58,6 +64,11 @@ class Process
     protected function table(): string
     {
         return QUI::getDBTableName('process');
+    }
+
+    public function getUUID(): string
+    {
+        return $this->processId;
     }
 
     /**
@@ -111,8 +122,8 @@ class Process
         ) {
             foreach ($entities as $Entity) {
                 if (
-                    !($Entity instanceof QUI\ERP\Accounting\Invoice\Invoice
-                        || $Entity instanceof QUI\ERP\Accounting\Invoice\InvoiceTemporary)
+                    !($Entity instanceof QUI\ERP\Accounting\Invoice\Invoice)
+                    && !($Entity instanceof QUI\ERP\Accounting\Invoice\InvoiceTemporary)
                 ) {
                     continue;
                 }
@@ -130,7 +141,7 @@ class Process
                     }
                 }
 
-                if (class_exists('QUI\ERP\SalesOrders\SalesOrder')) {
+                if (class_exists('QUI\ERP\SalesOrders\Handler')) {
                     $salesOrder = $Entity->getPaymentData('salesOrder');
 
                     if ($salesOrder) {
@@ -142,6 +153,45 @@ class Process
                 }
             }
         }
+
+        if (empty($groups)) {
+            if (class_exists('QUI\ERP\Order\Order')) {
+                foreach ($entities as $Entity) {
+                    if (!($Entity instanceof QUI\ERP\Order\Order)) {
+                        continue;
+                    }
+
+                    $uuid = $Entity->getUUID();
+
+                    $groups[$uuid][] = $Entity;
+
+                    if (class_exists('QUI\ERP\SalesOrders\Handler')) {
+                        $salesOrder = $Entity->getPaymentData('salesOrder');
+
+                        if ($salesOrder) {
+                            try {
+                                $groups[$uuid][] = QUI\ERP\SalesOrders\Handler::getSalesOrder($salesOrder['hash']);
+                            } catch (QUI\Exception) {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (empty($groups)) {
+            if (class_exists('QUI\ERP\SalesOrders\SalesOrder')) {
+                foreach ($entities as $Entity) {
+                    if (!($Entity instanceof QUI\ERP\SalesOrders\SalesOrder)) {
+                        continue;
+                    }
+
+                    $uuid = $Entity->getUUID();
+                    $groups[$uuid][] = $Entity;
+                }
+            }
+        }
+
 
         // not group
         $notGroup = [];
@@ -195,7 +245,7 @@ class Process
      * @param string $message
      * @param bool|int $time - optional, unix timestamp
      */
-    public function addHistory(string $message, bool|int $time = false): void
+    public function addHistory(string $message, bool | int $time = false): void
     {
         $this->getHistory()->addComment($message, $time);
 
@@ -234,7 +284,7 @@ class Process
 
                 if (isset($result[0]['history'])) {
                     $history = $result[0]['history'];
-                } else {
+                } elseif (!isset($result[0])) {
                     QUI::getDataBase()->insert($this->table(), [
                         'id' => $this->processId
                     ]);
@@ -279,6 +329,35 @@ class Process
             QUI\System\Log::addError($exception->getMessage());
         }
 
+        // filter comments
+        /**
+         * this date determines when the global process ids start to work.
+         * also the relationships.
+         */
+        $processDate = strtotime(self::PROCESS_ACTIVE_DATE);
+        $comments = $History->toArray();
+
+        $comments = array_filter($comments, function ($comment) use ($processDate) {
+            $createDate = $comment['time'];
+
+            if ($createDate > $processDate) {
+                return true;
+            }
+
+            return false;
+        });
+
+        $History = QUI\ERP\Comments::unserialize($comments);
+
+        if ($History->isEmpty()) {
+            $History->addComment(
+                QUI::getLocale()->get('quiqqer/erp', 'process.history.empty.info'),
+                strtotime(self::PROCESS_ACTIVE_DATE),
+                'quiqqer/erp',
+                'fa fa-info'
+            );
+        }
+
         return $History;
     }
 
@@ -293,7 +372,7 @@ class Process
         foreach ($invoices as $Invoice) {
             $History->addComment(
                 QUI::getLocale()->get('quiqqer/erp', 'process.history.invoice.created', [
-                    'hash' => $Invoice->getUUID()
+                    'hash' => $Invoice->getPrefixedNumber()
                 ]),
                 strtotime($Invoice->getAttribute('date')),
                 'quiqqer/invoice',
@@ -371,7 +450,9 @@ class Process
         }
 
         try {
-            return QUI\ERP\Accounting\Invoice\Handler::getInstance()->getInvoicesByGlobalProcessId($this->processId);
+            return QUI\ERP\Accounting\Invoice\Handler::getInstance()->getInvoicesByGlobalProcessId(
+                $this->processId
+            );
         } catch (\QUI\Exception) {
             return [];
         }
@@ -390,7 +471,7 @@ class Process
             $history = $Order->getHistory()->toArray();
             $hasCreateMessage = false;
             $createMessage = QUI::getLocale()->get('quiqqer/erp', 'process.history.order.created', [
-                'hash' => $Order->getUUID()
+                'hash' => $Order->getPrefixedNumber()
             ]);
 
             foreach ($history as $entry) {
@@ -443,7 +524,7 @@ class Process
      *
      * @return null|Order\Order|Order\OrderInProcess
      */
-    public function getOrder(): Order\OrderInProcess|Order\Order|null
+    public function getOrder(): Order\OrderInProcess | Order\Order | null
     {
         if (!QUI::getPackageManager()->isInstalled('quiqqer/order')) {
             return null;
@@ -503,7 +584,7 @@ class Process
                 ]),
                 strtotime($Offer->getAttribute('date')),
                 'quiqqer/offer',
-                'fa fa-file-text-o',
+                'fa fa-regular fa-handshake',
                 false,
                 $Offer->getHash()
             );
@@ -516,7 +597,7 @@ class Process
                 }
 
                 if (empty($entry['sourceIcon'])) {
-                    $entry['sourceIcon'] = 'fa fa-file-text-o';
+                    $entry['sourceIcon'] = 'fa fa-regular fa-handshake';
                 }
 
                 $History->addComment(
@@ -550,7 +631,7 @@ class Process
                 ]
             ]);
         } catch (\Exception) {
-            return [];
+            $offers = [];
         }
 
         $result = [];
@@ -559,6 +640,27 @@ class Process
         foreach ($offers as $offer) {
             try {
                 $result[] = $Offers->getOffer($offer['id']);
+            } catch (\Exception) {
+            }
+        }
+
+        // temporary
+        try {
+            $temporaryOffers = QUI::getDatabase()->fetch([
+                'select' => 'id,hash,global_process_id,date',
+                'from' => QUI\ERP\Accounting\Offers\Handler::getInstance()->temporaryOffersTable(),
+                'where_or' => [
+                    'global_process_id' => $this->processId,
+                    'hash' => $this->processId
+                ]
+            ]);
+        } catch (\Exception) {
+            $temporaryOffers = [];
+        }
+
+        foreach ($temporaryOffers as $temporaryOffer) {
+            try {
+                $result[] = $Offers->getTemporaryOffer($temporaryOffer['id']);
             } catch (\Exception) {
             }
         }
@@ -577,7 +679,7 @@ class Process
         foreach ($bookings as $Booking) {
             $History->addComment(
                 QUI::getLocale()->get('quiqqer/erp', 'process.history.booking.created', [
-                    'hash' => $Booking->getUuid()
+                    'hash' => $Booking->getPrefixedNumber()
                 ]),
                 $Booking->getCreateDate()->getTimestamp(),
                 'quiqqer/booking',
@@ -789,6 +891,12 @@ class Process
             return [];
         }
 
+        if (!class_exists('QUI\ERP\SalesOrders\Handler')) {
+            return [];
+        }
+
+        $result = [];
+
         try {
             $salesOrders = QUI::getDatabase()->fetch([
                 'select' => 'id,hash,global_process_id,date',
@@ -802,9 +910,28 @@ class Process
             return [];
         }
 
-        $result = [];
-
         foreach ($salesOrders as $salesOrder) {
+            try {
+                $result[] = QUI\ERP\SalesOrders\Handler::getSalesOrder($salesOrder['id']);
+            } catch (\Exception) {
+            }
+        }
+
+        // drafts
+        try {
+            $salesOrderDrafts = QUI::getDatabase()->fetch([
+                'select' => 'id,hash,global_process_id,date',
+                'from' => QUI\ERP\SalesOrders\Handler::getTableSalesOrderDrafts(),
+                'where_or' => [
+                    'global_process_id' => $this->processId,
+                    'hash' => $this->processId
+                ]
+            ]);
+        } catch (\Exception) {
+            return [];
+        }
+
+        foreach ($salesOrderDrafts as $salesOrder) {
             try {
                 $result[] = QUI\ERP\SalesOrders\Handler::getSalesOrder($salesOrder['id']);
             } catch (\Exception) {
@@ -863,9 +990,8 @@ class Process
         }
 
         $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
-        $this->transactions = $Transactions->getTransactionsByProcessId($this->processId);
 
-        return $this->transactions;
+        return $Transactions->getTransactionsByProcessId($this->processId);
     }
 
     //endregion

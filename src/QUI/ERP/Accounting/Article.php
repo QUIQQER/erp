@@ -14,6 +14,7 @@ use QUI\Exception;
 use function floatval;
 use function get_called_class;
 use function is_array;
+use function method_exists;
 
 /**
  * Class Article
@@ -348,7 +349,7 @@ class Article implements ArticleInterface
             QUI\System\Log::writeDebugException($Exception);
         }
 
-        if (!empty($Product)) {
+        if (!empty($Product) && method_exists($Product, 'getImage')) {
             try {
                 return $Product->getImage();
             } catch (QUI\Exception) {
@@ -414,7 +415,11 @@ class Article implements ArticleInterface
             return new Price($this->nettoPriceNotRounded, $this->Currency);
         }
 
-        return $this->getUnitPrice();
+        if (isset($this->attributes['unitPrice'])) {
+            $this->nettoPriceNotRounded = $this->attributes['unitPrice'];
+        }
+
+        return new Price($this->nettoPriceNotRounded, $this->Currency);
     }
 
     /**
@@ -562,7 +567,7 @@ class Article implements ArticleInterface
             if (isset($options['entries'][$unitId])) {
                 $titles = $options['entries'][$unitId]['title'];
 
-                if ($titles[$current]) {
+                if (!empty($titles[$current])) {
                     return $titles[$current];
                 }
             }

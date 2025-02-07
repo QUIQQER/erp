@@ -5,8 +5,13 @@
  * It opens the native download dialog
  */
 
-define('QUIQQER_SYSTEM', true);
-define('QUIQQER_AJAX', true);
+if (!defined('QUIQQER_SYSTEM')) {
+    define('QUIQQER_SYSTEM', true);
+}
+
+if (!defined('QUIQQER_AJAX')) {
+    define('QUIQQER_AJAX', true);
+}
 
 require_once dirname(__FILE__, 6) . '/header.php';
 
@@ -25,6 +30,7 @@ $entityType = Orthos::clear($Request->query->get('t'));
 $template = Orthos::clear($Request->query->get('tpl'));
 $templateProvider = Orthos::clear($Request->query->get('tplpr'));
 $quiId = Orthos::clear($Request->query->get('oid'));
+$show = Orthos::clear($Request->query->get('show'));
 
 $errorOutput = function ($message) use ($quiId) {
     echo '
@@ -57,7 +63,21 @@ try {
         $template ?: null
     );
 
-    $HtmlPdfDocument->download();
+    if (isset($show) && $show) {
+        $pdfFile = $HtmlPdfDocument->createPDF();
+        $filename = $HtmlPdfDocument->getAttribute('filename');
+
+        if (empty($filename)) {
+            $filename = $entityId . '_' . date("d_m_Y__H_m") . '.pdf';
+        }
+
+        header("Content-Type: application/pdf");
+        header("Content-Disposition: inline; filename=\"$filename\""); // inline zeigt es im Browser an
+
+        echo file_get_contents($pdfFile);
+    } else {
+        $HtmlPdfDocument->download();
+    }
 } catch (\Exception $Exception) {
     QUI\System\Log::writeException($Exception);
 
