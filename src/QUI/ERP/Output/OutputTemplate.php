@@ -168,6 +168,14 @@ class OutputTemplate
      */
     public function getPDFDocument(): QUI\HtmlToPdf\Document
     {
+        if (!class_exists('QUI\HtmlToPdf\Document')) {
+            QUI\System\Log::addError('Missing html2pdf module. Please install the html2pdf module.');
+
+            throw new QUI\Exception(
+                'An error has occurred. Please try again or contact support if the issue persists.'
+            );
+        }
+
         $Locale = $this->OutputProvider::getLocale($this->entityId);
         QUI::getLocale()->setTemporaryCurrent($Locale->getCurrent());
 
