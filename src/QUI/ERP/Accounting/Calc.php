@@ -1015,8 +1015,8 @@ class Calc
         ) {
             // Leave everything as it is because a subscription plan order can never be set to "paid"
         } elseif (
-            $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::TYPE_INVOICE_REVERSAL
-            || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::TYPE_INVOICE_CANCEL
+            $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_ERROR
+            || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_CANCELED
             || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
         ) {
             // Leave everything as it is
