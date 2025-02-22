@@ -126,7 +126,7 @@ class Calc
      * @param UserInterface|null $User - optional
      * @return Calc
      */
-    public static function getInstance(UserInterface $User = null): Calc
+    public static function getInstance(null | UserInterface $User = null): Calc
     {
         if (!$User && QUI::isBackend()) {
             $User = QUI::getUsers()->getSystemUser();
@@ -200,7 +200,7 @@ class Calc
      * @param callable|boolean $callback - optional, callback function for the data array
      * @return ArticleList
      */
-    public function calcArticleList(ArticleList $List, callable|bool $callback = false): ArticleList
+    public function calcArticleList(ArticleList $List, callable | bool $callback = false): ArticleList
     {
         // calc data
         if (!is_callable($callback)) {
@@ -414,11 +414,11 @@ class Calc
         }
 
         // delete 0 % vat, 0% vat is allowed to calculate more easily
-        if (isset($vatText[0])) {
+        if (isset($vatText[0])) { // @phpstan-ignore-line
             unset($vatText[0]);
         }
 
-        if (isset($vatArray[0])) {
+        if (isset($vatArray[0])) { // @phpstan-ignore-line
             unset($vatArray[0]);
         }
 
@@ -475,6 +475,9 @@ class Calc
 
             // counterbalance - gegenrechnung
             // works only for one vat entry
+
+            // @todo: check -> wegen is netto, müsste eigentlich nach dem if
+            // @phpstan-ignore-next-line
             if (count($vatArray) === 1 && $isNetto) {
                 $vat = key($vatArray);
                 $netto = $bruttoSum / ((float)$vat / 100 + 1);
@@ -687,11 +690,15 @@ class Calc
      * @param string|int|float $value
      * @return float
      */
-    public function round($value): float
+    public function round(string | int | float $value): float
     {
         $decimalSeparator = $this->getUser()->getLocale()->getDecimalSeparator();
         $groupingSeparator = $this->getUser()->getLocale()->getGroupingSeparator();
         $precision = QUI\ERP\Defaults::getPrecision();
+
+        if (is_int($value) || is_float($value)) {
+            return round($value, $precision);
+        }
 
         if (strpos($value, $decimalSeparator) && $decimalSeparator != '.') {
             $value = str_replace($groupingSeparator, '', $value);
@@ -699,13 +706,12 @@ class Calc
 
         $value = str_replace(',', '.', $value);
         $value = floatval($value);
-        $value = round($value, $precision);
 
-        return $value;
+        return round($value, $precision);
     }
 
     /**
-     * Return the tax message for an user
+     * Return the tax message for a user
      *
      * @return string
      */
@@ -731,9 +737,9 @@ class Calc
      * @return string
      */
     public static function getVatText(
-        float|int $vat,
+        float | int $vat,
         UserInterface $User,
-        QUI\Locale $Locale = null
+        null | QUI\Locale $Locale = null
     ): string {
         if ($Locale === null) {
             $Locale = QUI::getLocale();
@@ -1015,8 +1021,8 @@ class Calc
         ) {
             // Leave everything as it is because a subscription plan order can never be set to "paid"
         } elseif (
-            $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::TYPE_INVOICE_REVERSAL
-            || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::TYPE_INVOICE_CANCEL
+            $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_ERROR
+            || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_CANCELED
             || $ToCalculate->getAttribute('paid_status') === QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
         ) {
             // Leave everything as it is
@@ -1071,13 +1077,13 @@ class Calc
      * @param QUI\ERP\Currency\Currency|null $Currency
      * @return array
      */
-    public static function calculateTotal(array $invoiceList, QUI\ERP\Currency\Currency $Currency = null): array
+    public static function calculateTotal(array $invoiceList, null | QUI\ERP\Currency\Currency $Currency = null): array
     {
         if ($Currency === null) {
             try {
                 $currency = json_decode($invoiceList[0]['currency_data'], true);
                 $Currency = QUI\ERP\Currency\Handler::getCurrency($currency['code']);
-            } catch (QUI\Exception $Exception) {
+            } catch (QUI\Exception) {
                 $Currency = QUI\ERP\Defaults::getCurrency();
             }
         }

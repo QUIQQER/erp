@@ -292,7 +292,7 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * @deprecated use getUUID()
      */
-    public function getId(): int|false
+    public function getId(): int | false
     {
         return $this->id;
     }
@@ -433,7 +433,7 @@ class User extends QUI\QDOM implements UserInterface
      * @param int|string $id - only for the interface, has no effect
      * @return Address
      */
-    public function getAddress(int|string $id = 0): QUI\Users\Address
+    public function getAddress(int | string $id = 0): QUI\Users\Address
     {
         return new Address($this->address, $this);
     }
@@ -514,7 +514,7 @@ class User extends QUI\QDOM implements UserInterface
         return false;
     }
 
-    public function isInGroup(int|string $groupId): bool
+    public function isInGroup(int | string $groupId): bool
     {
         return false;
     }
@@ -541,7 +541,7 @@ class User extends QUI\QDOM implements UserInterface
         return true;
     }
 
-    public function disable(UserInterface|null $PermissionUser = null): bool
+    public function disable(UserInterface | null $PermissionUser = null): bool
     {
         return true;
     }
@@ -561,7 +561,7 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * This user has nowhere permissions
      */
-    public function getPermission(string $right, bool|array|string|callable $ruleset = false): bool
+    public function getPermission(string $right, bool | array | string | callable $ruleset = false): bool
     {
         return false;
     }
@@ -571,7 +571,7 @@ class User extends QUI\QDOM implements UserInterface
         return $this->getAddress();
     }
 
-    public function addAddress(array $params = [], QUI\Interfaces\Users\User $ParentUser = null): ?Address
+    public function addAddress(array $params = [], null | QUI\Interfaces\Users\User $ParentUser = null): ?Address
     {
         return null;
     }
@@ -579,7 +579,7 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Does nothing
      */
-    public function setGroups(array|string $groups)
+    public function setGroups(array | string $groups)
     {
     }
 
@@ -632,12 +632,15 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Does nothing
      */
-    public function setPassword(string $new, ?UserInterface $PermissionUser = null)
+    public function setPassword(string $new, null | UserInterface $PermissionUser = null)
     {
     }
 
-    public function changePassword(string $newPassword, string $oldPassword, UserInterface $ParentUser = null): void
-    {
+    public function changePassword(
+        string $newPassword,
+        string $oldPassword,
+        null | UserInterface $ParentUser = null
+    ): void {
     }
 
     /**
@@ -672,14 +675,14 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Does nothing
      */
-    public function addToGroup(int|string $groupId)
+    public function addToGroup(int | string $groupId)
     {
     }
 
     /**
      * Does nothing
      */
-    public function removeGroup(Group|int|string $Group)
+    public function removeGroup(Group | int | string $Group)
     {
     }
 
@@ -743,7 +746,7 @@ class User extends QUI\QDOM implements UserInterface
         );
     }
 
-    public function enableAuthenticator(string $authenticator, UserInterface $ParentUser = null): void
+    public function enableAuthenticator(string $authenticator, null | UserInterface $ParentUser = null): void
     {
         throw new QUI\Users\Exception(
             ['quiqqer/core', 'exception.authenticator.not.found'],
@@ -751,7 +754,7 @@ class User extends QUI\QDOM implements UserInterface
         );
     }
 
-    public function disableAuthenticator(string $authenticator, UserInterface $ParentUser = null): void
+    public function disableAuthenticator(string $authenticator, null | UserInterface $ParentUser = null): void
     {
         throw new QUI\Users\Exception(
             ['quiqqer/core', 'exception.authenticator.not.found'],

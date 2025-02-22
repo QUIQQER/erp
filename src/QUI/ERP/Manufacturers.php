@@ -159,11 +159,11 @@ class Manufacturers
 
             $Address->save();
 
-            if (!$User->getAttribute('firstname') || $User->getAttribute('firstname') === '') {
+            if (empty($User->getAttribute('firstname'))) {
                 $User->setAttribute('firstname', $address['firstname']);
             }
 
-            if (!$User->getAttribute('lastname') || $User->getAttribute('lastname') === '') {
+            if (empty($User->getAttribute('lastname'))) {
                 $User->setAttribute('lastname', $address['lastname']);
             }
         }
@@ -183,7 +183,7 @@ class Manufacturers
 
         // Set random password and activate
         $User->setPassword(QUI\Security\Password::generateRandom(), $SystemUser);
-        $User->activate(false, $SystemUser);
+        $User->activate('', $SystemUser);
 
         return $User;
     }

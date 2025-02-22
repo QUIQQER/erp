@@ -31,19 +31,8 @@ class Process
      */
     const PROCESS_ACTIVE_DATE = '2024-08-01 00:00:00';
 
-    /**
-     * @var string
-     */
     protected string $processId;
-
-    /**
-     * @var null|array
-     */
     protected ?array $transactions = null;
-
-    /**
-     * @var null|QUI\ERP\Comments
-     */
     protected ?Comments $History = null;
 
     /**
@@ -166,7 +155,11 @@ class Process
                     $groups[$uuid][] = $Entity;
 
                     if (class_exists('QUI\ERP\SalesOrders\Handler')) {
-                        $salesOrder = $Entity->getPaymentData('salesOrder');
+                        $salesOrder = $Entity->getPaymentDataEntry('salesOrder');
+
+                        if (empty($salesOrder)) {
+                            $salesOrder = $Entity->getCustomDataEntry('salesOrder');
+                        }
 
                         if ($salesOrder) {
                             try {

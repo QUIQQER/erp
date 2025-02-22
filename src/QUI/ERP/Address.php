@@ -26,7 +26,7 @@ class Address extends QUI\Users\Address
      * @param array|null $data
      * @param QUIUserInterface|null $User
      */
-    public function __construct(?array $data = [], QUI\Interfaces\Users\User $User = null)
+    public function __construct(?array $data = [], null | QUI\Interfaces\Users\User $User = null)
     {
         if ($User) {
             $this->User = $User;

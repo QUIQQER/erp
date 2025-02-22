@@ -227,7 +227,7 @@ class User
      * @return bool|QUI\ERP\Areas\Area
      * @throws QUI\Exception
      */
-    public static function getUserArea(UserInterface $User): bool|QUI\ERP\Areas\Area
+    public static function getUserArea(UserInterface $User): bool | QUI\ERP\Areas\Area
     {
         $CurrentAddress = $User->getAttribute('CurrentAddress');
 
@@ -276,7 +276,7 @@ class User
      * @throws Exception
      * @throws QUI\Permissions\Exception
      */
-    public static function getUserERPAddress(UserInterface $User): null|Address|array
+    public static function getUserERPAddress(UserInterface $User): null | Address | array
     {
         if (!QUI::getUsers()->isUser($User)) {
             throw new QUI\Exception([

@@ -38,7 +38,7 @@ class Defaults
      * @param string $key
      * @return array|bool|string
      */
-    public static function conf(string $section, string $key): bool|array|string
+    public static function conf(string $section, string $key): bool | array | string
     {
         try {
             $Package = QUI::getPackage('quiqqer/erp');
@@ -110,7 +110,7 @@ class Defaults
      * @param QUI\Interfaces\Users\User|null $User
      * @return Currency\Currency|null
      */
-    public static function getUserCurrency(QUI\Interfaces\Users\User $User = null): ?Currency\Currency
+    public static function getUserCurrency(null | QUI\Interfaces\Users\User $User = null): ?Currency\Currency
     {
         if (self::$userRelatedCurrency !== null) {
             if (self::$userRelatedCurrency) {
@@ -191,7 +191,7 @@ class Defaults
      * @param bool|string $lang - language of the wanted timestamp
      * @return int|null|string
      */
-    public static function getTimestampFormat(bool|string $lang = false): int|string|null
+    public static function getTimestampFormat(bool | string $lang = false): int | string | null
     {
         if ($lang === false) {
             $lang = QUI::getLocale()->getCurrent();
@@ -227,7 +227,7 @@ class Defaults
      * @param bool|string $lang
      * @return string
      */
-    public static function getDateFormat(bool|string $lang = false): string
+    public static function getDateFormat(bool | string $lang = false): string
     {
         if ($lang === false) {
             $lang = QUI::getLocale()->getCurrent();

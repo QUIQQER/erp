@@ -7,6 +7,7 @@
 use QUI\ERP\Tax\TaxEntry;
 use QUI\ERP\Tax\TaxType;
 use QUI\ERP\Tax\Utils as TaxUtils;
+use QUI\System\Log;
 
 /**
  * Calculate the netto price
@@ -20,18 +21,22 @@ use QUI\ERP\Tax\Utils as TaxUtils;
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_calcBruttoPrice',
     function ($price, $formatted, $vat) {
-        $price    = QUI\ERP\Money\Price::validatePrice($price);
+        $price = QUI\ERP\Money\Price::validatePrice($price);
         $Currency = QUI\ERP\Defaults::getCurrency();
 
         if (empty($vat)) {
-            $Area    = QUI\ERP\Defaults::getArea();
-            $TaxType = TaxUtils::getTaxTypeByArea($Area);
+            $Area = QUI\ERP\Defaults::getArea();
 
-            if ($TaxType instanceof TaxType) {
+            try {
+                $TaxType = TaxUtils::getTaxTypeByArea($Area);
                 $TaxEntry = TaxUtils::getTaxEntry($TaxType, $Area);
-            } elseif ($TaxType instanceof TaxEntry) {
-                $TaxEntry = $TaxType;
-            } else {
+            } catch (QUI\Exception $e) {
+                Log::addError($e->getMessage(), [
+                    'ajax' => 'package_quiqqer_erp_ajax_calcBruttoPrice',
+                    'price' => $price,
+                    'vat' => $vat
+                ]);
+
                 if (isset($formatted) && $formatted) {
                     return $Currency->format($price);
                 }
