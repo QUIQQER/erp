@@ -64,7 +64,11 @@ QUI::$Ajax->registerFunction(
                         }
 
                         try {
-                            $attachedMediaFiles[] = $Media->get((int)$fileId);
+                            $File = $Media->get((int)$fileId);
+
+                            if ($File instanceof QUI\Projects\Media\File || $File instanceof QUI\Projects\Media\Image) {
+                                $attachedMediaFiles[] = $File;
+                            }
                         } catch (Exception $Exception) {
                             QUI\System\Log::writeException($Exception);
                         }

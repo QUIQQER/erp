@@ -117,5 +117,5 @@ interface ErpEntityInterface
 
     public function clearCustomerFiles(): void;
 
-    public function getCustomerFiles(): array;
+    public function getCustomerFiles(bool $parsing = false): array;
 }

@@ -16,6 +16,7 @@ QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_customerFiles_getFiles',
     function ($hash) {
         $Entity = (new Processes())->getEntity($hash);
+
         return $Entity->getCustomerFiles(true);
     },
     ['hash']

@@ -7,6 +7,7 @@
 use QUI\ERP\Tax\TaxEntry;
 use QUI\ERP\Tax\TaxType;
 use QUI\ERP\Tax\Utils as TaxUtils;
+use QUI\System\Log;
 
 /**
  * Calculate the netto price
@@ -35,21 +36,15 @@ QUI::$Ajax->registerFunction(
 
             try {
                 $TaxType = TaxUtils::getTaxTypeByArea($Area);
-            } catch (QUI\Exception $Exception) {
-                QUI::getMessagesHandler()->addError($Exception->getMessage());
-
-                if (isset($formatted) && $formatted) {
-                    return QUI\ERP\Defaults::getCurrency()->format($price);
-                }
-
-                return $price;
-            }
-
-            if ($TaxType instanceof TaxType) {
                 $TaxEntry = TaxUtils::getTaxEntry($TaxType, $Area);
-            } elseif ($TaxType instanceof TaxEntry) {
-                $TaxEntry = $TaxType;
-            } else {
+            } catch (QUI\Exception $Exception) {
+                Log::addError($Exception->getMessage(), [
+                    'price' => $price,
+                    'formatted' => $formatted,
+                    'vat' => $vat,
+                    'ajax' => 'package_quiqqer_erp_ajax_calcNettoPrice'
+                ]);
+
                 if (isset($formatted) && $formatted) {
                     return QUI\ERP\Defaults::getCurrency()->format($price);
                 }
@@ -68,7 +63,7 @@ QUI::$Ajax->registerFunction(
         $precision = QUI\ERP\Defaults::getPrecision();
         $bruttoInput = round($price, $precision);
 
-        $decimalParts = explode('.', $bruttoInput);
+        $decimalParts = explode('.', (string)$bruttoInput);
         $inputPrecision = isset($decimalParts[1]) ? strlen($decimalParts[1]) : 0;
 
         $brutto = round($netto, $precision) * $vat;
@@ -80,7 +75,7 @@ QUI::$Ajax->registerFunction(
 
             if ($brutto != $bruttoInput) {
                 for ($i = 0; $i < 10; $i++) {
-                    $nettoCheck = substr($netto, 0, -$precision);
+                    $nettoCheck = (float)substr((string)$netto, 0, -$precision);
                     $bruttoCheck = round($nettoCheck * $vat, $inputPrecision);
 
                     if ($bruttoCheck == $bruttoInput) {
