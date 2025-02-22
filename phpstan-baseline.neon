@@ -1,0 +1,137 @@
+parameters:
+    ignoreErrors:
+        -
+            message: "#^Property QUI\\\\ERP\\\\Accounting\\\\ArticleList::\\$Order has unknown class QUI\\\\ERP\\\\Order\\\\AbstractOrder as its type\\.$#"
+            path: src/QUI/ERP/Accounting/ArticleList.php
+        -
+            message: "#^Parameter \\$Order of method QUI\\\\ERP\\\\Accounting\\\\ArticleList::setOrder\\(\\) has invalid type QUI\\\\ERP\\\\Order\\\\AbstractOrder\\.$#"
+            path: src/QUI/ERP/Accounting/ArticleList.php
+        -
+            message: "#^Method QUI\\\\ERP\\\\Accounting\\\\ArticleList::getOrder\\(\\) has invalid return type QUI\\\\ERP\\\\Order\\\\AbstractOrder\\.$#"
+            path: src/QUI/ERP/Accounting/ArticleList.php
+        -
+            message: "#^Call to method getDeliveryAddress\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\AbstractOrder\\.$#"
+            path: src/QUI/ERP/Accounting/Calc.php
+        -
+            message: "#^Parameter \\$Invoice of method QUI\\\\ERP\\\\Accounting\\\\Calc::calculateInvoicePayments\\(\\) has invalid type QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+            path: src/QUI/ERP/Accounting/Calc.php
+        -
+            message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Handler\\.$#"
+            path: src/QUI/ERP/Accounting/Calc.php
+        -
+            message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Handler\\.$#"
+            path: src/QUI/ERP/Accounting/Calc.php
+        -
+            message: "#^Class QUI\\\\ERP\\\\Order\\\\AbstractOrder not found\\.$#"
+            path: src/QUI/ERP/Accounting/Calc.php
+        -
+            message: "#^Call to method getAttribute\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\AbstractOrder\\.$#"
+            path: src/QUI/ERP/Accounting/Calc.php
+        -
+            message: "#^Parameter \\$Transaction of method QUI\\\\ERP\\\\ErpTransactionsInterface::linkTransaction\\(\\) has invalid type QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
+            path: src/QUI/ERP/ErpTransactionsInterface.php
+        -
+            message: "#^Parameter \\$Transaction of method QUI\\\\ERP\\\\ErpTransactionsInterface::addTransaction\\(\\) has invalid type QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
+            path: src/QUI/ERP/ErpTransactionsInterface.php
+        -
+            message: "#^Call to method getPrefixedNumber\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getPrefixedNumber\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\InvoiceTemporary\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getAttribute\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getAttribute\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\InvoiceTemporary\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getUUID\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getUUID\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\InvoiceTemporary\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getHistory\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getHistory\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\InvoiceTemporary\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice not found\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\InvoiceTemporary not found\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Method QUI\\\\ERP\\\\Process::getInvoices\\(\\) has invalid return type QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Method QUI\\\\ERP\\\\Process::getInvoices\\(\\) has invalid return type QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\InvoiceTemporary\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Handler\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Method QUI\\\\ERP\\\\Process::getOrder\\(\\) has invalid return type QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Method QUI\\\\ERP\\\\Process::getOrder\\(\\) has invalid return type QUI\\\\ERP\\\\Order\\\\OrderInProcess\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Handler\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getHash\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Offers\\\\Offer\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getAttribute\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Offers\\\\Offer\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getHistory\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Offers\\\\Offer\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Method QUI\\\\ERP\\\\Process::getOffers\\(\\) has invalid return type QUI\\\\ERP\\\\Accounting\\\\Offers\\\\Offer\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Offers\\\\Handler\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getHash\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getAmountFormatted\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to method getDate\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Method QUI\\\\ERP\\\\Process::getTransactions\\(\\) has invalid return type QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Handler\\.$#"
+            path: src/QUI/ERP/Process.php
+        -
+            message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Handler\\.$#"
+            path: src/QUI/ERP/Processes.php
+        -
+            message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Handler\\.$#"
+            path: src/QUI/ERP/Processes.php
+        -
+            message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Offers\\\\Handler\\.$#"
+            path: src/QUI/ERP/Processes.php
+        -
+            message: "#^Call to static method getTableSalesOrders\\(\\) on an unknown class QUI\\\\ERP\\\\SalesOrders\\\\Handler\\.$#"
+            path: src/QUI/ERP/Processes.php
+        -
+            message: "#^Call to static method table\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Factory\\.$#"
+            path: src/QUI/ERP/Processes.php
+        -
+            message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Handler\\.$#"
+            path: src/QUI/ERP/Utils/Process.php
+        -
+            message: "#^Call to static method getInvoiceByString\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Utils\\\\Invoice\\.$#"
+            path: src/QUI/ERP/Utils/Process.php
+        -
+            message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Handler\\.$#"
+            path: src/QUI/ERP/Utils/Process.php
