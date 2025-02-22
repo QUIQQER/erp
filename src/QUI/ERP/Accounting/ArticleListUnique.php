@@ -86,7 +86,7 @@ class ArticleListUnique implements IteratorAggregate
      * @param ?QUI\Interfaces\Users\User $User
      * @throws QUI\ERP\Exception|QUI\Exception
      */
-    public function __construct(array $attributes = [], QUI\Interfaces\Users\User $User = null)
+    public function __construct(array $attributes = [], null | QUI\Interfaces\Users\User $User = null)
     {
         $this->Locale = QUI::getLocale();
 
@@ -271,7 +271,7 @@ class ArticleListUnique implements IteratorAggregate
      *
      * @throws QUI\Exception
      */
-    public static function unserialize(array|string $data): ArticleListUnique
+    public static function unserialize(array | string $data): ArticleListUnique
     {
         if (is_string($data)) {
             $data = json_decode($data, true);
@@ -391,8 +391,8 @@ class ArticleListUnique implements IteratorAggregate
      * @throws Exception
      */
     public function toHTML(
-        bool|string $template = false,
-        bool|string $articleTemplate = false,
+        bool | string $template = false,
+        bool | string $articleTemplate = false,
         ?QUI\Interfaces\Template\EngineInterface $Engine = null
     ): string {
         if ($Engine === null) {
@@ -556,8 +556,8 @@ class ArticleListUnique implements IteratorAggregate
      * @throws Exception
      */
     public function toHTMLWithCSS(
-        bool|string $template = false,
-        bool|string $articleTemplate = false,
+        bool | string $template = false,
+        bool | string $articleTemplate = false,
         ?QUI\Interfaces\Template\EngineInterface $Engine = null
     ): string {
         $style = '<style>';
@@ -577,8 +577,8 @@ class ArticleListUnique implements IteratorAggregate
      * @throws Exception
      */
     public function render(
-        bool|string $template = false,
-        bool|string $articleTemplate = false
+        bool | string $template = false,
+        bool | string $articleTemplate = false
     ): string {
         return $this->toHTMLWithCSS($template, $articleTemplate);
     }
@@ -620,7 +620,7 @@ class ArticleListUnique implements IteratorAggregate
      *
      * @return ArrayIterator|Traversable
      */
-    public function getIterator(): Traversable|ArrayIterator
+    public function getIterator(): Traversable | ArrayIterator
     {
         return new ArrayIterator($this->articles);
     }
