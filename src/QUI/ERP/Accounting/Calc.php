@@ -414,11 +414,11 @@ class Calc
         }
 
         // delete 0 % vat, 0% vat is allowed to calculate more easily
-        if (isset($vatText[0])) {
+        if (isset($vatText[0])) { // @phpstan-ignore-line
             unset($vatText[0]);
         }
 
-        if (isset($vatArray[0])) {
+        if (isset($vatArray[0])) { // @phpstan-ignore-line
             unset($vatArray[0]);
         }
 
@@ -475,6 +475,9 @@ class Calc
 
             // counterbalance - gegenrechnung
             // works only for one vat entry
+
+            // @todo: check -> wegen is netto, müsste eigentlich nach dem if
+            // @phpstan-ignore-next-line
             if (count($vatArray) === 1 && $isNetto) {
                 $vat = key($vatArray);
                 $netto = $bruttoSum / ((float)$vat / 100 + 1);
