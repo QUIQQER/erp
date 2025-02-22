@@ -34,7 +34,10 @@ interface OutputTemplateProviderInterface
      * @param Locale|null $Locale $Locale (optional) - If omitted use \QUI::getLocale()
      * @return string
      */
-    public static function getTemplateTitle(int|string $templateId, Locale $Locale = null): string;
+    public static function getTemplateTitle(
+        int | string $templateId,
+        null | Locale $Locale = null
+    ): string;
 
     /**
      * Get HTML for document header area
@@ -46,11 +49,11 @@ interface OutputTemplateProviderInterface
      * @return string|false
      */
     public static function getHeaderHtml(
-        int|string $templateId,
+        int | string $templateId,
         string $entityType,
         EngineInterface $Engine,
         mixed $Entity
-    ): bool|string;
+    ): bool | string;
 
     /**
      * Get HTML for document body area
@@ -62,11 +65,11 @@ interface OutputTemplateProviderInterface
      * @return string|false
      */
     public static function getBodyHtml(
-        int|string $templateId,
+        int | string $templateId,
         string $entityType,
         EngineInterface $Engine,
         mixed $Entity
-    ): bool|string;
+    ): bool | string;
 
     /**
      * Get HTML for document footer area
@@ -78,9 +81,9 @@ interface OutputTemplateProviderInterface
      * @return string|false
      */
     public static function getFooterHtml(
-        int|string $templateId,
+        int | string $templateId,
         string $entityType,
         EngineInterface $Engine,
         mixed $Entity
-    ): bool|string;
+    ): bool | string;
 }

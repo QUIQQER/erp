@@ -20,7 +20,7 @@ interface ErpCopyInterface
      * @return ErpEntityInterface
      */
     public function copy(
-        User $PermissionUser = null,
-        bool|string $globalProcessId = false
+        null | User $PermissionUser = null,
+        bool | string $globalProcessId = false
     ): ErpEntityInterface;
 }

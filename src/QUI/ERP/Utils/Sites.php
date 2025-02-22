@@ -15,7 +15,7 @@ class Sites
      * @param QUI\Locale|null $Locale - in which language the page should be
      * @return QUI\Projects\Site|null
      */
-    public static function getTermsAndConditions(QUI\Locale $Locale = null): ?QUI\Projects\Site
+    public static function getTermsAndConditions(null | QUI\Locale $Locale = null): ?QUI\Projects\Site
     {
         if ($Locale === null) {
             $Locale = QUI::getLocale();
@@ -43,7 +43,7 @@ class Sites
      * @param QUI\Locale|null $Locale - in which language the page should be
      * @return QUI\Projects\Site|null
      */
-    public static function getRevocation(QUI\Locale $Locale = null): ?QUI\Projects\Site
+    public static function getRevocation(null | QUI\Locale $Locale = null): ?QUI\Projects\Site
     {
         if ($Locale === null) {
             $Locale = QUI::getLocale();
@@ -71,7 +71,7 @@ class Sites
      * @param QUI\Locale|null $Locale - in which language the page should be
      * @return QUI\Projects\Site|null
      */
-    public static function getPrivacyPolicy(QUI\Locale $Locale = null): ?QUI\Projects\Site
+    public static function getPrivacyPolicy(null | QUI\Locale $Locale = null): ?QUI\Projects\Site
     {
         if ($Locale === null) {
             $Locale = QUI::getLocale();

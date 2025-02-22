@@ -38,11 +38,11 @@ class CalculationVatValue extends CalculationValue
      * @param bool|int $precision - The optional number of decimal digits to round to.
      */
     public function __construct(
-        int|float $number,
+        int | float $number,
         string $text,
-        float|int $vat,
-        QUI\ERP\Currency\Currency $Currency = null,
-        bool|int $precision = false
+        float | int $vat,
+        null | QUI\ERP\Currency\Currency $Currency = null,
+        bool | int $precision = false
     ) {
         parent::__construct($number, $Currency, $precision);
 

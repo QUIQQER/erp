@@ -32,7 +32,7 @@ class Output
      * @param string $package
      * @return OutputProviderInterface|false - OutputProvider class (static) or false if none found
      */
-    public static function getOutputProviderByPackage(string $package): bool|OutputProviderInterface
+    public static function getOutputProviderByPackage(string $package): bool | OutputProviderInterface
     {
         foreach (self::getAllOutputProviders() as $outputProvider) {
             if ($outputProvider['package'] === $package) {
@@ -49,7 +49,7 @@ class Output
      * @param string $entityType
      * @return string|false - OutputProvider class (static) or false if none found
      */
-    public static function getOutputProviderByEntityType(string $entityType): bool|string
+    public static function getOutputProviderByEntityType(string $entityType): bool | string
     {
         foreach (self::getAllOutputProviders() as $outputProvider) {
             $class = $outputProvider['class'];
@@ -77,11 +77,11 @@ class Output
      * @throws QUI\Exception
      */
     public static function getDocumentHtml(
-        int|string $entityId,
+        int | string $entityId,
         string $entityType,
-        OutputProviderInterface $OutputProvider = null,
-        OutputTemplateProviderInterface $TemplateProvider = null,
-        string $template = null,
+        null | OutputProviderInterface $OutputProvider = null,
+        null | OutputTemplateProviderInterface $TemplateProvider = null,
+        null | string $template = null,
         bool $preview = false
     ): string {
         if (empty($OutputProvider)) {
@@ -125,11 +125,11 @@ class Output
      * @throws QUI\Exception
      */
     public static function getDocumentPdf(
-        int|string $entityId,
+        int | string $entityId,
         string $entityType,
-        OutputProviderInterface $OutputProvider = null,
-        OutputTemplateProviderInterface $TemplateProvider = null,
-        string $template = null
+        null | OutputProviderInterface $OutputProvider = null,
+        null | OutputTemplateProviderInterface $TemplateProvider = null,
+        null | string $template = null
     ): QUI\HtmlToPdf\Document {
         if (empty($OutputProvider)) {
             $OutputProvider = self::getOutputProviderByEntityType($entityType);
@@ -158,7 +158,7 @@ class Output
      *
      * @return string
      */
-    public static function getDocumentPdfDownloadUrl(int|string $entityId, string $entityType): string
+    public static function getDocumentPdfDownloadUrl(int | string $entityId, string $entityType): string
     {
         $url = URL_OPT_DIR . 'quiqqer/erp/bin/output/frontend/download.php?';
         $url .= http_build_query([
@@ -187,14 +187,14 @@ class Output
      * @throws QUI\Exception|\PHPMailer\PHPMailer\Exception
      */
     public static function sendPdfViaMail(
-        int|string $entityId,
+        int | string $entityId,
         string $entityType,
-        OutputProviderInterface $OutputProvider = null,
-        OutputTemplateProviderInterface $TemplateProvider = null,
-        string $template = null,
-        string $recipientEmail = null,
-        string $mailSubject = null,
-        string $mailContent = null,
+        null | OutputProviderInterface $OutputProvider = null,
+        null | OutputTemplateProviderInterface $TemplateProvider = null,
+        null | string $template = null,
+        null | string $recipientEmail = null,
+        null | string $mailSubject = null,
+        null | string $mailContent = null,
         array $attachedMediaFiles = []
     ): void {
         if (empty($OutputProvider)) {
@@ -310,7 +310,7 @@ class Output
      * @param string|null $entityType (optional) - Restrict to templates of $entityType [default: fetch templates for all entity types]
      * @return array
      */
-    public static function getTemplates(string $entityType = null): array
+    public static function getTemplates(null | string $entityType = null): array
     {
         $templates = [];
         $outputProviders = [];
@@ -419,7 +419,7 @@ class Output
      * @param string $entityType
      * @return string|false
      */
-    public static function getDefaultOutputTemplateProviderForEntityType(string $entityType): string|bool
+    public static function getDefaultOutputTemplateProviderForEntityType(string $entityType): string | bool
     {
         $defaultEntityTypeTemplate = self::getDefaultOutputTemplateForEntityType($entityType);
 

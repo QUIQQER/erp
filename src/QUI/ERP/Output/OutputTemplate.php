@@ -17,17 +17,17 @@ class OutputTemplate
     /**
      * @var string|OutputTemplateProviderInterface
      */
-    protected string|OutputTemplateProviderInterface $TemplateProvider;
+    protected string | OutputTemplateProviderInterface $TemplateProvider;
 
     /**
      * @var string|OutputProviderInterface
      */
-    protected string|OutputProviderInterface $OutputProvider;
+    protected string | OutputProviderInterface $OutputProvider;
 
     /**
      * @var string|null
      */
-    protected string|null $template;
+    protected string | null $template;
 
     /**
      * @var QUI\Interfaces\Template\EngineInterface
@@ -42,7 +42,7 @@ class OutputTemplate
     /**
      * @var string|int
      */
-    protected string|int $entityId;
+    protected string | int $entityId;
 
     /**
      * The entity the output is created for
@@ -66,11 +66,11 @@ class OutputTemplate
      * @param string|null $template (optional) - Template identifier (from template provider)
      */
     public function __construct(
-        OutputTemplateProviderInterface|string $TemplateProvider,
-        OutputProviderInterface|string $OutputProvider,
-        int|string $entityId,
+        OutputTemplateProviderInterface | string $TemplateProvider,
+        OutputProviderInterface | string $OutputProvider,
+        int | string $entityId,
         string $entityType,
-        string $template = null
+        null | string $template = null
     ) {
         $this->Engine = QUI::getTemplateManager()->getEngine();
         $this->TemplateProvider = $TemplateProvider;
@@ -168,6 +168,14 @@ class OutputTemplate
      */
     public function getPDFDocument(): QUI\HtmlToPdf\Document
     {
+        if (!class_exists('QUI\HtmlToPdf\Document')) {
+            QUI\System\Log::addError('Missing html2pdf module. Please install the html2pdf module.');
+
+            throw new QUI\Exception(
+                'An error has occurred. Please try again or contact support if the issue persists.'
+            );
+        }
+
         $Locale = $this->OutputProvider::getLocale($this->entityId);
         QUI::getLocale()->setTemporaryCurrent($Locale->getCurrent());
 
@@ -216,7 +224,7 @@ class OutputTemplate
     /**
      * @return OutputTemplateProviderInterface|string
      */
-    public function getTemplateProvider(): OutputTemplateProviderInterface|string
+    public function getTemplateProvider(): OutputTemplateProviderInterface | string
     {
         if (is_string($this->TemplateProvider)) {
             return $this->TemplateProvider;

@@ -63,35 +63,35 @@ class Article implements ArticleInterface
     /**
      * @var float|int
      */
-    protected float|int $price;
+    protected float | int $price;
 
     /**
      * @var float|int
      */
-    protected float|int $basisPrice;
+    protected float | int $basisPrice;
 
     /**
      * @var float|int|null
      */
-    protected float|int|null $nettoPriceNotRounded = null;
+    protected float | int | null $nettoPriceNotRounded = null;
 
     /**
      * @var float|int
      */
-    protected float|int $sum;
+    protected float | int $sum;
 
     /**
      * The calculated netto sum with quantity and discount
      * @var float|int
      */
-    protected float|int $nettoSum = 0;
+    protected float | int $nettoSum = 0;
 
     /**
      * Sum from the article, without discount and with quantity
      *
      * @var float|int
      */
-    protected float|int $nettoSubSum = 0;
+    protected float | int $nettoSubSum = 0;
 
     /**
      * The article netto price, without discount, without quantity
@@ -99,7 +99,7 @@ class Article implements ArticleInterface
      *
      * @var float|int
      */
-    protected float|int $nettoPrice = 0;
+    protected float | int $nettoPrice = 0;
 
     /**
      * The article netto price, without discount, without quantity
@@ -107,7 +107,7 @@ class Article implements ArticleInterface
      *
      * @var float|int
      */
-    protected float|int $nettoBasisPrice = 0;
+    protected float | int $nettoBasisPrice = 0;
 
     /**
      * @var array
@@ -285,7 +285,7 @@ class Article implements ArticleInterface
      *
      * @return int|string
      */
-    public function getArticleNo(): int|string
+    public function getArticleNo(): int | string
     {
         if (isset($this->attributes['articleNo'])) {
             return $this->attributes['articleNo'];
@@ -439,7 +439,7 @@ class Article implements ArticleInterface
      *
      * @return float|int
      */
-    public function getVat(): float|int
+    public function getVat(): float | int
     {
         if (isset($this->attributes['vat']) && $this->attributes['vat'] !== '') {
             return (float)$this->attributes['vat'];
@@ -532,7 +532,7 @@ class Article implements ArticleInterface
      *
      * @return float|int|bool
      */
-    public function getQuantity(): float|int|bool
+    public function getQuantity(): float | int | bool
     {
         if (isset($this->attributes['quantity'])) {
             return $this->attributes['quantity'];
@@ -547,7 +547,7 @@ class Article implements ArticleInterface
      * @param null|QUI\Locale $Locale
      * @return string
      */
-    public function getQuantityUnit(QUI\Locale $Locale = null): string
+    public function getQuantityUnit(null | QUI\Locale $Locale = null): string
     {
         if ($Locale === null) {
             $Locale = QUI::getLocale();
@@ -607,7 +607,7 @@ class Article implements ArticleInterface
      *
      * @todo überdenken, ganzer artikel ist eigentlich nicht änderbar
      */
-    public function setDiscount(float|int $discount, int $discountType = Calc::CALCULATION_COMPLEMENT): void
+    public function setDiscount(float | int $discount, int $discountType = Calc::CALCULATION_COMPLEMENT): void
     {
         switch ($discountType) {
             case Calc::CALCULATION_PERCENTAGE:
@@ -649,7 +649,7 @@ class Article implements ArticleInterface
      * @param null|Calc|QUI\ERP\User $Instance
      * @return self
      */
-    public function calc(Calc|QUI\ERP\User $Instance = null): Article
+    public function calc(null | Calc | QUI\ERP\User $Instance = null): Article
     {
         if ($this->calculated) {
             return $this;

@@ -31,7 +31,7 @@ class Price
      * Netto Price
      * @var float|int
      */
-    protected float|int $price;
+    protected float | int $price;
 
     /**
      * Price currency
@@ -64,9 +64,9 @@ class Price
      * @param User|null $User - optional, if no user, session user are used
      */
     public function __construct(
-        float|int|null $price,
+        float | int | null $price,
         QUI\ERP\Currency\Currency $Currency,
-        QUI\Interfaces\Users\User $User = null
+        null | QUI\Interfaces\Users\User $User = null
     ) {
         if (!$price) {
             $price = 0;
@@ -102,7 +102,7 @@ class Price
      *
      * @return float|int|null
      */
-    public function getPrice(): float|int|null
+    public function getPrice(): float | int | null
     {
         return $this->validatePrice($this->price);
     }
@@ -112,7 +112,7 @@ class Price
      *
      * @return float|int|null
      */
-    public function value(): float|int|null
+    public function value(): float | int | null
     {
         return $this->getPrice();
     }
@@ -122,7 +122,7 @@ class Price
      *
      * @return float|int|null
      */
-    public function getValue(): float|int|null
+    public function getValue(): float | int | null
     {
         return $this->getPrice();
     }
@@ -198,7 +198,7 @@ class Price
      * @param QUI\Locale|null $Locale - based locale, in which the price is
      * @return float|int|null
      */
-    public static function validatePrice(mixed $value, QUI\Locale $Locale = null): float|int|null
+    public static function validatePrice(mixed $value, null | QUI\Locale $Locale = null): float | int | null
     {
         if (is_float($value) || is_int($value)) {
             return round($value, QUI\ERP\Defaults::getPrecision());

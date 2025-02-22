@@ -43,6 +43,7 @@ class Processes
         if ($entityPlugin === false || $entityPlugin === 'quiqqer/booking') {
             try {
                 // @todo quiqqer/booking
+                // @phpstan-ignore-next-line
             } catch (\Exception) {
             }
         }
@@ -70,6 +71,7 @@ class Processes
         if ($entityPlugin === false || $entityPlugin === 'quiqqer/delivery-notes') {
             try {
                 // @todo quiqqer/delivery-notes
+                // @phpstan-ignore-next-line
             } catch (\Exception) {
             }
         }

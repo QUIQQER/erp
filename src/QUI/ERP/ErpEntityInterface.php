@@ -70,7 +70,7 @@ interface ErpEntityInterface
      *
      * @return ArticleList|ArticleListUnique
      */
-    public function getArticles(): ArticleList|ArticleListUnique;
+    public function getArticles(): ArticleList | ArticleListUnique;
 
     /**
      * Get the price calculation object of the erp entity
@@ -91,7 +91,7 @@ interface ErpEntityInterface
      *
      * @param array|User $User
      */
-    public function setCustomer(array|QUI\Interfaces\Users\User $User);
+    public function setCustomer(array | QUI\Interfaces\Users\User $User);
 
     /**
      * Returns the erp entity as an array
@@ -110,12 +110,12 @@ interface ErpEntityInterface
      */
     public function reversal(
         string $reason = '',
-        QUI\Interfaces\Users\User $PermissionUser = null
+        null | QUI\Interfaces\Users\User $PermissionUser = null
     ): ?ErpEntityInterface;
 
     public function addCustomerFile(string $fileHash, array $options = []): void;
 
     public function clearCustomerFiles(): void;
 
-    public function getCustomerFiles(): array;
+    public function getCustomerFiles(bool $parsing = false): array;
 }
