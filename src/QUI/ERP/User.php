@@ -209,8 +209,6 @@ class User extends QUI\QDOM implements UserInterface
      *
      * @param UserInterface $User
      * @return self
-     *
-     * @throws QUI\ERP\Exception
      */
     public static function convertUserToErpUser(UserInterface $User): User
     {
@@ -224,7 +222,6 @@ class User extends QUI\QDOM implements UserInterface
         $address = false;
 
         if (!QUI::getUsers()->isNobodyUser($User) && !QUI::getUsers()->isSystemUser($User)) {
-            /* @var $Address QUI\Users\Address */
             $Address = $User->getStandardAddress();
 
             if ($Address) {
