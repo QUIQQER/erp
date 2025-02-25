@@ -71,10 +71,10 @@ class CalculationValue
     /**
      * Return the CalculationValue with the wanted precision
      *
-     * @param bool $precision
+     * @param bool|int $precision
      * @return CalculationValue
      */
-    public function precision(bool $precision = false): CalculationValue
+    public function precision(bool | int $precision = false): CalculationValue
     {
         if ($precision === false) {
             return $this;
