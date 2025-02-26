@@ -34,17 +34,17 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * @var int|float
      */
-    protected int|float $sum;
+    protected int | float $sum;
 
     /**
      * @var int|float
      */
-    protected int|float $grandSubSum;
+    protected int | float $grandSubSum;
 
     /**
      * @var ?QUI\Interfaces\Users\User
      */
-    protected QUI\Interfaces\Users\User|null $User = null;
+    protected QUI\Interfaces\Users\User | null $User = null;
 
     /**
      * @var ?QUI\ERP\Order\AbstractOrder
@@ -59,17 +59,17 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * @var int|float
      */
-    protected int|float $subSum;
+    protected int | float $subSum;
 
     /**
      * @var int|float
      */
-    protected int|float $nettoSum;
+    protected int | float $nettoSum;
 
     /**
      * @var int|float
      */
-    protected int|float $nettoSubSum;
+    protected int | float $nettoSubSum;
 
     /**
      * key 19% value[sum] = sum value[text] = text value[display_sum] formatted
@@ -140,9 +140,9 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
      * Set the user for the list
      * User for calculation
      *
-     * @param QUI\Interfaces\Users\User $User
+     * @param null|QUI\Interfaces\Users\User $User
      */
-    public function setUser(QUI\Interfaces\Users\User $User): void
+    public function setUser(null | QUI\Interfaces\Users\User $User): void
     {
         if ($this->User === $User) {
             return;
@@ -486,7 +486,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
      *
      * @throws Exception
      */
-    public function addPriceFactor(Factor|QUI\ERP\Products\Utils\PriceFactor $PriceFactor): void
+    public function addPriceFactor(Factor | QUI\ERP\Products\Utils\PriceFactor $PriceFactor): void
     {
         if ($PriceFactor instanceof QUI\ERP\Products\Utils\PriceFactor) {
             $isNetto = $this->isNetto;
@@ -550,8 +550,8 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     }
 
     public function toHTMLWithCSS(
-        bool|string $template = false,
-        bool|string $articleTemplate = false,
+        bool | string $template = false,
+        bool | string $articleTemplate = false,
         ?QUI\Interfaces\Template\EngineInterface $Engine = null,
     ): string {
         return $this->toUniqueList()->toHTMLWithCSS($template, $articleTemplate, $Engine);

@@ -499,9 +499,9 @@ class Article implements ArticleInterface
     /**
      * Set the user to the product, this user will be used for the calculation
      *
-     * @param QUI\Interfaces\Users\User $User
+     * @param null|QUI\Interfaces\Users\User $User
      */
-    public function setUser(QUI\Interfaces\Users\User $User): void
+    public function setUser(null | QUI\Interfaces\Users\User $User): void
     {
         $this->calculated = false;
         $this->User = $User;
