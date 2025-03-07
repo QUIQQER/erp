@@ -25,11 +25,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
     return new Class({
 
         Extends: QUIControl,
-        Type   : 'package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary',
+        Type: 'package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary',
 
         options: {
-            List    : null,
-            styles  : false,
+            List: null,
+            styles: false,
             currency: 'EUR',
 
             showPosSummary: true // show summary for selected article
@@ -57,7 +57,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         },
 
         /**
-         * Create the domnode element
+         * Create the dom-node element
          *
          * @returns {HTMLDivElement}
          */
@@ -66,16 +66,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
             this.$Elm = new Element('div', {
                 'data-qui': 'package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary',
-                'class'   : 'quiqqer-erp-backend-temporaryErp-summary',
-                html      : Mustache.render(template, {
+                'class': 'quiqqer-erp-backend-temporaryErp-summary',
+                html: Mustache.render(template, {
                     showPosSummary: showPosSummary,
-                    labelPosInfo  : QUILocale.get(lg, 'article.summary.tpl.labelPosInfo'),
-                    labelNet      : QUILocale.get(lg, 'article.summary.tpl.labelNet'),
-                    labelGross    : QUILocale.get(lg, 'article.summary.tpl.labelGross'),
-                    labelSums     : QUILocale.get(lg, 'article.summary.tpl.labelSums'),
-                    labelVat      : QUILocale.get(lg, 'article.summary.tpl.labelVat'),
+                    labelPosInfo: QUILocale.get(lg, 'article.summary.tpl.labelPosInfo'),
+                    labelNet: QUILocale.get(lg, 'article.summary.tpl.labelNet'),
+                    labelGross: QUILocale.get(lg, 'article.summary.tpl.labelGross'),
+                    labelSums: QUILocale.get(lg, 'article.summary.tpl.labelSums'),
+                    labelVat: QUILocale.get(lg, 'article.summary.tpl.labelVat'),
                 }),
-                events    : {
+                events: {
                     mouseenter: this.showPriceFactors,
                     mouseleave: this.hidePriceFactors
                 }
@@ -137,8 +137,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
                 Currency.getCurrency(currency).then((currency) => {
                     this.$Formatter = QUILocale.getNumberFormatter({
-                        style                : 'currency',
-                        currency             : currency.code,
+                        style: 'currency',
+                        currency: currency.code,
                         minimumFractionDigits: currency.precision,
                         maximumFractionDigits: currency.precision
                     });
@@ -208,7 +208,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
                         Content.set('html', Mustache.render(template, {
                             priceFactors: priceFactors,
-                            vatArray    : Object.values(calculations.vatArray)
+                            vatArray: Object.values(calculations.vatArray)
                         }));
 
                         const Total = Content.getElement('.quiqqer-erp-backend-temporaryErp-summaryWin-total');
@@ -241,7 +241,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
          * @param ArticleInstance
          */
         $refreshArticleSelect: function (List, ArticleInstance) {
-            let calculated = List.getCalculation();
+            let calculated = List.getCalculations();
 
             if (typeof calculated.calculations === 'undefined') {
                 return;
@@ -314,7 +314,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         showPriceFactors: function () {
             const ArticleList = this.getAttribute('List');
             let priceFactors = ArticleList.getPriceFactors();
-            let calculated = ArticleList.getCalculation();
+            let calculated = ArticleList.getCalculations();
 
             if (typeof calculated.calculations === 'undefined') {
                 calculated.calculations = {};
@@ -326,19 +326,21 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             }
 
             this.getCurrencyFormatter().then(() => {
+                console.log(calculated.calculations.vatArray);
+
                 const vat = Object.entries(calculated.calculations.vatArray).map((val) => {
                     return {
                         text: val[1].text,
-                        sum : this.$Formatter.format(val[1].sum)
+                        sum: this.$Formatter.format(val[1].sum)
                     };
                 });
-                
+
                 this.$PriceFactors.set('html', Mustache.render(templatePriceFactor, {
-                    valueSubSum : calculated.calculations.display_subSum,
-                    valueSum    : calculated.calculations.display_sum,
-                    vat         : vat,
-                    textSubSum  : QUILocale.get(lg, 'article.list.articles.subtotal'),
-                    textSum     : QUILocale.get(lg, 'article.list.articles.sumtotal'),
+                    valueSubSum: calculated.calculations.display_subSum,
+                    valueSum: calculated.calculations.display_sum,
+                    vat: vat,
+                    textSubSum: QUILocale.get(lg, 'article.list.articles.subtotal'),
+                    textSum: QUILocale.get(lg, 'article.list.articles.sumtotal'),
                     priceFactors: priceFactors
                 }));
 
@@ -347,7 +349,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 this.$PriceFactors.setStyle('bottom', 70);
 
                 this.$PFFX.animate({
-                    bottom : 80,
+                    bottom: 80,
                     opacity: 1
                 }, {
                     duration: 300
@@ -357,7 +359,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
         hidePriceFactors: function () {
             this.$PFFX.animate({
-                bottom : 70,
+                bottom: 70,
                 opacity: 0
             }, {
                 duration: 300,
