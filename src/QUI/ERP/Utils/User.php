@@ -177,31 +177,35 @@ class User
             // no address found
         }
 
-        // @todo es gibt neue einstellungen b2b, b2c b2bANDb2c ... von diesen einstellungen ausgehen
-        // @todo tax ist nicht optimal dafür
 
         $isNetto = $Config->getValue('shop', 'isNetto');
 
         if ($isNetto) {
             self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
-
             return self::$userBruttoNettoStatus[$uid];
         }
-
 
         try {
             $Tax = QUI\ERP\Tax\Utils::getTaxByUser($User);
 
             if ($Tax->getValue() == 0) {
                 self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
-
                 return self::$userBruttoNettoStatus[$uid];
             }
         } catch (QUI\Exception) {
-            self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
-
-            return self::$userBruttoNettoStatus[$uid];
         }
+
+        try {
+            $Package = QUI::getPackage('quiqqer/erp');
+            $Config = $Package->getConfig();
+
+            if ($Config->getValue('general', 'businessType') === 'B2B&B2C') {
+                self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
+                return self::$userBruttoNettoStatus[$uid];
+            }
+        } catch (QUI\Exception) {
+        }
+
 
         self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
 
