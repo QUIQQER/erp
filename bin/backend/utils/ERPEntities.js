@@ -2,7 +2,7 @@
  * @module package/quiqqer/erp/bin/backend/utils/ERPEntities
  * @author www.pcsg.de (Henning Leutz)
  */
-define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function() {
+define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function () {
     'use strict';
 
     return {
@@ -13,7 +13,7 @@ define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function() {
          * @param {String} entityType
          * @return {String}
          */
-        getPanelByEntity: function(entityType) {
+        getPanelByEntity: function (entityType) {
             switch (entityType) {
                 case 'QUI\\ERP\\Order\\Order':
                     return 'package/quiqqer/order/bin/backend/controls/panels/Order';
@@ -49,9 +49,9 @@ define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function() {
             return '';
         },
 
-        getEntityTitle: function(uuid) {
-            return new Promise(function(resolve) {
-                require(['Ajax'], function(QUIAjax) {
+        getEntityTitle: function (uuid) {
+            return new Promise(function (resolve) {
+                require(['Ajax'], function (QUIAjax) {
                     QUIAjax.get('package_quiqqer_erp_ajax_getEntityTitle', resolve, {
                         'package': 'quiqqer/erp',
                         uuid: uuid
@@ -60,13 +60,13 @@ define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function() {
             });
         },
 
-        getEntity: function(uuid, entityPlugin) {
+        getEntity: function (uuid, entityPlugin) {
             if (typeof entityPlugin === 'undefined') {
                 entityPlugin = false;
             }
 
-            return new Promise(function(resolve) {
-                require(['Ajax'], function(QUIAjax) {
+            return new Promise(function (resolve) {
+                require(['Ajax'], function (QUIAjax) {
                     QUIAjax.get('package_quiqqer_erp_ajax_getEntity', resolve, {
                         'package': 'quiqqer/erp',
                         uuid: uuid,
@@ -76,13 +76,14 @@ define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function() {
             });
         },
 
-        openPanelByUUID: function(uuid) {
+        openPanelByUUID: function (uuid) {
             return this.getTypeByUUID(uuid).then((entityType) => {
                 const panel = this.getPanelByEntity(entityType);
 
-                return new Promise(function(resolve) {
+                return new Promise(function (resolve) {
                     require(['utils/Panels', panel], (PanelUtils, Panel) => {
                         const PanelInstance = new Panel({
+                            '#id': uuid,
                             uuid: uuid
                         });
 
@@ -93,9 +94,9 @@ define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function() {
             });
         },
 
-        getTypeByUUID: function(uuid) {
-            return new Promise(function(resolve) {
-                require(['Ajax'], function(QUIAjax) {
+        getTypeByUUID: function (uuid) {
+            return new Promise(function (resolve) {
+                require(['Ajax'], function (QUIAjax) {
                     QUIAjax.get('package_quiqqer_erp_ajax_getEntityType', resolve, {
                         'package': 'quiqqer/erp',
                         uuid: uuid
