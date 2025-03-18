@@ -326,8 +326,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             }
 
             this.getCurrencyFormatter().then(() => {
-                console.log(calculated.calculations.vatArray);
-
                 const vat = Object.entries(calculated.calculations.vatArray).map((val) => {
                     return {
                         text: val[1].text,

@@ -153,7 +153,7 @@ define('package/quiqqer/erp/bin/backend/controls/dialogs/CopyErpEntityDialog', [
                 require([
                     'package/quiqqer/erp/bin/backend/utils/ERPEntities'
                 ], function(ErpUtils) {
-                    ErpUtils.openPanelByUUID(newCopy.hash);
+                    ErpUtils.openPanelByUUID(newCopy.uuid);
                 });
             }, {
                 'package': 'quiqqer/erp',

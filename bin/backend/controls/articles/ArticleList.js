@@ -343,10 +343,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             }
 
             if (!this.$calculate) {
-                console.log('add -> disableCalculation');
                 if (typeof Child.disableCalculation === 'function') Child.disableCalculation();
             } else {
-                console.log('add -> enableCalculation');
                 if (typeof Child.enableCalculation === 'function') Child.enableCalculation();
             }
 
