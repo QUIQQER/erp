@@ -198,8 +198,10 @@ class Price
      * @param QUI\Locale|null $Locale - based locale, in which the price is
      * @return float|int|null
      */
-    public static function validatePrice(mixed $value, null | QUI\Locale $Locale = null): float | int | null
-    {
+    public static function validatePrice(
+        mixed $value,
+        null | QUI\Locale $Locale = null
+    ): float | int | null {
         if (is_float($value) || is_int($value)) {
             return round($value, QUI\ERP\Defaults::getPrecision());
         }
