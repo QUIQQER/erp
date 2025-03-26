@@ -62,6 +62,11 @@ class Address extends QUI\Users\Address
 
         if ($this->User && $this->User->isCompany()) {
             $isCompany = $this->User->isCompany();
+        } elseif (
+            !empty($this->getAttribute('isCompany'))
+            && !empty($this->getAttribute('company'))
+        ) {
+            $isCompany = true;
         }
 
         if (!empty($this->getAttribute('contactPerson'))) {
