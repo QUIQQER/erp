@@ -23,7 +23,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
     'text!package/quiqqer/erp/bin/backend/controls/userData/UserData.html',
     'css!package/quiqqer/erp/bin/backend/controls/userData/UserData.css'
 
-], function(QUI, QUIControl, AddressWindow, ContactEmailSelectWindow, Users, QUILocale, QUIAjax, Mustache, template) {
+], function (QUI, QUIControl, AddressWindow, ContactEmailSelectWindow, Users, QUILocale, QUIAjax, Mustache, template) {
     'use strict';
 
     const pkg = 'quiqqer/erp';
@@ -83,7 +83,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             userPanelControl: 'package/quiqqer/customer/bin/backend/Handler'
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.parent(options);
 
             this.addEvents({
@@ -121,11 +121,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * Create the DOMNoe Element
          * @returns {*}
          */
-        create: function() {
+        create: function () {
             const labelUser = this.getAttribute('labelUser');
 
-            function ignoreAutoFill(node)
-            {
+            function ignoreAutoFill(node) {
                 node.role = 'presentation';
                 node.autocomplete = 'off';
             }
@@ -242,7 +241,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          *
          * @return {Object}
          */
-        getValue: function() {
+        getValue: function () {
             const result = {};
 
             fields.forEach((field) => {
@@ -256,7 +255,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             return result;
         },
 
-        getAddress: function() {
+        getAddress: function () {
             return {
                 id: this.getAttribute('addressId'),
                 contactEmail: this.getAttribute('contactEmail'),
@@ -277,7 +276,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @param {Object} data
          * @return {Promise}
          */
-        setValue: function(data) {
+        setValue: function (data) {
             if (this.$CustomerEdit) {
                 this.$CustomerEdit.setStyle('display', 'inline');
             }
@@ -313,7 +312,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             });
         },
 
-        refresh: function() {
+        refresh: function () {
             this.$refreshValues();
         },
 
@@ -322,8 +321,8 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          *
          * @return {void}
          */
-        $refreshValues: function() {
-            const checkVal = function(val) {
+        $refreshValues: function () {
+            const checkVal = function (val) {
                 return !(!val || val === '' || val === 'false');
             };
 
@@ -381,7 +380,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @param {Object} [address] - Build address label based on given address; if omitted, use attributes.
          * @return {string}
          */
-        $getAddressLabel: function(address) {
+        $getAddressLabel: function (address) {
             const getVal = (key) => {
                 let val;
 
@@ -433,7 +432,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @param userId
          * @return {Promise}
          */
-        $setDataByUserId: function(userId) {
+        $setDataByUserId: function (userId) {
             this.$oldUserId = this.getAttribute('userId');
 
             //this.$clearData();
@@ -457,6 +456,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             this.$BtnContactEmailSelect.disabled = true;
 
             let contactPersonAddress = null;
+            let erpAddress = null;
 
             return this.$getUser().then((User) => {
                 if (!User) {
@@ -470,6 +470,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 }
 
                 contactPersonAddress = User.getAttribute('quiqqer.erp.customer.contact.person');
+                erpAddress = User.getAttribute('quiqqer.erp.address');
 
                 this.setAttribute(
                     'quiqqer.erp.standard.payment',
@@ -496,22 +497,49 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                     return;
                 }
 
+                let mail;
+                let currentAddress = false;
                 let defaultAddress = false;
+
+                if (erpAddress) {
+                    currentAddress = erpAddress;
+                }
 
                 for (let i = 0; i < addresses.length; i++) {
                     if (addresses[i].default) {
                         defaultAddress = addresses[i];
+
+                        if (!currentAddress) {
+                            currentAddress = addresses[i];
+                        }
                         break;
                     }
                 }
 
-                if (!defaultAddress) {
-                    defaultAddress = addresses[0];
+                if (!currentAddress) {
+                    currentAddress = addresses[0];
                 }
 
-                if (typeof defaultAddress.mail !== 'undefined' && !this.$setValues) {
+                if (typeof currentAddress.mail !== 'undefined' && !this.$setValues) {
                     try {
-                        const mail = JSON.decode(defaultAddress.mail);
+                        mail = JSON.decode(currentAddress.mail);
+
+                        if (typeof mail === 'string' && mail !== '') {
+                            this.$ContactEmail.value = mail;
+                            this.setAttribute('contactEmail', mail);
+                        }
+
+                        if (Array.isArray(mail) && typeof mail[0] !== 'undefined') {
+                            this.$ContactEmail.value = mail[0];
+                            this.setAttribute('contactEmail', mail[0]);
+                        }
+                    } catch (e) {
+                    }
+                }
+
+                if (this.$ContactEmail.value === '') {
+                    try {
+                        mail = JSON.decode(defaultAddress.mail);
 
                         if (typeof mail === 'string' && mail !== '') {
                             this.$ContactEmail.value = mail;
@@ -527,7 +555,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 }
 
                 // Set address data
-                this.$setDataByAddress(defaultAddress);
+                this.$setDataByAddress(currentAddress);
             }).then(() => {
                 this.$ContactPerson.disabled = false;
                 this.$BtnContactPersonSelect.disabled = false;
@@ -559,7 +587,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @param {Object} address - Address data
          * @return {void}
          */
-        $setDataByAddress: function(address) {
+        $setDataByAddress: function (address) {
             this.setAttributes(address);
             this.$AddressField.value = address.id;
 
@@ -576,7 +604,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          *
          * @return {void}
          */
-        $clearData: function() {
+        $clearData: function () {
             this.$Company.set('value', '');
             this.$Street.set('value', '');
             this.$Zip.set('value', '');
@@ -601,15 +629,15 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @param {String|Number} addressId
          * @return {Promise}
          */
-        setAddressId: function(addressId) {
+        setAddressId: function (addressId) {
             const self = this;
 
-            return new Promise(function(resolve) {
+            return new Promise(function (resolve) {
                 if (self.getAttribute('userId') === '') {
                     return Promise.resolve([]);
                 }
 
-                QUIAjax.get('ajax_users_address_get', function(address) {
+                QUIAjax.get('ajax_users_address_get', function (address) {
                     if (!('id' in address)) {
                         address.id = addressId;
                     }
@@ -629,7 +657,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          *
          * @returns {Promise}
          */
-        $getUser: function() {
+        $getUser: function () {
             const userId = this.getAttribute('userId');
 
             if (!userId || userId === '') {
@@ -651,7 +679,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @param User
          * @return {Promise}
          */
-        getAddressList: function(User) {
+        getAddressList: function (User) {
             return new Promise((resolve, reject) => {
                 if (!User.getId()) {
                     return resolve([]);
@@ -663,10 +691,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                     }
 
                     // create new address
-                    return this.openCreateAddressDialog(User).then(function() {
+                    return this.openCreateAddressDialog(User).then(function () {
                         return User.getAddressList().then(resolve);
                     }).catch(reject);
-                }).catch(function() {
+                }).catch(function () {
                     resolve([]);
                 });
             });
@@ -677,14 +705,14 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          *
          * @return {Promise}
          */
-        openAddressWindow: function() {
+        openAddressWindow: function () {
             const self = this;
 
-            return new Promise(function(resolve, reject) {
+            return new Promise(function (resolve, reject) {
                 new AddressWindow({
                     userId: self.getAttribute('userId'),
                     events: {
-                        onSubmit: function(Win, addressId) {
+                        onSubmit: function (Win, addressId) {
                             resolve(addressId);
                             Win.close();
                         },
@@ -701,13 +729,13 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
         /**
          * event on import
          */
-        $onInject: function() {
+        $onInject: function () {
             const CustomerSelectElm = this.$Elm.getElement('[name="customer"]');
 
             this.$Elm.getElement('button[name="select-address"]').addEvent('click', () => {
                 this.openAddressWindow().then((addressId) => {
                     return this.setAddressId(addressId);
-                }).catch(function() {
+                }).catch(function () {
                     // nothing
                 });
             });
@@ -784,12 +812,12 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
         /**
          * fire the change event
          */
-        $fireChange: function() {
+        $fireChange: function () {
             if (this.$triggerChange) {
                 clearTimeout(this.$triggerChange);
             }
 
-            this.$triggerChange = (function() {
+            this.$triggerChange = (function () {
                 this.fireEvent('change', [this.getValue(), this]);
             }).delay(100, this);
         },
@@ -803,16 +831,16 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @param User
          * @return {Promise}
          */
-        openCreateAddressDialog: function(User) {
-            return new Promise(function(resolve, reject) {
+        openCreateAddressDialog: function (User) {
+            return new Promise(function (resolve, reject) {
                 require([
                     'package/quiqqer/erp/bin/backend/controls/userData/customers/customer/address/Window'
-                ], function(Win) {
+                ], function (Win) {
                     new Win({
                         userId: User.getId(),
                         events: {
                             onSubmit: resolve,
-                            onCancel: function() {
+                            onCancel: function () {
                                 reject('No User selected');
                             }
                         }
@@ -830,7 +858,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          *
          * @returns {Promise}
          */
-        toggleExtras: function() {
+        toggleExtras: function () {
             if (this.$extrasAreOpen) {
                 return this.closeExtras();
             }
@@ -843,10 +871,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          *
          * @return {Promise}
          */
-        openExtras: function() {
+        openExtras: function () {
             const self = this;
 
-            return new Promise(function(resolve) {
+            return new Promise(function (resolve) {
                 self.$rows.setStyles({
                     height: 0,
                     opacity: 0,
@@ -862,7 +890,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                     height: height
                 }, {
                     duration: 250,
-                    callback: function() {
+                    callback: function () {
                         self.$rows.setStyles({
                             display: null,
                             height: null,
@@ -874,7 +902,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                             opacity: 1
                         }, {
                             duration: 250,
-                            callback: function() {
+                            callback: function () {
                                 self.$Extras.set({
                                     html: '<span class="fa fa-chevron-up"></span> ' +
                                         QUILocale.get(pkg, 'UserData.btn.extraClose')
@@ -894,15 +922,15 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          *
          * @return {Promise}
          */
-        closeExtras: function() {
+        closeExtras: function () {
             const self = this;
 
-            return new Promise(function(resolve) {
+            return new Promise(function (resolve) {
                 moofx(self.$rows).animate({
                     opacity: 0
                 }, {
                     duration: 250,
-                    callback: function() {
+                    callback: function () {
                         self.$rows.setStyle('display', 'none');
                         self.$extrasAreOpen = false;
 
@@ -920,15 +948,15 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
         /**
          * open the user edit panel for the customer
          */
-        editCustomer: function() {
+        editCustomer: function () {
             const self = this;
 
             if (this.$Panel) {
                 this.$Panel.Loader.show();
             }
 
-            require(['package/quiqqer/customer/bin/backend/Handler'], function(CustomerHandler) {
-                CustomerHandler.openCustomer(self.getAttribute('userId')).then(function() {
+            require(['package/quiqqer/customer/bin/backend/Handler'], function (CustomerHandler) {
+                CustomerHandler.openCustomer(self.getAttribute('userId')).then(function () {
                     self.$Panel.Loader.hide();
                 });
             });
@@ -940,7 +968,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @param {Object} address - Address data
          * @return {void}
          */
-        $setContactPersonByAddress: function(address) {
+        $setContactPersonByAddress: function (address) {
             if (typeof address.salutation === 'undefined' &&
                 typeof address.firstname === 'undefined' &&
                 typeof address.lastname === 'undefined') {
@@ -981,7 +1009,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @param {Number} userId
          * @return {Promise<String>}
          */
-        $getContactEmailAddress: function(userId) {
+        $getContactEmailAddress: function (userId) {
             return new Promise((resolve, reject) => {
                 QUIAjax.get('package_quiqqer_erp_ajax_userData_getContactEmailAddress', resolve, {
                     'package': pkg,
