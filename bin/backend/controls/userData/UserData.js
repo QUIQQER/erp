@@ -499,21 +499,14 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
 
                 let mail;
                 let currentAddress = false;
-                let defaultAddress = false;
+                let defaultAddress = addresses.find(a => a.default) || null;
 
                 if (erpAddress) {
-                    currentAddress = erpAddress;
+                    currentAddress = addresses.find(a => a.uuid === erpAddress) || null;
                 }
 
-                for (let i = 0; i < addresses.length; i++) {
-                    if (addresses[i].default) {
-                        defaultAddress = addresses[i];
-
-                        if (!currentAddress) {
-                            currentAddress = addresses[i];
-                        }
-                        break;
-                    }
+                if (!currentAddress) {
+                    currentAddress = defaultAddress;
                 }
 
                 if (!currentAddress) {
