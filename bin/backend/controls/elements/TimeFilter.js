@@ -161,7 +161,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
                 case 'year':
                     this.$type = 'year';
 
-                    text = QUILocale.get('quiqqer/core', 'year');
+                    text = QUILocale.get(lg, 'journal.timeFilter.year');
                     text = text + ' ' + this.$Current.getFullYear();
                     break;
 
