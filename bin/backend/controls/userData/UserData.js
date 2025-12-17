@@ -2,9 +2,6 @@
  * Control for selecting a user / address / contact data for ERP entities (e.g. invoice customer).
  *
  * @module package/quiqqer/erp/bin/backend/controls/userData/UserData
- * @author www.pcsg.de (Henning Leutz)
- * @author www.pcsg.de (Patrick Müller)
- *
  * @event onChange [userData, this]
  */
 define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
@@ -35,6 +32,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
         'contactEmail',
         'quiqqer.erp.standard.payment',
         'quiqqer.erp.customer.payment.term',
+        'quiqqer.erp.customer.referenceCode',
 
         'suffix',
         'firstname',
@@ -480,6 +478,11 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 this.setAttribute(
                     'quiqqer.erp.customer.payment.term',
                     User.getAttribute('quiqqer.erp.customer.payment.term')
+                );
+
+                this.setAttribute(
+                    'quiqqer.erp.customer.referenceCode',
+                    User.getAttribute('quiqqer.erp.customer.referenceCode')
                 );
 
                 return this.getAddressList(User).then((addresses) => {
