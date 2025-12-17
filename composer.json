@@ -24,7 +24,7 @@
         "quiqqer/utils": "^2",
         "quiqqer/translator": "^2",
         "quiqqer/employee": "^2",
-        "quiqqer/customer": "^2",
+        "quiqqer/customer": "^2.4",
         "quiqqer/qui-php": "^2",
         "quiqqer/countries": "^2",
         "quiqqer/frontend-users": "^2",
