@@ -970,7 +970,7 @@ class Process
     /**
      * Return all related transactions
      *
-     * @return QUI\ERP\Accounting\Payments\Transactions\Transaction[];
+     * @return QUI\ERP\Accounting\Payments\Transactions\Transaction[]
      */
     public function getTransactions(): array
     {

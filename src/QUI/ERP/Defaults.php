@@ -13,13 +13,11 @@ use function implode;
 
 /**
  * Class Defaults
- *
- * @package QUI\ERP
  */
 class Defaults
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected static array $timestampFormat = [];
 
@@ -29,7 +27,7 @@ class Defaults
     protected static ?bool $userRelatedCurrency = null;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected static array $dateFormat = [];
 
@@ -71,7 +69,7 @@ class Defaults
                 'The ecoyn default area was not found. Please check your ecoyn area settings.'
             );
 
-            // use area from default country
+            // use area from the default country
             $Country = self::getCountry();
             $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
         }
@@ -287,14 +285,12 @@ class Defaults
      */
     public static function getShortAddress(): string
     {
-        // ACME gmbH - Pferdweg 12 - 42424 Pfedestadt
+        // ACME gmbH - Pferdeweg 12 - 42424 Pfedestadt
         $fields = [];
 
         $fields[] = self::conf('company', 'name');
         $fields[] = self::conf('company', 'street');
         $fields[] = self::conf('company', 'zipCode') . ' ' . self::conf('company', 'city');
-
-        $fields = array_values($fields);
 
         return implode(' - ', $fields);
     }
