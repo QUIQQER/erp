@@ -8,7 +8,7 @@ use QUI\ERP\User as ErpUser;
 
 use function is_array;
 
-trait ErpEntityCustomerFiles
+trait ErpEntityCustomerFiles // @phpstan-ignore-line
 {
     // region needed methods
 

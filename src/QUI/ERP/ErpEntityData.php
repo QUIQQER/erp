@@ -4,7 +4,7 @@ namespace QUI\ERP;
 
 use function method_exists;
 
-trait ErpEntityData
+trait ErpEntityData // @phpstan-ignore-line
 {
     public function getReferenceData(): array
     {
