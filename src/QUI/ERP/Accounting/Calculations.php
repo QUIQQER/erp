@@ -9,8 +9,6 @@ namespace QUI\ERP\Accounting;
 use QUI;
 use QUI\ERP\Exception;
 
-use function is_array;
-
 /**
  * Class Calculations
  *
@@ -19,7 +17,7 @@ use function is_array;
 class Calculations
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $attributes = [];
 
@@ -36,8 +34,8 @@ class Calculations
     /**
      * Calculations constructor.
      *
-     * @param array $attributes - calculation array
-     * @param array $articles - list of articles
+     * @param array<string, mixed> $attributes - calculation array
+     * @param array<Article> $articles - list of articles
      *
      * @throws Exception
      */
@@ -71,11 +69,9 @@ class Calculations
             $this->Currency = QUI\ERP\Defaults::getCurrency();
         }
 
-        if (is_array($articles)) {
-            foreach ($articles as $Article) {
-                if ($Article instanceof Article) {
-                    $this->articles[] = $Article;
-                }
+        foreach ($articles as $Article) {
+            if ($Article instanceof Article) {
+                $this->articles[] = $Article;
             }
         }
     }

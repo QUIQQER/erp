@@ -3,11 +3,12 @@
 namespace QUITests\ERP\Money;
 
 use QUI;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class BruttoUserTest
  */
-class PriceTest extends \PHPUnit_Framework_TestCase
+class PriceTest extends TestCase
 {
     public function testValidatePrice()
     {
