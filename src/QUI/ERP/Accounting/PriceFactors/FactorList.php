@@ -38,16 +38,12 @@ class FactorList implements IteratorAggregate, Countable
     /**
      * FactorList constructor.
      *
-     * @param array $data
+     * @param array<Factor|array> $data
      *
      * @throws QUI\ERP\Exception
      */
     public function __construct(array $data = [])
     {
-        if (!is_array($data)) {
-            return;
-        }
-
         foreach ($data as $factorData) {
             if ($factorData instanceof Factor) {
                 $this->factorList[] = $factorData;

@@ -3,12 +3,13 @@
 namespace QUITests\Composer;
 
 use QUI;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ParserTest
  * @package QUITests\Composer
  */
-class ParserTest extends \PHPUnit\Framework\TestCase
+class ParserTest extends TestCase
 {
     /**
      * @group Completed

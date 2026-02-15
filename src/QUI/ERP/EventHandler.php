@@ -412,6 +412,8 @@ class EventHandler
                 "\\QUI\\ERP\\EventHandler::getPrefixedNumber"
             );
         }
+
+        $Smarty->registerPlugin('modifier', 'strtolower', 'strtolower');
     }
 
     /**

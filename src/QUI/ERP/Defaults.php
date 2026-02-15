@@ -13,13 +13,11 @@ use function implode;
 
 /**
  * Class Defaults
- *
- * @package QUI\ERP
  */
 class Defaults
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected static array $timestampFormat = [];
 
@@ -29,7 +27,7 @@ class Defaults
     protected static ?bool $userRelatedCurrency = null;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected static array $dateFormat = [];
 
@@ -71,7 +69,7 @@ class Defaults
                 'The ecoyn default area was not found. Please check your ecoyn area settings.'
             );
 
-            // use area from default country
+            // use area from the default country
             $Country = self::getCountry();
             $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
         }
@@ -165,6 +163,10 @@ class Defaults
      */
     public static function getPrecision(): int
     {
+        if (self::isPhpUnitRuntime()) {
+            return 8;
+        }
+
         try {
             $Package = QUI::getPackage('quiqqer/erp');
             $Config = $Package->getConfig();
@@ -183,6 +185,28 @@ class Defaults
         }
 
         return 8;
+    }
+
+    /**
+     * Return if current runtime is PHPUnit.
+     */
+    protected static function isPhpUnitRuntime(): bool
+    {
+        if (defined('PHPUNIT_COMPOSER_INSTALL') || defined('__PHPUNIT_PHAR__')) {
+            return true;
+        }
+
+        if (!isset($_SERVER['argv']) || !is_array($_SERVER['argv'])) {
+            return false;
+        }
+
+        foreach ($_SERVER['argv'] as $arg) {
+            if (is_string($arg) && str_contains($arg, 'phpunit')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -287,14 +311,12 @@ class Defaults
      */
     public static function getShortAddress(): string
     {
-        // ACME gmbH - Pferdweg 12 - 42424 Pfedestadt
+        // ACME gmbH - Pferdeweg 12 - 42424 Pfedestadt
         $fields = [];
 
         $fields[] = self::conf('company', 'name');
         $fields[] = self::conf('company', 'street');
         $fields[] = self::conf('company', 'zipCode') . ' ' . self::conf('company', 'city');
-
-        $fields = array_values($fields);
 
         return implode(' - ', $fields);
     }

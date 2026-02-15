@@ -30,18 +30,18 @@ use function usort;
 class Comments
 {
     /**
-     * @var array
+     * @var list<array<string, mixed>>
      */
     protected array $comments = [];
 
     /**
      * Comments constructor.
      *
-     * @param array|null $comments
+     * @param list<array<string, mixed>>|null $comments
      */
     public function __construct(?array $comments = [])
     {
-        if (!$comments || !is_array($comments)) {
+        if (empty($comments)) {
             return;
         }
 
@@ -62,7 +62,7 @@ class Comments
      * @param array|string $data
      * @return Comments
      */
-    public static function unserialize(array|string $data): Comments
+    public static function unserialize(array | string $data): Comments
     {
         if (is_string($data)) {
             $data = json_decode($data, true);
@@ -96,7 +96,7 @@ class Comments
     }
 
     /**
-     * Generates a storable json representation of the list
+     * Generates a storable JSON representation of the list
      * Alias for serialize()
      *
      * @return string
@@ -109,7 +109,7 @@ class Comments
     /**
      * Return the list as an array
      *
-     * @return array
+     * @return list<array<string, mixed>>
      */
     public function toArray(): array
     {
@@ -128,11 +128,11 @@ class Comments
      */
     public function addComment(
         string $message,
-        bool|int $time = false,
+        bool | int $time = false,
         string $source = '',
         string $sourceIcon = '',
-        bool|string $id = false,
-        bool|string $objectHash = false
+        bool | string $id = false,
+        bool | string $objectHash = false
     ): void {
         if ($time === false) {
             $time = time();
@@ -248,9 +248,7 @@ class Comments
                 }
             }
 
-            if (is_array($json)) {
-                $Comments = new self($json);
-            }
+            $Comments = new self($json);
         }
 
         if ($Comments === null) {
