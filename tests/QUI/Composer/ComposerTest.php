@@ -2,15 +2,19 @@
 
 namespace QUITests\Composer;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
+use QUI\Composer\CLI;
+use QUI\Composer\Composer;
+use QUI\Composer\Web;
 
 class ComposerTest extends TestCase
 {
-    private $workingDir;
-    private $composerDir;
-    private $mode = ComposerTest::MODE_WEB;
+    private string $workingDir;
+    private string $composerDir;
+    private int $mode = ComposerTest::MODE_WEB;
 
-    private $testPackages = array(
+    private array $testPackages = array(
         'testRequire' => array(
             'name' => "psr/log",
             'version' => "1.0.0"
@@ -39,12 +43,11 @@ class ComposerTest extends TestCase
     # =============================================
     # Fixtures
     # =============================================
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->workingDir = "/tmp/composerTest/" . md5(date("dmYHis") . mt_rand(0, 10000000));
         $this->composerDir = $this->workingDir . "/composer/";
-
 
         if (!is_dir($this->workingDir)) {
             mkdir($this->workingDir, 0777, true);
@@ -67,7 +70,7 @@ class ComposerTest extends TestCase
         $this->writePHPUnitLog("Workingdirectory :" . $this->workingDir . "  ComposerDir:" . $this->composerDir);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
@@ -162,6 +165,9 @@ class ComposerTest extends TestCase
     }
 
 
+    /**
+     * @throws Exception
+     */
     public function testClearCache()
     {
         $Composer = $this->getComposer();
@@ -171,11 +177,12 @@ class ComposerTest extends TestCase
             $this->testPackages['default']['version']
         );
 
-        $result = $Composer->clearCache();
+        $Composer->clearCache();
     }
 
     /**
      * @group Completed
+     * @throws Exception
      */
     public function testShow()
     {
@@ -217,7 +224,7 @@ class ComposerTest extends TestCase
 
         # ===================
 
-        # Check if correct version is in composer.json
+        # Check if a correct version is in composer.json
         $data = json_decode($json, true);
         $require = $data['require'];
         $this->assertArrayHasKey($this->testPackages['testUpdate']['name'], $require);
@@ -253,6 +260,7 @@ class ComposerTest extends TestCase
 
     /**
      * @group Completed
+     * @throws Exception
      */
     public function testUpdatesAvailable()
     {
@@ -269,7 +277,9 @@ class ComposerTest extends TestCase
         $this->assertFalse($Composer->updatesAvailable(true));
     }
 
-
+    /**
+     * @throws \QUI\Composer\Exception
+     */
     public function testInstall()
     {
         $Composer = $this->getComposer();
@@ -287,23 +297,23 @@ class ComposerTest extends TestCase
     # Helper
     # =============================================
 
-    private function getComposer()
+    private function getComposer(): CLI | Web | Composer | null
     {
         $Composer = null;
         switch ($this->mode) {
             case self::MODE_AUTO:
-                $Composer = new \QUI\Composer\Composer($this->workingDir, $this->composerDir);
+                $Composer = new Composer($this->workingDir, $this->composerDir);
                 $this->writePHPUnitLog(
                     "Using Composer in " . ($Composer->getMode(
-                    ) == \QUI\Composer\Composer::MODE_CLI ? "CLI" : "Web") . " mode."
+                    ) == Composer::MODE_CLI ? "CLI" : "Web") . " mode."
                 );
                 break;
             case self::MODE_WEB:
-                $Composer = new \QUI\Composer\Web($this->workingDir);
+                $Composer = new Web($this->workingDir);
                 $this->writePHPUnitLog("Using Composer in forced-Web mode.");
                 break;
             case self::MODE_CLI:
-                $Composer = new \QUI\Composer\CLI($this->workingDir, $this->composerDir);
+                $Composer = new CLI($this->workingDir, $this->composerDir);
                 $this->writePHPUnitLog("Using Composer in forced-CLI mode.");
                 break;
         }
@@ -312,7 +322,7 @@ class ComposerTest extends TestCase
         return $Composer;
     }
 
-    private function createJson()
+    private function createJson(): void
     {
         $template = <<<JSON
  {
@@ -321,14 +331,7 @@ class ComposerTest extends TestCase
   "description": "Composer API für Quiqqer",
   "version": "dev-dev",
   "license": "GPL-3.0+",
-  "authors": [
-    {
-      "name": "Florian Bogner",
-      "email": "f.bogner@pcsg.de",
-      "homepage": "http://www.pcsg.de",
-      "role": "Developer"
-    }
-  ],
+  "authors": [],
    "repositories": [
     {
       "type": "composer",
@@ -348,7 +351,7 @@ JSON;
         file_put_contents($this->workingDir . "/composer.json", $template);
     }
 
-    private function foreceRemoveDir($src)
+    private function foreceRemoveDir($src): void
     {
         $dir = opendir($src);
         while (false !== ($file = readdir($dir))) {
@@ -365,12 +368,12 @@ JSON;
         rmdir($src);
     }
 
-    private function writePHPUnitLogError($msg)
+    private function writePHPUnitLogError($msg): void
     {
         fwrite(STDERR, print_r($msg, true) . PHP_EOL);
     }
 
-    private function writePHPUnitLog($msg)
+    private function writePHPUnitLog($msg): void
     {
         fwrite(STDOUT, print_r($msg, true) . PHP_EOL);
     }
