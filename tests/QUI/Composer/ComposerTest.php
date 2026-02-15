@@ -60,21 +60,21 @@ class ComposerTest extends TestCase
 
             if (!is_file($this->composerDir . "/composer.phar")) {
                 copy(
-                    dirname(dirname(dirname(dirname(__FILE__)))) . "/lib/composer.phar",
+                    dirname(__FILE__, 4) . "/lib/composer.phar",
                     $this->composerDir . "/composer.phar"
                 );
             }
         }
 
         $this->createJson();
-        $this->writePHPUnitLog("Workingdirectory :" . $this->workingDir . "  ComposerDir:" . $this->composerDir);
+        //$this->writePHPUnitLog("Workingdirectory :" . $this->workingDir . "  ComposerDir:" . $this->composerDir);
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
 
-        $this->foreceRemoveDir($this->workingDir);
+        $this->forceRemoveDir($this->workingDir);
     }
     # =============================================
     # Tests
@@ -303,18 +303,12 @@ class ComposerTest extends TestCase
         switch ($this->mode) {
             case self::MODE_AUTO:
                 $Composer = new Composer($this->workingDir, $this->composerDir);
-                $this->writePHPUnitLog(
-                    "Using Composer in " . ($Composer->getMode(
-                    ) == Composer::MODE_CLI ? "CLI" : "Web") . " mode."
-                );
                 break;
             case self::MODE_WEB:
                 $Composer = new Web($this->workingDir);
-                $this->writePHPUnitLog("Using Composer in forced-Web mode.");
                 break;
             case self::MODE_CLI:
                 $Composer = new CLI($this->workingDir, $this->composerDir);
-                $this->writePHPUnitLog("Using Composer in forced-CLI mode.");
                 break;
         }
 
@@ -351,14 +345,14 @@ JSON;
         file_put_contents($this->workingDir . "/composer.json", $template);
     }
 
-    private function foreceRemoveDir($src): void
+    private function forceRemoveDir($src): void
     {
         $dir = opendir($src);
         while (false !== ($file = readdir($dir))) {
             if (($file != '.') && ($file != '..')) {
                 $full = $src . '/' . $file;
                 if (is_dir($full)) {
-                    $this->foreceRemoveDir($full);
+                    $this->forceRemoveDir($full);
                 } else {
                     unlink($full);
                 }
@@ -366,15 +360,5 @@ JSON;
         }
         closedir($dir);
         rmdir($src);
-    }
-
-    private function writePHPUnitLogError($msg): void
-    {
-        fwrite(STDERR, print_r($msg, true) . PHP_EOL);
-    }
-
-    private function writePHPUnitLog($msg): void
-    {
-        fwrite(STDOUT, print_r($msg, true) . PHP_EOL);
     }
 }
