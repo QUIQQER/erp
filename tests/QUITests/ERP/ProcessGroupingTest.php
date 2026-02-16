@@ -7,22 +7,6 @@ use QUI\ERP\ErpEntityInterface;
 use QUI\ERP\ErpTransactionsInterface;
 use QUI\ERP\Process;
 
-class ProcessGroupingTestProcess extends Process
-{
-    protected array $entities = [];
-
-    public function __construct(array $entities)
-    {
-        parent::__construct('process-group-test');
-        $this->entities = $entities;
-    }
-
-    public function getEntities(): array
-    {
-        return $this->entities;
-    }
-}
-
 class ProcessGroupingTest extends TestCase
 {
     protected function createTransactionalEntityMock(string $uuid, array $payload): object
@@ -43,7 +27,22 @@ class ProcessGroupingTest extends TestCase
         $EntityA = $this->createTransactionalEntityMock('a', ['uuid' => 'a']);
         $EntityB = $this->createTransactionalEntityMock('b', ['uuid' => 'b']);
 
-        $Process = new ProcessGroupingTestProcess([$EntityA, $EntityB]);
+        $entities = [$EntityA, $EntityB];
+        $Process = new class ('process-group-test', $entities) extends Process {
+            protected array $entities = [];
+
+            public function __construct(string $processId, array $entities)
+            {
+                parent::__construct($processId);
+                $this->entities = $entities;
+            }
+
+            public function getEntities(): array
+            {
+                return $this->entities;
+            }
+        };
+
         $result = $Process->getGroupedRelatedTransactionEntities();
 
         $this->assertCount(2, $result['entities']);
@@ -58,7 +57,22 @@ class ProcessGroupingTest extends TestCase
         $EntityA = $this->createTransactionalEntityMock('a', ['uuid' => 'a']);
         $EntityB = $this->createTransactionalEntityMock('b', ['uuid' => 'b']);
 
-        $Process = new ProcessGroupingTestProcess([$EntityA, $EntityB]);
+        $entities = [$EntityA, $EntityB];
+        $Process = new class ('process-group-test', $entities) extends Process {
+            protected array $entities = [];
+
+            public function __construct(string $processId, array $entities)
+            {
+                parent::__construct($processId);
+                $this->entities = $entities;
+            }
+
+            public function getEntities(): array
+            {
+                return $this->entities;
+            }
+        };
+
         $result = $Process->getGroupedRelatedTransactionEntities(function ($Entity) {
             return $Entity->getUUID() === 'a';
         });

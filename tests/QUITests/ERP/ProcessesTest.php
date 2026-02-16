@@ -40,4 +40,24 @@ class ProcessesTest extends TestCase
 
         $Processes->getEntity('hash-does-not-exist', 'custom/unknown-plugin');
     }
+
+    public function testGetEntityWithAutoPluginResolutionThrowsNotFound(): void
+    {
+        $Processes = new Processes();
+
+        try {
+            $Processes->getEntity('definitely-unknown-hash-' . uniqid(), false);
+            $this->fail('Expected exception was not thrown');
+        } catch (Exception $Exception) {
+            $this->assertSame(404, $Exception->getCode());
+        }
+    }
+
+    public function testGetListReturnsArray(): void
+    {
+        $Processes = new Processes();
+        $result = $Processes->getList();
+
+        $this->assertIsArray($result);
+    }
 }

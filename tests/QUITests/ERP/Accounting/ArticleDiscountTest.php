@@ -11,81 +11,6 @@ use QUI\ERP\Currency\Currency;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
 
-class ArticleDiscountArticleStub implements ArticleInterface
-{
-    protected ?UserInterface $User = null;
-    protected float $vat = 0.0;
-
-    public function __construct(array $attributes = [])
-    {
-    }
-
-    public function setUser(UserInterface $User): void
-    {
-        $this->User = $User;
-    }
-
-    public function getUser(): ?UserInterface
-    {
-        return $this->User;
-    }
-
-    public function setVat(float $vat): void
-    {
-        $this->vat = $vat;
-    }
-
-    public function getVat(): float
-    {
-        return $this->vat;
-    }
-
-    public function getView(): ArticleView
-    {
-        throw new \RuntimeException('Not used in this test');
-    }
-
-    public function getTitle(): string
-    {
-        throw new \RuntimeException('Not used in this test');
-    }
-
-    public function getDescription(): string
-    {
-        throw new \RuntimeException('Not used in this test');
-    }
-
-    public function getUnitPrice(): Price
-    {
-        throw new \RuntimeException('Not used in this test');
-    }
-
-    public function getUnitPriceUnRounded(): Price
-    {
-        throw new \RuntimeException('Not used in this test');
-    }
-
-    public function getSum(): Price
-    {
-        throw new \RuntimeException('Not used in this test');
-    }
-
-    public function getQuantity(): bool|int|float
-    {
-        throw new \RuntimeException('Not used in this test');
-    }
-
-    public function toArray(): array
-    {
-        throw new \RuntimeException('Not used in this test');
-    }
-
-    public function displayPrice(): bool
-    {
-        throw new \RuntimeException('Not used in this test');
-    }
-}
-
 class ArticleDiscountTest extends TestCase
 {
     public function testConstructorFallsBackToComplementForUnknownType(): void
@@ -163,9 +88,75 @@ class ArticleDiscountTest extends TestCase
             ['RUNTIME_NETTO_BRUTTO_STATUS', 2]
         ]);
 
-        $Article = new ArticleDiscountArticleStub();
+        $Article = new class implements ArticleInterface {
+            protected ?UserInterface $User = null;
+            protected float $vat = 19.0;
+
+            public function __construct(array $attributes = [])
+            {
+            }
+
+            public function setUser(?UserInterface $User): void
+            {
+                $this->User = $User;
+            }
+
+            public function getUser(): ?UserInterface
+            {
+                return $this->User;
+            }
+
+            public function getVat(): float
+            {
+                return $this->vat;
+            }
+
+            public function getView(): ArticleView
+            {
+                throw new \RuntimeException('Not used in this test');
+            }
+
+            public function getTitle(): string
+            {
+                throw new \RuntimeException('Not used in this test');
+            }
+
+            public function getDescription(): string
+            {
+                throw new \RuntimeException('Not used in this test');
+            }
+
+            public function getUnitPrice(): Price
+            {
+                throw new \RuntimeException('Not used in this test');
+            }
+
+            public function getUnitPriceUnRounded(): Price
+            {
+                throw new \RuntimeException('Not used in this test');
+            }
+
+            public function getSum(): Price
+            {
+                throw new \RuntimeException('Not used in this test');
+            }
+
+            public function getQuantity(): bool|int|float
+            {
+                throw new \RuntimeException('Not used in this test');
+            }
+
+            public function toArray(): array
+            {
+                throw new \RuntimeException('Not used in this test');
+            }
+
+            public function displayPrice(): bool
+            {
+                throw new \RuntimeException('Not used in this test');
+            }
+        };
         $Article->setUser($User);
-        $Article->setVat(19.0);
 
         $Discount = new ArticleDiscount(10.0, Calc::CALCULATION_COMPLEMENT);
         $Discount->setCurrency($Currency);
