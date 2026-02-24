@@ -1,6 +1,4 @@
 /**
- * @module package/quiqqer/erp/bin/backend/controls/manufacturers/Administration
- * @author www.pcsg.de (Patrick Müller)
  *
  * @event manufacturerOpenBegin [self, userId]
  * @event onManufacturerOpen [self, userId, Panel]

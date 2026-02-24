@@ -1,6 +1,4 @@
 /**
- * @module package/quiqqer/erp/bin/backend/controls/elements/TimeFilter
- * @author www.pcsg.de (Henning Leutz)
  *
  * @event onChange [self, {Date} from, {Date} to]
  * @event onPeriodSelectClose [self]

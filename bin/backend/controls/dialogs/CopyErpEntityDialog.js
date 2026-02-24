@@ -1,8 +1,6 @@
 /**
  * Create a copy of an erp entity
  *
- * @module package/quiqqer/erp/bin/backend/controls/dialogs/CopyErpEntityDialog
- * @author www.pcsg.de (Henning)
  *
  * @event onSuccess [self, newCopy] - Fires if a copy has been successfully created
  * @event onError [self] - Fires if an error occurs during copy creation

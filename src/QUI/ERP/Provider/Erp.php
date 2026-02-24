@@ -13,8 +13,6 @@ use QUI\ERP\Api\AbstractErpProvider;
 
 /**
  * Class ErpProvider
- *
- * @package QUI\ERP\Provider\Products
  */
 class Erp extends AbstractErpProvider
 {

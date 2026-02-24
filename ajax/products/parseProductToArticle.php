@@ -7,9 +7,6 @@
 use QUI\ERP\Products\Handler\Fields;
 use QUI\ERP\Products\Handler\Products;
 
-/**
- *
- */
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_parseProductToArticle',
     function ($productId, $attributes, $user, $fields) {

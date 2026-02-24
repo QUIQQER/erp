@@ -2,9 +2,6 @@
  * Class BankAccounts
  *
  * Bank account managing for ecoyn.
- *
- * @module package/quiqqer/erp/bin/backend/controls/settings/BankAccounts
- * @author www.pcsg.de (Patrick Müller)
  */
 define('package/quiqqer/erp/bin/backend/controls/settings/BankAccounts', [
 

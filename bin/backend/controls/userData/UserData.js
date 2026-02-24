@@ -1,7 +1,6 @@
 /**
  * Control for selecting a user / address / contact data for ERP entities (e.g. invoice customer).
  *
- * @module package/quiqqer/erp/bin/backend/controls/userData/UserData
  * @event onChange [userData, this]
  */
 define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [

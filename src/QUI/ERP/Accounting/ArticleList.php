@@ -20,8 +20,6 @@ use function round;
 
 /**
  * Class ArticleList
- *
- * @package QUI\ERP\Accounting
  */
 class ArticleList extends ArticleListUnique implements IteratorAggregate
 {

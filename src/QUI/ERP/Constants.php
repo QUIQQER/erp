@@ -5,8 +5,6 @@ namespace QUI\ERP;
 /**
  * Class Erp
  * - Main ERP Class for all const vars
- *
- * @package QUI\ERP
  */
 class Constants
 {

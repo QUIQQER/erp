@@ -1,8 +1,6 @@
 /**
  * Lists articles that are selectable via checkbox. Only calculates selected articles.
  *
- * @module package/quiqqer/erp/bin/backend/controls/articles/SelectArticleList
- * @author www.pcsg.de (Patrick Müller)
  *
  * @event onCalc [self, {Object} calculation]
  * @event onArticleSelect [self, {Object} Article]

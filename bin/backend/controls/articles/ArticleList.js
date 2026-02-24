@@ -1,6 +1,4 @@
 /**
- * @module package/quiqqer/erp/bin/backend/controls/articles/ArticleList
- * @author www.pcsg.de (Henning Leutz)
  *
  * Article list (Produkte Positionen)
  *

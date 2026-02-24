@@ -10,8 +10,6 @@ use QUI;
 
 /**
  * Class Exception
- *
- * @package QUI\ERP\Packages
  */
 class Exception extends QUI\Exception
 {

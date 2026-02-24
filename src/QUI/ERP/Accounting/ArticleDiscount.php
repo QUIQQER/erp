@@ -21,8 +21,6 @@ use function strpos;
 
 /**
  * Class ArticleDiscount
- *
- * @package QUI\ERP\Accounting
  */
 class ArticleDiscount
 {

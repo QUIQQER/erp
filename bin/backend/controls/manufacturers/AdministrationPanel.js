@@ -1,7 +1,3 @@
-/**
- * @module package/quiqqer/erp/bin/backend/controls/manufacturers/AdministrationPanel
- * @author www.pcsg.de (Patrick Müller)
- */
 define('package/quiqqer/erp/bin/backend/controls/manufacturers/AdministrationPanel', [
 
     'qui/controls/desktop/Panel',

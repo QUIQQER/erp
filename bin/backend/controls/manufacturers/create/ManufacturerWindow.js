@@ -1,7 +1,3 @@
-/**
- * @module package/quiqqer/erp/bin/backend/controls/manufacturers/create/ManufacturerWindow
- * @author www.pcsg.de (Patrick Müller)
- */
 define('package/quiqqer/erp/bin/backend/controls/manufacturers/create/ManufacturerWindow', [
 
     'qui/controls/windows/Popup',

@@ -22,8 +22,6 @@ use function get_class;
  * - Ein Artikel welcher nur Text beinhaltet
  * - Kann als Informationsposition auf einer Rechnung verwendet werden
  * - Besitzt keine Werte
- *
- * @package QUI\ERP\Accounting\Invoice
  */
 class Text extends QUI\ERP\Accounting\Article
 {
