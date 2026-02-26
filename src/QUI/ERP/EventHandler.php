@@ -284,7 +284,6 @@ class EventHandler
      * event: on user save
      * saves the vat number
      *
-     *
      * @param QUI\Users\User $User
      * @throws QUI\Exception
      */
@@ -410,7 +409,12 @@ class EventHandler
             );
         }
 
-        $Smarty->registerPlugin('modifier', 'strtolower', 'strtolower');
+        if (
+            !isset($Smarty->registered_plugins['modifier']) ||
+            !isset($Smarty->registered_plugins['modifier']['strtolower'])
+        ) {
+            $Smarty->registerPlugin('modifier', 'strtolower', 'strtolower');
+        }
     }
 
     /**
