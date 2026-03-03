@@ -786,7 +786,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                     }
                 });
 
-                if (this.getAttribute('userId') && this.getAttribute('userId') != 0) {
+                const rawUserId = this.getAttribute('userId');
+                const userId = String(rawUserId ?? '').trim(); // immer String
+
+                if (userId !== '' && userId !== '0') {
                     this.$CustomerSelect.addItem(this.getAttribute('userId'));
                 } else {
                     this.$loading = false;
