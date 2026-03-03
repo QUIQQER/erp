@@ -13,8 +13,6 @@ use QUI\ERP\Currency\Currency;
  * Class CalculationVatValue
  * - represent a number for the calculations
  * - additional represent a vat number
- *
- * @package QUI\ERP\Accounting
  */
 class CalculationVatValue extends CalculationValue
 {

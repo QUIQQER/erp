@@ -1,8 +1,6 @@
 /**
  * Window for selecting user email addresses.
  *
- * @module package/quiqqer/erp/bin/backend/controls/userData/ContactEmailSelectWindow
- * @author www.pcsg.de (Patrick Müller)
  *
  * @event onSubmit [selectedEmailAddress, this]
  */

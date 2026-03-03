@@ -1,7 +1,3 @@
-/**
- * @module package/quiqqer/erp/bin/backend/controls/articles/BruttoCalcButton
- * @author www.pcsgde (Henning Leutz)
- */
 define('package/quiqqer/erp/bin/backend/controls/articles/BruttoCalcButton', [
 
     'qui/QUI',

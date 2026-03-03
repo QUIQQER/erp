@@ -4,10 +4,6 @@
  * This file contains package_quiqqer_erp_ajax_calculatePriceFactor
  */
 
-/**
- *
- */
-
 use QUI\ERP\Currency\Handler as CurrencyHandler;
 use QUI\ERP\Money\Price;
 

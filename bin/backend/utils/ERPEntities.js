@@ -1,7 +1,3 @@
-/**
- * @module package/quiqqer/erp/bin/backend/utils/ERPEntities
- * @author www.pcsg.de (Henning Leutz)
- */
 define('package/quiqqer/erp/bin/backend/utils/ERPEntities', function () {
     'use strict';
 

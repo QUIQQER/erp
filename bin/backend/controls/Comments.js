@@ -1,6 +1,4 @@
 /**
- * @module package/quiqqer/erp/bin/backend/controls/Comments
- * @author www.pcsg.de (Henning Leutz
  *
  * @event onEdit [self, Comment Node, data]
  *

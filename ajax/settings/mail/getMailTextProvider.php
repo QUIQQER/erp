@@ -4,8 +4,6 @@
  * This file contains package_quiqqer_erp_ajax_settings_mail_getMailTextProvider
  */
 
-/**
- */
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_settings_mail_getMailTextProvider',
     function () {

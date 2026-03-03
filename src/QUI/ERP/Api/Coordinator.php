@@ -21,8 +21,6 @@ use function usort;
  * - API point to get provider
  * - API point to get panel menu items
  * - API point to get number ranges
- *
- * @package QUI\ERP\Api
  */
 class Coordinator extends QUI\Utils\Singleton
 {

@@ -1,8 +1,6 @@
 /**
  * Creation process for new manufacturer user
  *
- * @module package/quiqqer/erp/bin/backend/controls/manufacturers/create/Manufacturer
- * @author www.pcsg.de (Patrick Müller)
  *
  * @event onLoad [this] - Fires when the control is fully loaded
  * @event onCreateManufacturerBegin [this] - Fires right before the create request is sent to the server

@@ -27,8 +27,6 @@ use function json_encode;
 /**
  * Class ArticleListUnique
  * - Nicht änderbare Artikel Liste
- *
- * @package QUI\ERP\Accounting
  */
 class ArticleListUnique implements IteratorAggregate
 {

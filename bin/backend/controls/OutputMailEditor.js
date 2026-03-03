@@ -1,8 +1,6 @@
 /**
  * Edit the e-mail subject and content of an Output document
  *
- * @module package/quiqqer/erp/bin/backend/controls/OutputMailEditor
- * @author www.pcsg.de (Patrick Müller)
  *
  * @event onMailSubmit [MailData, this] - Fires if the user submits the mail data
  */

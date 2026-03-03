@@ -1,6 +1,4 @@
 /**
- * @module package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary
- * @author www.pcsg.de (Henning Leutz)
  *
  * Displays an article list
  */

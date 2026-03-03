@@ -1,8 +1,6 @@
 /* jshint proto: true */
 
 /**
- * @module package/quiqqer/erp/bin/backend/controls/articles/Article
- * @author www.pcsg.de (Henning Leutz)
  *
  * Freies Produkt
  * - Dieses Produkt kann vom Benutzer komplett selbst bestimmt werden

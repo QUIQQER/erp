@@ -1,6 +1,3 @@
-/**
- * @module package/quiqqer/erp/bin/backend/controls/process/ProcessGrid
- */
 define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
 
     'qui/QUI',

@@ -7,9 +7,6 @@
 use QUI\ERP\Products\Handler\Products;
 use QUI\ERP\Products\Product\Types\VariantParent;
 
-/**
- *
- */
 QUI::$Ajax->registerFunction(
     'package_quiqqer_erp_ajax_products_isVariantParent',
     function ($productId) {

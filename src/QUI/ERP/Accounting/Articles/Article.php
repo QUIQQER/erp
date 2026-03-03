@@ -16,8 +16,6 @@ use function get_class;
  * An temporary invoice article
  *
  * - Freier Artikel
- *
- * @package QUI\ERP\Accounting\Invoice
  */
 class Article extends QUI\ERP\Accounting\Article
 {

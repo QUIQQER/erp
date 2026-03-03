@@ -10,8 +10,6 @@ use QUI\Requirements\Api\AbstractRequirementProvider;
 
 /**
  * Class Requirements
- *
- * @package QUI\ERP\Provider
  */
 class Requirements extends AbstractRequirementProvider
 {

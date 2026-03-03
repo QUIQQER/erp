@@ -1,8 +1,5 @@
 /**
  * Set default output templates for all output providers
- *
- * @module package/quiqqer/erp/bin/backend/controls/settings/OutputTemplates
- * @author www.pcsg.de (Patrick Müller)
  */
 define('package/quiqqer/erp/bin/backend/controls/settings/OutputTemplates', [
 

@@ -15,8 +15,6 @@ use function in_array;
  * Class Installer
  * - ERP package installer, installs ERP Packages to the system
  * - Easier installation for the ERP Stack
- *
- * @package QUI\ERP\Packages
  */
 class Installer extends QUI\Utils\Singleton
 {

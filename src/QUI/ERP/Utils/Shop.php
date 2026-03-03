@@ -11,8 +11,6 @@ use QUI;
 
 /**
  * Class Shop
- *
- * @package QUI\ERP\Utils
  */
 class Shop
 {

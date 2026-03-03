@@ -24,8 +24,6 @@ use function usort;
  * - transaction comments
  *
  * Helper class to manage comment arrays
- *
- * @package QUI\ERP
  */
 class Comments
 {

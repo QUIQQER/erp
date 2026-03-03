@@ -18,8 +18,6 @@ use function method_exists;
 
 /**
  * Class Article
- *
- * @package QUI\ERP\Accounting
  */
 class Article implements ArticleInterface
 {

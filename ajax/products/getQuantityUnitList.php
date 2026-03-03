@@ -4,10 +4,6 @@
  * This file contains package_quiqqer_erp_ajax_products_getQuantityUnitList
  */
 
-/**
- *
- */
-
 use QUI\ERP\Products\Handler\Fields;
 
 QUI::$Ajax->registerFunction(

@@ -1,7 +1,3 @@
-/**
- * @module package/quiqqer/erp/bin/frontend/controls/frontendUsers/VatType
- * @author www.pcsg.de (Henning Leutz)
- */
 define('package/quiqqer/erp/bin/frontend/controls/frontendUsers/VatType', [
 
     'qui/QUI',

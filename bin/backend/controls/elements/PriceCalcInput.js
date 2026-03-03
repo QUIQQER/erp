@@ -1,6 +1,4 @@
 /**
- * @module package/quiqqer/erp/bin/backend/controls/elements/PriceCalcInput
- * @author www.pcsg.de (Henning Leutz)
  *
  * @event onSetValue [value, this] - Fires if a net/gross price value is set/calculated
  */

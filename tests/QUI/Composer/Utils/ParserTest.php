@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class ParserTest
- * @package QUITests\Composer
  */
 class ParserTest extends TestCase
 {

@@ -14,8 +14,6 @@ use QUI\Requirements\Tests\Test;
 /**
  * Class Area
  * - checks if a default zone is set
- *
- * @package QUI\ERP\Requirements
  */
 class Area extends Test
 {

@@ -1,8 +1,5 @@
 /**
  * Manufacturers JavaScript handler
- *
- * @module package/quiqqer/erp/bin/backend/classes/Manufacturers
- * @author www.pcsg.de (Patrick Müller)
  */
 define('package/quiqqer/erp/bin/backend/classes/Manufacturers', [
 

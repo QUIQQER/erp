@@ -20,8 +20,6 @@ use function strtotime;
  * Class Process
  * - represents a complete erp process
  * - Vorgangsnummer
- *
- * @package QUI\ERP
  */
 class Process
 {
