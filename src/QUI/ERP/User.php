@@ -25,8 +25,6 @@ use function trim;
 /**
  * Class User
  * ERP User, a user object compatible to the QUIQQER User Interface
- *
- * @package QUI\ERP
  */
 class User extends QUI\QDOM implements UserInterface
 {

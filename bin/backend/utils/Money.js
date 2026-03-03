@@ -1,6 +1,3 @@
-/**
- * @module package/quiqqer/erp/bin/backend/utils/Money
- */
 define('package/quiqqer/erp/bin/backend/utils/Money', [
     'Locale'
 ], function (QUILocale) {

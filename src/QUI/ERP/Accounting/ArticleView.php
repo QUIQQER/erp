@@ -17,8 +17,6 @@ use function is_string;
 
 /**
  * Class ArticleView
- *
- * @package QUI\ERP\Accounting
  */
 class ArticleView extends QUI\QDOM
 {

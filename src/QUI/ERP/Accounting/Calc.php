@@ -41,8 +41,6 @@ use function time;
  * Calculations for Accounting
  *
  * @info Produkt Berechnungen sind zu finden unter: QUI\ERP\Products\Utils\Calc
- *
- * @package QUI\ERP\Accounting
  */
 class Calc
 {

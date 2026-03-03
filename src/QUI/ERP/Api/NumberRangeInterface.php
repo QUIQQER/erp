@@ -10,8 +10,6 @@ use QUI;
 
 /**
  * Class NumberRangeInterface
- *
- * @package QUI\ERP\Api
  */
 interface NumberRangeInterface
 {

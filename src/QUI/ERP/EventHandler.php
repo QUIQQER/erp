@@ -27,8 +27,6 @@ use function method_exists;
 
 /**
  * Class EventHandler
- *
- * @package QUI\ERP
  */
 class EventHandler
 {
@@ -238,7 +236,6 @@ class EventHandler
      * event: on user save
      * @param QUI\Interfaces\Users\User $User
      * @todo prüfung auch für steuernummer
-     *
      */
     public static function onUserSave(QUI\Interfaces\Users\User $User): void
     {
@@ -286,7 +283,6 @@ class EventHandler
     /**
      * event: on user save
      * saves the vat number
-     *
      *
      * @param QUI\Users\User $User
      * @throws QUI\Exception
@@ -413,7 +409,12 @@ class EventHandler
             );
         }
 
-        $Smarty->registerPlugin('modifier', 'strtolower', 'strtolower');
+        if (
+            !isset($Smarty->registered_plugins['modifier']) ||
+            !isset($Smarty->registered_plugins['modifier']['strtolower'])
+        ) {
+            $Smarty->registerPlugin('modifier', 'strtolower', 'strtolower');
+        }
     }
 
     /**
@@ -423,7 +424,6 @@ class EventHandler
      * @param $smarty
      * @return string
      * @example {erpGetPrefixedNumber assign=prefixedNumber var=$erpUUID}
-     *
      */
     public static function getPrefixedNumber(array $params, $smarty): string
     {

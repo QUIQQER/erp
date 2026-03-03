@@ -12,8 +12,6 @@ use QUI\Exception;
 /**
  * Article
  * An temporary invoice article
- *
- * @package QUI\ERP\Accounting\Invoice
  */
 interface ArticleInterface
 {

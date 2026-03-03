@@ -1,7 +1,3 @@
-/**
- * @module package/quiqqer/erp/bin/backend/controls/articles/product/QuantityUnitWindow
- * @author www.pcsg.de (Henning Leutz)
- */
 define('package/quiqqer/erp/bin/backend/controls/articles/product/QuantityUnitWindow', [
 
     'qui/QUI',
@@ -145,9 +141,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/QuantityUnitWi
             Target.addClass('quiqqer-erp-quantity-unit-entry--active');
         },
 
-        /**
-         *
-         */
         submit: function () {
             var value   = '',
                 title   = '',

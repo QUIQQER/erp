@@ -11,8 +11,6 @@ use QUI\ERP\Exception;
 
 /**
  * Class Calculations
- *
- * @package QUI\ERP\Accounting
  */
 class Calculations
 {

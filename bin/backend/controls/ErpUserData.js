@@ -1,7 +1,3 @@
-/**
- * @module package/quiqqer/erp/bin/backend/controls/ErpUserData
- * @author www.pcsg.de (Henning Leutz)
- */
 define('package/quiqqer/erp/bin/backend/controls/ErpUserData', [
 
     'qui/QUI',

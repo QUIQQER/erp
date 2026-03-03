@@ -19,9 +19,6 @@ use function is_object;
 
 /**
  * Class User Utils
- *
- * @package QUI\ERP\Utils
- * @author www.pcsg.de (Henning Leutz)
  */
 class User
 {

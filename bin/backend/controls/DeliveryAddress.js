@@ -3,9 +3,6 @@
  *
  * Used in ERP document panels (invoice, offer, etc.)
  *
- * @module package/quiqqer/erp/bin/backend/controls/DeliveryAddress
- * @author www.pcsg.de (Henning Leutz)
- * @author www.pcsg.de (Patrick Müller)
  *
  * @event onLoaded [this] - Fires if control finished loading
  */
@@ -348,8 +345,6 @@ define('package/quiqqer/erp/bin/backend/controls/DeliveryAddress', [
 
         /**
          * event : on select change
-         *
-         * @package {Object} Address
          */
         $displayAddressData: function(Address) {
             this.$Company.value = Address.company;

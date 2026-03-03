@@ -11,8 +11,6 @@ use QUI\System\Log;
 
 /**
  * Class EventHandler
- *
- * @package QUI\ERP
  */
 class Debug
 {

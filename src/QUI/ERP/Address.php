@@ -15,8 +15,6 @@ use function is_numeric;
 
 /**
  * Class Address
- *
- * @package QUI\ERP
  */
 class Address extends QUI\Users\Address
 {

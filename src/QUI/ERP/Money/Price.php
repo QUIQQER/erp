@@ -23,7 +23,6 @@ use function trim;
 
 /**
  * Class Price
- * @package QUI\ERP\Products\Price
  */
 class Price
 {

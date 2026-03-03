@@ -1,6 +1,4 @@
 /**
- * @module package/quiqqer/erp/bin/backend/controls/articles/Text
- * @author www.pcsg.de (Henning Leutz)
  *
  * Text Produkt
  * - Dieses "Produkt" benhaltet nur text und hat keine Summe oder Preise
@@ -154,7 +152,6 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
 
         /**
          * Set the product unit price
-         *
          */
         setUnitPrice: function() {
             return Promise.resolve();

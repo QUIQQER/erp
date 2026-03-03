@@ -1,7 +1,3 @@
-/**
- * @module package/quiqqer/erp/bin/backend/utils/Discount
- * @author www.pcsg.de (Henning Leutz)
- */
 define('package/quiqqer/erp/bin/backend/utils/Discount', function () {
     "use strict";
 

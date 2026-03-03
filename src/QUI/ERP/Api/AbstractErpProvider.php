@@ -10,8 +10,6 @@ use QUI\Controls\Sitemap\Map;
 
 /**
  * Class AbstractErpProvider
- *
- * @package QUI\ERP\Api
  */
 abstract class AbstractErpProvider
 {

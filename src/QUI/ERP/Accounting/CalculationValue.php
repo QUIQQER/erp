@@ -14,8 +14,6 @@ use function round;
 /**
  * Class CalculationValue
  * - represent a number for the calculations
- *
- * @package QUI\ERP\Accounting
  */
 class CalculationValue
 {

@@ -8,8 +8,6 @@ use QUI\Locale;
 
 /**
  * Class DashboardProvider
- *
- * @package QUI\LoginLogger
  */
 class ErpDashboard implements DashboardInterface
 {

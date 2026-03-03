@@ -12,8 +12,6 @@ use function array_map;
 
 /**
  * Class Process
- *
- * @package QUI\ERP\Utils
  */
 class Process
 {

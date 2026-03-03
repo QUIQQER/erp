@@ -1,8 +1,6 @@
 /**
  * Select for bank accounts.
  *
- * @module package/quiqqer/erp/bin/backend/controls/bankAccounts/Select
- * @author www.pcsg.de (Patrick Müller)
  *
  * @event onBankAccountChange [self, value]
  */

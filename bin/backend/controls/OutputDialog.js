@@ -1,6 +1,4 @@
 /**
- * @module package/quiqqer/erp/bin/backend/controls/OutputDialog
- * @author www.pcsg.de (Patrick Müller)
  *
  * @event onOuput [FormData, this] - Fires if the user submits the popup with a chosen output format
  */
