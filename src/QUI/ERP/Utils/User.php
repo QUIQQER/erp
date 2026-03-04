@@ -33,7 +33,7 @@ class User
     const IS_BRUTTO_USER = 2;
 
     /**
-     * Runtime cache for user brutt/netto status
+     * Runtime cache for user brutto/netto status
      *
      * @var array
      */
@@ -270,7 +270,7 @@ class User
     }
 
     /**
-     * Return the user ERP address (Rechnungsaddresse, Accounting Address)
+     * Return the user ERP address (Invoice address, Accounting address)
      *
      * @param UserInterface $User
      * @return Address|array|null
@@ -368,11 +368,90 @@ class User
     public static function setUserCurrentAddress(
         QUI\Interfaces\Users\User $User,
         $Address
-    ) {
+    ): void {
         if (class_exists('QUI\ERP\Tax\Utils')) {
             QUI\ERP\Tax\Utils::cleanUpUserTaxCache($User);
         }
 
         $User->setAttribute('CurrentAddress', $Address);
+    }
+
+    public static function getUserSalutation(
+        UserInterface | QUI\ERP\Customer\Customers $user,
+        null | QUI\Locale $locale = null
+    ): string {
+        $locale = $locale ?: QUI::getLocale();
+
+        $salutation = trim((string)$user->getAttribute('salutation')); // "Herr" | "Frau"
+        $firstname = trim((string)$user->getAttribute('firstname'));
+        $lastname = trim((string)$user->getAttribute('lastname'));
+        $isCompany = $user->isCompany();
+
+        try {
+            $address = $user->getAddress();
+            $addressSalutation = trim((string)$address->getAttribute('salutation'));
+            $addressFirstname = trim((string)$address->getAttribute('firstname'));
+            $addressLastname = trim((string)$address->getAttribute('lastname'));
+
+            if (!empty($addressFirstname) || !empty($addressLastname)) {
+                $salutation = '';
+                $firstname = '';
+                $lastname = '';
+
+                if ($addressSalutation !== '') {
+                    $salutation = $addressSalutation;
+                }
+
+                if ($addressFirstname !== '') {
+                    $firstname = $addressFirstname;
+                }
+
+                if ($addressLastname !== '') {
+                    $lastname = $addressLastname;
+                }
+            }
+        } catch (QUI\Exception) {
+        }
+
+        // 1) Person mit Herr/Frau + Nachname
+        if ($lastname !== '' && $salutation === 'Herr') {
+            return $locale->get('quiqqer/erp', 'salutation.formal.mr_lastname', [
+                'lastname' => $lastname
+            ]);
+        }
+
+        if ($lastname !== '' && $salutation === 'Frau') {
+            return $locale->get('quiqqer/erp', 'salutation.formal.ms_lastname', [
+                'lastname' => $lastname
+            ]);
+        }
+
+        // 2) Firma ohne Ansprechpartner
+        if ($isCompany) {
+            return $locale->get('quiqqer/erp', 'salutation.formal.company_generic');
+        }
+
+        // 3) Vorname + Nachname
+        if ($firstname !== '' && $lastname !== '') {
+            return $locale->get('quiqqer/erp', 'salutation.neutral.full_name', [
+                'firstname' => $firstname,
+                'lastname' => $lastname
+            ]);
+        }
+
+        // 4) Nur Nachname ohne Herr/Frau -> neutraler generischer Fallback
+        if ($lastname !== '') {
+            return $locale->get('quiqqer/erp', 'salutation.neutral.generic');
+        }
+
+        // 5) Nur Vorname
+        if ($firstname !== '') {
+            return $locale->get('quiqqer/erp', 'salutation.neutral.first_name', [
+                'firstname' => $firstname
+            ]);
+        }
+
+        // 6) Fallback
+        return $locale->get('quiqqer/erp', 'salutation.neutral.generic');
     }
 }
