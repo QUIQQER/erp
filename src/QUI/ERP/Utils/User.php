@@ -388,7 +388,7 @@ class User
         $isCompany = $user->isCompany();
 
         try {
-            $address = $user->getAddress();
+            $address = $user->getStandardAddress();
             $addressSalutation = trim((string)$address->getAttribute('salutation'));
             $addressFirstname = trim((string)$address->getAttribute('firstname'));
             $addressLastname = trim((string)$address->getAttribute('lastname'));
