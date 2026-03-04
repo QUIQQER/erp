@@ -392,6 +392,30 @@
             <de><![CDATA[Hier werden nur Einträge aufgelistet, die nach dem 01.08.2024 erstellt wurden.]]></de>
             <en><![CDATA[Only entries created after 01/08/2024 are listed here.]]></en>
         </locale>
+        <locale name="salutation.formal.mr_lastname">
+            <de><![CDATA[Sehr geehrter Herr [lastname],]]></de>
+            <en><![CDATA[Dear Mr. [lastname],]]></en>
+        </locale>
+        <locale name="salutation.formal.ms_lastname">
+            <de><![CDATA[Sehr geehrte Frau [lastname],]]></de>
+            <en><![CDATA[Dear Ms. [lastname],]]></en>
+        </locale>
+        <locale name="salutation.formal.company_generic">
+            <de><![CDATA[Sehr geehrte Damen und Herren,]]></de>
+            <en><![CDATA[Dear Sir or Madam,]]></en>
+        </locale>
+        <locale name="salutation.neutral.full_name">
+            <de><![CDATA[Guten Tag [firstname] [lastname],]]></de>
+            <en><![CDATA[Hello [firstname] [lastname],]]></en>
+        </locale>
+        <locale name="salutation.neutral.first_name">
+            <de><![CDATA[Guten Tag [firstname],]]></de>
+            <en><![CDATA[Hello [firstname],]]></en>
+        </locale>
+        <locale name="salutation.neutral.generic">
+            <de><![CDATA[Sehr geehrte Damen und Herren,]]></de>
+            <en><![CDATA[Dear Sir or Madam,]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
