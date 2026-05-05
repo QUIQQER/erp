@@ -1159,7 +1159,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                             });
 
                             self.$Editor.addEvent('onLoaded', function () {
-                                self.$Editor.switchToWYSIWYG();
+                                if (typeof self.$Editor.hideSourceCode === 'function') {
+                                    self.$Editor.hideSourceCode();
+                                } else {
+                                    self.$Editor.switchToWYSIWYG();
+                                }
+
                                 self.$Editor.showToolbar();
                                 self.$Editor.setContent(self.getAttribute('description'));
 
