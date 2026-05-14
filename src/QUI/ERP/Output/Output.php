@@ -9,6 +9,7 @@ use function array_column;
 use function class_exists;
 use function file_exists;
 use function http_build_query;
+use function in_array;
 use function json_decode;
 use function rename;
 use function unlink;
@@ -239,7 +240,14 @@ class Output
         }
 
         // mail send
-        $Mailer = new QUI\Mail\Mailer();
+        $mailerAttributes = [];
+        $Project = self::getProjectForMail($OutputProvider, $entityId);
+
+        if ($Project) {
+            $mailerAttributes['Project'] = $Project;
+        }
+
+        $Mailer = new QUI\Mail\Mailer($mailerAttributes);
 
         $Mailer->addRecipient($recipientEmail);
         $Mailer->addAttachment($mailFile);
@@ -281,6 +289,60 @@ class Output
         if (file_exists($mailFile)) {
             unlink($mailFile);
         }
+    }
+
+    /**
+     * Resolve the most suitable project context for ERP mails.
+     *
+     * Prefer the document's own project combined with the customer's language.
+     * If that cannot be resolved, fall back to the current rewrite project.
+     */
+    protected static function getProjectForMail(
+        OutputProviderInterface|string $OutputProvider,
+        int | string $entityId
+    ): null | QUI\Projects\Project {
+        try {
+            $Entity = $OutputProvider::getEntity($entityId);
+        } catch (\Exception) {
+            return QUI::getRewrite()->getProject() ?: null;
+        }
+
+        $projectName = false;
+        $customerLang = false;
+
+        if (method_exists($Entity, 'getAttribute')) {
+            $projectName = $Entity->getAttribute('project_name') ?: false;
+        }
+
+        if (method_exists($Entity, 'getCustomer')) {
+            try {
+                $Customer = $Entity->getCustomer();
+
+                if ($Customer && method_exists($Customer, 'getLang')) {
+                    $customerLang = $Customer->getLang() ?: false;
+                }
+            } catch (\Exception) {
+            }
+        }
+
+        if ($projectName) {
+            try {
+                $Project = QUI::getRewrite()->getProject();
+
+                if (!$Project || $Project->getName() !== $projectName) {
+                    $Project = QUI::getProjectManager()->getProject($projectName);
+                }
+
+                if ($customerLang && in_array($customerLang, $Project->getLanguages(), true)) {
+                    return QUI::getProjectManager()->getProject($projectName, $customerLang);
+                }
+
+                return $Project;
+            } catch (\Exception) {
+            }
+        }
+
+        return QUI::getRewrite()->getProject() ?: null;
     }
 
     /**
