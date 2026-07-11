@@ -43,7 +43,7 @@ class Manufacturers
 
         try {
             $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
-            $defaultGroupId = $Conf->get('manufacturers', 'groupId');
+            $defaultGroupId = $Conf?->get('manufacturers', 'groupId');
 
             if (!empty($defaultGroupId)) {
                 $groupIds[] = (int)$defaultGroupId;
@@ -121,6 +121,10 @@ class Manufacturers
                 $Address = $User->getStandardAddress();
             } catch (QUI\Exception) {
                 $Address = $User->addAddress();
+            }
+
+            if ($Address === null) {
+                throw new QUI\Exception('Could not create manufacturer address');
             }
 
             $needles = [

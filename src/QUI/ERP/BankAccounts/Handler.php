@@ -55,6 +55,10 @@ class Handler
 
         $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
 
+        if ($Conf === null) {
+            throw new QUI\Exception('ERP configuration is not available');
+        }
+
         $bankAccount['id'] = $id;
         $list[$id] = $bankAccount;
 
@@ -73,7 +77,7 @@ class Handler
     {
         try {
             $bankAccounts = self::getList();
-            $bankAccountId = QUI::getPackage('quiqqer/erp')->getConfig()->get('company', 'bankAccountId');
+            $bankAccountId = QUI::getPackage('quiqqer/erp')->getConfig()?->get('company', 'bankAccountId');
         } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return false;
@@ -162,6 +166,11 @@ class Handler
     protected static function getConfig(): array
     {
         $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
+
+        if ($Conf === null) {
+            throw new QUI\Exception('ERP configuration is not available');
+        }
+
         return $Conf->getSection('bankAccounts');
     }
 }
