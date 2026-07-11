@@ -55,7 +55,7 @@ class ArticleListUnique implements IteratorAggregate
     protected ErpFactorList $PriceFactors;
 
     /**
-     * @var null|QUI\Locale
+     * @var QUI\Locale
      */
     protected QUI\Locale $Locale;
 

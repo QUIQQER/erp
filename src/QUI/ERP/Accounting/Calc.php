@@ -310,10 +310,6 @@ class Calc
                 $priceFactorValue = $PriceFactor->getValue();
                 $vatValue = $PriceFactor->getVat();
 
-                if ($vatValue === null) {
-                    $vatValue = QUI\ERP\Tax\Utils::getTaxByUser($this->getUser())->getValue();
-                }
-
                 switch ($calcBasis) {
                     default:
                     case self::CALCULATION_BASIS_NETTO:
@@ -548,10 +544,6 @@ class Calc
         $isNetto = QUI\ERP\Utils\User::isNettoUser($this->getUser());
         $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($this->getUser());
         $Currency = $Article->getCurrency();
-
-        if (!$Currency) {
-            $Currency = $this->getCurrency();
-        }
 
         $nettoPrice = $Article->getUnitPriceUnRounded()->value();
         $nettoPrice = round($nettoPrice, $Currency->getPrecision());

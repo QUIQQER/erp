@@ -185,9 +185,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
                     $this->currencyData['currency_code']
                 );
 
-                if ($this->Currency !== null) {
-                    return $this->Currency;
-                }
+                return $this->Currency;
             } catch (QUI\Exception) {
             }
         }

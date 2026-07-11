@@ -439,6 +439,8 @@ class User extends QUI\QDOM implements UserInterface
     public function getAddressList(): array
     {
         $Address = $this->getAddress();
+        // Core uses UUID keys too, although its interface currently declares integer keys.
+        /** @phpstan-ignore return.type */
         return [$Address->getUUID() => $Address];
     }
 
@@ -642,8 +644,9 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Does nothing
      */
-    public function checkPassword(string $pass, bool $encrypted = false)
+    public function checkPassword(string $pass, bool $encrypted = false): bool
     {
+        return false;
     }
 
     public function isDeleted(): bool
