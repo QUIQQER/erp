@@ -24,6 +24,11 @@ interface ArticleInterface
     public function __construct(array $attributes = []);
 
     /**
+     * @return int
+     */
+    public function getId(): int;
+
+    /**
      * @return ArticleView
      */
     public function getView(): ArticleView;
@@ -51,12 +56,22 @@ interface ArticleInterface
     /**
      * @return Price
      */
+    public function getPrice(): Price;
+
+    /**
+     * @return Price
+     */
     public function getSum(): Price;
 
     /**
      * @return float|int|bool
      */
     public function getQuantity(): float|int|bool;
+
+    /**
+     * @return ArticleDiscount|null
+     */
+    public function getDiscount(): ?ArticleDiscount;
 
     /**
      * @return array<mixed>
