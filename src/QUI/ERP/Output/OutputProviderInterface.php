@@ -58,7 +58,7 @@ interface OutputProviderInterface
      * Fill the OutputTemplate with appropriate entity data
      *
      * @param int|string $entityId
-     * @return array
+     * @return array<string, mixed>
      */
     public static function getTemplateData(int | string $entityId): array;
 

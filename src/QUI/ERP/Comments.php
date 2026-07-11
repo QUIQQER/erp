@@ -57,7 +57,7 @@ class Comments
     /**
      * Creates a comment list from a stored representation
      *
-     * @param array|string $data
+     * @param array<int, array<string, mixed>>|string $data
      * @return Comments
      */
     public static function unserialize(array | string $data): Comments
@@ -86,7 +86,7 @@ class Comments
     /**
      * Comments are empty?
      *
-     * @retun bool
+     * @return bool
      */
     public function isEmpty(): bool
     {
