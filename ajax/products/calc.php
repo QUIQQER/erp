@@ -37,7 +37,13 @@ QUI::getAjax()->registerFunction(
             $Calc = QUI\ERP\Accounting\Calc::getInstance();
         }
 
-        $User = $Calc->getUser();
+        $User = $Calc->getUser() ?? QUI::getUserBySession();
+
+        if ($User === null) {
+            throw new QUI\ERP\Exception('No user available for ERP calculation');
+        }
+
+        $Calc->setUser($User);
 
         if ($nettoInput) {
             $User->setAttribute('RUNTIME_NETTO_BRUTTO_STATUS', QUI\ERP\Utils\User::IS_NETTO_USER);
@@ -103,6 +109,10 @@ QUI::getAjax()->registerFunction(
             }
 
             $Discount = ArticleDiscount::unserialize($article['discount']);
+
+            if ($Discount === null) {
+                continue;
+            }
 
             if ($Discount->getCalculation() !== QUI\ERP\Accounting\Calc::CALCULATION_COMPLEMENT) {
                 $bruttoUnit = $result['articles'][$k]['unitPrice'] * $vat;

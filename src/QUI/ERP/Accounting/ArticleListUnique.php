@@ -106,7 +106,7 @@ class ArticleListUnique implements IteratorAggregate
         }
 
         $articles = $attributes['articles'];
-        $currency = QUI\ERP\Currency\Handler::getDefaultCurrency()->getCode();
+        $currency = QUI\ERP\Defaults::getCurrency()->getCode();
 
         if (isset($attributes['calculations']['currencyData']['code'])) {
             $currency = $attributes['calculations']['currencyData']['code'];
