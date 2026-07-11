@@ -42,7 +42,7 @@ class Defaults
             $Package = QUI::getPackage('quiqqer/erp');
             $Config = $Package->getConfig();
 
-            return $Config->get($section, $key);
+            return $Config?->get($section, $key) ?? false;
         } catch (QUI\Exception) {
         }
 
@@ -60,9 +60,13 @@ class Defaults
         $Areas = new QUI\ERP\Areas\Handler();
         $Package = QUI::getPackage('quiqqer/tax');
         $Config = $Package->getConfig();
-        $standardArea = $Config->getValue('shop', 'area');
+        $standardArea = $Config?->getValue('shop', 'area');
 
         try {
+            if (!is_int($standardArea) && !is_string($standardArea)) {
+                throw new QUI\Exception('No default area configured');
+            }
+
             $Area = $Areas->getChild($standardArea);
         } catch (QUI\Exception) {
             QUI\System\Log::addError(
@@ -122,7 +126,7 @@ class Defaults
             $Package = QUI::getPackage('quiqqer/erp');
             $Config = $Package->getConfig();
 
-            self::$userRelatedCurrency = $Config->get('general', 'userRelatedCurrency');
+            self::$userRelatedCurrency = (bool)$Config?->get('general', 'userRelatedCurrency');
 
             if (!self::$userRelatedCurrency) {
                 return self::getCurrency();
@@ -147,7 +151,7 @@ class Defaults
             return QUI\ERP\Utils\User::IS_BRUTTO_USER;
         }
 
-        $isNetto = $Config->getValue('shop', 'isNetto');
+        $isNetto = $Config?->getValue('shop', 'isNetto');
 
         if ($isNetto) {
             return QUI\ERP\Utils\User::IS_NETTO_USER;
@@ -236,7 +240,7 @@ class Defaults
             return self::$timestampFormat[$lang];
         }
 
-        $value = $Config->get('timestampFormat', $lang);
+        $value = $Config?->get('timestampFormat', $lang);
 
         if (!empty($value)) {
             self::$timestampFormat[$lang] = $value;
@@ -272,7 +276,12 @@ class Defaults
             return self::$dateFormat[$lang];
         }
 
-        $value = $Config->get('dateFormat', $lang);
+        $value = $Config?->get('dateFormat', $lang);
+
+        if (!is_string($value)) {
+            return self::$dateFormat[$lang];
+        }
+
         $value = trim($value);
 
         if (!empty($value)) {
@@ -293,7 +302,7 @@ class Defaults
     {
         try {
             $Config = QUI::getPackage('quiqqer/erp')->getConfig();
-            $logo = $Config->get('general', 'logo');
+            $logo = $Config?->get('general', 'logo');
 
             if (!empty($logo)) {
                 return QUI\Projects\Media\Utils::getImageByUrl($logo);
@@ -301,7 +310,7 @@ class Defaults
         } catch (QUI\Exception) {
         }
 
-        return QUI::getProjectManager()->getStandard()->getMedia()->getLogoImage();
+        return QUI::getProjectManager()->getStandard()?->getMedia()?->getLogoImage();
     }
 
     /**

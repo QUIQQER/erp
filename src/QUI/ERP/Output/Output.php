@@ -455,7 +455,7 @@ class Output
 
         try {
             $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
-            $defaultTemplates = $Conf->get('output', 'default_templates');
+            $defaultTemplates = $Conf?->get('output', 'default_templates');
 
             if (empty($defaultTemplates)) {
                 return $fallBackTemplate;

@@ -480,7 +480,7 @@ class User extends QUI\QDOM implements UserInterface
             $Package = QUI::getPackage('quiqqer/erp');
             $Config = $Package->getConfig();
 
-            if ($Config->getValue('general', 'businessType') === 'B2B') {
+            if ($Config?->getValue('general', 'businessType') === 'B2B') {
                 return true;
             }
         } catch (QUI\Exception) {
