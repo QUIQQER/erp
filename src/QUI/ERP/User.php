@@ -439,8 +439,6 @@ class User extends QUI\QDOM implements UserInterface
     public function getAddressList(): array
     {
         $Address = $this->getAddress();
-        // Core uses UUID keys too, although its interface currently declares integer keys.
-        /** @phpstan-ignore return.type */
         return [$Address->getUUID() => $Address];
     }
 
