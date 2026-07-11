@@ -22,13 +22,18 @@ QUI::getAjax()->registerFunction(
             return false;
         }
 
-        $status = QUI::getSession()->get('quiqqer.erp.b2b.status');
+        $status = QUI::getSession()?->get('quiqqer.erp.b2b.status');
 
         if (is_numeric($status)) {
             return false;
         }
 
-        $areas = $Package->getConfig()->get('general', 'customerRequestWindow');
+        $areas = $Package->getConfig()?->get('general', 'customerRequestWindow');
+
+        if (!is_string($areas) || $areas === '') {
+            return false;
+        }
+
         $areas = explode(',', $areas);
 
         if (QUI\ERP\Areas\Utils::isUserInAreas($User, $areas)) {

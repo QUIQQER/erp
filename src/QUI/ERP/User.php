@@ -622,9 +622,7 @@ class User extends QUI\QDOM implements UserInterface
     public function getAvatar(): ?QUI\Projects\Media\Image
     {
         return QUI::getProjectManager()
-            ->getStandard()
-            ->getMedia()
-            ->getPlaceholderImage();
+            ->getStandard()?->getMedia()?->getPlaceholderImage();
     }
 
     /**

@@ -356,7 +356,7 @@ class Article implements ArticleInterface
 
         try {
             $Project = QUI::getRewrite()->getProject();
-            $PlaceholderImage = $Project->getMedia()->getPlaceholderImage();
+            $PlaceholderImage = $Project?->getMedia()?->getPlaceholderImage();
 
             if ($PlaceholderImage instanceof QUI\Projects\Media\Image) {
                 return $PlaceholderImage;
@@ -706,7 +706,7 @@ class Article implements ArticleInterface
         }
 
         if ($this->hasDiscount()) {
-            $discount = $this->Discount->toJSON();
+            $discount = $this->Discount?->toJSON() ?? '';
         }
 
         $class = get_called_class();
