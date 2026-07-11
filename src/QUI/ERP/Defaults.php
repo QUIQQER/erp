@@ -89,7 +89,6 @@ class Defaults
      * Return the default country
      *
      * @return QUI\Countries\Country
-     * @throws QUI\Exception
      */
     public static function getCountry(): QUI\Countries\Country
     {

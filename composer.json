@@ -26,7 +26,7 @@
         "quiqqer/employee": "^2",
         "quiqqer/customer": "^2.4",
         "quiqqer/qui-php": "^2",
-        "quiqqer/countries": "^2",
+        "quiqqer/countries": "^2.0.6",
         "quiqqer/frontend-users": "^2",
         "quiqqer/erp-accounting-templates": "^2",
         "quiqqer/areas": "^2",
