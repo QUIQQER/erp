@@ -103,7 +103,13 @@ class Defaults
      */
     public static function getCurrency(): Currency\Currency
     {
-        return QUI\ERP\Currency\Handler::getDefaultCurrency();
+        $Currency = QUI\ERP\Currency\Handler::getDefaultCurrency();
+
+        if ($Currency === null) {
+            throw new QUI\Exception('No default ERP currency configured');
+        }
+
+        return $Currency;
     }
 
     /**

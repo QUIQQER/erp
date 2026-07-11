@@ -94,7 +94,7 @@ class ArticleView extends QUI\QDOM
             return $this->Currency;
         }
 
-        return QUI\ERP\Currency\Handler::getDefaultCurrency();
+        return QUI\ERP\Defaults::getCurrency();
     }
 
     /**

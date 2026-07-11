@@ -99,7 +99,7 @@ class Calc
 
     protected ?UserInterface $User = null;
 
-    protected ?QUI\Locale $Locale = null;
+    protected QUI\Locale $Locale;
 
     protected ?QUI\ERP\Currency\Currency $Currency = null;
 
@@ -160,7 +160,7 @@ class Calc
 
     //region locale
 
-    public function getLocale(): ?Locale
+    public function getLocale(): Locale
     {
         return $this->Locale;
     }
@@ -180,12 +180,12 @@ class Calc
     /**
      * Return the currency
      *
-     * @return Currency|null
+     * @return Currency
      */
-    public function getCurrency(): ?QUI\ERP\Currency\Currency
+    public function getCurrency(): QUI\ERP\Currency\Currency
     {
         if (is_null($this->Currency)) {
-            $this->Currency = QUI\ERP\Currency\Handler::getDefaultCurrency();
+            $this->Currency = QUI\ERP\Defaults::getCurrency();
         }
 
         return $this->Currency;

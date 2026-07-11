@@ -508,11 +508,11 @@ class Article implements ArticleInterface
     /**
      * Return the currency of the article
      *
-     * @return QUI\ERP\Currency\Currency|null
+     * @return QUI\ERP\Currency\Currency
      */
-    public function getCurrency(): ?QUI\ERP\Currency\Currency
+    public function getCurrency(): QUI\ERP\Currency\Currency
     {
-        return $this->Currency;
+        return $this->Currency ?? QUI\ERP\Defaults::getCurrency();
     }
 
     /**

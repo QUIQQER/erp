@@ -171,9 +171,9 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * Return the currency
      *
-     * @return Currency|null
+     * @return Currency
      */
-    public function getCurrency(): ?QUI\ERP\Currency\Currency
+    public function getCurrency(): QUI\ERP\Currency\Currency
     {
         if (!is_null($this->Currency)) {
             return $this->Currency;
@@ -185,7 +185,9 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
                     $this->currencyData['currency_code']
                 );
 
-                return $this->Currency;
+                if ($this->Currency !== null) {
+                    return $this->Currency;
+                }
             } catch (QUI\Exception) {
             }
         }

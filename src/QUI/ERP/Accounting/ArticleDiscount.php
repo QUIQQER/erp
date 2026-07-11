@@ -167,7 +167,7 @@ class ArticleDiscount
      *
      * @return Currency
      */
-    public function getCurrency(): ?Currency
+    public function getCurrency(): Currency
     {
         if ($this->Currency === null) {
             return QUI\ERP\Defaults::getCurrency();

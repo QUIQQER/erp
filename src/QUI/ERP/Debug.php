@@ -30,9 +30,9 @@ class Debug
     protected int|bool $debug = false;
 
     /**
-     * @return Debug|null
+     * @return Debug
      */
-    public static function getInstance(): ?Debug
+    public static function getInstance(): Debug
     {
         if (self::$Instance === null) {
             self::$Instance = new self();

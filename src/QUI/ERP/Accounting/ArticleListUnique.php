@@ -57,7 +57,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * @var null|QUI\Locale
      */
-    protected ?QUI\Locale $Locale = null;
+    protected QUI\Locale $Locale;
 
     /**
      * @var ?QUI\Interfaces\Users\User
