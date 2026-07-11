@@ -97,6 +97,13 @@ class Output
             $TemplateProvider = self::getDefaultOutputTemplateProviderForEntityType($entityType);
         }
 
+        if (
+            (!is_string($OutputProvider) && !($OutputProvider instanceof OutputProviderInterface))
+            || (!is_string($TemplateProvider) && !($TemplateProvider instanceof OutputTemplateProviderInterface))
+        ) {
+            throw new QUI\ERP\Exception('ERP output provider is not available');
+        }
+
         if (empty($TemplateProvider)) {
             throw new QUI\Exception('No default output template provider found for entity type "' . $entityType . '"');
         }
@@ -138,6 +145,13 @@ class Output
 
         if (empty($TemplateProvider)) {
             $TemplateProvider = self::getDefaultOutputTemplateProviderForEntityType($entityType);
+        }
+
+        if (
+            (!is_string($OutputProvider) && !($OutputProvider instanceof OutputProviderInterface))
+            || (!is_string($TemplateProvider) && !($TemplateProvider instanceof OutputTemplateProviderInterface))
+        ) {
+            throw new QUI\ERP\Exception('ERP output provider is not available');
         }
 
         $OutputTemplate = new OutputTemplate(
@@ -204,6 +218,13 @@ class Output
 
         if (empty($TemplateProvider)) {
             $TemplateProvider = self::getDefaultOutputTemplateProviderForEntityType($entityType);
+        }
+
+        if (
+            (!is_string($OutputProvider) && !($OutputProvider instanceof OutputProviderInterface))
+            || (!is_string($TemplateProvider) && !($TemplateProvider instanceof OutputTemplateProviderInterface))
+        ) {
+            throw new QUI\ERP\Exception('ERP output provider is not available');
         }
 
         $OutputTemplate = new OutputTemplate(
@@ -307,6 +328,10 @@ class Output
             return QUI::getRewrite()->getProject() ?: null;
         }
 
+        if (!is_object($Entity)) {
+            return QUI::getRewrite()->getProject() ?: null;
+        }
+
         $projectName = false;
         $customerLang = false;
 
@@ -318,7 +343,7 @@ class Output
             try {
                 $Customer = $Entity->getCustomer();
 
-                if ($Customer && method_exists($Customer, 'getLang')) {
+                if (is_object($Customer) && method_exists($Customer, 'getLang')) {
                     $customerLang = $Customer->getLang() ?: false;
                 }
             } catch (\Exception) {

@@ -29,7 +29,7 @@ QUI::getAjax()->registerFunction(
 
         try {
             $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
-            $defaultTemplates = $Conf->get('output', 'default_templates');
+            $defaultTemplates = $Conf?->get('output', 'default_templates');
 
             if (!empty($defaultTemplates)) {
                 $defaultTemplates = json_decode($defaultTemplates, true);
@@ -56,13 +56,17 @@ QUI::getAjax()->registerFunction(
             if ($OutputProviderInstance instanceof OutputProviderInterface) {
                 $Entity = $OutputProviderInstance->getEntity($entityId);
 
-                if ($Entity && method_exists($Entity, 'getUUID')) {
+                if (!is_object($Entity)) {
+                    return false;
+                }
+
+                if (method_exists($Entity, 'getUUID')) {
                     $uuid = $Entity->getUUID();
-                } elseif ($Entity && method_exists($Entity, 'getId')) {
+                } elseif (method_exists($Entity, 'getId')) {
                     $uuid = $Entity->getID();
                 }
 
-                if ($Entity && method_exists($Entity, 'getPrefixedNumber')) {
+                if (method_exists($Entity, 'getPrefixedNumber')) {
                     $prefixedNumber = $Entity->getPrefixedNumber();
                 }
             }
