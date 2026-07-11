@@ -207,23 +207,16 @@ class Calc
 
         // user order address
         $Order = $List->getOrder();
-        $User = $this->getUser() ?? QUI::getUserBySession();
-
-        if ($User === null) {
-            throw new QUI\ERP\Exception('No user available for ERP calculation');
-        }
-
-        $this->User = $User;
 
         if ($Order) {
-            $User->setAttribute('CurrentAddress', $Order->getDeliveryAddress());
+            $this->getUser()->setAttribute('CurrentAddress', $Order->getDeliveryAddress());
         }
 
         $this->Currency = $List->getCurrency();
 
         $articles = $List->getArticles();
-        $isNetto = QUI\ERP\Utils\User::isNettoUser($User);
-        $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($User);
+        $isNetto = QUI\ERP\Utils\User::isNettoUser($this->getUser());
+        $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($this->getUser());
 
         $Currency = $this->getCurrency();
         $precision = $Currency->getPrecision();
@@ -697,9 +690,8 @@ class Calc
      */
     public function round(string | int | float $value): float
     {
-        $Locale = $this->getUser()?->getLocale() ?? QUI::getLocale();
-        $decimalSeparator = $Locale->getDecimalSeparator();
-        $groupingSeparator = $Locale->getGroupingSeparator();
+        $decimalSeparator = $this->getUser()->getLocale()->getDecimalSeparator();
+        $groupingSeparator = $this->getUser()->getLocale()->getGroupingSeparator();
         $precision = QUI\ERP\Defaults::getPrecision();
 
         if (is_int($value) || is_float($value)) {

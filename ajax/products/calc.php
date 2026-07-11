@@ -37,13 +37,7 @@ QUI::getAjax()->registerFunction(
             $Calc = QUI\ERP\Accounting\Calc::getInstance();
         }
 
-        $User = $Calc->getUser() ?? QUI::getUserBySession();
-
-        if ($User === null) {
-            throw new QUI\ERP\Exception('No user available for ERP calculation');
-        }
-
-        $Calc->setUser($User);
+        $User = $Calc->getUser();
 
         if ($nettoInput) {
             $User->setAttribute('RUNTIME_NETTO_BRUTTO_STATUS', QUI\ERP\Utils\User::IS_NETTO_USER);
