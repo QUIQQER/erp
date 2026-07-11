@@ -20,6 +20,8 @@ use function round;
 
 /**
  * Class ArticleList
+ *
+ * @implements IteratorAggregate<int, ArticleInterface>
  */
 class ArticleList extends ArticleListUnique implements IteratorAggregate
 {
@@ -72,14 +74,14 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * key 19% value[sum] = sum value[text] = text value[display_sum] formatted
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $vatArray = [];
 
     /**
      * key 19% value[sum] = sum value[text] = text value[display_sum] formatted
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $vatText;
 
@@ -98,7 +100,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * Currency information
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $currencyData = [
         'currency_sign' => '',
@@ -110,7 +112,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * ArticleList constructor.
      *
-     * @param array $attributes
+     * @param array<mixed> $attributes
      * @throws Exception|QUI\Exception
      */
     public function __construct(array $attributes = [])
@@ -244,7 +246,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * Return the list as an array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {
@@ -423,7 +425,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     }
 
     /**
-     * @param $pos
+     * @param int $pos
      * @return Article|null
      */
     public function getArticle($pos): ?Article

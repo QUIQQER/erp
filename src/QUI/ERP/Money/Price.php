@@ -45,7 +45,7 @@ class Price
     protected bool $isMinimalPrice = false;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected array $discounts;
 
@@ -84,7 +84,7 @@ class Price
 
     /**
      * Return the price as array notation
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {
@@ -169,7 +169,7 @@ class Price
     /**
      * Return the assigned discounts
      *
-     * @return array [Discount, Discount, Discount]
+     * @return array<mixed> [Discount, Discount, Discount]
      */
     public function getDiscounts(): array
     {

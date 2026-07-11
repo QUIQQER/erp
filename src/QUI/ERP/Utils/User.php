@@ -35,7 +35,7 @@ class User
     /**
      * Runtime cache for user brutto/netto status
      *
-     * @var array
+     * @var array<mixed>
      */
     protected static array $userBruttoNettoStatus = [];
 
@@ -317,8 +317,8 @@ class User
      * Filter unwanted user attributes
      * Therefore we can use the attributes in the ERP stack
      *
-     * @param array $attributes
-     * @return array
+     * @param array<mixed> $attributes
+     * @return array<mixed>
      */
     public static function filterCustomerAttributes(array $attributes = []): array
     {

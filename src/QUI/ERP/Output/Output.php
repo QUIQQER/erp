@@ -370,7 +370,7 @@ class Output
      * Get available templates for $entityType (e.g. "Invoice", "InvoiceTemporary" etc.)
      *
      * @param string|null $entityType (optional) - Restrict to templates of $entityType [default: fetch templates for all entity types]
-     * @return array
+     * @return array<mixed>
      */
     public static function getTemplates(null | string $entityType = null): array
     {
@@ -443,7 +443,7 @@ class Output
      * Return default template id for a specific entity type
      *
      * @param string $entityType
-     * @return array - Containing template ID and template provider package
+     * @return array<mixed> - Containing template ID and template provider package
      */
     public static function getDefaultOutputTemplateForEntityType(string $entityType): array
     {
@@ -507,7 +507,7 @@ class Output
     /**
      * Get all available ERP Output provider classes
      *
-     * @return array - Provider classes
+     * @return array<mixed> - Provider classes
      */
     protected static function getAllOutputProviders(): array
     {
@@ -549,7 +549,7 @@ class Output
     /**
      * Get all available ERP Output Template provider classes
      *
-     * @return array - Provider classes
+     * @return array<mixed> - Provider classes
      */
     protected static function getAllOutputTemplateProviders(): array
     {

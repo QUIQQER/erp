@@ -139,7 +139,7 @@ class Processes
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getList(): array
     {

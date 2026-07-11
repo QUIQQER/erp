@@ -23,7 +23,7 @@ abstract class AbstractErpProvider
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public static function getNumberRanges(): array
     {
@@ -44,7 +44,7 @@ abstract class AbstractErpProvider
      *      ]
      * ]
      *
-     * @return array
+     * @return array<mixed>
      */
     public static function getMailLocale(): array
     {

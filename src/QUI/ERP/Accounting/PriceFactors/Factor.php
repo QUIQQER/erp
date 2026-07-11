@@ -50,7 +50,7 @@ class Factor
     /**
      * FactorList constructor.
      *
-     * @param array $data
+     * @param array<mixed> $data
      *
      * @throws Exception
      */
@@ -255,7 +255,7 @@ class Factor
     /**
      * Return the Factor as an array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {

@@ -788,7 +788,7 @@ class Calc
      * Calculates the individual amounts paid of an invoice
      *
      * @param Invoice $Invoice
-     * @return array
+     * @return array<mixed>
      *
      * @throws QUI\ERP\Exception
      *
@@ -803,7 +803,7 @@ class Calc
      * Calculates the individual amounts paid of an invoice / order
      *
      * @param mixed $ToCalculate
-     * @return array
+     * @return array<mixed>
      *
      * @throws QUI\ERP\Exception|QUI\Exception
      */
@@ -1071,9 +1071,9 @@ class Calc
     /**
      * Calculate the total of the invoice list
      *
-     * @param array $invoiceList - list of invoice array
+     * @param array<mixed> $invoiceList - list of invoice array
      * @param QUI\ERP\Currency\Currency|null $Currency
-     * @return array
+     * @return array<mixed>
      */
     public static function calculateTotal(array $invoiceList, null | QUI\ERP\Currency\Currency $Currency = null): array
     {

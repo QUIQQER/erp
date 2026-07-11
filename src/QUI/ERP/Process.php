@@ -87,7 +87,7 @@ class Process
      * facilitating easier management and retrieval of related transactional data within the ERP system.
      *
      * @param callable|null $filterEntityTypes - own filter function
-     * @return array
+     * @return array<mixed>
      */
     public function getGroupedRelatedTransactionEntities(?callable $filterEntityTypes = null): array
     {
@@ -541,7 +541,7 @@ class Process
     /**
      * Return all orders from the process
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getOrders(): array
     {
@@ -703,7 +703,7 @@ class Process
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getBookings(): array
     {
@@ -789,7 +789,7 @@ class Process
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getPurchasing(): array
     {
@@ -874,7 +874,7 @@ class Process
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getSalesOrders(): array
     {

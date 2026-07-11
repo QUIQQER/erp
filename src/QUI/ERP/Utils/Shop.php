@@ -22,7 +22,7 @@ class Shop
     /**
      * Return the shop business type
      *
-     * @return array|string|null
+     * @return array<mixed>|string|null
      */
     public static function getBusinessType(): array|string|null
     {

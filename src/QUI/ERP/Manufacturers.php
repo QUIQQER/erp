@@ -83,8 +83,8 @@ class Manufacturers
      * Create a new manufacturer user
      *
      * @param string $manufacturerId - QUIQQER username
-     * @param array $address
-     * @param array $groupIds - QUIQQER group IDs of manufacturer groups
+     * @param array<mixed> $address
+     * @param array<mixed> $groupIds - QUIQQER group IDs of manufacturer groups
      *
      * @return QUI\Interfaces\Users\User
      *
@@ -191,7 +191,7 @@ class Manufacturers
     /**
      * Search manufacturers
      *
-     * @param array $searchParams
+     * @param array<mixed> $searchParams
      * @param bool $countOnly (optional) - get count for search result only [default: false]
      * @return int[]|int - Manufacturer user IDs or count
      */
@@ -387,8 +387,8 @@ class Manufacturers
     /**
      * Parse data and prepare for frontend use with GRID
      *
-     * @param array $data - Search result IDs
-     * @return array
+     * @param array<mixed> $data - Search result IDs
+     * @return array<mixed>
      */
     public static function parseListForGrid(array $data): array
     {

@@ -27,6 +27,8 @@ use function json_encode;
 /**
  * Class ArticleListUnique
  * - Nicht änderbare Artikel Liste
+ *
+ * @implements IteratorAggregate<int, ArticleInterface>
  */
 class ArticleListUnique implements IteratorAggregate
 {
@@ -36,7 +38,7 @@ class ArticleListUnique implements IteratorAggregate
     protected array $articles = [];
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected mixed $calculations = [];
 
@@ -80,7 +82,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * ArticleList constructor.
      *
-     * @param array $attributes
+     * @param array<mixed> $attributes
      * @param ?QUI\Interfaces\Users\User $User
      * @throws QUI\ERP\Exception|QUI\Exception
      */
@@ -178,8 +180,8 @@ class ArticleListUnique implements IteratorAggregate
      * Children follow immediately after their parents in the sorted list.
      * Each item is assigned a consecutive position, which reflects its order in the sorted list.
      *
-     * @param array $articles - The input list of items, articles
-     * @return array The sorted list of items with added 'position' keys, starting with 1.
+     * @param array<mixed> $articles - The input list of items, articles
+     * @return array<mixed> The sorted list of items with added 'position' keys, starting with 1.
      */
     protected function sortArticlesWithParents(array $articles = []): array
     {
@@ -232,6 +234,7 @@ class ArticleListUnique implements IteratorAggregate
      * recalculate makes the unique article list compatible to the article list
      *
      * @param ?QUI\ERP\Accounting\Calc $Calc
+     * @return void
      */
     public function recalculate(?QUI\ERP\Accounting\Calc $Calc = null)
     {
@@ -264,7 +267,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Creates a list from a stored representation
      *
-     * @param array|string $data
+     * @param array<mixed>|string $data
      * @return ArticleListUnique
      *
      * @throws QUI\Exception
@@ -291,7 +294,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Return the calculation array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getCalculations(): array
     {
@@ -332,7 +335,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Return the list as an array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {
@@ -616,7 +619,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Iterator helper
      *
-     * @return ArrayIterator|Traversable
+     * @return Traversable<int, ArticleInterface>|ArrayIterator<int, ArticleInterface>
      */
     public function getIterator(): Traversable | ArrayIterator
     {

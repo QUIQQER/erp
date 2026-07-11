@@ -76,14 +76,14 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Address data
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $address = [];
 
     /**
      * User constructor.
      *
-     * @param array $attributes
+     * @param array<mixed> $attributes
      */
     public function __construct(array $attributes)
     {
@@ -170,7 +170,7 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Return the list of the needled attributes
-     * @return array
+     * @return array<mixed>
      */
     public static function getNeedles(): array
     {
@@ -185,8 +185,8 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
-     * @param array $attributes - array('attribute' => 'value')
-     * @return array
+     * @param array<mixed> $attributes - array('attribute' => 'value')
+     * @return array<mixed>
      */
     public static function getMissingAttributes(array $attributes): array
     {
@@ -253,7 +253,7 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Convert user data to an ERP user
      *
-     * @param array $user {{$user.uid, $user.aid}}
+     * @param array<mixed> $user {{$user.uid, $user.aid}}
      * @return self
      *
      * @throws QUI\ERP\Exception

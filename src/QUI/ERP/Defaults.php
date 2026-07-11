@@ -34,7 +34,7 @@ class Defaults
     /**
      * @param string $section
      * @param string $key
-     * @return array|bool|string
+     * @return array<mixed>|bool|string
      */
     public static function conf(string $section, string $key): bool | array | string
     {

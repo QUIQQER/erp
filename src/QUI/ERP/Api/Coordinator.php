@@ -83,7 +83,7 @@ class Coordinator extends QUI\Utils\Singleton
     /**
      * Return the menu items for the shop panel
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getMenuItems(): array
     {
@@ -148,7 +148,7 @@ class Coordinator extends QUI\Utils\Singleton
     /**
      * Return all number range objects
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getNumberRanges(): array
     {
@@ -167,7 +167,7 @@ class Coordinator extends QUI\Utils\Singleton
     //region mail settings
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getMailTextsList(): array
     {

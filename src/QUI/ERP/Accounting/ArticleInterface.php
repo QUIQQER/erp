@@ -18,7 +18,7 @@ interface ArticleInterface
     /**
      * Article constructor.
      *
-     * @param array $attributes - article attributes
+     * @param array<mixed> $attributes - article attributes
      * @throws Exception
      */
     public function __construct(array $attributes = []);
@@ -59,7 +59,7 @@ interface ArticleInterface
     public function getQuantity(): float|int|bool;
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array;
 

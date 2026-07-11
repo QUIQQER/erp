@@ -25,6 +25,8 @@ use function json_encode;
  * This list can't be edited and is not changeable
  *
  * This is list is only a presentation layer
+ *
+ * @implements IteratorAggregate<int, Factor>
  */
 class FactorList implements IteratorAggregate, Countable
 {
@@ -38,7 +40,7 @@ class FactorList implements IteratorAggregate, Countable
     /**
      * FactorList constructor.
      *
-     * @param array<Factor|array> $data
+     * @param array<Factor|array<mixed>> $data
      *
      * @throws QUI\ERP\Exception
      */
@@ -67,7 +69,7 @@ class FactorList implements IteratorAggregate, Countable
     /**
      * Return the complete list as an array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {
@@ -134,7 +136,7 @@ class FactorList implements IteratorAggregate, Countable
     /**
      * Iterator helper
      *
-     * @return Traversable
+     * @return Traversable<int, Factor>
      */
     public function getIterator(): \Traversable
     {

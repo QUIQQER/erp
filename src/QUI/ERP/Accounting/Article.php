@@ -22,7 +22,7 @@ use function method_exists;
 class Article implements ArticleInterface
 {
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected array $attributes = [
         'id' => '',
@@ -36,14 +36,14 @@ class Article implements ArticleInterface
      *
      * in a custom field are only allowed string and numeric values
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $customFields = [];
 
     /**
      * Custom data for plugins and modules
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $customData = [];
 
@@ -108,7 +108,7 @@ class Article implements ArticleInterface
     protected float | int $nettoBasisPrice = 0;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected mixed $vatArray = [];
 
@@ -142,7 +142,7 @@ class Article implements ArticleInterface
     /**
      * Article constructor.
      *
-     * @param array $attributes - (id, articleNo, title, description, unitPrice, nettoPriceNotRounded, quantity, discount, customData)
+     * @param array<mixed> $attributes - (id, articleNo, title, description, unitPrice, nettoPriceNotRounded, quantity, discount, customData)
      * @throws Exception
      */
     public function __construct(array $attributes = [])
@@ -694,7 +694,7 @@ class Article implements ArticleInterface
     /**
      * Return the article as an array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {
@@ -780,7 +780,7 @@ class Article implements ArticleInterface
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getCustomFields(): array
     {
@@ -788,7 +788,7 @@ class Article implements ArticleInterface
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getCustomData(): array
     {

@@ -26,7 +26,7 @@ class CalculationValue
     /**
      * CalculationValue constructor.
      *
-     * @param $number
+     * @param int|float|string $number
      * @param QUI\ERP\Currency\Currency|null $Currency
      * @param bool|int $precision - The optional number of decimal digits to round to.
      */

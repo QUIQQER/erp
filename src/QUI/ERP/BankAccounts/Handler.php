@@ -19,8 +19,8 @@ class Handler
     /**
      * Add bank account to list.
      *
-     * @param array $data
-     * @return array - New bank account data
+     * @param array<mixed> $data
+     * @return array<mixed> - New bank account data
      *
      * @throws QUI\Exception
      */
@@ -67,7 +67,7 @@ class Handler
     /**
      * Get data of the bank account that is set as the company default.
      *
-     * @return array|false
+     * @return array<mixed>|false
      */
     public static function getCompanyBankAccount(): bool|array
     {
@@ -89,7 +89,7 @@ class Handler
     /**
      * Get the bank account data of the default bank account.
      *
-     * @return array|false
+     * @return array<mixed>|false
      */
     public static function getDefaultBankAccount(): bool|array
     {
@@ -112,7 +112,7 @@ class Handler
     /**
      * Get the bank account data by id.
      *
-     * @return array|false
+     * @return array<mixed>|false
      */
     public static function getBankAccountById(int $id): bool|array
     {
@@ -135,7 +135,7 @@ class Handler
     /**
      * Get list of bank accounts.
      *
-     * @return array
+     * @return array<mixed>
      */
     public static function getList(): array
     {
@@ -156,7 +156,7 @@ class Handler
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      * @throws QUI\Exception
      */
     protected static function getConfig(): array

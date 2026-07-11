@@ -180,6 +180,7 @@ class ArticleDiscount
      * Set the currency
      *
      * @param Currency $Currency
+     * @return void
      */
     public function setCurrency(Currency $Currency)
     {
@@ -189,7 +190,7 @@ class ArticleDiscount
     /**
      * Parse the discount to an array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {
@@ -241,6 +242,7 @@ class ArticleDiscount
 
     /**
      * @param ArticleInterface $Article
+     * @return void
      */
     public function setArticle(ArticleInterface $Article)
     {

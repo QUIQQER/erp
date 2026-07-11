@@ -194,7 +194,7 @@ class EventHandler
 
     /**
      * @param Package $Package
-     * @param array $params
+     * @param array<mixed> $params
      */
     public static function onPackageConfigSave(QUI\Package\Package $Package, array $params): void
     {
@@ -420,7 +420,7 @@ class EventHandler
     /**
      * erp smarty function {getPrefixedNumber}
      *
-     * @param array $params
+     * @param array<mixed> $params
      * @param $smarty
      * @return string
      * @example {erpGetPrefixedNumber assign=prefixedNumber var=$erpUUID}

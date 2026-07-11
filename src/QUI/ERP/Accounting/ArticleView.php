@@ -70,7 +70,7 @@ class ArticleView extends QUI\QDOM
     /**
      * Set the position
      *
-     * @param $position
+     * @param int|float $position
      */
     public function setPosition($position): void
     {
@@ -98,7 +98,7 @@ class ArticleView extends QUI\QDOM
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getCustomFields(): array
     {

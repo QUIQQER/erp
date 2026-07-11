@@ -21,7 +21,7 @@ class Installer extends QUI\Utils\Singleton
     /**
      * List of packages and their requirements
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $packages = [
         'quiqqer/areas' => [
@@ -128,7 +128,7 @@ class Installer extends QUI\Utils\Singleton
     /**
      * Return all ERP Package module names
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getPackageList(): array
     {
@@ -139,7 +139,7 @@ class Installer extends QUI\Utils\Singleton
      * Return the package requirements
      *
      * @param $packageName
-     * @return array
+     * @return array<mixed>
      * @throws Exception
      */
     protected function getPackageRequirements($packageName): array

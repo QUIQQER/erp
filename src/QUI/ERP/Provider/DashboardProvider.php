@@ -17,7 +17,7 @@ class DashboardProvider implements DashboardProviderInterface
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public static function getBoards(): array
     {
@@ -27,7 +27,7 @@ class DashboardProvider implements DashboardProviderInterface
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public static function getCards(): array
     {

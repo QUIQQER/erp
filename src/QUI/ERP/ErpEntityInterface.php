@@ -89,14 +89,14 @@ interface ErpEntityInterface
     /**
      * Set a customer to the erp entity
      *
-     * @param array|User $User
+     * @param array<mixed>|User $User
      */
     public function setCustomer(array | QUI\Interfaces\Users\User $User);
 
     /**
      * Returns the erp entity as an array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array;
 
