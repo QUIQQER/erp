@@ -47,7 +47,7 @@ class EventHandler
     {
         try {
             $Package = QUI::getPackage('quiqqer/erp');
-            $areas = $Package->getConfig()->get('general', 'customerRequestWindow');
+            $areas = $Package->getConfig()?->get('general', 'customerRequestWindow');
 
             if (empty($areas)) {
                 return;
@@ -90,6 +90,11 @@ class EventHandler
     {
         try {
             $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
+
+            if ($Conf === null) {
+                throw new QUI\Exception('ERP configuration is not available');
+            }
+
             $defaultGroupId = $Conf->get('manufacturers', 'groupId');
 
             if (!empty($defaultGroupId)) {
@@ -140,6 +145,11 @@ class EventHandler
     public static function patchBankAccount(): void
     {
         $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
+
+        if ($Conf === null) {
+            throw new QUI\Exception('ERP configuration is not available');
+        }
+
         $bankAccountPatched = $Conf->getValue('bankAccounts', 'isPatched');
 
         if (!empty($bankAccountPatched)) {
@@ -208,6 +218,10 @@ class EventHandler
         try {
             $Config = $Package->getConfig();
 
+            if ($Config === null) {
+                return;
+            }
+
             // timestampFormat
             if (isset($params['timestampFormat'])) {
                 foreach ($params['timestampFormat'] as $language => $format) {
@@ -246,7 +260,7 @@ class EventHandler
         // eu vat id validation
         try {
             $Package = QUI::getPackage('quiqqer/tax');
-            $validate = $Package->getConfig()->getValue('shop', 'validateVatId');
+            $validate = $Package->getConfig()?->getValue('shop', 'validateVatId');
             $vatId = $User->getAttribute('quiqqer.erp.euVatId');
 
             if ($validate && !empty($vatId)) {
@@ -311,6 +325,11 @@ class EventHandler
         if (isset($data['company'])) {
             try {
                 $Address = $User->getStandardAddress();
+
+                if ($Address === null) {
+                    return;
+                }
+
                 $Address->setAttribute(
                     'company',
                     QUI\Utils\Security\Orthos::clear($data['company'])
@@ -571,9 +590,9 @@ class EventHandler
 
         try {
             $Conf = QUI::getPackage('quiqqer/frontend-users')->getConfig();
-            $settings = $Conf->getValue('profile', 'addressFields');
+            $settings = $Conf?->getValue('profile', 'addressFields');
 
-            if (!empty($settings)) {
+            if (is_string($settings) && $settings !== '') {
                 $settings = json_decode($settings, true);
             } else {
                 $settings = [];
@@ -617,9 +636,9 @@ class EventHandler
 
         try {
             $Conf = QUI::getPackage('quiqqer/frontend-users')->getConfig();
-            $settings = $Conf->getValue('profile', 'addressFields');
+            $settings = $Conf?->getValue('profile', 'addressFields');
 
-            if (!empty($settings)) {
+            if (is_string($settings) && $settings !== '') {
                 $settings = json_decode($settings, true);
             } else {
                 $settings = [];
@@ -667,9 +686,9 @@ class EventHandler
 
         try {
             $Conf = QUI::getPackage('quiqqer/frontend-users')->getConfig();
-            $settings = $Conf->getValue('profile', 'addressFields');
+            $settings = $Conf?->getValue('profile', 'addressFields');
 
-            if (!empty($settings)) {
+            if (is_string($settings) && $settings !== '') {
                 $settings = json_decode($settings, true);
             } else {
                 $settings = [];
@@ -732,9 +751,9 @@ class EventHandler
 
         try {
             $Conf = QUI::getPackage('quiqqer/frontend-users')->getConfig();
-            $settings = $Conf->getValue('profile', 'addressFields');
+            $settings = $Conf?->getValue('profile', 'addressFields');
 
-            if (!empty($settings)) {
+            if (is_string($settings) && $settings !== '') {
                 $settings = json_decode($settings, true);
             } else {
                 $settings = [];
