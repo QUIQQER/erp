@@ -9,7 +9,7 @@
 
 use QUI\ERP\Manufacturers;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_manufacturers_getGroupIds',
     function () {
         return Manufacturers::getManufacturerGroupIds();

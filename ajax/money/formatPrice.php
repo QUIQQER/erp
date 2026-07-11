@@ -12,7 +12,7 @@ use QUI\ERP\Defaults;
  * @param string|int|float $value
  * @return string
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_money_formatPrice',
     function ($price, $language) {
         $Locale = QUI::getSystemLocale();

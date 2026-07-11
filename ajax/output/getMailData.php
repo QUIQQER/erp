@@ -9,7 +9,7 @@
 use QUI\ERP\Output\Output as ERPOutput;
 use QUI\Utils\Security\Orthos;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_output_getMailData',
     function ($entityId, $entityType) {
         $OutputProvider = ERPOutput::getOutputProviderByEntityType(Orthos::clear($entityType));

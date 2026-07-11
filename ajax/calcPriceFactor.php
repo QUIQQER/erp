@@ -7,7 +7,7 @@
 use QUI\ERP\Currency\Handler as CurrencyHandler;
 use QUI\ERP\Money\Price;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_calcPriceFactor',
     function ($price, $vat, $currency) {
         $Currency = CurrencyHandler::getCurrency($currency);

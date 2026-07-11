@@ -10,7 +10,7 @@
  * @param string|int|float $value
  * @return int
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_getProcessInformation',
     function ($hash) {
         return QUI\ERP\Utils\Process::getProcessInformation($hash);

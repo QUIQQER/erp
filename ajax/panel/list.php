@@ -11,7 +11,7 @@
  *
  * @return array
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_panel_list',
     function () {
         return QUI\ERP\Api\Coordinator::getInstance()->getMenuItems();

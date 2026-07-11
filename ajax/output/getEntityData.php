@@ -12,7 +12,7 @@ use QUI\ERP\Output\Output as ERPOutput;
 use QUI\ERP\Output\OutputProviderInterface;
 use QUI\Utils\Security\Orthos;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_output_getEntityData',
     function ($entityId, $entityType, $entityPlugin) {
         $OutputProvider = ERPOutput::getOutputProviderByEntityType(Orthos::clear($entityType));

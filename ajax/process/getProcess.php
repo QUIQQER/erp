@@ -7,7 +7,7 @@
 use QUI\ERP\Process;
 use QUI\ERP\Processes;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_process_getProcess',
     function ($globalProcessId, $hash) {
         if (!empty($hash) && empty($globalProcessId)) {

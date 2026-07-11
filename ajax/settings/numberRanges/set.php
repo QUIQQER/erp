@@ -11,7 +11,7 @@ use QUI\ERP\Api\NumberRangeInterface;
  *
  * @return array
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_settings_numberRanges_set',
     function ($className, $newIndex) {
         $ranges = Coordinator::getInstance()->getNumberRanges();

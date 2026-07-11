@@ -13,7 +13,7 @@
 use QUI\ERP\Accounting\ArticleDiscount;
 use QUI\ERP\Defaults;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_products_calc',
     function ($articles, $priceFactors, $user, $currency, $nettoInput) {
         $nettoInput = (int)$nettoInput;

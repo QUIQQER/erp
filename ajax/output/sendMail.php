@@ -19,7 +19,7 @@ use QUI\ERP\Output\Output as ERPOutput;
 use QUI\Permissions\Permission;
 use QUI\Utils\Security\Orthos;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_output_sendMail',
     function (
         $entityId,

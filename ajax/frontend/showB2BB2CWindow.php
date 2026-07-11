@@ -11,7 +11,7 @@
  * @return int
  */
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_frontend_showB2BB2CWindow',
     function () {
         $User = QUI::getUserBySession();

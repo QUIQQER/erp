@@ -9,7 +9,7 @@
 
 use QUI\ERP\Customer\Utils;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_userData_getContactEmailAddress',
     function ($userId) {
         try {

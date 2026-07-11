@@ -9,7 +9,7 @@
 
 use QUI\ERP\Utils\Utils;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_utils_sanitizeArticleDescription',
     function ($description) {
         return Utils::sanitizeArticleDescription($description);

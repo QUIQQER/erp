@@ -6,7 +6,7 @@
 
 use QUI\ERP\Processes;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_dashboard_globalProcess_availablePlugins',
     function () {
         $PackageManager = QUI::getPackageManager();

@@ -18,7 +18,7 @@ use QUI\System\Log;
  *
  * @return float
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_calcNettoPrice',
     function ($price, $formatted, $vat) {
         $price = QUI\ERP\Money\Price::validatePrice($price);

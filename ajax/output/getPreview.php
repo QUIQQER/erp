@@ -9,7 +9,7 @@
 use QUI\ERP\Output\Output as ERPOutput;
 use QUI\Utils\Security\Orthos;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_output_getPreview',
     function ($entity, $template) {
         $entity = Orthos::clearArray(json_decode($entity, true));

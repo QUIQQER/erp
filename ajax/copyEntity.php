@@ -4,7 +4,7 @@
  * This file contains package_quiqqer_erp_ajax_copyEntity
  */
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_copyEntity',
     function ($uuid, $processKeepStatus, $entityPlugin) {
         $Instance = (new QUI\ERP\Processes())->getEntity($uuid, $entityPlugin);

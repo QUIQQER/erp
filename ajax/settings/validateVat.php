@@ -10,7 +10,7 @@
  * @param string|int|float $value
  * @return int
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_settings_validateVat',
     function ($vatId) {
         if (!class_exists('\SoapClient')) {

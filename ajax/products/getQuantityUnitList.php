@@ -6,7 +6,7 @@
 
 use QUI\ERP\Products\Handler\Fields;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_products_getQuantityUnitList',
     function () {
         $Field   = QUI\ERP\Products\Handler\Fields::getField(Fields::FIELD_UNIT);
