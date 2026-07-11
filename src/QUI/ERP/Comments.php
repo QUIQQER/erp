@@ -80,7 +80,7 @@ class Comments
      */
     public function serialize(): string
     {
-        return json_encode($this->toArray());
+        return json_encode($this->toArray()) ?: '';
     }
 
     /**

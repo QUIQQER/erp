@@ -208,7 +208,7 @@ class ArticleDiscount
      */
     public function toJSON(): string
     {
-        return json_encode($this->toArray());
+        return json_encode($this->toArray()) ?: '';
     }
 
     /**
