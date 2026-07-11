@@ -16,6 +16,9 @@ interface ErpEntityInterface
 
     public function getAttribute(string $key): mixed;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getAttributes(): array;
 
     public function setAttribute(string $key, mixed $value): void;
@@ -90,6 +93,7 @@ interface ErpEntityInterface
      * Set a customer to the erp entity
      *
      * @param array<mixed>|User $User
+     * @return mixed
      */
     public function setCustomer(array | QUI\Interfaces\Users\User $User);
 
@@ -113,9 +117,15 @@ interface ErpEntityInterface
         null | QUI\Interfaces\Users\User $PermissionUser = null
     ): ?ErpEntityInterface;
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function addCustomerFile(string $fileHash, array $options = []): void;
 
     public function clearCustomerFiles(): void;
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getCustomerFiles(bool $parsing = false): array;
 }

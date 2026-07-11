@@ -30,6 +30,7 @@ interface NumberRangeInterface
 
     /**
      * @param int $range
+     * @return void
      */
     public function setRange(int $range);
 }

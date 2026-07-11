@@ -138,7 +138,7 @@ class Installer extends QUI\Utils\Singleton
     /**
      * Return the package requirements
      *
-     * @param $packageName
+     * @param string $packageName
      * @return array<mixed>
      * @throws Exception
      */
@@ -165,7 +165,7 @@ class Installer extends QUI\Utils\Singleton
      * Set all package requirements to the composer
      * - server
      *
-     * @param $packageName
+     * @param string $packageName
      * @throws Exception
      */
     public function setPackageRequirements($packageName): void

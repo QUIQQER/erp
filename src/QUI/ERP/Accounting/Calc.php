@@ -1210,7 +1210,7 @@ class Calc
     /**
      * Return the total of all vats
      *
-     * @param string|array $vatArray
+     * @param string|array<mixed> $vatArray
      * @return float|int
      */
     public static function calculateTotalVatOfInvoice($vatArray)

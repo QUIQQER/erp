@@ -421,7 +421,7 @@ class EventHandler
      * erp smarty function {getPrefixedNumber}
      *
      * @param array<mixed> $params
-     * @param $smarty
+     * @param mixed $smarty
      * @return string
      * @example {erpGetPrefixedNumber assign=prefixedNumber var=$erpUUID}
      */

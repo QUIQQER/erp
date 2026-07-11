@@ -13,6 +13,9 @@ use function trim;
  */
 class Utils
 {
+    /**
+     * @var array<class-string|string, string>
+     */
     public static array $entityIcons = [
         'QUI\ERP\Order\Order' => 'fa-shopping-basket',
         'QUI\ERP\Accounting\Invoice\InvoiceTemporary' => 'fa-file-text-o',
@@ -60,6 +63,9 @@ class Utils
         );
     }
 
+    /**
+     * @param class-string|string $className
+     */
     public static function getEntityIcon($className): string
     {
         if (isset(self::$entityIcons[$className])) {

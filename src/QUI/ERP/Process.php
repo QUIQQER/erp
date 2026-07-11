@@ -30,6 +30,9 @@ class Process
     const PROCESS_ACTIVE_DATE = '2024-08-01 00:00:00';
 
     protected string $processId;
+    /**
+     * @var array<mixed>|null
+     */
     protected ?array $transactions = null;
     protected ?Comments $History = null;
 

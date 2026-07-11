@@ -33,9 +33,14 @@ use function strtotime;
  */
 class Processes
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected array $list = [];
 
     /**
+     * @param string $entityHash
+     * @param string|false $entityPlugin
      * @throws Exception
      */
     public function getEntity($entityHash, $entityPlugin = false): ErpEntityInterface
@@ -486,6 +491,11 @@ class Processes
 
     //region utils
 
+    /**
+     * @param string|null $date1
+     * @param string|null $date2
+     * @return string|null
+     */
     protected function getEarlierDate($date1, $date2)
     {
         if ($date1 === null && $date2) {

@@ -130,7 +130,7 @@ class Address extends QUI\Users\Address
     }
 
     /**
-     * @param $value
+     * @param mixed $value
      * @return string
      */
     protected function emptyStringCheck($value): string

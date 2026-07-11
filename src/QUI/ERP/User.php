@@ -379,6 +379,9 @@ class User extends QUI\QDOM implements UserInterface
         return $Locale;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getAttributes(): array
     {
         $attributes = parent::getAttributes();

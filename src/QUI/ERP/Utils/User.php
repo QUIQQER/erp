@@ -273,7 +273,7 @@ class User
      * Return the user ERP address (Invoice address, Accounting address)
      *
      * @param UserInterface $User
-     * @return Address|array|null
+     * @return Address|array<mixed>|null
      * @throws Exception
      * @throws QUI\Permissions\Exception
      */
@@ -363,7 +363,7 @@ class User
 
     /**
      * @param UserInterface $User
-     * @param $Address
+     * @param mixed $Address
      */
     public static function setUserCurrentAddress(
         QUI\Interfaces\Users\User $User,

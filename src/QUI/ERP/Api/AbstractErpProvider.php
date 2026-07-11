@@ -17,6 +17,7 @@ abstract class AbstractErpProvider
      * Add menu items to the e-commerce panel
      *
      * @param Map $Map
+     * @return void
      */
     public static function addMenuItems(Map $Map)
     {
