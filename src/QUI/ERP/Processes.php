@@ -6,16 +6,17 @@
 
 namespace QUI\ERP;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DbalException;
 use QUI;
 use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
 use QUI\ERP\Accounting\Offers\Handler as OfferHandler;
 use QUI\ERP\Accounting\Payments\Transactions\Factory as TransactionFactory;
+use QUI\ERP\Database\Queries;
 use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\ERP\SalesOrders\Handler as SalesOrdersHandler;
 use QUI\Exception;
 
-use function array_map;
 use function class_exists;
 use function strtotime;
 
@@ -152,43 +153,43 @@ class Processes
     {
         try {
             $this->readBooking();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
             $this->readInvoices();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
             $this->readOffers();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
             $this->readOrders();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
             $this->readPurchasing();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
             $this->readSalesOrders();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
             $this->readTransactions();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
@@ -515,13 +516,12 @@ class Processes
      */
     private function fetchAllAssociative(string $table, array $columns): array
     {
-        $quote = static fn(string $identifier): string => QUI\Utils\Doctrine::quoteIdentifier($identifier);
+        return Queries::fetchAllAssociative($this->getDatabaseConnection(), $table, $columns);
+    }
 
-        return QUI::getQueryBuilder()
-            ->select(...array_map($quote, $columns))
-            ->from($quote($table))
-            ->executeQuery()
-            ->fetchAllAssociative();
+    protected function getDatabaseConnection(): Connection
+    {
+        return QUI::getDataBaseConnection();
     }
 
     /**

@@ -3,9 +3,9 @@
 namespace QUI\ERP;
 
 use Doctrine\DBAL\Exception as DbalException;
-use Doctrine\DBAL\ParameterType;
 use IntlDateFormatter;
 use QUI;
+use QUI\ERP\Database\ManufacturerSearch;
 use QUI\ERP\Products\Handler\Fields;
 use QUI\Utils\Security\Orthos;
 
@@ -17,14 +17,11 @@ use function array_unique;
 use function array_values;
 use function array_walk;
 use function count;
-use function date_create;
-use function explode;
 use function implode;
 use function in_array;
 use function is_array;
 use function sort;
 use function str_replace;
-use function strtoupper;
 use function trim;
 
 /**
@@ -205,179 +202,21 @@ class Manufacturers
     {
         $Grid = new QUI\Utils\Grid($searchParams);
         $gridParams = $Grid->parseDBParams($searchParams);
-        $usersTbl = QUI::getDBTableName('users');
-        $usersAddressTbl = QUI::getDBTableName('users_address');
-        $QueryBuilder = QUI::getQueryBuilder();
-        $quote = static fn(string $identifier): string => QUI\Utils\Doctrine::quoteIdentifier($identifier);
-        $column = static fn(string $alias, string $name): string => $alias . '.' . $quote($name);
-
-        if ($countOnly) {
-            $QueryBuilder->select('COUNT(*)');
-        } else {
-            $QueryBuilder->select(
-                $column('u', 'id'),
-                $column('u', 'firstname'),
-                $column('u', 'lastname'),
-                $column('u', 'email'),
-                $column('u', 'username'),
-                $column('ua', 'company'),
-                $column('u', 'usergroup'),
-                $column('u', 'active'),
-                $column('u', 'regdate')
-            );
-        }
-
-        $QueryBuilder
-            ->from($quote($usersTbl), 'u')
-            ->leftJoin(
-                'u',
-                $quote($usersAddressTbl),
-                'ua',
-                $column('u', 'address') . ' = ' . $column('ua', 'id')
-            );
-
-        // Only fetch users in manufacturer groups
-        $groupExpressions = [];
-
-        foreach (self::getManufacturerGroupIds() as $index => $groupId) {
-            $parameter = 'group' . $index;
-            $groupExpressions[] = $QueryBuilder->expr()->like($column('u', 'usergroup'), ':' . $parameter);
-            $QueryBuilder->setParameter($parameter, '%,' . $groupId . ',%', ParameterType::STRING);
-        }
-
-        if (!empty($groupExpressions)) {
-            $QueryBuilder->andWhere($QueryBuilder->expr()->or(...$groupExpressions));
-        }
-
-        // User search
-        $searchFields = [
-            'id',
-            'username',
-            'email',
-            'company'
-        ];
-
-        if (!empty($searchParams['filter']) && is_array($searchParams['filter'])) {
-            $searchFields = array_filter($searchParams['filter'], function ($value) {
-                return !!(int)$value;
-            });
-
-            $searchFields = array_keys($searchFields);
-
-            // date filters
-            if (!empty($searchParams['filter']['regdate_from'])) {
-                $DateFrom = date_create($searchParams['filter']['regdate_from']);
-
-                if ($DateFrom) {
-                    $DateFrom->setTime(0, 0, 0);
-                    $QueryBuilder->andWhere(
-                        $QueryBuilder->expr()->gte($column('u', 'regdate'), ':dateFrom')
-                    );
-                    $QueryBuilder->setParameter(
-                        'dateFrom',
-                        $DateFrom->getTimestamp(),
-                        ParameterType::INTEGER
-                    );
-                }
-            }
-
-            if (!empty($searchParams['filter']['regdate_to'])) {
-                $DateTo = date_create($searchParams['filter']['regdate_to']);
-
-                if ($DateTo) {
-                    $DateTo->setTime(23, 59, 59);
-                    $QueryBuilder->andWhere(
-                        $QueryBuilder->expr()->lte($column('u', 'regdate'), ':dateTo')
-                    );
-                    $QueryBuilder->setParameter(
-                        'dateTo',
-                        $DateTo->getTimestamp(),
-                        ParameterType::INTEGER
-                    );
-                }
-            }
-        }
-
-        if (!empty($searchParams['search'])) {
-            $searchValue = $searchParams['search'];
-            $searchExpressions = [];
-
-            // search value filters
-            foreach ($searchFields as $filter) {
-                switch ($filter) {
-                    case 'id':
-                    case 'username':
-                    case 'firstname':
-                    case 'lastname':
-                    case 'email':
-                        $searchExpressions[] = $QueryBuilder->expr()->like(
-                            $column('u', $filter),
-                            ':search'
-                        );
-                        break;
-
-                    case 'company':
-                        $searchExpressions[] = $QueryBuilder->expr()->like(
-                            $column('ua', $filter),
-                            ':search'
-                        );
-                        break;
-
-                    default:
-                        continue 2;
-                }
-            }
-
-            if (!empty($searchExpressions)) {
-                $QueryBuilder->andWhere($QueryBuilder->expr()->or(...$searchExpressions));
-                $QueryBuilder->setParameter('search', '%' . $searchValue . '%', ParameterType::STRING);
-            }
-        }
-
-        // ORDER
-        $sortColumns = [
-            'id' => $column('u', 'id'),
-            'username' => $column('u', 'username'),
-            'firstname' => $column('u', 'firstname'),
-            'lastname' => $column('u', 'lastname'),
-            'email' => $column('u', 'email'),
-            'company' => $column('ua', 'company')
-        ];
-        $sortOn = (string)($searchParams['sortOn'] ?? '');
-
-        if (!$countOnly && isset($sortColumns[$sortOn])) {
-            $sortBy = strtoupper((string)($searchParams['sortBy'] ?? 'ASC')) === 'DESC' ? 'DESC' : 'ASC';
-            $QueryBuilder->orderBy($sortColumns[$sortOn], $sortBy);
-        }
-
-        // LIMIT
-        if (!$countOnly) {
-            if (!empty($gridParams['limit'])) {
-                $limit = explode(',', (string)$gridParams['limit'], 2);
-
-                if (isset($limit[1])) {
-                    $QueryBuilder->setFirstResult((int)$limit[0]);
-                    $QueryBuilder->setMaxResults((int)$limit[1]);
-                } else {
-                    $QueryBuilder->setMaxResults((int)$limit[0]);
-                }
-            } else {
-                $QueryBuilder->setMaxResults(20);
-            }
-        }
 
         try {
-            $Result = $QueryBuilder->executeQuery();
+            return ManufacturerSearch::execute(
+                QUI::getDataBaseConnection(),
+                QUI::getDBTableName('users'),
+                QUI::getDBTableName('users_address'),
+                self::getManufacturerGroupIds(),
+                $searchParams,
+                $gridParams,
+                $countOnly
+            );
         } catch (DbalException $Exception) {
             QUI\System\Log::writeException($Exception);
             return [];
         }
-
-        if ($countOnly) {
-            return (int)$Result->fetchOne();
-        }
-
-        return $Result->fetchAllAssociative();
     }
 
     /**

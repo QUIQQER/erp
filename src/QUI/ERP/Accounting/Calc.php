@@ -13,6 +13,7 @@ use QUI;
 use QUI\ERP\Accounting\Invoice\Handler;
 use QUI\ERP\Accounting\Invoice\Invoice;
 use QUI\ERP\Currency\Currency;
+use QUI\ERP\Database\Queries;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
 use QUI\Locale;
@@ -985,7 +986,8 @@ class Calc
         // workaround fix
         if ($ToCalculate->getAttribute('paid_date') != $paidDate) {
             try {
-                QUI::getDataBaseConnection()->update(
+                Queries::update(
+                    QUI::getDataBaseConnection(),
                     Handler::getInstance()->invoiceTable(),
                     ['paid_date' => $paidDate],
                     ['id' => $ToCalculate->getCleanId()]

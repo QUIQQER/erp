@@ -6,11 +6,12 @@
 
 namespace QUI\ERP;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DbalException;
 use QUI;
+use QUI\ERP\Database\Queries;
 
 use function array_filter;
-use function array_map;
 use function array_merge;
 use function class_exists;
 use function count;
@@ -57,6 +58,11 @@ class Process
         return QUI::getDBTableName('process');
     }
 
+    protected function getDatabaseConnection(): Connection
+    {
+        return QUI::getDataBaseConnection();
+    }
+
     /**
      * Fetches entries whose process column or own identifier matches this process ID.
      *
@@ -64,25 +70,20 @@ class Process
      * @return array<array<string, mixed>>
      * @throws DbalException
      */
-    private function fetchProcessEntriesByProcessIdOrIdentifier(
+    protected function fetchProcessEntriesByProcessIdOrIdentifier(
         string $table,
         array $columns,
         string $processColumn = 'global_process_id',
         string $identifierColumn = 'hash'
     ): array {
-        $QueryBuilder = QUI::getQueryBuilder();
-        $quote = static fn(string $identifier): string => QUI\Utils\Doctrine::quoteIdentifier($identifier);
-
-        return $QueryBuilder
-            ->select(...array_map($quote, $columns))
-            ->from($quote($table))
-            ->where($QueryBuilder->expr()->or(
-                $QueryBuilder->expr()->eq($quote($processColumn), ':processId'),
-                $QueryBuilder->expr()->eq($quote($identifierColumn), ':processId')
-            ))
-            ->setParameter('processId', $this->processId)
-            ->executeQuery()
-            ->fetchAllAssociative();
+        return Queries::fetchAllAssociativeByEitherIdentifier(
+            $this->getDatabaseConnection(),
+            $table,
+            $columns,
+            $processColumn,
+            $identifierColumn,
+            $this->processId
+        );
     }
 
     public function getUUID(): string
@@ -273,7 +274,8 @@ class Process
         $this->getHistory()->addComment($message, $time);
 
         try {
-            QUI::getDataBaseConnection()->update(
+            Queries::update(
+                $this->getDatabaseConnection(),
                 $this->table(),
                 ['history' => $this->getHistory()->toJSON()],
                 ['id' => $this->processId]
@@ -297,20 +299,18 @@ class Process
             $history = '';
 
             try {
-                $Connection = QUI::getDataBaseConnection();
-                $result = $Connection->createQueryBuilder()
-                    ->select('history')
-                    ->from($this->table())
-                    ->where('id = :processId')
-                    ->setParameter('processId', $this->processId)
-                    ->setMaxResults(1)
-                    ->executeQuery()
-                    ->fetchAssociative();
+                $Connection = $this->getDatabaseConnection();
+                $result = Queries::fetchAssociativeByIdentifier(
+                    $Connection,
+                    $this->table(),
+                    'id',
+                    $this->processId
+                );
 
                 if ($result !== false) {
                     $history = (string)$result['history'];
                 } else {
-                    $Connection->insert($this->table(), [
+                    Queries::insert($Connection, $this->table(), [
                         'id' => $this->processId
                     ]);
                 }
