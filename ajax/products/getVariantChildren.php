@@ -16,9 +16,15 @@ QUI::getAjax()->registerFunction(
             return [];
         }
 
+        $variants = $Product->getVariants();
+
+        if (!is_array($variants)) {
+            return [];
+        }
+
         return array_map(function ($Variant) {
             return $Variant->getAttributes();
-        }, $Product->getVariants());
+        }, $variants);
     },
     ['productId'],
     'Permission::checkAdminUser'

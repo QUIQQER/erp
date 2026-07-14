@@ -35,7 +35,7 @@ class Comments
     /**
      * Comments constructor.
      *
-     * @param list<array<string, mixed>>|null $comments
+     * @param array<int|string, mixed>|null $comments
      */
     public function __construct(?array $comments = [])
     {
@@ -44,6 +44,10 @@ class Comments
         }
 
         foreach ($comments as $comment) {
+            if (!is_array($comment)) {
+                continue;
+            }
+
             if (!isset($comment['id'])) {
                 $comment['id'] = QUI\Utils\Uuid::get();
             }

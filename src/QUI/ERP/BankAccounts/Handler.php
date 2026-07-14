@@ -62,7 +62,7 @@ class Handler
         $bankAccount['id'] = $id;
         $list[$id] = $bankAccount;
 
-        $Conf->setValue('bankAccounts', 'accounts', json_encode($list));
+        $Conf->setValue('bankAccounts', 'accounts', json_encode($list) ?: '[]');
         $Conf->save();
 
         return $bankAccount;

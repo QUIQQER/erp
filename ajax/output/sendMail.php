@@ -42,6 +42,13 @@ QUI::getAjax()->registerFunction(
                 $TemplateProvider = ERPOutput::getDefaultOutputTemplateProviderForEntityType($entityType);
             }
 
+            if (
+                !is_string($TemplateProvider)
+                && !$TemplateProvider instanceof QUI\ERP\Output\OutputTemplateProviderInterface
+            ) {
+                throw new QUI\ERP\Exception('ERP output template provider is not available');
+            }
+
             $attachedMediaFiles = [];
 
             if (

@@ -511,13 +511,13 @@ class Processes
      * @param string|null $date2
      * @return string|null
      */
-    protected function getEarlierDate($date1, $date2)
+    protected function getEarlierDate(?string $date1, ?string $date2): ?string
     {
-        if ($date1 === null && $date2) {
+        if ($date1 === null) {
             return $date2;
         }
 
-        if ($date1 && $date2 === null) {
+        if ($date2 === null) {
             return $date1;
         }
 

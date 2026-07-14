@@ -377,7 +377,7 @@ class User
     }
 
     public static function getUserSalutation(
-        UserInterface | QUI\ERP\Customer\Customers $user,
+        UserInterface $user,
         null | QUI\Locale $locale = null
     ): string {
         $locale = $locale ?: QUI::getLocale();

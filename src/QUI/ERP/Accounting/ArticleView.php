@@ -246,7 +246,7 @@ class ArticleView extends QUI\QDOM
             'hasAppliedVat' => !empty($articleData['calculated']['vatArray']['vat'])
         ]);
 
-        if ($template && file_exists($template)) {
+        if (is_string($template) && file_exists($template)) {
             return $Engine->fetch($template);
         }
 

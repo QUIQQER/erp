@@ -25,9 +25,9 @@ class OutputTemplate
     protected string | OutputProviderInterface $OutputProvider;
 
     /**
-     * @var string|null
+     * @var int|string
      */
-    protected string | null $template;
+    protected int | string $template;
 
     /**
      * @var QUI\Interfaces\Template\EngineInterface
@@ -63,14 +63,14 @@ class OutputTemplate
      * @param string|OutputProviderInterface $OutputProvider - Output provider class
      * @param int|string $entityId
      * @param string $entityType
-     * @param string|null $template (optional) - Template identifier (from template provider)
+     * @param int|string|null $template (optional) - Template identifier (from template provider)
      */
     public function __construct(
         OutputTemplateProviderInterface | string $TemplateProvider,
         OutputProviderInterface | string $OutputProvider,
         int | string $entityId,
         string $entityType,
-        null | string $template = null
+        int | string | null $template = null
     ) {
         $this->Engine = QUI::getTemplateManager()->getEngine();
         $this->TemplateProvider = $TemplateProvider;
@@ -79,7 +79,7 @@ class OutputTemplate
         $templates = $this->TemplateProvider::getTemplates($entityType);
 
         if (empty($template)) {
-            $template = $templates[0];
+            $template = $templates[0] ?? null;
         } else {
             // Check if $template is provided by template provider
             $templateIsProvided = false;
@@ -92,8 +92,12 @@ class OutputTemplate
             }
 
             if (!$templateIsProvided) {
-                $template = $templates[0];
+                $template = $templates[0] ?? null;
             }
+        }
+
+        if (!is_int($template) && !is_string($template)) {
+            throw new QUI\ERP\Exception('ERP output template is not available');
         }
 
         $this->template = $template;

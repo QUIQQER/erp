@@ -68,8 +68,8 @@ class Output
      *
      * @param int|string $entityId
      * @param string $entityType
-     * @param OutputProviderInterface|null $OutputProvider (optional)
-     * @param OutputTemplateProviderInterface|null $TemplateProvider (optional)
+     * @param OutputProviderInterface|string|null $OutputProvider (optional)
+     * @param OutputTemplateProviderInterface|string|null $TemplateProvider (optional)
      * @param string|null $template (optional)
      * @param bool $preview (optional) - Get preview HTML
      *
@@ -80,8 +80,8 @@ class Output
     public static function getDocumentHtml(
         int | string $entityId,
         string $entityType,
-        null | OutputProviderInterface $OutputProvider = null,
-        null | OutputTemplateProviderInterface $TemplateProvider = null,
+        null | string | OutputProviderInterface $OutputProvider = null,
+        null | string | OutputTemplateProviderInterface $TemplateProvider = null,
         null | string $template = null,
         bool $preview = false
     ): string {
@@ -124,8 +124,8 @@ class Output
      *
      * @param int|string $entityId
      * @param string $entityType
-     * @param OutputProviderInterface|null $OutputProvider (optional)
-     * @param OutputTemplateProviderInterface|null $TemplateProvider (optional)
+     * @param OutputProviderInterface|string|null $OutputProvider (optional)
+     * @param OutputTemplateProviderInterface|string|null $TemplateProvider (optional)
      * @param string|null $template (optional)
      *
      * @return QUI\HtmlToPdf\Document
@@ -135,8 +135,8 @@ class Output
     public static function getDocumentPdf(
         int | string $entityId,
         string $entityType,
-        null | OutputProviderInterface $OutputProvider = null,
-        null | OutputTemplateProviderInterface $TemplateProvider = null,
+        null | string | OutputProviderInterface $OutputProvider = null,
+        null | string | OutputTemplateProviderInterface $TemplateProvider = null,
         null | string $template = null
     ): QUI\HtmlToPdf\Document {
         if (empty($OutputProvider)) {
@@ -189,8 +189,8 @@ class Output
      *
      * @param int|string $entityId
      * @param string $entityType
-     * @param OutputProviderInterface|null $OutputProvider (optional)
-     * @param OutputTemplateProviderInterface|null $TemplateProvider (optional)
+     * @param OutputProviderInterface|string|null $OutputProvider (optional)
+     * @param OutputTemplateProviderInterface|string|null $TemplateProvider (optional)
      * @param string|null $template (optional)
      * @param string|null $recipientEmail (optional)
      * @param string|null $mailSubject (optional)
@@ -204,8 +204,8 @@ class Output
     public static function sendPdfViaMail(
         int | string $entityId,
         string $entityType,
-        null | OutputProviderInterface $OutputProvider = null,
-        null | OutputTemplateProviderInterface $TemplateProvider = null,
+        null | string | OutputProviderInterface $OutputProvider = null,
+        null | string | OutputTemplateProviderInterface $TemplateProvider = null,
         null | string $template = null,
         null | string $recipientEmail = null,
         null | string $mailSubject = null,
@@ -242,13 +242,6 @@ class Output
         $mailFile = $pdfDir . $OutputProvider::getDownloadFileName($entityId) . '.pdf';
         rename($pdfFile, $mailFile);
 
-        if (!QUI\Utils\Security\Orthos::checkMailSyntax($recipientEmail)) {
-            throw new QUI\ERP\Exception([
-                'quiqqer/erp',
-                'exception.Output.sendPdfViaMail.recpient_address_invalid'
-            ]);
-        }
-
         if (empty($recipientEmail)) {
             $recipientEmail = $OutputProvider::getEmailAddress($entityId);
         }
@@ -257,6 +250,13 @@ class Output
             throw new QUI\ERP\Exception([
                 'quiqqer/erp',
                 'exception.Output.sendPdfViaMail.missing_recipient'
+            ]);
+        }
+
+        if (!QUI\Utils\Security\Orthos::checkMailSyntax($recipientEmail)) {
+            throw new QUI\ERP\Exception([
+                'quiqqer/erp',
+                'exception.Output.sendPdfViaMail.recpient_address_invalid'
             ]);
         }
 

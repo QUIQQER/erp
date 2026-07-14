@@ -341,7 +341,7 @@ class Article implements ArticleInterface
 
         try {
             $Product = QUI\ERP\Products\Handler\Products::getProductByProductNo(
-                $this->getArticleNo()
+                (string)$this->getArticleNo()
             );
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);

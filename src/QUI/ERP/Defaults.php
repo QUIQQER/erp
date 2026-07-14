@@ -17,7 +17,7 @@ use function implode;
 class Defaults
 {
     /**
-     * @var array<string, mixed>
+     * @var array<string, int|string|null>
      */
     protected static array $timestampFormat = [];
 
@@ -27,7 +27,7 @@ class Defaults
     protected static ?bool $userRelatedCurrency = null;
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, string>
      */
     protected static array $dateFormat = [];
 
@@ -226,7 +226,7 @@ class Defaults
      */
     public static function getTimestampFormat(bool | string $lang = false): int | string | null
     {
-        if ($lang === false) {
+        if (!is_string($lang) || $lang === '') {
             $lang = QUI::getLocale()->getCurrent();
         }
 
@@ -247,7 +247,7 @@ class Defaults
 
         $value = $Config?->get('timestampFormat', $lang);
 
-        if (!empty($value)) {
+        if (is_int($value) || is_string($value)) {
             self::$timestampFormat[$lang] = $value;
         }
 
@@ -262,7 +262,7 @@ class Defaults
      */
     public static function getDateFormat(bool | string $lang = false): string
     {
-        if ($lang === false) {
+        if (!is_string($lang) || $lang === '') {
             $lang = QUI::getLocale()->getCurrent();
         }
 
@@ -328,9 +328,14 @@ class Defaults
         // ACME gmbH - Pferdeweg 12 - 42424 Pfedestadt
         $fields = [];
 
-        $fields[] = self::conf('company', 'name');
-        $fields[] = self::conf('company', 'street');
-        $fields[] = self::conf('company', 'zipCode') . ' ' . self::conf('company', 'city');
+        $name = self::conf('company', 'name');
+        $street = self::conf('company', 'street');
+        $zipCode = self::conf('company', 'zipCode');
+        $city = self::conf('company', 'city');
+
+        $fields[] = is_string($name) ? $name : '';
+        $fields[] = is_string($street) ? $street : '';
+        $fields[] = (is_string($zipCode) ? $zipCode : '') . ' ' . (is_string($city) ? $city : '');
 
         return implode(' - ', $fields);
     }

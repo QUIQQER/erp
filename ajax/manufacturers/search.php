@@ -16,11 +16,20 @@ QUI::getAjax()->registerFunction(
         $searchParams = Orthos::clearArray(json_decode($params, true));
 
         $results = Manufacturers::search($searchParams);
+        $count = Manufacturers::search($searchParams, true);
         $Grid = new Grid($searchParams);
+
+        if (!is_array($results)) {
+            $results = [];
+        }
+
+        if (!is_int($count)) {
+            $count = count($count);
+        }
 
         return $Grid->parseResult(
             Manufacturers::parseListForGrid($results),
-            Manufacturers::search($searchParams, true)
+            $count
         );
     },
     ['params'],
