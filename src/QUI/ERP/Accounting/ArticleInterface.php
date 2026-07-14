@@ -18,10 +18,15 @@ interface ArticleInterface
     /**
      * Article constructor.
      *
-     * @param array $attributes - article attributes
+     * @param array<mixed> $attributes - article attributes
      * @throws Exception
      */
     public function __construct(array $attributes = []);
+
+    /**
+     * @return int
+     */
+    public function getId(): int;
 
     /**
      * @return ArticleView
@@ -51,6 +56,11 @@ interface ArticleInterface
     /**
      * @return Price
      */
+    public function getPrice(): Price;
+
+    /**
+     * @return Price
+     */
     public function getSum(): Price;
 
     /**
@@ -59,7 +69,12 @@ interface ArticleInterface
     public function getQuantity(): float|int|bool;
 
     /**
-     * @return array
+     * @return ArticleDiscount|null
+     */
+    public function getDiscount(): ?ArticleDiscount;
+
+    /**
+     * @return array<mixed>
      */
     public function toArray(): array;
 

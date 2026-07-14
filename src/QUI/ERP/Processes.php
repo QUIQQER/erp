@@ -6,10 +6,13 @@
 
 namespace QUI\ERP;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception as DbalException;
 use QUI;
 use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
 use QUI\ERP\Accounting\Offers\Handler as OfferHandler;
 use QUI\ERP\Accounting\Payments\Transactions\Factory as TransactionFactory;
+use QUI\ERP\Database\Queries;
 use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\ERP\SalesOrders\Handler as SalesOrdersHandler;
 use QUI\Exception;
@@ -33,9 +36,14 @@ use function strtotime;
  */
 class Processes
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected array $list = [];
 
     /**
+     * @param string $entityHash
+     * @param string|false $entityPlugin
      * @throws Exception
      */
     public function getEntity($entityHash, $entityPlugin = false): ErpEntityInterface
@@ -139,49 +147,49 @@ class Processes
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getList(): array
     {
         try {
             $this->readBooking();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
             $this->readInvoices();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
             $this->readOffers();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
             $this->readOrders();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
             $this->readPurchasing();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
             $this->readSalesOrders();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
         try {
             $this->readTransactions();
-        } catch (QUI\Database\Exception $exception) {
+        } catch (DbalException $exception) {
             QUI\System\Log::addError($exception->getMessage());
         }
 
@@ -219,18 +227,21 @@ class Processes
      * Rads all invoices
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readInvoices(): void
     {
-        if (!QUI::getPackageManager()->isInstalled('quiqqer/invoice')) {
+        if (
+            !QUI::getPackageManager()->isInstalled('quiqqer/invoice')
+            || !class_exists(InvoiceHandler::class)
+        ) {
             return;
         }
 
-        $invoices = QUI::getDatabase()->fetch([
-            'select' => 'hash,global_process_id,date',
-            'from' => InvoiceHandler::getInstance()->invoiceTable()
-        ]);
+        $invoices = $this->fetchAllAssociative(
+            InvoiceHandler::getInstance()->invoiceTable(),
+            ['hash', 'global_process_id', 'date']
+        );
 
         foreach ($invoices as $invoice) {
             $gpi = $invoice['global_process_id'];
@@ -256,18 +267,21 @@ class Processes
      * Rads all invoices
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readOrders(): void
     {
-        if (!QUI::getPackageManager()->isInstalled('quiqqer/order')) {
+        if (
+            !QUI::getPackageManager()->isInstalled('quiqqer/order')
+            || !class_exists(OrderHandler::class)
+        ) {
             return;
         }
 
-        $orders = QUI::getDatabase()->fetch([
-            'select' => 'hash,global_process_id,c_date',
-            'from' => OrderHandler::getInstance()->table()
-        ]);
+        $orders = $this->fetchAllAssociative(
+            OrderHandler::getInstance()->table(),
+            ['hash', 'global_process_id', 'c_date']
+        );
 
         foreach ($orders as $order) {
             $gpi = $order['global_process_id'];
@@ -293,18 +307,21 @@ class Processes
      * Read all offers
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readOffers(): void
     {
-        if (!QUI::getPackageManager()->isInstalled('quiqqer/offers')) {
+        if (
+            !QUI::getPackageManager()->isInstalled('quiqqer/offers')
+            || !class_exists(OfferHandler::class)
+        ) {
             return;
         }
 
-        $offers = QUI::getDatabase()->fetch([
-            'select' => 'hash,global_process_id,date',
-            'from' => OfferHandler::getInstance()->offersTable()
-        ]);
+        $offers = $this->fetchAllAssociative(
+            OfferHandler::getInstance()->offersTable(),
+            ['hash', 'global_process_id', 'date']
+        );
 
         foreach ($offers as $offer) {
             $gpi = $offer['global_process_id'];
@@ -330,18 +347,21 @@ class Processes
      * Read all sales orders
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readSalesOrders(): void
     {
-        if (!QUI::getPackageManager()->isInstalled('quiqqer/salesorders')) {
+        if (
+            !QUI::getPackageManager()->isInstalled('quiqqer/salesorders')
+            || !class_exists(SalesOrdersHandler::class)
+        ) {
             return;
         }
 
-        $salesOrders = QUI::getDatabase()->fetch([
-            'select' => 'hash,global_process_id,date',
-            'from' => SalesOrdersHandler::getTableSalesOrders()
-        ]);
+        $salesOrders = $this->fetchAllAssociative(
+            SalesOrdersHandler::getTableSalesOrders(),
+            ['hash', 'global_process_id', 'date']
+        );
 
         foreach ($salesOrders as $salesOrder) {
             $gpi = $salesOrder['global_process_id'];
@@ -367,18 +387,21 @@ class Processes
      * Read all sales orders
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readTransactions(): void
     {
-        if (!QUI::getPackageManager()->isInstalled('quiqqer/payment-transactions')) {
+        if (
+            !QUI::getPackageManager()->isInstalled('quiqqer/payment-transactions')
+            || !class_exists(TransactionFactory::class)
+        ) {
             return;
         }
 
-        $transactions = QUI::getDatabase()->fetch([
-            'select' => 'hash,global_process_id,date',
-            'from' => TransactionFactory::table()
-        ]);
+        $transactions = $this->fetchAllAssociative(
+            TransactionFactory::table(),
+            ['hash', 'global_process_id', 'date']
+        );
 
         foreach ($transactions as $transaction) {
             $gpi = $transaction['global_process_id'];
@@ -404,7 +427,7 @@ class Processes
      * Read all purchases
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readPurchasing(): void
     {
@@ -416,10 +439,10 @@ class Processes
             return;
         }
 
-        $purchasing = QUI::getDatabase()->fetch([
-            'select' => 'hash,global_process_id,date',
-            'from' => QUI\ERP\Purchasing\Processes\Handler::getTablePurchasingProcesses()
-        ]);
+        $purchasing = $this->fetchAllAssociative(
+            QUI\ERP\Purchasing\Processes\Handler::getTablePurchasingProcesses(),
+            ['hash', 'global_process_id', 'date']
+        );
 
         foreach ($purchasing as $entry) {
             $gpi = $entry['global_process_id'];
@@ -445,7 +468,7 @@ class Processes
      * Read all purchases
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readBooking(): void
     {
@@ -457,10 +480,10 @@ class Processes
             return;
         }
 
-        $bookings = QUI::getDatabase()->fetch([
-            'select' => 'uuid,globalProcessId,createDate',
-            'from' => QUI\ERP\Booking\Table::BOOKINGS->tableName(),
-        ]);
+        $bookings = $this->fetchAllAssociative(
+            QUI\ERP\Booking\Table::BOOKINGS->tableName(),
+            ['uuid', 'globalProcessId', 'createDate']
+        );
 
         foreach ($bookings as $booking) {
             $gpi = $booking['globalProcessId'];
@@ -486,13 +509,33 @@ class Processes
 
     //region utils
 
-    protected function getEarlierDate($date1, $date2)
+    /**
+     * @param array<string> $columns
+     * @return array<array<string, mixed>>
+     * @throws DbalException
+     */
+    private function fetchAllAssociative(string $table, array $columns): array
     {
-        if ($date1 === null && $date2) {
+        return Queries::fetchAllAssociative($this->getDatabaseConnection(), $table, $columns);
+    }
+
+    protected function getDatabaseConnection(): Connection
+    {
+        return QUI::getDataBaseConnection();
+    }
+
+    /**
+     * @param string|null $date1
+     * @param string|null $date2
+     * @return string|null
+     */
+    protected function getEarlierDate(?string $date1, ?string $date2): ?string
+    {
+        if ($date1 === null) {
             return $date2;
         }
 
-        if ($date1 && $date2 === null) {
+        if ($date2 === null) {
             return $date1;
         }
 

@@ -19,8 +19,8 @@ class Handler
     /**
      * Add bank account to list.
      *
-     * @param array $data
-     * @return array - New bank account data
+     * @param array<mixed> $data
+     * @return array<mixed> - New bank account data
      *
      * @throws QUI\Exception
      */
@@ -55,10 +55,14 @@ class Handler
 
         $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
 
+        if ($Conf === null) {
+            throw new QUI\Exception('ERP configuration is not available');
+        }
+
         $bankAccount['id'] = $id;
         $list[$id] = $bankAccount;
 
-        $Conf->setValue('bankAccounts', 'accounts', json_encode($list));
+        $Conf->setValue('bankAccounts', 'accounts', json_encode($list) ?: '[]');
         $Conf->save();
 
         return $bankAccount;
@@ -67,13 +71,13 @@ class Handler
     /**
      * Get data of the bank account that is set as the company default.
      *
-     * @return array|false
+     * @return array<mixed>|false
      */
     public static function getCompanyBankAccount(): bool|array
     {
         try {
             $bankAccounts = self::getList();
-            $bankAccountId = QUI::getPackage('quiqqer/erp')->getConfig()->get('company', 'bankAccountId');
+            $bankAccountId = QUI::getPackage('quiqqer/erp')->getConfig()?->get('company', 'bankAccountId');
         } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return false;
@@ -89,7 +93,7 @@ class Handler
     /**
      * Get the bank account data of the default bank account.
      *
-     * @return array|false
+     * @return array<mixed>|false
      */
     public static function getDefaultBankAccount(): bool|array
     {
@@ -112,7 +116,7 @@ class Handler
     /**
      * Get the bank account data by id.
      *
-     * @return array|false
+     * @return array<mixed>|false
      */
     public static function getBankAccountById(int $id): bool|array
     {
@@ -135,7 +139,7 @@ class Handler
     /**
      * Get list of bank accounts.
      *
-     * @return array
+     * @return array<mixed>
      */
     public static function getList(): array
     {
@@ -156,12 +160,17 @@ class Handler
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      * @throws QUI\Exception
      */
     protected static function getConfig(): array
     {
         $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
+
+        if ($Conf === null) {
+            throw new QUI\Exception('ERP configuration is not available');
+        }
+
         return $Conf->getSection('bankAccounts');
     }
 }

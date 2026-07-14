@@ -2,9 +2,10 @@
 
 namespace QUI\ERP;
 
+use Doctrine\DBAL\Exception as DbalException;
 use IntlDateFormatter;
-use PDO;
 use QUI;
+use QUI\ERP\Database\ManufacturerSearch;
 use QUI\ERP\Products\Handler\Fields;
 use QUI\Utils\Security\Orthos;
 
@@ -16,8 +17,6 @@ use function array_unique;
 use function array_values;
 use function array_walk;
 use function count;
-use function date_create;
-use function explode;
 use function implode;
 use function in_array;
 use function is_array;
@@ -43,7 +42,7 @@ class Manufacturers
 
         try {
             $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
-            $defaultGroupId = $Conf->get('manufacturers', 'groupId');
+            $defaultGroupId = $Conf?->get('manufacturers', 'groupId');
 
             if (!empty($defaultGroupId)) {
                 $groupIds[] = (int)$defaultGroupId;
@@ -83,8 +82,8 @@ class Manufacturers
      * Create a new manufacturer user
      *
      * @param string $manufacturerId - QUIQQER username
-     * @param array $address
-     * @param array $groupIds - QUIQQER group IDs of manufacturer groups
+     * @param array<mixed> $address
+     * @param array<mixed> $groupIds - QUIQQER group IDs of manufacturer groups
      *
      * @return QUI\Interfaces\Users\User
      *
@@ -121,6 +120,10 @@ class Manufacturers
                 $Address = $User->getStandardAddress();
             } catch (QUI\Exception) {
                 $Address = $User->addAddress();
+            }
+
+            if ($Address === null) {
+                throw new QUI\Exception('Could not create manufacturer address');
             }
 
             $needles = [
@@ -191,204 +194,36 @@ class Manufacturers
     /**
      * Search manufacturers
      *
-     * @param array $searchParams
+     * @param array<mixed> $searchParams
      * @param bool $countOnly (optional) - get count for search result only [default: false]
-     * @return int[]|int - Manufacturer user IDs or count
+     * @return array<int, array<string, mixed>>|int - Manufacturer data or count
      */
     public static function search(array $searchParams, bool $countOnly = false): array|int
     {
         $Grid = new QUI\Utils\Grid($searchParams);
         $gridParams = $Grid->parseDBParams($searchParams);
-        $usersTbl = QUI::getDBTableName('users');
-        $usersAddressTbl = QUI::getDBTableName('users_address');
-        $binds = [];
-        $where = [];
-
-        if ($countOnly) {
-            $sql = "SELECT COUNT(*)";
-        } else {
-            $sql = "SELECT u.`id`, u.`firstname`, u.`lastname`, u.`email`, u.`username`, ua.`company`, u.`usergroup`";
-            $sql .= ", u.`active`, u.`regdate`";
-        }
-
-        $sql .= " FROM `" . $usersTbl . "` as u LEFT JOIN `" . $usersAddressTbl . "` as ua ON u.`address` = ua.`id`";
-
-        // Only fetch users in manufacturer groups
-        $gc = 0;
-        $whereOr = [];
-
-        foreach (self::getManufacturerGroupIds() as $groupId) {
-            $whereOr[] = "u.`usergroup` LIKE :group" . $gc;
-            $bind = 'group' . $gc++;
-
-            $binds[$bind] = [
-                'value' => '%,' . $groupId . ',%',
-                'type' => PDO::PARAM_STR
-            ];
-        }
-
-        if (!empty($whereOr)) {
-            $where[] = "(" . implode(" OR ", $whereOr) . ")";
-        }
-
-        // User search
-        $searchFields = [
-            'id',
-            'username',
-            'email',
-            'company'
-        ];
-
-        if (!empty($searchParams['filter']) && is_array($searchParams['filter'])) {
-            $searchFields = array_filter($searchParams['filter'], function ($value) {
-                return !!(int)$value;
-            });
-
-            $searchFields = array_keys($searchFields);
-
-            // date filters
-            if (!empty($searchParams['filter']['regdate_from'])) {
-                $DateFrom = date_create($searchParams['filter']['regdate_from']);
-
-                if ($DateFrom) {
-                    $DateFrom->setTime(0, 0, 0);
-
-                    $bind = 'datefrom';
-                    $where[] = 'u.`regdate` >= :' . $bind;
-
-                    $binds[$bind] = [
-                        'value' => $DateFrom->getTimestamp(),
-                        'type' => PDO::PARAM_INT
-                    ];
-                }
-            }
-
-            if (!empty($searchParams['filter']['regdate_to'])) {
-                $DateTo = date_create($searchParams['filter']['regdate_to']);
-
-                if ($DateTo) {
-                    $DateTo->setTime(23, 59, 59);
-
-                    $bind = 'dateto';
-                    $where[] = 'u.`regdate` <= :' . $bind;
-
-                    $binds[$bind] = [
-                        'value' => $DateTo->getTimestamp(),
-                        'type' => PDO::PARAM_INT
-                    ];
-                }
-            }
-        }
-
-        if (!empty($searchParams['search'])) {
-            $searchValue = $searchParams['search'];
-            $fc = 0;
-            $whereOr = [];
-
-            // search value filters
-            foreach ($searchFields as $filter) {
-                $bind = 'filter' . $fc;
-
-                switch ($filter) {
-                    case 'id':
-                    case 'username':
-                    case 'firstname':
-                    case 'lastname':
-                    case 'email':
-                        $whereOr[] = 'u.`' . $filter . '` LIKE :' . $bind;
-                        break;
-
-                    case 'company':
-                        $whereOr[] = 'ua.`' . $filter . '` LIKE :' . $bind;
-                        break;
-
-                    default:
-                        continue 2;
-                }
-
-                $binds[$bind] = [
-                    'value' => '%' . $searchValue . '%',
-                    'type' => PDO::PARAM_STR
-                ];
-
-                $fc++;
-            }
-
-            if (!empty($whereOr)) {
-                $where[] = "(" . implode(" OR ", $whereOr) . ")";
-            }
-        }
-
-        // build WHERE query string
-        if (!empty($where)) {
-            $sql .= " WHERE " . implode(" AND ", $where);
-        }
-
-        // ORDER
-        if (!empty($searchParams['sortOn'])) {
-            $sortOn = Orthos::clear($searchParams['sortOn']);
-
-            switch ($sortOn) {
-                case 'id':
-                case 'username':
-                case 'firstname':
-                case 'lastname':
-                case 'email':
-                    $sortOn = 'u.`' . $sortOn . '`';
-                    break;
-
-                case 'company':
-                    $sortOn = 'ua.`' . $sortOn . '`';
-                    break;
-            }
-
-            $order = "ORDER BY " . $sortOn;
-
-            if (!empty($searchParams['sortBy'])) {
-                $order .= " " . Orthos::clear($searchParams['sortBy']);
-            } else {
-                $order .= " ASC";
-            }
-
-            $sql .= " " . $order;
-        }
-
-        // LIMIT
-        if (!empty($gridParams['limit']) && !$countOnly) {
-            $sql .= " LIMIT " . $gridParams['limit'];
-        } else {
-            if (!$countOnly) {
-                $sql .= " LIMIT " . 20;
-            }
-        }
-
-        $Stmt = QUI::getPDO()->prepare($sql);
-
-        // bind search values
-        foreach ($binds as $var => $bind) {
-            $Stmt->bindValue(':' . $var, $bind['value'], $bind['type']);
-        }
 
         try {
-            $Stmt->execute();
-            $result = $Stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $Exception) {
+            return ManufacturerSearch::execute(
+                QUI::getDataBaseConnection(),
+                QUI::getDBTableName('users'),
+                QUI::getDBTableName('users_address'),
+                self::getManufacturerGroupIds(),
+                $searchParams,
+                $gridParams,
+                $countOnly
+            );
+        } catch (DbalException $Exception) {
             QUI\System\Log::writeException($Exception);
             return [];
         }
-
-        if ($countOnly) {
-            return (int)current(current($result));
-        }
-
-        return $result;
     }
 
     /**
      * Parse data and prepare for frontend use with GRID
      *
-     * @param array $data - Search result IDs
-     * @return array
+     * @param array<mixed> $data - Search result IDs
+     * @return array<mixed>
      */
     public static function parseListForGrid(array $data): array
     {

@@ -17,7 +17,7 @@ use function implode;
 class Defaults
 {
     /**
-     * @var array<string, mixed>
+     * @var array<string, int|string|null>
      */
     protected static array $timestampFormat = [];
 
@@ -27,14 +27,14 @@ class Defaults
     protected static ?bool $userRelatedCurrency = null;
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, string>
      */
     protected static array $dateFormat = [];
 
     /**
      * @param string $section
      * @param string $key
-     * @return array|bool|string
+     * @return array<mixed>|bool|string
      */
     public static function conf(string $section, string $key): bool | array | string
     {
@@ -42,7 +42,7 @@ class Defaults
             $Package = QUI::getPackage('quiqqer/erp');
             $Config = $Package->getConfig();
 
-            return $Config->get($section, $key);
+            return $Config?->get($section, $key) ?? false;
         } catch (QUI\Exception) {
         }
 
@@ -60,9 +60,13 @@ class Defaults
         $Areas = new QUI\ERP\Areas\Handler();
         $Package = QUI::getPackage('quiqqer/tax');
         $Config = $Package->getConfig();
-        $standardArea = $Config->getValue('shop', 'area');
+        $standardArea = $Config?->getValue('shop', 'area');
 
         try {
+            if (!is_int($standardArea) && !is_string($standardArea)) {
+                throw new QUI\Exception('No default area configured');
+            }
+
             $Area = $Areas->getChild($standardArea);
         } catch (QUI\Exception) {
             QUI\System\Log::addError(
@@ -85,7 +89,6 @@ class Defaults
      * Return the default country
      *
      * @return QUI\Countries\Country
-     * @throws QUI\Exception
      */
     public static function getCountry(): QUI\Countries\Country
     {
@@ -99,7 +102,13 @@ class Defaults
      */
     public static function getCurrency(): Currency\Currency
     {
-        return QUI\ERP\Currency\Handler::getDefaultCurrency();
+        $Currency = QUI\ERP\Currency\Handler::getDefaultCurrency();
+
+        if ($Currency === null) {
+            throw new QUI\Exception('No default ERP currency configured');
+        }
+
+        return $Currency;
     }
 
     /**
@@ -122,7 +131,7 @@ class Defaults
             $Package = QUI::getPackage('quiqqer/erp');
             $Config = $Package->getConfig();
 
-            self::$userRelatedCurrency = $Config->get('general', 'userRelatedCurrency');
+            self::$userRelatedCurrency = (bool)$Config?->get('general', 'userRelatedCurrency');
 
             if (!self::$userRelatedCurrency) {
                 return self::getCurrency();
@@ -147,7 +156,7 @@ class Defaults
             return QUI\ERP\Utils\User::IS_BRUTTO_USER;
         }
 
-        $isNetto = $Config->getValue('shop', 'isNetto');
+        $isNetto = $Config?->getValue('shop', 'isNetto');
 
         if ($isNetto) {
             return QUI\ERP\Utils\User::IS_NETTO_USER;
@@ -217,7 +226,7 @@ class Defaults
      */
     public static function getTimestampFormat(bool | string $lang = false): int | string | null
     {
-        if ($lang === false) {
+        if (!is_string($lang) || $lang === '') {
             $lang = QUI::getLocale()->getCurrent();
         }
 
@@ -236,9 +245,9 @@ class Defaults
             return self::$timestampFormat[$lang];
         }
 
-        $value = $Config->get('timestampFormat', $lang);
+        $value = $Config?->get('timestampFormat', $lang);
 
-        if (!empty($value)) {
+        if (is_int($value) || is_string($value)) {
             self::$timestampFormat[$lang] = $value;
         }
 
@@ -253,7 +262,7 @@ class Defaults
      */
     public static function getDateFormat(bool | string $lang = false): string
     {
-        if ($lang === false) {
+        if (!is_string($lang) || $lang === '') {
             $lang = QUI::getLocale()->getCurrent();
         }
 
@@ -272,7 +281,12 @@ class Defaults
             return self::$dateFormat[$lang];
         }
 
-        $value = $Config->get('dateFormat', $lang);
+        $value = $Config?->get('dateFormat', $lang);
+
+        if (!is_string($value)) {
+            return self::$dateFormat[$lang];
+        }
+
         $value = trim($value);
 
         if (!empty($value)) {
@@ -293,7 +307,7 @@ class Defaults
     {
         try {
             $Config = QUI::getPackage('quiqqer/erp')->getConfig();
-            $logo = $Config->get('general', 'logo');
+            $logo = $Config?->get('general', 'logo');
 
             if (!empty($logo)) {
                 return QUI\Projects\Media\Utils::getImageByUrl($logo);
@@ -301,7 +315,7 @@ class Defaults
         } catch (QUI\Exception) {
         }
 
-        return QUI::getProjectManager()->getStandard()->getMedia()->getLogoImage();
+        return QUI::getProjectManager()->getStandard()?->getMedia()?->getLogoImage();
     }
 
     /**
@@ -314,9 +328,14 @@ class Defaults
         // ACME gmbH - Pferdeweg 12 - 42424 Pfedestadt
         $fields = [];
 
-        $fields[] = self::conf('company', 'name');
-        $fields[] = self::conf('company', 'street');
-        $fields[] = self::conf('company', 'zipCode') . ' ' . self::conf('company', 'city');
+        $name = self::conf('company', 'name');
+        $street = self::conf('company', 'street');
+        $zipCode = self::conf('company', 'zipCode');
+        $city = self::conf('company', 'city');
+
+        $fields[] = is_string($name) ? $name : '';
+        $fields[] = is_string($street) ? $street : '';
+        $fields[] = (is_string($zipCode) ? $zipCode : '') . ' ' . (is_string($city) ? $city : '');
 
         return implode(' - ', $fields);
     }

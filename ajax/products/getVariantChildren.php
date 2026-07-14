@@ -7,7 +7,7 @@
 use QUI\ERP\Products\Handler\Products;
 use QUI\ERP\Products\Product\Types\VariantParent;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_products_getVariantChildren',
     function ($productId) {
         $Product = Products::getProduct((int)$productId);
@@ -16,9 +16,15 @@ QUI::$Ajax->registerFunction(
             return [];
         }
 
+        $variants = $Product->getVariants();
+
+        if (!is_array($variants)) {
+            return [];
+        }
+
         return array_map(function ($Variant) {
             return $Variant->getAttributes();
-        }, $Product->getVariants());
+        }, $variants);
     },
     ['productId'],
     'Permission::checkAdminUser'

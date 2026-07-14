@@ -8,7 +8,7 @@
 
 use QUI\ERP\BankAccounts\Handler;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_settings_bankAccounts_getList',
     function () {
         return Handler::getList();

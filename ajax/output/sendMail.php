@@ -19,7 +19,7 @@ use QUI\ERP\Output\Output as ERPOutput;
 use QUI\Permissions\Permission;
 use QUI\Utils\Security\Orthos;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_output_sendMail',
     function (
         $entityId,
@@ -40,6 +40,13 @@ QUI::$Ajax->registerFunction(
 
             if (empty($TemplateProvider)) {
                 $TemplateProvider = ERPOutput::getDefaultOutputTemplateProviderForEntityType($entityType);
+            }
+
+            if (
+                !is_string($TemplateProvider)
+                && !$TemplateProvider instanceof QUI\ERP\Output\OutputTemplateProviderInterface
+            ) {
+                throw new QUI\ERP\Exception('ERP output template provider is not available');
             }
 
             $attachedMediaFiles = [];

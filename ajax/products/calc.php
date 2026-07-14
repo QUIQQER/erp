@@ -12,8 +12,9 @@
 
 use QUI\ERP\Accounting\ArticleDiscount;
 use QUI\ERP\Defaults;
+use QUI\ERP\Money\Price;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_products_calc',
     function ($articles, $priceFactors, $user, $currency, $nettoInput) {
         $nettoInput = (int)$nettoInput;
@@ -45,17 +46,34 @@ QUI::$Ajax->registerFunction(
             $User->setAttribute('RUNTIME_NETTO_BRUTTO_STATUS', QUI\ERP\Utils\User::IS_BRUTTO_USER);
         }
 
-        $Articles = new QUI\ERP\Accounting\ArticleList($articles);
+        $Articles = new QUI\ERP\Accounting\ArticleList($articles, $User);
 
         if (!empty($priceFactors)) {
             foreach ($priceFactors as $priceFactor) {
+                foreach (['sum', 'nettoSum'] as $field) {
+                    if (!isset($priceFactor[$field]) || is_numeric($priceFactor[$field])) {
+                        continue;
+                    }
+
+                    $amount = Price::parsePrice($priceFactor[$field], $User->getLocale());
+
+                    if ($amount === null) {
+                        throw new QUI\ERP\Exception(
+                            'Invalid price factor ' . $field,
+                            400,
+                            [$field => $priceFactor[$field]]
+                        );
+                    }
+
+                    $priceFactor[$field] = $amount;
+                }
+
                 $Articles->addPriceFactor(
                     new QUI\ERP\Accounting\PriceFactors\Factor($priceFactor)
                 );
             }
         }
 
-        $Articles->setUser($User);
         $Articles->calc($Calc);
 
         try {
@@ -103,6 +121,10 @@ QUI::$Ajax->registerFunction(
             }
 
             $Discount = ArticleDiscount::unserialize($article['discount']);
+
+            if ($Discount === null) {
+                continue;
+            }
 
             if ($Discount->getCalculation() !== QUI\ERP\Accounting\Calc::CALCULATION_COMPLEMENT) {
                 $bruttoUnit = $result['articles'][$k]['unitPrice'] * $vat;

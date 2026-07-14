@@ -24,7 +24,12 @@ class Sites
         $Config = QUI::getPackage('quiqqer/erp')->getConfig();
         $language = $Locale->getCurrent();
 
-        $terms = $Config->getValue('sites', 'terms_and_conditions');
+        $terms = $Config?->getValue('sites', 'terms_and_conditions');
+
+        if (!is_string($terms)) {
+            return null;
+        }
+
         $terms = json_decode($terms, true);
 
         if (isset($terms[$language])) {
@@ -52,7 +57,12 @@ class Sites
         $Config = QUI::getPackage('quiqqer/erp')->getConfig();
         $language = $Locale->getCurrent();
 
-        $terms = $Config->getValue('sites', 'revocation');
+        $terms = $Config?->getValue('sites', 'revocation');
+
+        if (!is_string($terms)) {
+            return null;
+        }
+
         $terms = json_decode($terms, true);
 
         if (isset($terms[$language])) {
@@ -80,7 +90,12 @@ class Sites
         $Config = QUI::getPackage('quiqqer/erp')->getConfig();
         $language = $Locale->getCurrent();
 
-        $terms = $Config->getValue('sites', 'privacy_policy');
+        $terms = $Config?->getValue('sites', 'privacy_policy');
+
+        if (!is_string($terms)) {
+            return null;
+        }
+
         $terms = json_decode($terms, true);
 
         if (isset($terms[$language])) {

@@ -10,7 +10,7 @@
  *
  * @return array
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_products_summary',
     function ($article, $user) {
         $article = json_decode($article, true);

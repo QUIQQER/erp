@@ -35,7 +35,7 @@ class User
     /**
      * Runtime cache for user brutto/netto status
      *
-     * @var array
+     * @var array<mixed>
      */
     protected static array $userBruttoNettoStatus = [];
 
@@ -53,7 +53,7 @@ class User
         }
 
         if ($User instanceof QUI\Users\Nobody) {
-            $status = QUI::getSession()->get('quiqqer.erp.b2b.status');
+            $status = QUI::getSession()?->get('quiqqer.erp.b2b.status');
 
             if (is_numeric($status)) {
                 return (int)$status;
@@ -70,7 +70,7 @@ class User
             $Package = QUI::getPackage('quiqqer/erp');
             $Config = $Package->getConfig();
 
-            if ($Config->getValue('general', 'businessType') === 'B2B') {
+            if ($Config?->getValue('general', 'businessType') === 'B2B') {
                 self::$userBruttoNettoStatus[$uid] = QUI\ERP\Utils\User::IS_NETTO_USER;
                 return self::$userBruttoNettoStatus[$uid];
             }
@@ -143,7 +143,7 @@ class User
                 $company = $Address->getAttribute('company');
 
                 if (!empty($company)) {
-                    if ($Config->getValue('shop', 'companyForceBruttoPrice')) {
+                    if ($Config?->getValue('shop', 'companyForceBruttoPrice')) {
                         self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
 
                         return self::$userBruttoNettoStatus[$uid];
@@ -160,7 +160,7 @@ class User
                 && isset($Address['company'])
                 && $Address['company'] == 1
             ) {
-                if ($Config->getValue('shop', 'companyForceBruttoPrice')) {
+                if ($Config?->getValue('shop', 'companyForceBruttoPrice')) {
                     self::$userBruttoNettoStatus[$uid] = self::IS_BRUTTO_USER;
 
                     return self::$userBruttoNettoStatus[$uid];
@@ -175,7 +175,7 @@ class User
         }
 
 
-        $isNetto = $Config->getValue('shop', 'isNetto');
+        $isNetto = $Config?->getValue('shop', 'isNetto');
 
         if ($isNetto) {
             self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
@@ -196,7 +196,7 @@ class User
             $Package = QUI::getPackage('quiqqer/erp');
             $Config = $Package->getConfig();
 
-            if ($Config->getValue('general', 'businessType') === 'B2B&B2C') {
+            if ($Config?->getValue('general', 'businessType') === 'B2B&B2C') {
                 self::$userBruttoNettoStatus[$uid] = self::IS_NETTO_USER;
                 return self::$userBruttoNettoStatus[$uid];
             }
@@ -260,10 +260,13 @@ class User
 
 
         $Country = $User->getCountry();
-        $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
 
-        if ($Area) {
-            return $Area;
+        if ($Country) {
+            $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+
+            if ($Area) {
+                return $Area;
+            }
         }
 
         return QUI\ERP\Defaults::getArea();
@@ -273,7 +276,7 @@ class User
      * Return the user ERP address (Invoice address, Accounting address)
      *
      * @param UserInterface $User
-     * @return Address|array|null
+     * @return Address|array<mixed>|null
      * @throws Exception
      * @throws QUI\Permissions\Exception
      */
@@ -317,8 +320,8 @@ class User
      * Filter unwanted user attributes
      * Therefore we can use the attributes in the ERP stack
      *
-     * @param array $attributes
-     * @return array
+     * @param array<mixed> $attributes
+     * @return array<mixed>
      */
     public static function filterCustomerAttributes(array $attributes = []): array
     {
@@ -363,7 +366,7 @@ class User
 
     /**
      * @param UserInterface $User
-     * @param $Address
+     * @param mixed $Address
      */
     public static function setUserCurrentAddress(
         QUI\Interfaces\Users\User $User,
@@ -377,7 +380,7 @@ class User
     }
 
     public static function getUserSalutation(
-        UserInterface | QUI\ERP\Customer\Customers $user,
+        UserInterface $user,
         null | QUI\Locale $locale = null
     ): string {
         $locale = $locale ?: QUI::getLocale();
@@ -389,6 +392,11 @@ class User
 
         try {
             $address = $user->getStandardAddress();
+
+            if ($address === null) {
+                throw new QUI\Exception('User has no standard address');
+            }
+
             $addressSalutation = trim((string)$address->getAttribute('salutation'));
             $addressFirstname = trim((string)$address->getAttribute('firstname'));
             $addressLastname = trim((string)$address->getAttribute('lastname'));

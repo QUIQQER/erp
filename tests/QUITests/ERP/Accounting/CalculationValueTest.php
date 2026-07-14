@@ -52,4 +52,13 @@ class CalculationValueTest extends TestCase
         $this->assertSame(0, $Value->value());
         $this->assertSame(0.0, $Value->get());
     }
+
+    public function testNumericStringsPreserveTheirNumericRepresentation(): void
+    {
+        $Currency = $this->createMock(Currency::class);
+
+        $this->assertSame(19, (new CalculationValue('19', $Currency))->value());
+        $this->assertSame(19.5, (new CalculationValue('19.5', $Currency))->value());
+        $this->assertSame(100.0, (new CalculationValue('1e2', $Currency))->value());
+    }
 }

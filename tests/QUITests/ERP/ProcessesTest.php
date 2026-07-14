@@ -2,6 +2,7 @@
 
 namespace QUITests\ERP;
 
+use Doctrine\DBAL\DriverManager;
 use PHPUnit\Framework\TestCase;
 use QUI\ERP\Processes;
 use QUI\Exception;
@@ -59,5 +60,42 @@ class ProcessesTest extends TestCase
         $result = $Processes->getList();
 
         $this->assertIsArray($result);
+    }
+
+    public function testGetListCatchesDbalExceptionsAndContinues(): void
+    {
+        $Processes = new class () extends Processes {
+            protected function readBooking(): void
+            {
+                DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true])
+                    ->executeQuery('SELECT * FROM missing_table');
+            }
+
+            protected function readInvoices(): void
+            {
+            }
+
+            protected function readOffers(): void
+            {
+            }
+
+            protected function readOrders(): void
+            {
+            }
+
+            protected function readPurchasing(): void
+            {
+            }
+
+            protected function readSalesOrders(): void
+            {
+            }
+
+            protected function readTransactions(): void
+            {
+            }
+        };
+
+        $this->assertSame([], $Processes->getList());
     }
 }

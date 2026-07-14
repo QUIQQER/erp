@@ -21,12 +21,12 @@ class CalculationValue
 
     protected int | float $number = 0;
 
-    protected int | float $precision = 8;
+    protected int $precision = 8;
 
     /**
      * CalculationValue constructor.
      *
-     * @param $number
+     * @param int|float|string $number
      * @param QUI\ERP\Currency\Currency|null $Currency
      * @param bool|int $precision - The optional number of decimal digits to round to.
      */
@@ -39,7 +39,7 @@ class CalculationValue
             return;
         }
 
-        $this->number = $number;
+        $this->number = $number + 0; // Preserve numeric type: "19" -> int, "19.5" -> float.
 
         // precision
         if (is_numeric($precision)) {

@@ -9,6 +9,7 @@ use function array_column;
 use function class_exists;
 use function file_exists;
 use function http_build_query;
+use function in_array;
 use function json_decode;
 use function rename;
 use function unlink;
@@ -67,8 +68,8 @@ class Output
      *
      * @param int|string $entityId
      * @param string $entityType
-     * @param OutputProviderInterface|null $OutputProvider (optional)
-     * @param OutputTemplateProviderInterface|null $TemplateProvider (optional)
+     * @param OutputProviderInterface|string|null $OutputProvider (optional)
+     * @param OutputTemplateProviderInterface|string|null $TemplateProvider (optional)
      * @param string|null $template (optional)
      * @param bool $preview (optional) - Get preview HTML
      *
@@ -79,8 +80,8 @@ class Output
     public static function getDocumentHtml(
         int | string $entityId,
         string $entityType,
-        null | OutputProviderInterface $OutputProvider = null,
-        null | OutputTemplateProviderInterface $TemplateProvider = null,
+        null | string | OutputProviderInterface $OutputProvider = null,
+        null | string | OutputTemplateProviderInterface $TemplateProvider = null,
         null | string $template = null,
         bool $preview = false
     ): string {
@@ -94,6 +95,13 @@ class Output
 
         if (empty($TemplateProvider)) {
             $TemplateProvider = self::getDefaultOutputTemplateProviderForEntityType($entityType);
+        }
+
+        if (
+            (!is_string($OutputProvider) && !($OutputProvider instanceof OutputProviderInterface))
+            || (!is_string($TemplateProvider) && !($TemplateProvider instanceof OutputTemplateProviderInterface))
+        ) {
+            throw new QUI\ERP\Exception('ERP output provider is not available');
         }
 
         if (empty($TemplateProvider)) {
@@ -116,8 +124,8 @@ class Output
      *
      * @param int|string $entityId
      * @param string $entityType
-     * @param OutputProviderInterface|null $OutputProvider (optional)
-     * @param OutputTemplateProviderInterface|null $TemplateProvider (optional)
+     * @param OutputProviderInterface|string|null $OutputProvider (optional)
+     * @param OutputTemplateProviderInterface|string|null $TemplateProvider (optional)
      * @param string|null $template (optional)
      *
      * @return QUI\HtmlToPdf\Document
@@ -127,8 +135,8 @@ class Output
     public static function getDocumentPdf(
         int | string $entityId,
         string $entityType,
-        null | OutputProviderInterface $OutputProvider = null,
-        null | OutputTemplateProviderInterface $TemplateProvider = null,
+        null | string | OutputProviderInterface $OutputProvider = null,
+        null | string | OutputTemplateProviderInterface $TemplateProvider = null,
         null | string $template = null
     ): QUI\HtmlToPdf\Document {
         if (empty($OutputProvider)) {
@@ -137,6 +145,13 @@ class Output
 
         if (empty($TemplateProvider)) {
             $TemplateProvider = self::getDefaultOutputTemplateProviderForEntityType($entityType);
+        }
+
+        if (
+            (!is_string($OutputProvider) && !($OutputProvider instanceof OutputProviderInterface))
+            || (!is_string($TemplateProvider) && !($TemplateProvider instanceof OutputTemplateProviderInterface))
+        ) {
+            throw new QUI\ERP\Exception('ERP output provider is not available');
         }
 
         $OutputTemplate = new OutputTemplate(
@@ -174,8 +189,8 @@ class Output
      *
      * @param int|string $entityId
      * @param string $entityType
-     * @param OutputProviderInterface|null $OutputProvider (optional)
-     * @param OutputTemplateProviderInterface|null $TemplateProvider (optional)
+     * @param OutputProviderInterface|string|null $OutputProvider (optional)
+     * @param OutputTemplateProviderInterface|string|null $TemplateProvider (optional)
      * @param string|null $template (optional)
      * @param string|null $recipientEmail (optional)
      * @param string|null $mailSubject (optional)
@@ -189,8 +204,8 @@ class Output
     public static function sendPdfViaMail(
         int | string $entityId,
         string $entityType,
-        null | OutputProviderInterface $OutputProvider = null,
-        null | OutputTemplateProviderInterface $TemplateProvider = null,
+        null | string | OutputProviderInterface $OutputProvider = null,
+        null | string | OutputTemplateProviderInterface $TemplateProvider = null,
         null | string $template = null,
         null | string $recipientEmail = null,
         null | string $mailSubject = null,
@@ -203,6 +218,13 @@ class Output
 
         if (empty($TemplateProvider)) {
             $TemplateProvider = self::getDefaultOutputTemplateProviderForEntityType($entityType);
+        }
+
+        if (
+            (!is_string($OutputProvider) && !($OutputProvider instanceof OutputProviderInterface))
+            || (!is_string($TemplateProvider) && !($TemplateProvider instanceof OutputTemplateProviderInterface))
+        ) {
+            throw new QUI\ERP\Exception('ERP output provider is not available');
         }
 
         $OutputTemplate = new OutputTemplate(
@@ -220,13 +242,6 @@ class Output
         $mailFile = $pdfDir . $OutputProvider::getDownloadFileName($entityId) . '.pdf';
         rename($pdfFile, $mailFile);
 
-        if (!QUI\Utils\Security\Orthos::checkMailSyntax($recipientEmail)) {
-            throw new QUI\ERP\Exception([
-                'quiqqer/erp',
-                'exception.Output.sendPdfViaMail.recpient_address_invalid'
-            ]);
-        }
-
         if (empty($recipientEmail)) {
             $recipientEmail = $OutputProvider::getEmailAddress($entityId);
         }
@@ -238,8 +253,22 @@ class Output
             ]);
         }
 
+        if (!QUI\Utils\Security\Orthos::checkMailSyntax($recipientEmail)) {
+            throw new QUI\ERP\Exception([
+                'quiqqer/erp',
+                'exception.Output.sendPdfViaMail.recpient_address_invalid'
+            ]);
+        }
+
         // mail send
-        $Mailer = new QUI\Mail\Mailer();
+        $mailerAttributes = [];
+        $Project = self::getProjectForMail($OutputProvider, $entityId);
+
+        if ($Project) {
+            $mailerAttributes['Project'] = $Project;
+        }
+
+        $Mailer = new QUI\Mail\Mailer($mailerAttributes);
 
         $Mailer->addRecipient($recipientEmail);
         $Mailer->addAttachment($mailFile);
@@ -284,6 +313,64 @@ class Output
     }
 
     /**
+     * Resolve the most suitable project context for ERP mails.
+     *
+     * Prefer the document's own project combined with the customer's language.
+     * If that cannot be resolved, fall back to the current rewrite project.
+     */
+    protected static function getProjectForMail(
+        OutputProviderInterface|string $OutputProvider,
+        int | string $entityId
+    ): null | QUI\Projects\Project {
+        try {
+            $Entity = $OutputProvider::getEntity($entityId);
+        } catch (\Exception) {
+            return QUI::getRewrite()->getProject() ?: null;
+        }
+
+        if (!is_object($Entity)) {
+            return QUI::getRewrite()->getProject() ?: null;
+        }
+
+        $projectName = false;
+        $customerLang = false;
+
+        if (method_exists($Entity, 'getAttribute')) {
+            $projectName = $Entity->getAttribute('project_name') ?: false;
+        }
+
+        if (method_exists($Entity, 'getCustomer')) {
+            try {
+                $Customer = $Entity->getCustomer();
+
+                if (is_object($Customer) && method_exists($Customer, 'getLang')) {
+                    $customerLang = $Customer->getLang() ?: false;
+                }
+            } catch (\Exception) {
+            }
+        }
+
+        if ($projectName) {
+            try {
+                $Project = QUI::getRewrite()->getProject();
+
+                if (!$Project || $Project->getName() !== $projectName) {
+                    $Project = QUI::getProjectManager()->getProject($projectName);
+                }
+
+                if ($customerLang && in_array($customerLang, $Project->getLanguages(), true)) {
+                    return QUI::getProjectManager()->getProject($projectName, $customerLang);
+                }
+
+                return $Project;
+            } catch (\Exception) {
+            }
+        }
+
+        return QUI::getRewrite()->getProject() ?: null;
+    }
+
+    /**
      * Get available templates for $entityType (e.g. "Invoice", "InvoiceTemporary" etc.)
      *
      * @param string $package
@@ -308,7 +395,7 @@ class Output
      * Get available templates for $entityType (e.g. "Invoice", "InvoiceTemporary" etc.)
      *
      * @param string|null $entityType (optional) - Restrict to templates of $entityType [default: fetch templates for all entity types]
-     * @return array
+     * @return array<mixed>
      */
     public static function getTemplates(null | string $entityType = null): array
     {
@@ -381,7 +468,7 @@ class Output
      * Return default template id for a specific entity type
      *
      * @param string $entityType
-     * @return array - Containing template ID and template provider package
+     * @return array<mixed> - Containing template ID and template provider package
      */
     public static function getDefaultOutputTemplateForEntityType(string $entityType): array
     {
@@ -393,7 +480,7 @@ class Output
 
         try {
             $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
-            $defaultTemplates = $Conf->get('output', 'default_templates');
+            $defaultTemplates = $Conf?->get('output', 'default_templates');
 
             if (empty($defaultTemplates)) {
                 return $fallBackTemplate;
@@ -445,7 +532,7 @@ class Output
     /**
      * Get all available ERP Output provider classes
      *
-     * @return array - Provider classes
+     * @return array<mixed> - Provider classes
      */
     protected static function getAllOutputProviders(): array
     {
@@ -487,7 +574,7 @@ class Output
     /**
      * Get all available ERP Output Template provider classes
      *
-     * @return array - Provider classes
+     * @return array<mixed> - Provider classes
      */
     protected static function getAllOutputTemplateProviders(): array
     {

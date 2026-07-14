@@ -35,37 +35,37 @@ class PriceTest extends TestCase
     {
         $this->assertEquals(
             10,
-            QUI\ERP\Money\Price::validatePrice(10)
+            QUI\ERP\Money\Price::parsePrice(10)
         );
 
         $this->assertEquals(
             -10,
-            QUI\ERP\Money\Price::validatePrice(-10)
+            QUI\ERP\Money\Price::parsePrice(-10)
         );
 
         $this->assertEquals(
             '10.00',
-            QUI\ERP\Money\Price::validatePrice(10)
+            QUI\ERP\Money\Price::parsePrice(10)
         );
 
         $this->assertEquals(
             '10.10',
-            QUI\ERP\Money\Price::validatePrice(10.1)
+            QUI\ERP\Money\Price::parsePrice(10.1)
         );
 
         $this->assertEquals(
             '5.99',
-            QUI\ERP\Money\Price::validatePrice(5.99)
+            QUI\ERP\Money\Price::parsePrice(5.99)
         );
 
         $this->assertEquals(
             '-5.99',
-            QUI\ERP\Money\Price::validatePrice(-5.99)
+            QUI\ERP\Money\Price::parsePrice(-5.99)
         );
 
         $this->assertEquals(
             '5.9999',
-            QUI\ERP\Money\Price::validatePrice(5.9999)
+            QUI\ERP\Money\Price::parsePrice(5.9999)
         );
     }
 
@@ -75,22 +75,65 @@ class PriceTest extends TestCase
         $Locale->method('getDecimalSeparator')->willReturn(',');
         $Locale->method('getGroupingSeparator')->willReturn('.');
 
-        $this->assertSame(1234.56, Price::validatePrice('1.234,56', $Locale));
-        $this->assertSame(-1234.56, Price::validatePrice('-1.234,56', $Locale));
-        $this->assertSame(1234.0, Price::validatePrice('1.234', $Locale));
+        $this->assertSame(1234.56, Price::parsePrice('1.234,56', $Locale));
+        $this->assertSame(-1234.56, Price::parsePrice('-1.234,56', $Locale));
+        $this->assertSame(1234.0, Price::parsePrice('1.234', $Locale));
+        $this->assertSame(12.5, Price::parsePrice('Preis: 12,50 €', $Locale));
+    }
+
+    public function testValidatePriceWithLegacyDecimalSeparatorArray(): void
+    {
+        $testCases = [
+            [[','], '.', '1.234,56', 1234.56],
+            [['.'], ',', '1,234.56', 1234.56],
+            [[','], '.', '1.000.000,00', 1000000.0],
+            [['.'], ',', '1,000,000.00', 1000000.0],
+            [[','], '.', '-1.000.000,00', -1000000.0],
+            [['.'], ',', '-1,000,000.00', -1000000.0]
+        ];
+
+        foreach ($testCases as [$decimalSeparator, $groupingSeparator, $price, $expected]) {
+            $Locale = $this->createMock(QUI\Locale::class);
+            $Locale->method('getDecimalSeparator')->willReturn($decimalSeparator);
+            $Locale->method('getGroupingSeparator')->willReturn($groupingSeparator);
+
+            $this->assertSame($expected, Price::parsePrice($price, $Locale));
+        }
     }
 
     public function testValidatePriceWithEmptyAndInvalidValues(): void
     {
-        $this->assertNull(Price::validatePrice(''));
-        $this->assertNull(Price::validatePrice('foo-bar'));
+        $this->assertNull(Price::parsePrice(''));
+        $this->assertNull(Price::parsePrice('foo-bar'));
     }
 
     public function testValidatePriceAcceptsPriceInstance(): void
     {
         $PriceObject = $this->createPriceObject(4.56789);
 
-        $this->assertSame(4.56789, Price::validatePrice($PriceObject));
+        $this->assertSame(4.56789, Price::parsePrice($PriceObject));
+    }
+
+    public function testDeprecatedValidatePriceDelegatesToParsePrice(): void
+    {
+        $Locale = $this->createMock(QUI\Locale::class);
+        $Locale->method('getDecimalSeparator')->willReturn(',');
+        $Locale->method('getGroupingSeparator')->willReturn('.');
+
+        $this->assertSame(
+            Price::parsePrice('1.234,56', $Locale),
+            Price::validatePrice('1.234,56', $Locale)
+        );
+    }
+
+    public function testNullConstructorPriceIsExposedAsZero(): void
+    {
+        $Currency = $this->createMock(Currency::class);
+        $Price = new Price(null, $Currency);
+
+        $this->assertSame(0.0, $Price->getPrice());
+        $this->assertSame(0.0, $Price->value());
+        $this->assertSame(0.0, $Price->getValue());
     }
 
     public function testMinimalPriceStateCanBeToggled(): void

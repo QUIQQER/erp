@@ -22,7 +22,7 @@ use function method_exists;
 class Article implements ArticleInterface
 {
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected array $attributes = [
         'id' => '',
@@ -36,14 +36,14 @@ class Article implements ArticleInterface
      *
      * in a custom field are only allowed string and numeric values
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $customFields = [];
 
     /**
      * Custom data for plugins and modules
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $customData = [];
 
@@ -108,7 +108,7 @@ class Article implements ArticleInterface
     protected float | int $nettoBasisPrice = 0;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected mixed $vatArray = [];
 
@@ -142,7 +142,7 @@ class Article implements ArticleInterface
     /**
      * Article constructor.
      *
-     * @param array $attributes - (id, articleNo, title, description, unitPrice, nettoPriceNotRounded, quantity, discount, customData)
+     * @param array<mixed> $attributes - (id, articleNo, title, description, unitPrice, nettoPriceNotRounded, quantity, discount, customData)
      * @throws Exception
      */
     public function __construct(array $attributes = [])
@@ -341,7 +341,7 @@ class Article implements ArticleInterface
 
         try {
             $Product = QUI\ERP\Products\Handler\Products::getProductByProductNo(
-                $this->getArticleNo()
+                (string)$this->getArticleNo()
             );
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
@@ -356,7 +356,7 @@ class Article implements ArticleInterface
 
         try {
             $Project = QUI::getRewrite()->getProject();
-            $PlaceholderImage = $Project->getMedia()->getPlaceholderImage();
+            $PlaceholderImage = $Project?->getMedia()?->getPlaceholderImage();
 
             if ($PlaceholderImage instanceof QUI\Projects\Media\Image) {
                 return $PlaceholderImage;
@@ -395,7 +395,7 @@ class Article implements ArticleInterface
             $unitPrice = $this->attributes['unitPrice'];
         }
 
-        return new Price($unitPrice, $this->Currency);
+        return new Price($unitPrice, $this->getCurrency());
     }
 
     /**
@@ -406,18 +406,18 @@ class Article implements ArticleInterface
     public function getUnitPriceUnRounded(): Price
     {
         if (isset($this->attributes['nettoPriceNotRounded'])) {
-            return new Price($this->attributes['nettoPriceNotRounded'], $this->Currency);
+            return new Price($this->attributes['nettoPriceNotRounded'], $this->getCurrency());
         }
 
         if ($this->nettoPriceNotRounded !== null) {
-            return new Price($this->nettoPriceNotRounded, $this->Currency);
+            return new Price($this->nettoPriceNotRounded, $this->getCurrency());
         }
 
         if (isset($this->attributes['unitPrice'])) {
             $this->nettoPriceNotRounded = $this->attributes['unitPrice'];
         }
 
-        return new Price($this->nettoPriceNotRounded, $this->Currency);
+        return new Price($this->nettoPriceNotRounded, $this->getCurrency());
     }
 
     /**
@@ -429,7 +429,7 @@ class Article implements ArticleInterface
     {
         $this->calc();
 
-        return new Price($this->sum, $this->Currency);
+        return new Price($this->sum, $this->getCurrency());
     }
 
     /**
@@ -448,8 +448,14 @@ class Article implements ArticleInterface
             try {
                 $Area = null;
 
-                if ($this->getUser()) {
-                    $Area = QUI\ERP\Areas\Utils::getAreaByCountry($this->getUser()->getCountry());
+                $User = $this->getUser();
+
+                if ($User) {
+                    $Country = $User->getCountry();
+
+                    if ($Country) {
+                        $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+                    }
                 }
 
                 if (!$Area) {
@@ -508,11 +514,11 @@ class Article implements ArticleInterface
     /**
      * Return the currency of the article
      *
-     * @return QUI\ERP\Currency\Currency|null
+     * @return QUI\ERP\Currency\Currency
      */
-    public function getCurrency(): ?QUI\ERP\Currency\Currency
+    public function getCurrency(): QUI\ERP\Currency\Currency
     {
-        return $this->Currency;
+        return $this->Currency ?? QUI\ERP\Defaults::getCurrency();
     }
 
     /**
@@ -584,7 +590,7 @@ class Article implements ArticleInterface
     {
         $this->calc();
 
-        return new Price($this->sum, $this->Currency);
+        return new Price($this->sum, $this->getCurrency());
     }
 
     /**
@@ -694,7 +700,7 @@ class Article implements ArticleInterface
     /**
      * Return the article as an array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {
@@ -706,7 +712,7 @@ class Article implements ArticleInterface
         }
 
         if ($this->hasDiscount()) {
-            $discount = $this->Discount->toJSON();
+            $discount = $this->Discount?->toJSON() ?? '';
         }
 
         $class = get_called_class();
@@ -780,7 +786,7 @@ class Article implements ArticleInterface
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getCustomFields(): array
     {
@@ -788,7 +794,7 @@ class Article implements ArticleInterface
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getCustomData(): array
     {

@@ -12,7 +12,7 @@ use QUI\ERP\Processes;
  * @param string $hash - Entity hash
  * @return array
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_customerFiles_addFile',
     function ($hash, $fileHash) {
         $Entity = (new Processes())->getEntity($hash);

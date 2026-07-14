@@ -1,35 +1,14 @@
 includes:
-	- phpstan-baseline.neon
+    - phpstan-baseline.neon
 
 parameters:
-    level: 5
+    level: 8
+    phpVersion:
+        min: 80200
+        max: 80509
     paths:
         - src
         - ajax
     bootstrapFiles:
         - tests/phpstan-bootstrap.php
     treatPhpDocTypesAsCertain: false
-    customRulesetUsed: true
-    reportUnmatchedIgnoredErrors: false
-services:
-    -
-        class: \PHPStan\Rules\Properties\TypesAssignedToPropertiesRule
-        tags:
-            - phpstan.rules.rule
-    -
-        class: \PHPStan\Rules\Functions\ArrowFunctionReturnTypeRule
-        tags:
-            - phpstan.rules.rule
-    -
-        class: \PHPStan\Rules\Functions\ClosureReturnTypeRule
-        tags:
-            - phpstan.rules.rule
-    -
-        class: \PHPStan\Rules\Functions\ReturnTypeRule
-        tags:
-            - phpstan.rules.rule
-    -
-        class: \PHPStan\Rules\Methods\ReturnTypeRule
-        tags:
-            - phpstan.rules.rule
-

@@ -30,7 +30,7 @@ trait ErpEntityCustomerFiles // @phpstan-ignore-line
      * Add a customer file to this invoice
      *
      * @param string $fileHash - SHA256 hash of the file basename
-     * @param array $options (optional) - File options; see $defaultOptions in code for what's possible
+     * @param array<mixed> $options (optional) - File options; see $defaultOptions in code for what's possible
      *
      * @throws Exception
      * @throws QUI\Exception
@@ -58,7 +58,7 @@ trait ErpEntityCustomerFiles // @phpstan-ignore-line
     }
 
     /**
-     * @param array $files
+     * @param array<mixed> $files
      * @return void
      *
      * @throws Exception
@@ -111,7 +111,7 @@ trait ErpEntityCustomerFiles // @phpstan-ignore-line
      *
      * @param bool $parsing -  true = parses the file hash
      * ]
-     * @return array - Contains file hash and file options
+     * @return array<mixed> - Contains file hash and file options
      */
     public function getCustomerFiles(bool $parsing = false): array
     {
@@ -152,8 +152,8 @@ trait ErpEntityCustomerFiles // @phpstan-ignore-line
     /**
      * cleans a customer files option array
      *
-     * @param array $options
-     * @return array
+     * @param array<mixed> $options
+     * @return array<mixed>
      */
     protected function cleanCustomerFilesOptions(array $options = []): array
     {

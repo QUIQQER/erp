@@ -19,7 +19,7 @@ class Process
      * Return all information about a process
      *
      * @param string $hash - process hash
-     * @return array
+     * @return array<string, mixed>
      *
      * @deprecated
      */

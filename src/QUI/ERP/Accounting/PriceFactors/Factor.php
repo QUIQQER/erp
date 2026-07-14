@@ -12,6 +12,7 @@ use QUI\Utils\Math;
 
 use function abs;
 use function floatval;
+use function is_numeric;
 use function is_string;
 use function json_encode;
 
@@ -25,7 +26,7 @@ class Factor
     protected mixed $description = '';
     protected int|float $sum = 0;
     protected mixed $sumFormatted = '';
-    protected mixed $nettoSum = '';
+    protected int|float $nettoSum = 0;
     protected string $nettoSumFormatted = '';
     protected int $visible = 1;
     protected float|bool $vat = false;
@@ -50,7 +51,7 @@ class Factor
     /**
      * FactorList constructor.
      *
-     * @param array $data
+     * @param array<mixed> $data
      *
      * @throws Exception
      */
@@ -81,9 +82,9 @@ class Factor
 
         $this->title = $data['title'];
         $this->description = $data['description'];
-        $this->sum = $data['sum'];
+        $this->sum = $this->normalizeAmount($data['sum'], 'sum');
         $this->sumFormatted = $data['sumFormatted'];
-        $this->nettoSum = $data['nettoSum'];
+        $this->nettoSum = $this->normalizeAmount($data['nettoSum'], 'nettoSum');
         $this->nettoSumFormatted = $data['nettoSumFormatted'];
         $this->visible = (int)$data['visible'];
         $this->value = $data['value'];
@@ -148,9 +149,9 @@ class Factor
     /**
      * Return the sum
      *
-     * @return float|int|string
+     * @return float|int
      */
-    public function getSum(): float|int|string
+    public function getSum(): float|int
     {
         if ($this->euVat) {
             return $this->getNettoSum();
@@ -172,11 +173,27 @@ class Factor
     /**
      * Return the netto sum
      *
-     * @return float|int|string
+     * @return float|int
      */
-    public function getNettoSum(): float|int|string
+    public function getNettoSum(): float|int
     {
         return $this->nettoSum;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function normalizeAmount(mixed $amount, string $field): float|int
+    {
+        if (!is_numeric($amount)) {
+            throw new Exception(
+                'QUI\ERP\Accounting\PriceFactors\Factor ' . $field . ' must be numeric',
+                500,
+                [$field => $amount]
+            );
+        }
+
+        return $amount + 0; // Preserve numeric type: "19" -> int, "19.5" -> float.
     }
 
     /**
@@ -255,7 +272,7 @@ class Factor
     /**
      * Return the Factor as an array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {
@@ -283,7 +300,7 @@ class Factor
      */
     public function toJSON(): string
     {
-        return json_encode($this->toArray());
+        return json_encode($this->toArray()) ?: '';
     }
 
     //region eu vat
