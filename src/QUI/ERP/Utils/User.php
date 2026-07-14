@@ -260,10 +260,13 @@ class User
 
 
         $Country = $User->getCountry();
-        $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
 
-        if ($Area) {
-            return $Area;
+        if ($Country) {
+            $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+
+            if ($Area) {
+                return $Area;
+            }
         }
 
         return QUI\ERP\Defaults::getArea();

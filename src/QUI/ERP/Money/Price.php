@@ -12,6 +12,7 @@ use QUI\ERP\Discount\Discount;
 use QUI\Interfaces\Users\User;
 
 use function floatval;
+use function is_array;
 use function is_float;
 use function is_int;
 use function mb_strpos;
@@ -213,7 +214,7 @@ class Price
         $isNegative = str_starts_with($value, '-');
 
         // value cleanup
-        $value = preg_replace('#[^\d,.]#i', '', $value);
+        $value = preg_replace('#[^\d,.]#i', '', $value) ?? '';
 
         if (trim($value) === '') {
             return null;
@@ -231,6 +232,12 @@ class Price
 
         $decimalSeparator = $Locale->getDecimalSeparator();
         $thousandSeparator = $Locale->getGroupingSeparator();
+
+        if (is_array($decimalSeparator)) {
+            $decimalSeparator = isset($decimalSeparator[0])
+                ? (string)$decimalSeparator[0]
+                : '';
+        }
 
         $decimal = mb_strpos($value, $decimalSeparator);
         $thousands = mb_strpos($value, $thousandSeparator);

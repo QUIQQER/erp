@@ -80,6 +80,22 @@ class PriceTest extends TestCase
         $this->assertSame(1234.0, Price::validatePrice('1.234', $Locale));
     }
 
+    public function testValidatePriceWithLegacyDecimalSeparatorArray(): void
+    {
+        $testCases = [
+            [[','], '.', '1.234,56'],
+            [['.'], ',', '1,234.56']
+        ];
+
+        foreach ($testCases as [$decimalSeparator, $groupingSeparator, $price]) {
+            $Locale = $this->createMock(QUI\Locale::class);
+            $Locale->method('getDecimalSeparator')->willReturn($decimalSeparator);
+            $Locale->method('getGroupingSeparator')->willReturn($groupingSeparator);
+
+            $this->assertSame(1234.56, Price::validatePrice($price, $Locale));
+        }
+    }
+
     public function testValidatePriceWithEmptyAndInvalidValues(): void
     {
         $this->assertNull(Price::validatePrice(''));
