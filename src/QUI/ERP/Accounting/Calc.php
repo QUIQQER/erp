@@ -7,6 +7,7 @@
 namespace QUI\ERP\Accounting;
 
 use DateTime;
+use Doctrine\DBAL\Exception as DbalException;
 use Exception;
 use QUI;
 use QUI\ERP\Accounting\Invoice\Handler;
@@ -984,12 +985,12 @@ class Calc
         // workaround fix
         if ($ToCalculate->getAttribute('paid_date') != $paidDate) {
             try {
-                QUI::getDataBase()->update(
+                QUI::getDataBaseConnection()->update(
                     Handler::getInstance()->invoiceTable(),
                     ['paid_date' => $paidDate],
                     ['id' => $ToCalculate->getCleanId()]
                 );
-            } catch (QUI\Database\Exception $Exception) {
+            } catch (DbalException $Exception) {
                 QUI\System\Log::writeException($Exception);
 
                 throw new QUI\ERP\Exception(

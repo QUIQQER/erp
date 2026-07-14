@@ -6,6 +6,7 @@
 
 namespace QUI\ERP;
 
+use Doctrine\DBAL\Exception as DbalException;
 use QUI;
 use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
 use QUI\ERP\Accounting\Offers\Handler as OfferHandler;
@@ -14,6 +15,7 @@ use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\ERP\SalesOrders\Handler as SalesOrdersHandler;
 use QUI\Exception;
 
+use function array_map;
 use function class_exists;
 use function strtotime;
 
@@ -224,7 +226,7 @@ class Processes
      * Rads all invoices
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readInvoices(): void
     {
@@ -235,10 +237,10 @@ class Processes
             return;
         }
 
-        $invoices = QUI::getDatabase()->fetch([
-            'select' => 'hash,global_process_id,date',
-            'from' => InvoiceHandler::getInstance()->invoiceTable()
-        ]);
+        $invoices = $this->fetchAllAssociative(
+            InvoiceHandler::getInstance()->invoiceTable(),
+            ['hash', 'global_process_id', 'date']
+        );
 
         foreach ($invoices as $invoice) {
             $gpi = $invoice['global_process_id'];
@@ -264,7 +266,7 @@ class Processes
      * Rads all invoices
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readOrders(): void
     {
@@ -275,10 +277,10 @@ class Processes
             return;
         }
 
-        $orders = QUI::getDatabase()->fetch([
-            'select' => 'hash,global_process_id,c_date',
-            'from' => OrderHandler::getInstance()->table()
-        ]);
+        $orders = $this->fetchAllAssociative(
+            OrderHandler::getInstance()->table(),
+            ['hash', 'global_process_id', 'c_date']
+        );
 
         foreach ($orders as $order) {
             $gpi = $order['global_process_id'];
@@ -304,7 +306,7 @@ class Processes
      * Read all offers
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readOffers(): void
     {
@@ -315,10 +317,10 @@ class Processes
             return;
         }
 
-        $offers = QUI::getDatabase()->fetch([
-            'select' => 'hash,global_process_id,date',
-            'from' => OfferHandler::getInstance()->offersTable()
-        ]);
+        $offers = $this->fetchAllAssociative(
+            OfferHandler::getInstance()->offersTable(),
+            ['hash', 'global_process_id', 'date']
+        );
 
         foreach ($offers as $offer) {
             $gpi = $offer['global_process_id'];
@@ -344,7 +346,7 @@ class Processes
      * Read all sales orders
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readSalesOrders(): void
     {
@@ -355,10 +357,10 @@ class Processes
             return;
         }
 
-        $salesOrders = QUI::getDatabase()->fetch([
-            'select' => 'hash,global_process_id,date',
-            'from' => SalesOrdersHandler::getTableSalesOrders()
-        ]);
+        $salesOrders = $this->fetchAllAssociative(
+            SalesOrdersHandler::getTableSalesOrders(),
+            ['hash', 'global_process_id', 'date']
+        );
 
         foreach ($salesOrders as $salesOrder) {
             $gpi = $salesOrder['global_process_id'];
@@ -384,7 +386,7 @@ class Processes
      * Read all sales orders
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readTransactions(): void
     {
@@ -395,10 +397,10 @@ class Processes
             return;
         }
 
-        $transactions = QUI::getDatabase()->fetch([
-            'select' => 'hash,global_process_id,date',
-            'from' => TransactionFactory::table()
-        ]);
+        $transactions = $this->fetchAllAssociative(
+            TransactionFactory::table(),
+            ['hash', 'global_process_id', 'date']
+        );
 
         foreach ($transactions as $transaction) {
             $gpi = $transaction['global_process_id'];
@@ -424,7 +426,7 @@ class Processes
      * Read all purchases
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readPurchasing(): void
     {
@@ -436,10 +438,10 @@ class Processes
             return;
         }
 
-        $purchasing = QUI::getDatabase()->fetch([
-            'select' => 'hash,global_process_id,date',
-            'from' => QUI\ERP\Purchasing\Processes\Handler::getTablePurchasingProcesses()
-        ]);
+        $purchasing = $this->fetchAllAssociative(
+            QUI\ERP\Purchasing\Processes\Handler::getTablePurchasingProcesses(),
+            ['hash', 'global_process_id', 'date']
+        );
 
         foreach ($purchasing as $entry) {
             $gpi = $entry['global_process_id'];
@@ -465,7 +467,7 @@ class Processes
      * Read all purchases
      *
      * @return void
-     * @throws QUI\Database\Exception
+     * @throws DbalException
      */
     protected function readBooking(): void
     {
@@ -477,10 +479,10 @@ class Processes
             return;
         }
 
-        $bookings = QUI::getDatabase()->fetch([
-            'select' => 'uuid,globalProcessId,createDate',
-            'from' => QUI\ERP\Booking\Table::BOOKINGS->tableName(),
-        ]);
+        $bookings = $this->fetchAllAssociative(
+            QUI\ERP\Booking\Table::BOOKINGS->tableName(),
+            ['uuid', 'globalProcessId', 'createDate']
+        );
 
         foreach ($bookings as $booking) {
             $gpi = $booking['globalProcessId'];
@@ -505,6 +507,22 @@ class Processes
     //endregion
 
     //region utils
+
+    /**
+     * @param array<string> $columns
+     * @return array<array<string, mixed>>
+     * @throws DbalException
+     */
+    private function fetchAllAssociative(string $table, array $columns): array
+    {
+        $quote = static fn(string $identifier): string => QUI\Utils\Doctrine::quoteIdentifier($identifier);
+
+        return QUI::getQueryBuilder()
+            ->select(...array_map($quote, $columns))
+            ->from($quote($table))
+            ->executeQuery()
+            ->fetchAllAssociative();
+    }
 
     /**
      * @param string|null $date1

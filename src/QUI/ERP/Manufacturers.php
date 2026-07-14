@@ -2,8 +2,9 @@
 
 namespace QUI\ERP;
 
+use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\ParameterType;
 use IntlDateFormatter;
-use PDO;
 use QUI;
 use QUI\ERP\Products\Handler\Fields;
 use QUI\Utils\Security\Orthos;
@@ -23,6 +24,7 @@ use function in_array;
 use function is_array;
 use function sort;
 use function str_replace;
+use function strtoupper;
 use function trim;
 
 /**
@@ -197,7 +199,7 @@ class Manufacturers
      *
      * @param array<mixed> $searchParams
      * @param bool $countOnly (optional) - get count for search result only [default: false]
-     * @return int[]|int - Manufacturer user IDs or count
+     * @return array<int, array<string, mixed>>|int - Manufacturer data or count
      */
     public static function search(array $searchParams, bool $countOnly = false): array|int
     {
@@ -205,34 +207,46 @@ class Manufacturers
         $gridParams = $Grid->parseDBParams($searchParams);
         $usersTbl = QUI::getDBTableName('users');
         $usersAddressTbl = QUI::getDBTableName('users_address');
-        $binds = [];
-        $where = [];
+        $QueryBuilder = QUI::getQueryBuilder();
+        $quote = static fn(string $identifier): string => QUI\Utils\Doctrine::quoteIdentifier($identifier);
+        $column = static fn(string $alias, string $name): string => $alias . '.' . $quote($name);
 
         if ($countOnly) {
-            $sql = "SELECT COUNT(*)";
+            $QueryBuilder->select('COUNT(*)');
         } else {
-            $sql = "SELECT u.`id`, u.`firstname`, u.`lastname`, u.`email`, u.`username`, ua.`company`, u.`usergroup`";
-            $sql .= ", u.`active`, u.`regdate`";
+            $QueryBuilder->select(
+                $column('u', 'id'),
+                $column('u', 'firstname'),
+                $column('u', 'lastname'),
+                $column('u', 'email'),
+                $column('u', 'username'),
+                $column('ua', 'company'),
+                $column('u', 'usergroup'),
+                $column('u', 'active'),
+                $column('u', 'regdate')
+            );
         }
 
-        $sql .= " FROM `" . $usersTbl . "` as u LEFT JOIN `" . $usersAddressTbl . "` as ua ON u.`address` = ua.`id`";
+        $QueryBuilder
+            ->from($quote($usersTbl), 'u')
+            ->leftJoin(
+                'u',
+                $quote($usersAddressTbl),
+                'ua',
+                $column('u', 'address') . ' = ' . $column('ua', 'id')
+            );
 
         // Only fetch users in manufacturer groups
-        $gc = 0;
-        $whereOr = [];
+        $groupExpressions = [];
 
-        foreach (self::getManufacturerGroupIds() as $groupId) {
-            $whereOr[] = "u.`usergroup` LIKE :group" . $gc;
-            $bind = 'group' . $gc++;
-
-            $binds[$bind] = [
-                'value' => '%,' . $groupId . ',%',
-                'type' => PDO::PARAM_STR
-            ];
+        foreach (self::getManufacturerGroupIds() as $index => $groupId) {
+            $parameter = 'group' . $index;
+            $groupExpressions[] = $QueryBuilder->expr()->like($column('u', 'usergroup'), ':' . $parameter);
+            $QueryBuilder->setParameter($parameter, '%,' . $groupId . ',%', ParameterType::STRING);
         }
 
-        if (!empty($whereOr)) {
-            $where[] = "(" . implode(" OR ", $whereOr) . ")";
+        if (!empty($groupExpressions)) {
+            $QueryBuilder->andWhere($QueryBuilder->expr()->or(...$groupExpressions));
         }
 
         // User search
@@ -256,14 +270,14 @@ class Manufacturers
 
                 if ($DateFrom) {
                     $DateFrom->setTime(0, 0, 0);
-
-                    $bind = 'datefrom';
-                    $where[] = 'u.`regdate` >= :' . $bind;
-
-                    $binds[$bind] = [
-                        'value' => $DateFrom->getTimestamp(),
-                        'type' => PDO::PARAM_INT
-                    ];
+                    $QueryBuilder->andWhere(
+                        $QueryBuilder->expr()->gte($column('u', 'regdate'), ':dateFrom')
+                    );
+                    $QueryBuilder->setParameter(
+                        'dateFrom',
+                        $DateFrom->getTimestamp(),
+                        ParameterType::INTEGER
+                    );
                 }
             }
 
@@ -272,120 +286,98 @@ class Manufacturers
 
                 if ($DateTo) {
                     $DateTo->setTime(23, 59, 59);
-
-                    $bind = 'dateto';
-                    $where[] = 'u.`regdate` <= :' . $bind;
-
-                    $binds[$bind] = [
-                        'value' => $DateTo->getTimestamp(),
-                        'type' => PDO::PARAM_INT
-                    ];
+                    $QueryBuilder->andWhere(
+                        $QueryBuilder->expr()->lte($column('u', 'regdate'), ':dateTo')
+                    );
+                    $QueryBuilder->setParameter(
+                        'dateTo',
+                        $DateTo->getTimestamp(),
+                        ParameterType::INTEGER
+                    );
                 }
             }
         }
 
         if (!empty($searchParams['search'])) {
             $searchValue = $searchParams['search'];
-            $fc = 0;
-            $whereOr = [];
+            $searchExpressions = [];
 
             // search value filters
             foreach ($searchFields as $filter) {
-                $bind = 'filter' . $fc;
-
                 switch ($filter) {
                     case 'id':
                     case 'username':
                     case 'firstname':
                     case 'lastname':
                     case 'email':
-                        $whereOr[] = 'u.`' . $filter . '` LIKE :' . $bind;
+                        $searchExpressions[] = $QueryBuilder->expr()->like(
+                            $column('u', $filter),
+                            ':search'
+                        );
                         break;
 
                     case 'company':
-                        $whereOr[] = 'ua.`' . $filter . '` LIKE :' . $bind;
+                        $searchExpressions[] = $QueryBuilder->expr()->like(
+                            $column('ua', $filter),
+                            ':search'
+                        );
                         break;
 
                     default:
                         continue 2;
                 }
-
-                $binds[$bind] = [
-                    'value' => '%' . $searchValue . '%',
-                    'type' => PDO::PARAM_STR
-                ];
-
-                $fc++;
             }
 
-            if (!empty($whereOr)) {
-                $where[] = "(" . implode(" OR ", $whereOr) . ")";
+            if (!empty($searchExpressions)) {
+                $QueryBuilder->andWhere($QueryBuilder->expr()->or(...$searchExpressions));
+                $QueryBuilder->setParameter('search', '%' . $searchValue . '%', ParameterType::STRING);
             }
-        }
-
-        // build WHERE query string
-        if (!empty($where)) {
-            $sql .= " WHERE " . implode(" AND ", $where);
         }
 
         // ORDER
-        if (!empty($searchParams['sortOn'])) {
-            $sortOn = Orthos::clear($searchParams['sortOn']);
+        $sortColumns = [
+            'id' => $column('u', 'id'),
+            'username' => $column('u', 'username'),
+            'firstname' => $column('u', 'firstname'),
+            'lastname' => $column('u', 'lastname'),
+            'email' => $column('u', 'email'),
+            'company' => $column('ua', 'company')
+        ];
+        $sortOn = (string)($searchParams['sortOn'] ?? '');
 
-            switch ($sortOn) {
-                case 'id':
-                case 'username':
-                case 'firstname':
-                case 'lastname':
-                case 'email':
-                    $sortOn = 'u.`' . $sortOn . '`';
-                    break;
-
-                case 'company':
-                    $sortOn = 'ua.`' . $sortOn . '`';
-                    break;
-            }
-
-            $order = "ORDER BY " . $sortOn;
-
-            if (!empty($searchParams['sortBy'])) {
-                $order .= " " . Orthos::clear($searchParams['sortBy']);
-            } else {
-                $order .= " ASC";
-            }
-
-            $sql .= " " . $order;
+        if (!$countOnly && isset($sortColumns[$sortOn])) {
+            $sortBy = strtoupper((string)($searchParams['sortBy'] ?? 'ASC')) === 'DESC' ? 'DESC' : 'ASC';
+            $QueryBuilder->orderBy($sortColumns[$sortOn], $sortBy);
         }
 
         // LIMIT
-        if (!empty($gridParams['limit']) && !$countOnly) {
-            $sql .= " LIMIT " . $gridParams['limit'];
-        } else {
-            if (!$countOnly) {
-                $sql .= " LIMIT " . 20;
+        if (!$countOnly) {
+            if (!empty($gridParams['limit'])) {
+                $limit = explode(',', (string)$gridParams['limit'], 2);
+
+                if (isset($limit[1])) {
+                    $QueryBuilder->setFirstResult((int)$limit[0]);
+                    $QueryBuilder->setMaxResults((int)$limit[1]);
+                } else {
+                    $QueryBuilder->setMaxResults((int)$limit[0]);
+                }
+            } else {
+                $QueryBuilder->setMaxResults(20);
             }
         }
 
-        $Stmt = QUI::getPDO()->prepare($sql);
-
-        // bind search values
-        foreach ($binds as $var => $bind) {
-            $Stmt->bindValue(':' . $var, $bind['value'], $bind['type']);
-        }
-
         try {
-            $Stmt->execute();
-            $result = $Stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $Exception) {
+            $Result = $QueryBuilder->executeQuery();
+        } catch (DbalException $Exception) {
             QUI\System\Log::writeException($Exception);
             return [];
         }
 
         if ($countOnly) {
-            return (int)current(current($result));
+            return (int)$Result->fetchOne();
         }
 
-        return $result;
+        return $Result->fetchAllAssociative();
     }
 
     /**

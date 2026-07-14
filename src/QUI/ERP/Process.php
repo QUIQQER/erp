@@ -6,6 +6,7 @@
 
 namespace QUI\ERP;
 
+use Doctrine\DBAL\Exception as DbalException;
 use QUI;
 
 use function array_filter;
@@ -54,6 +55,34 @@ class Process
     protected function table(): string
     {
         return QUI::getDBTableName('process');
+    }
+
+    /**
+     * Fetches entries whose process column or own identifier matches this process ID.
+     *
+     * @param array<string> $columns
+     * @return array<array<string, mixed>>
+     * @throws DbalException
+     */
+    private function fetchProcessEntriesByProcessIdOrIdentifier(
+        string $table,
+        array $columns,
+        string $processColumn = 'global_process_id',
+        string $identifierColumn = 'hash'
+    ): array {
+        $QueryBuilder = QUI::getQueryBuilder();
+        $quote = static fn(string $identifier): string => QUI\Utils\Doctrine::quoteIdentifier($identifier);
+
+        return $QueryBuilder
+            ->select(...array_map($quote, $columns))
+            ->from($quote($table))
+            ->where($QueryBuilder->expr()->or(
+                $QueryBuilder->expr()->eq($quote($processColumn), ':processId'),
+                $QueryBuilder->expr()->eq($quote($identifierColumn), ':processId')
+            ))
+            ->setParameter('processId', $this->processId)
+            ->executeQuery()
+            ->fetchAllAssociative();
     }
 
     public function getUUID(): string
@@ -244,12 +273,12 @@ class Process
         $this->getHistory()->addComment($message, $time);
 
         try {
-            QUI::getDataBase()->update(
+            QUI::getDataBaseConnection()->update(
                 $this->table(),
                 ['history' => $this->getHistory()->toJSON()],
                 ['id' => $this->processId]
             );
-        } catch (\QUI\Exception $Exception) {
+        } catch (DbalException $Exception) {
             QUI\System\Log::addError($Exception->getMessage());
         }
     }
@@ -268,22 +297,24 @@ class Process
             $history = '';
 
             try {
-                $result = QUI::getDataBase()->fetch([
-                    'from' => $this->table(),
-                    'where' => [
-                        'id' => $this->processId
-                    ],
-                    'limit' => 1
-                ]);
+                $Connection = QUI::getDataBaseConnection();
+                $result = $Connection->createQueryBuilder()
+                    ->select('history')
+                    ->from($this->table())
+                    ->where('id = :processId')
+                    ->setParameter('processId', $this->processId)
+                    ->setMaxResults(1)
+                    ->executeQuery()
+                    ->fetchAssociative();
 
-                if (isset($result[0]['history'])) {
-                    $history = $result[0]['history'];
-                } elseif (!isset($result[0])) {
-                    QUI::getDataBase()->insert($this->table(), [
+                if ($result !== false) {
+                    $history = (string)$result['history'];
+                } else {
+                    $Connection->insert($this->table(), [
                         'id' => $this->processId
                     ]);
                 }
-            } catch (\QUI\Exception $Exception) {
+            } catch (DbalException $Exception) {
                 QUI\System\Log::addError($Exception->getMessage());
             }
 
@@ -616,14 +647,10 @@ class Process
         }
 
         try {
-            $offers = QUI::getDatabase()->fetch([
-                'select' => 'id,hash,global_process_id,date',
-                'from' => QUI\ERP\Accounting\Offers\Handler::getInstance()->offersTable(),
-                'where_or' => [
-                    'global_process_id' => $this->processId,
-                    'hash' => $this->processId
-                ]
-            ]);
+            $offers = $this->fetchProcessEntriesByProcessIdOrIdentifier(
+                QUI\ERP\Accounting\Offers\Handler::getInstance()->offersTable(),
+                ['id', 'hash', 'global_process_id', 'date']
+            );
         } catch (\Exception) {
             $offers = [];
         }
@@ -640,14 +667,10 @@ class Process
 
         // temporary
         try {
-            $temporaryOffers = QUI::getDatabase()->fetch([
-                'select' => 'id,hash,global_process_id,date',
-                'from' => QUI\ERP\Accounting\Offers\Handler::getInstance()->temporaryOffersTable(),
-                'where_or' => [
-                    'global_process_id' => $this->processId,
-                    'hash' => $this->processId
-                ]
-            ]);
+            $temporaryOffers = $this->fetchProcessEntriesByProcessIdOrIdentifier(
+                QUI\ERP\Accounting\Offers\Handler::getInstance()->temporaryOffersTable(),
+                ['id', 'hash', 'global_process_id', 'date']
+            );
         } catch (\Exception) {
             $temporaryOffers = [];
         }
@@ -723,14 +746,12 @@ class Process
         }
 
         try {
-            $bookings = QUI::getDatabase()->fetch([
-                'select' => 'uuid,globalProcessId,createDate',
-                'from' => QUI\ERP\Booking\Table::BOOKINGS->tableName(),
-                'where_or' => [
-                    'globalProcessId' => $this->processId,
-                    'uuid' => $this->processId
-                ]
-            ]);
+            $bookings = $this->fetchProcessEntriesByProcessIdOrIdentifier(
+                QUI\ERP\Booking\Table::BOOKINGS->tableName(),
+                ['uuid', 'globalProcessId', 'createDate'],
+                'globalProcessId',
+                'uuid'
+            );
         } catch (\Exception) {
             return [];
         }
@@ -809,14 +830,10 @@ class Process
         }
 
         try {
-            $purchasing = QUI::getDatabase()->fetch([
-                'select' => 'id,hash,global_process_id,date',
-                'from' => QUI\ERP\Purchasing\Processes\Handler::getTablePurchasingProcesses(),
-                'where_or' => [
-                    'global_process_id' => $this->processId,
-                    'hash' => $this->processId
-                ]
-            ]);
+            $purchasing = $this->fetchProcessEntriesByProcessIdOrIdentifier(
+                QUI\ERP\Purchasing\Processes\Handler::getTablePurchasingProcesses(),
+                ['id', 'hash', 'global_process_id', 'date']
+            );
         } catch (\Exception) {
             return [];
         }
@@ -892,14 +909,10 @@ class Process
         $result = [];
 
         try {
-            $salesOrders = QUI::getDatabase()->fetch([
-                'select' => 'id,hash,global_process_id,date',
-                'from' => QUI\ERP\SalesOrders\Handler::getTableSalesOrders(),
-                'where_or' => [
-                    'global_process_id' => $this->processId,
-                    'hash' => $this->processId
-                ]
-            ]);
+            $salesOrders = $this->fetchProcessEntriesByProcessIdOrIdentifier(
+                QUI\ERP\SalesOrders\Handler::getTableSalesOrders(),
+                ['id', 'hash', 'global_process_id', 'date']
+            );
         } catch (\Exception) {
             return [];
         }
@@ -913,14 +926,10 @@ class Process
 
         // drafts
         try {
-            $salesOrderDrafts = QUI::getDatabase()->fetch([
-                'select' => 'id,hash,global_process_id,date',
-                'from' => QUI\ERP\SalesOrders\Handler::getTableSalesOrderDrafts(),
-                'where_or' => [
-                    'global_process_id' => $this->processId,
-                    'hash' => $this->processId
-                ]
-            ]);
+            $salesOrderDrafts = $this->fetchProcessEntriesByProcessIdOrIdentifier(
+                QUI\ERP\SalesOrders\Handler::getTableSalesOrderDrafts(),
+                ['id', 'hash', 'global_process_id', 'date']
+            );
         } catch (\Exception) {
             return [];
         }
