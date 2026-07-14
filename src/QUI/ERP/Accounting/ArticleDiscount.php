@@ -89,7 +89,7 @@ class ArticleDiscount
 
         if (is_numeric($string)) {
             // number, float, int -> 5.99
-            $data['value'] = QUI\ERP\Money\Price::validatePrice($string);
+            $data['value'] = QUI\ERP\Money\Price::parsePrice($string);
             $data['type'] = Calc::CALCULATION_COMPLEMENT;
         } elseif (strpos($string, '{') !== false || strpos($string, '[') !== false) {
             // json string
@@ -104,7 +104,7 @@ class ArticleDiscount
                 $data['value'] = floatval(str_replace('%', '', $string));
                 $data['type'] = Calc::CALCULATION_PERCENTAGE;
             } else {
-                $data['value'] = QUI\ERP\Money\Price::validatePrice($string);
+                $data['value'] = QUI\ERP\Money\Price::parsePrice($string);
                 $data['type'] = Calc::CALCULATION_COMPLEMENT;
             }
         }

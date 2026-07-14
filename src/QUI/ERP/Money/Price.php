@@ -100,19 +100,19 @@ class Price
     /**
      * Return the real price
      *
-     * @return float|int|null
+     * @return float|int
      */
-    public function getPrice(): float | int | null
+    public function getPrice(): float | int
     {
-        return $this->validatePrice($this->price);
+        return round($this->price, QUI\ERP\Defaults::getPrecision());
     }
 
     /**
      * Alias for getPrice
      *
-     * @return float|int|null
+     * @return float|int
      */
-    public function value(): float | int | null
+    public function value(): float | int
     {
         return $this->getPrice();
     }
@@ -120,9 +120,9 @@ class Price
     /**
      * Alias for getPrice
      *
-     * @return float|int|null
+     * @return float|int
      */
-    public function getValue(): float | int | null
+    public function getValue(): float | int
     {
         return $this->getPrice();
     }
@@ -194,11 +194,27 @@ class Price
     /**
      * Validates a price value
      *
+     * @deprecated Use Price::parsePrice() instead.
+     *
      * @param mixed $value
      * @param QUI\Locale|null $Locale - based locale, in which the price is
      * @return float|int|null
      */
     public static function validatePrice(
+        mixed $value,
+        null | QUI\Locale $Locale = null
+    ): float | int | null {
+        return self::parsePrice($value, $Locale);
+    }
+
+    /**
+     * Parses and normalizes a price value
+     *
+     * @param mixed $value
+     * @param QUI\Locale|null $Locale - based locale, in which the price is
+     * @return float|int|null
+     */
+    public static function parsePrice(
         mixed $value,
         null | QUI\Locale $Locale = null
     ): float | int | null {

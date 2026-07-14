@@ -12,6 +12,7 @@
 
 use QUI\ERP\Accounting\ArticleDiscount;
 use QUI\ERP\Defaults;
+use QUI\ERP\Money\Price;
 
 QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_products_calc',
@@ -39,11 +40,6 @@ QUI::getAjax()->registerFunction(
 
         $User = $Calc->getUser();
 
-        if ($User === null) {
-            $User = QUI::getUserBySession();
-            $Calc->setUser($User);
-        }
-
         if ($nettoInput) {
             $User->setAttribute('RUNTIME_NETTO_BRUTTO_STATUS', QUI\ERP\Utils\User::IS_NETTO_USER);
         } else {
@@ -54,6 +50,24 @@ QUI::getAjax()->registerFunction(
 
         if (!empty($priceFactors)) {
             foreach ($priceFactors as $priceFactor) {
+                foreach (['sum', 'nettoSum'] as $field) {
+                    if (!isset($priceFactor[$field]) || is_numeric($priceFactor[$field])) {
+                        continue;
+                    }
+
+                    $amount = Price::parsePrice($priceFactor[$field], $User->getLocale());
+
+                    if ($amount === null) {
+                        throw new QUI\ERP\Exception(
+                            'Invalid price factor ' . $field,
+                            400,
+                            [$field => $priceFactor[$field]]
+                        );
+                    }
+
+                    $priceFactor[$field] = $amount;
+                }
+
                 $Articles->addPriceFactor(
                     new QUI\ERP\Accounting\PriceFactors\Factor($priceFactor)
                 );

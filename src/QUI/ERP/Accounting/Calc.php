@@ -23,6 +23,7 @@ use function count;
 use function floatval;
 use function get_class;
 use function is_array;
+use function is_bool;
 use function is_callable;
 use function is_null;
 use function is_string;
@@ -31,8 +32,6 @@ use function json_encode;
 use function key;
 use function round;
 use function sprintf;
-use function str_replace;
-use function strpos;
 use function strtotime;
 use function time;
 
@@ -97,7 +96,7 @@ class Calc
     const TRANSACTION_ATTR_TARGET_CURRENCY_EXCHANGE_RATE = 'tx_target_currency_exchange_rate';
     const TRANSACTION_ATTR_SHOP_CURRENCY_EXCHANGE_RATE = 'tx_shop_currency_exchange_rate';
 
-    protected ?UserInterface $User = null;
+    protected UserInterface $User;
 
     protected QUI\Locale $Locale;
 
@@ -110,7 +109,7 @@ class Calc
      */
     public function __construct(?UserInterface $User = null)
     {
-        if (!QUI::getUsers()->isUser($User)) {
+        if ($User === null || !QUI::getUsers()->isUser($User)) {
             $User = QUI::getUserBySession();
         }
 
@@ -151,9 +150,9 @@ class Calc
     /**
      * Return the calc user
      *
-     * @return UserInterface|null
+     * @return UserInterface
      */
-    public function getUser(): ?UserInterface
+    public function getUser(): UserInterface
     {
         return $this->User;
     }
@@ -365,6 +364,11 @@ class Calc
             }
 
             $vat = $PriceFactor->getVat();
+
+            if (is_bool($vat)) {
+                $vat = (int)$vat;
+            }
+
             $vatSum = round($PriceFactor->getVatSum(), $precision);
 
             if (!isset($vatArray[(string)$vat])) {
@@ -412,7 +416,7 @@ class Calc
             unset($vatText[0]);
         }
 
-        if (isset($vatArray[0])) { // @phpstan-ignore-line
+        if (isset($vatArray[0])) {
             unset($vatArray[0]);
         }
 
@@ -423,7 +427,6 @@ class Calc
 
             foreach ($priceFactors as $Factor) {
                 if ($Factor->getCalculationBasis() !== self::CALCULATION_GRAND_TOTAL) {
-                    /* @var $Factor QUI\ERP\Products\Utils\PriceFactor */
                     $priceFactorBruttoSums = $priceFactorBruttoSums + round($Factor->getSum(), $precision);
                 }
             }
@@ -682,22 +685,15 @@ class Calc
      */
     public function round(string | int | float $value): float
     {
-        $decimalSeparator = $this->getUser()->getLocale()->getDecimalSeparator();
-        $groupingSeparator = $this->getUser()->getLocale()->getGroupingSeparator();
         $precision = QUI\ERP\Defaults::getPrecision();
 
         if (is_int($value) || is_float($value)) {
             return round($value, $precision);
         }
 
-        if (strpos($value, $decimalSeparator) && $decimalSeparator != '.') {
-            $value = str_replace($groupingSeparator, '', $value);
-        }
+        $value = Price::parsePrice($value, $this->getUser()->getLocale());
 
-        $value = str_replace(',', '.', $value);
-        $value = floatval($value);
-
-        return round($value, $precision);
+        return round($value ?? 0.0, $precision);
     }
 
     /**
@@ -891,7 +887,10 @@ class Calc
             }
 
             // calculate the paid amount
-            $amount = Price::validatePrice($Transaction->getAmount());
+            $amount = round(
+                $Transaction->getAmount(),
+                QUI\ERP\Defaults::getPrecision()
+            );
             $TransactionCurrency = $Transaction->getCurrency();
 
             // If necessary, convert from transaction currency to calculation object currency
@@ -979,8 +978,8 @@ class Calc
             ];
         }
 
-        $paid = Price::validatePrice($sum);
-        $toPay = Price::validatePrice($calculations['sum']);
+        $paid = Price::parsePrice($sum);
+        $toPay = Price::parsePrice($calculations['sum']);
 
         // workaround fix
         if ($ToCalculate->getAttribute('paid_date') != $paidDate) {

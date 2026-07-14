@@ -33,6 +33,25 @@ class FactorTest extends TestCase
         ]);
     }
 
+    public function testConstructorNormalizesNumericAmountStrings(): void
+    {
+        $Factor = $this->createFactor([
+            'sum' => '1000000.50',
+            'nettoSum' => '-1000000.50'
+        ]);
+
+        $this->assertSame(1000000.5, $Factor->getSum());
+        $this->assertSame(-1000000.5, $Factor->getNettoSum());
+    }
+
+    public function testConstructorRejectsFormattedInternalNettoSum(): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('nettoSum must be numeric');
+
+        $this->createFactor(['nettoSum' => '1.000,00 €']);
+    }
+
     public function testVatAndVatSumWithExplicitVat(): void
     {
         $Factor = $this->createFactor([
