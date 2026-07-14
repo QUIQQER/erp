@@ -228,7 +228,10 @@ class Processes
      */
     protected function readInvoices(): void
     {
-        if (!QUI::getPackageManager()->isInstalled('quiqqer/invoice')) {
+        if (
+            !QUI::getPackageManager()->isInstalled('quiqqer/invoice')
+            || !class_exists(InvoiceHandler::class)
+        ) {
             return;
         }
 
@@ -265,7 +268,10 @@ class Processes
      */
     protected function readOrders(): void
     {
-        if (!QUI::getPackageManager()->isInstalled('quiqqer/order')) {
+        if (
+            !QUI::getPackageManager()->isInstalled('quiqqer/order')
+            || !class_exists(OrderHandler::class)
+        ) {
             return;
         }
 
@@ -302,7 +308,10 @@ class Processes
      */
     protected function readOffers(): void
     {
-        if (!QUI::getPackageManager()->isInstalled('quiqqer/offers')) {
+        if (
+            !QUI::getPackageManager()->isInstalled('quiqqer/offers')
+            || !class_exists(OfferHandler::class)
+        ) {
             return;
         }
 
@@ -339,7 +348,10 @@ class Processes
      */
     protected function readSalesOrders(): void
     {
-        if (!QUI::getPackageManager()->isInstalled('quiqqer/salesorders')) {
+        if (
+            !QUI::getPackageManager()->isInstalled('quiqqer/salesorders')
+            || !class_exists(SalesOrdersHandler::class)
+        ) {
             return;
         }
 
@@ -376,7 +388,10 @@ class Processes
      */
     protected function readTransactions(): void
     {
-        if (!QUI::getPackageManager()->isInstalled('quiqqer/payment-transactions')) {
+        if (
+            !QUI::getPackageManager()->isInstalled('quiqqer/payment-transactions')
+            || !class_exists(TransactionFactory::class)
+        ) {
             return;
         }
 

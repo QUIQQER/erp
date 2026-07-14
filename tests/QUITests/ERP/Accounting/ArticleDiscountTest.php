@@ -111,6 +111,11 @@ class ArticleDiscountTest extends TestCase
                 return $this->vat;
             }
 
+            public function getId(): int
+            {
+                return 0;
+            }
+
             public function getView(): ArticleView
             {
                 throw new \RuntimeException('Not used in this test');
@@ -136,6 +141,11 @@ class ArticleDiscountTest extends TestCase
                 throw new \RuntimeException('Not used in this test');
             }
 
+            public function getPrice(): Price
+            {
+                throw new \RuntimeException('Not used in this test');
+            }
+
             public function getSum(): Price
             {
                 throw new \RuntimeException('Not used in this test');
@@ -144,6 +154,11 @@ class ArticleDiscountTest extends TestCase
             public function getQuantity(): bool|int|float
             {
                 throw new \RuntimeException('Not used in this test');
+            }
+
+            public function getDiscount(): ?ArticleDiscount
+            {
+                return null;
             }
 
             public function toArray(): array
