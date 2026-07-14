@@ -20,6 +20,7 @@ use function count;
 use function dirname;
 use function file_exists;
 use function file_get_contents;
+use function is_bool;
 use function is_string;
 use function json_decode;
 use function json_encode;
@@ -27,6 +28,8 @@ use function json_encode;
 /**
  * Class ArticleListUnique
  * - Nicht änderbare Artikel Liste
+ *
+ * @implements IteratorAggregate<int, ArticleInterface>
  */
 class ArticleListUnique implements IteratorAggregate
 {
@@ -36,7 +39,7 @@ class ArticleListUnique implements IteratorAggregate
     protected array $articles = [];
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected mixed $calculations = [];
 
@@ -53,9 +56,9 @@ class ArticleListUnique implements IteratorAggregate
     protected ErpFactorList $PriceFactors;
 
     /**
-     * @var null|QUI\Locale
+     * @var QUI\Locale
      */
-    protected ?QUI\Locale $Locale = null;
+    protected QUI\Locale $Locale;
 
     /**
      * @var ?QUI\Interfaces\Users\User
@@ -80,7 +83,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * ArticleList constructor.
      *
-     * @param array $attributes
+     * @param array<mixed> $attributes
      * @param ?QUI\Interfaces\Users\User $User
      * @throws QUI\ERP\Exception|QUI\Exception
      */
@@ -104,7 +107,7 @@ class ArticleListUnique implements IteratorAggregate
         }
 
         $articles = $attributes['articles'];
-        $currency = QUI\ERP\Currency\Handler::getDefaultCurrency()->getCode();
+        $currency = QUI\ERP\Defaults::getCurrency()->getCode();
 
         if (isset($attributes['calculations']['currencyData']['code'])) {
             $currency = $attributes['calculations']['currencyData']['code'];
@@ -134,7 +137,9 @@ class ArticleListUnique implements IteratorAggregate
             $interfaces = class_implements($class);
 
             if (isset($interfaces[ArticleInterface::class])) {
-                $this->articles[] = new $class($article);
+                /** @var Article $Article */
+                $Article = new $class($article);
+                $this->articles[] = $Article;
                 continue;
             }
 
@@ -178,8 +183,8 @@ class ArticleListUnique implements IteratorAggregate
      * Children follow immediately after their parents in the sorted list.
      * Each item is assigned a consecutive position, which reflects its order in the sorted list.
      *
-     * @param array $articles - The input list of items, articles
-     * @return array The sorted list of items with added 'position' keys, starting with 1.
+     * @param array<mixed> $articles - The input list of items, articles
+     * @return array<mixed> The sorted list of items with added 'position' keys, starting with 1.
      */
     protected function sortArticlesWithParents(array $articles = []): array
     {
@@ -232,6 +237,7 @@ class ArticleListUnique implements IteratorAggregate
      * recalculate makes the unique article list compatible to the article list
      *
      * @param ?QUI\ERP\Accounting\Calc $Calc
+     * @return void
      */
     public function recalculate(?QUI\ERP\Accounting\Calc $Calc = null)
     {
@@ -264,7 +270,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Creates a list from a stored representation
      *
-     * @param array|string $data
+     * @param array<mixed>|string $data
      * @return ArticleListUnique
      *
      * @throws QUI\Exception
@@ -285,13 +291,13 @@ class ArticleListUnique implements IteratorAggregate
      */
     public function serialize(): string
     {
-        return json_encode($this->toArray());
+        return json_encode($this->toArray()) ?: '';
     }
 
     /**
      * Return the calculation array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getCalculations(): array
     {
@@ -332,7 +338,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Return the list as an array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {
@@ -466,10 +472,18 @@ class ArticleListUnique implements IteratorAggregate
                 class_exists('QUI\ERP\CryptoCurrency\Currency')
                 && $Currency instanceof QUI\ERP\CryptoCurrency\Currency
             ) {
-                $ExchangeCurrency->setExchangeRate($this->exchangeRate);
+                if ($this->exchangeRate !== null) {
+                    $ExchangeCurrency->setExchangeRate($this->exchangeRate);
+                }
+
                 $exchangeRate = $Currency->convertFormat(1, $ExchangeCurrency);
             } else {
                 $exchangeRate = $Currency->getExchangeRate($ExchangeCurrency);
+
+                if (is_bool($exchangeRate)) {
+                    $exchangeRate = (float)$exchangeRate;
+                }
+
                 $exchangeRate = $ExchangeCurrency->format($exchangeRate);
             }
 
@@ -490,10 +504,18 @@ class ArticleListUnique implements IteratorAggregate
                 class_exists('QUI\ERP\CryptoCurrency\Currency')
                 && $Currency instanceof QUI\ERP\CryptoCurrency\Currency
             ) {
-                $DefaultCurrency->setExchangeRate($this->exchangeRate);
+                if ($this->exchangeRate !== null) {
+                    $DefaultCurrency->setExchangeRate($this->exchangeRate);
+                }
+
                 $exchangeRate = $Currency->convertFormat(1, $DefaultCurrency);
             } else {
                 $exchangeRate = $Currency->getExchangeRate($DefaultCurrency);
+
+                if (is_bool($exchangeRate)) {
+                    $exchangeRate = (float)$exchangeRate;
+                }
+
                 $exchangeRate = $DefaultCurrency->format($exchangeRate);
             }
 
@@ -532,7 +554,7 @@ class ArticleListUnique implements IteratorAggregate
             'Currency' => $Currency
         ]);
 
-        if ($template && file_exists($template)) {
+        if (is_string($template) && file_exists($template)) {
             return $Engine->fetch($template);
         }
 
@@ -616,7 +638,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Iterator helper
      *
-     * @return ArrayIterator|Traversable
+     * @return Traversable<int, ArticleInterface>|ArrayIterator<int, ArticleInterface>
      */
     public function getIterator(): Traversable | ArrayIterator
     {

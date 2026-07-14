@@ -7,11 +7,13 @@
 namespace QUI\ERP\Accounting;
 
 use DateTime;
+use Doctrine\DBAL\Exception as DbalException;
 use Exception;
 use QUI;
 use QUI\ERP\Accounting\Invoice\Handler;
 use QUI\ERP\Accounting\Invoice\Invoice;
 use QUI\ERP\Currency\Currency;
+use QUI\ERP\Database\Queries;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
 use QUI\Locale;
@@ -23,6 +25,7 @@ use function count;
 use function floatval;
 use function get_class;
 use function is_array;
+use function is_bool;
 use function is_callable;
 use function is_null;
 use function is_string;
@@ -31,8 +34,6 @@ use function json_encode;
 use function key;
 use function round;
 use function sprintf;
-use function str_replace;
-use function strpos;
 use function strtotime;
 use function time;
 
@@ -97,9 +98,9 @@ class Calc
     const TRANSACTION_ATTR_TARGET_CURRENCY_EXCHANGE_RATE = 'tx_target_currency_exchange_rate';
     const TRANSACTION_ATTR_SHOP_CURRENCY_EXCHANGE_RATE = 'tx_shop_currency_exchange_rate';
 
-    protected ?UserInterface $User = null;
+    protected UserInterface $User;
 
-    protected ?QUI\Locale $Locale = null;
+    protected QUI\Locale $Locale;
 
     protected ?QUI\ERP\Currency\Currency $Currency = null;
 
@@ -110,7 +111,7 @@ class Calc
      */
     public function __construct(?UserInterface $User = null)
     {
-        if (!QUI::getUsers()->isUser($User)) {
+        if ($User === null || !QUI::getUsers()->isUser($User)) {
             $User = QUI::getUserBySession();
         }
 
@@ -151,16 +152,16 @@ class Calc
     /**
      * Return the calc user
      *
-     * @return UserInterface|null
+     * @return UserInterface
      */
-    public function getUser(): ?UserInterface
+    public function getUser(): UserInterface
     {
         return $this->User;
     }
 
     //region locale
 
-    public function getLocale(): ?Locale
+    public function getLocale(): Locale
     {
         return $this->Locale;
     }
@@ -180,12 +181,12 @@ class Calc
     /**
      * Return the currency
      *
-     * @return Currency|null
+     * @return Currency
      */
-    public function getCurrency(): ?QUI\ERP\Currency\Currency
+    public function getCurrency(): QUI\ERP\Currency\Currency
     {
         if (is_null($this->Currency)) {
-            $this->Currency = QUI\ERP\Currency\Handler::getDefaultCurrency();
+            $this->Currency = QUI\ERP\Defaults::getCurrency();
         }
 
         return $this->Currency;
@@ -310,10 +311,6 @@ class Calc
                 $priceFactorValue = $PriceFactor->getValue();
                 $vatValue = $PriceFactor->getVat();
 
-                if ($vatValue === null) {
-                    $vatValue = QUI\ERP\Tax\Utils::getTaxByUser($this->getUser())->getValue();
-                }
-
                 switch ($calcBasis) {
                     default:
                     case self::CALCULATION_BASIS_NETTO:
@@ -369,6 +366,11 @@ class Calc
             }
 
             $vat = $PriceFactor->getVat();
+
+            if (is_bool($vat)) {
+                $vat = (int)$vat;
+            }
+
             $vatSum = round($PriceFactor->getVatSum(), $precision);
 
             if (!isset($vatArray[(string)$vat])) {
@@ -416,7 +418,7 @@ class Calc
             unset($vatText[0]);
         }
 
-        if (isset($vatArray[0])) { // @phpstan-ignore-line
+        if (isset($vatArray[0])) {
             unset($vatArray[0]);
         }
 
@@ -427,7 +429,6 @@ class Calc
 
             foreach ($priceFactors as $Factor) {
                 if ($Factor->getCalculationBasis() !== self::CALCULATION_GRAND_TOTAL) {
-                    /* @var $Factor QUI\ERP\Products\Utils\PriceFactor */
                     $priceFactorBruttoSums = $priceFactorBruttoSums + round($Factor->getSum(), $precision);
                 }
             }
@@ -548,10 +549,6 @@ class Calc
         $isNetto = QUI\ERP\Utils\User::isNettoUser($this->getUser());
         $isEuVatUser = QUI\ERP\Tax\Utils::isUserEuVatUser($this->getUser());
         $Currency = $Article->getCurrency();
-
-        if (!$Currency) {
-            $Currency = $this->getCurrency();
-        }
 
         $nettoPrice = $Article->getUnitPriceUnRounded()->value();
         $nettoPrice = round($nettoPrice, $Currency->getPrecision());
@@ -690,22 +687,15 @@ class Calc
      */
     public function round(string | int | float $value): float
     {
-        $decimalSeparator = $this->getUser()->getLocale()->getDecimalSeparator();
-        $groupingSeparator = $this->getUser()->getLocale()->getGroupingSeparator();
         $precision = QUI\ERP\Defaults::getPrecision();
 
         if (is_int($value) || is_float($value)) {
             return round($value, $precision);
         }
 
-        if (strpos($value, $decimalSeparator) && $decimalSeparator != '.') {
-            $value = str_replace($groupingSeparator, '', $value);
-        }
+        $value = Price::parsePrice($value, $this->getUser()->getLocale());
 
-        $value = str_replace(',', '.', $value);
-        $value = floatval($value);
-
-        return round($value, $precision);
+        return round($value ?? 0.0, $precision);
     }
 
     /**
@@ -788,7 +778,7 @@ class Calc
      * Calculates the individual amounts paid of an invoice
      *
      * @param Invoice $Invoice
-     * @return array
+     * @return array<mixed>
      *
      * @throws QUI\ERP\Exception
      *
@@ -803,7 +793,7 @@ class Calc
      * Calculates the individual amounts paid of an invoice / order
      *
      * @param mixed $ToCalculate
-     * @return array
+     * @return array<mixed>
      *
      * @throws QUI\ERP\Exception|QUI\Exception
      */
@@ -899,7 +889,10 @@ class Calc
             }
 
             // calculate the paid amount
-            $amount = Price::validatePrice($Transaction->getAmount());
+            $amount = round(
+                $Transaction->getAmount(),
+                QUI\ERP\Defaults::getPrecision()
+            );
             $TransactionCurrency = $Transaction->getCurrency();
 
             // If necessary, convert from transaction currency to calculation object currency
@@ -987,18 +980,19 @@ class Calc
             ];
         }
 
-        $paid = Price::validatePrice($sum);
-        $toPay = Price::validatePrice($calculations['sum']);
+        $paid = Price::parsePrice($sum);
+        $toPay = Price::parsePrice($calculations['sum']);
 
         // workaround fix
         if ($ToCalculate->getAttribute('paid_date') != $paidDate) {
             try {
-                QUI::getDataBase()->update(
+                Queries::update(
+                    QUI::getDataBaseConnection(),
                     Handler::getInstance()->invoiceTable(),
                     ['paid_date' => $paidDate],
                     ['id' => $ToCalculate->getCleanId()]
                 );
-            } catch (QUI\Database\Exception $Exception) {
+            } catch (DbalException $Exception) {
                 QUI\System\Log::writeException($Exception);
 
                 throw new QUI\ERP\Exception(
@@ -1071,9 +1065,9 @@ class Calc
     /**
      * Calculate the total of the invoice list
      *
-     * @param array $invoiceList - list of invoice array
+     * @param array<mixed> $invoiceList - list of invoice array
      * @param QUI\ERP\Currency\Currency|null $Currency
-     * @return array
+     * @return array<mixed>
      */
     public static function calculateTotal(array $invoiceList, null | QUI\ERP\Currency\Currency $Currency = null): array
     {
@@ -1210,7 +1204,7 @@ class Calc
     /**
      * Return the total of all vats
      *
-     * @param string|array $vatArray
+     * @param string|array<mixed> $vatArray
      * @return float|int
      */
     public static function calculateTotalVatOfInvoice($vatArray)

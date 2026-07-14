@@ -13,7 +13,7 @@ use QUI\ERP\Exception as ERPException;
 use QUI\ERP\Manufacturers;
 use QUI\Utils\Security\Orthos;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_manufacturers_create_newManufacturer',
     function ($manufacturerId, $address, $groupIds) {
         $address = Orthos::clearArray(json_decode($address, true));

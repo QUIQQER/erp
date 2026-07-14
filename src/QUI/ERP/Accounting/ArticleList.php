@@ -14,12 +14,15 @@ use QUI\ERP\Exception;
 use QUI\Interfaces\Users\User;
 
 use function count;
+use function is_bool;
 use function is_null;
 use function key;
 use function round;
 
 /**
  * Class ArticleList
+ *
+ * @implements IteratorAggregate<int, ArticleInterface>
  */
 class ArticleList extends ArticleListUnique implements IteratorAggregate
 {
@@ -72,14 +75,14 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * key 19% value[sum] = sum value[text] = text value[display_sum] formatted
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $vatArray = [];
 
     /**
      * key 19% value[sum] = sum value[text] = text value[display_sum] formatted
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $vatText;
 
@@ -98,7 +101,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * Currency information
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $currencyData = [
         'currency_sign' => '',
@@ -110,10 +113,11 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * ArticleList constructor.
      *
-     * @param array $attributes
+     * @param array<mixed> $attributes
+     * @param User|null $User
      * @throws Exception|QUI\Exception
      */
-    public function __construct(array $attributes = [])
+    public function __construct(array $attributes = [], ?User $User = null)
     {
         if (!isset($attributes['calculations'])) {
             $attributes['calculations'] = [];
@@ -127,7 +131,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
             $attributes['priceFactors'] = [];
         }
 
-        parent::__construct($attributes);
+        parent::__construct($attributes, $User);
 
         if (!empty($this->calculations)) {
             $this->calculated = true;
@@ -169,9 +173,9 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * Return the currency
      *
-     * @return Currency|null
+     * @return Currency
      */
-    public function getCurrency(): ?QUI\ERP\Currency\Currency
+    public function getCurrency(): QUI\ERP\Currency\Currency
     {
         if (!is_null($this->Currency)) {
             return $this->Currency;
@@ -244,7 +248,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * Return the list as an array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {
@@ -423,7 +427,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     }
 
     /**
-     * @param $pos
+     * @param int $pos
      * @return Article|null
      */
     public function getArticle($pos): ?Article
@@ -489,15 +493,17 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
         if ($PriceFactor instanceof QUI\ERP\Products\Utils\PriceFactor) {
             $isNetto = $this->isNetto;
             $vat = 0;
-            $netto = $PriceFactor->getNettoSum();
+            $netto = self::normalizeLegacyNumericValue($PriceFactor->getNettoSum());
             $precision = $this->getCurrency()->getPrecision();
 
             if (count($this->vatArray)) {
-                $vat = key($this->vatArray);
+                $vat = (float)key($this->vatArray);
             }
 
-            if ($PriceFactor->getVat()) {
-                $vat = $PriceFactor->getVat();
+            $priceFactorVat = $PriceFactor->getVat();
+
+            if ($priceFactorVat !== false) {
+                $vat = self::normalizeLegacyNumericValue($priceFactorVat);
             }
 
             $PriceFactor->setVat($vat);
@@ -516,6 +522,14 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
 
         $this->PriceFactors->addFactor($PriceFactor);
         $this->recalculate();
+    }
+
+    /**
+     * Normalizes boolean numeric values returned by older versions of quiqqer/products.
+     */
+    private static function normalizeLegacyNumericValue(bool | float | int $value): float | int
+    {
+        return is_bool($value) ? (int)$value : $value;
     }
 
     //endregion

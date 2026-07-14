@@ -25,7 +25,7 @@ class ErpDashboard implements DashboardInterface
     }
 
     /**
-     * @return array
+     * @return list<string>
      */
     public function getCards(): array
     {

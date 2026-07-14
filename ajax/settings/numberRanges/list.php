@@ -10,7 +10,7 @@ use QUI\ERP\Api\Coordinator;
  *
  * @return array
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_settings_numberRanges_list',
     function () {
         return array_map(function ($Range) {

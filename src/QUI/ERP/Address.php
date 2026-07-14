@@ -21,7 +21,7 @@ class Address extends QUI\Users\Address
     /**
      * Address constructor.
      *
-     * @param array|null $data
+     * @param array<mixed>|null $data
      * @param QUIUserInterface|null $User
      */
     public function __construct(?array $data = [], null | QUI\Interfaces\Users\User $User = null)
@@ -48,7 +48,7 @@ class Address extends QUI\Users\Address
     /**
      * Return the address as HTML display
      *
-     * @param array $options - options ['mail' => true, 'tel' => true]
+     * @param array<mixed> $options - options ['mail' => true, 'tel' => true]
      * @return string - HTML <address>
      */
     public function getDisplay(array $options = []): string
@@ -130,7 +130,7 @@ class Address extends QUI\Users\Address
     }
 
     /**
-     * @param $value
+     * @param mixed $value
      * @return string
      */
     protected function emptyStringCheck($value): string

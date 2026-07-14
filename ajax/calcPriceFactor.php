@@ -7,11 +7,16 @@
 use QUI\ERP\Currency\Handler as CurrencyHandler;
 use QUI\ERP\Money\Price;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_calcPriceFactor',
     function ($price, $vat, $currency) {
         $Currency = CurrencyHandler::getCurrency($currency);
-        $price = Price::validatePrice($price);
+        $price = Price::parsePrice($price, QUI::getUserBySession()->getLocale());
+
+        if ($price === null) {
+            throw new QUI\ERP\Exception('Invalid price', 400);
+        }
+
         $vat = floatval($vat);
 
         /* auskommentiert weil: quiqqer/erp/-/issues/78#note_144725

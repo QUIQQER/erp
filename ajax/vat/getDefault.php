@@ -10,7 +10,7 @@
  * @return float|int
  */
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_vat_getDefault',
     function () {
         $DefaultTaxType = QUI\ERP\Tax\Utils::getTaxTypeByArea(QUI\ERP\Defaults::getArea());

@@ -30,9 +30,9 @@ class Debug
     protected int|bool $debug = false;
 
     /**
-     * @return Debug|null
+     * @return Debug
      */
-    public static function getInstance(): ?Debug
+    public static function getInstance(): Debug
     {
         if (self::$Instance === null) {
             self::$Instance = new self();
@@ -77,7 +77,7 @@ class Debug
      * Send debug logs
      * only if debugging is true
      *
-     * @param object|integer|array|string $value - debug data
+     * @param object|integer|array<mixed>|string $value - debug data
      * @param bool|string $source - debug source
      */
     public function log(object|int|array|string $value, bool|string $source = false): void

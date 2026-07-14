@@ -76,14 +76,14 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Address data
      *
-     * @var array
+     * @var array<mixed>
      */
     protected array $address = [];
 
     /**
      * User constructor.
      *
-     * @param array $attributes
+     * @param array<mixed> $attributes
      */
     public function __construct(array $attributes)
     {
@@ -170,7 +170,7 @@ class User extends QUI\QDOM implements UserInterface
 
     /**
      * Return the list of the needled attributes
-     * @return array
+     * @return array<mixed>
      */
     public static function getNeedles(): array
     {
@@ -185,8 +185,8 @@ class User extends QUI\QDOM implements UserInterface
     }
 
     /**
-     * @param array $attributes - array('attribute' => 'value')
-     * @return array
+     * @param array<mixed> $attributes - array('attribute' => 'value')
+     * @return array<mixed>
      */
     public static function getMissingAttributes(array $attributes): array
     {
@@ -253,7 +253,7 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Convert user data to an ERP user
      *
-     * @param array $user {{$user.uid, $user.aid}}
+     * @param array<mixed> $user {{$user.uid, $user.aid}}
      * @return self
      *
      * @throws QUI\ERP\Exception
@@ -379,6 +379,9 @@ class User extends QUI\QDOM implements UserInterface
         return $Locale;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getAttributes(): array
     {
         $attributes = parent::getAttributes();
@@ -477,7 +480,7 @@ class User extends QUI\QDOM implements UserInterface
             $Package = QUI::getPackage('quiqqer/erp');
             $Config = $Package->getConfig();
 
-            if ($Config->getValue('general', 'businessType') === 'B2B') {
+            if ($Config?->getValue('general', 'businessType') === 'B2B') {
                 return true;
             }
         } catch (QUI\Exception) {
@@ -619,9 +622,7 @@ class User extends QUI\QDOM implements UserInterface
     public function getAvatar(): ?QUI\Projects\Media\Image
     {
         return QUI::getProjectManager()
-            ->getStandard()
-            ->getMedia()
-            ->getPlaceholderImage();
+            ->getStandard()?->getMedia()?->getPlaceholderImage();
     }
 
     /**
@@ -641,8 +642,9 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Does nothing
      */
-    public function checkPassword(string $pass, bool $encrypted = false)
+    public function checkPassword(string $pass, bool $encrypted = false): bool
     {
+        return false;
     }
 
     public function isDeleted(): bool

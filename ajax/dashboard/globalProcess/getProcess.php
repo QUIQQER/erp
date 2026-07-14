@@ -6,7 +6,7 @@
 
 use QUI\ERP\Process;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_dashboard_globalProcess_getProcess',
     function ($globalProcessId) {
         $Process = new Process($globalProcessId);

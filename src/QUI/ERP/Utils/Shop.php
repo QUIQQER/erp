@@ -22,9 +22,9 @@ class Shop
     /**
      * Return the shop business type
      *
-     * @return array|string|null
+     * @return string
      */
-    public static function getBusinessType(): array|string|null
+    public static function getBusinessType(): string
     {
         if (self::$type !== null) {
             return self::$type;
@@ -41,7 +41,13 @@ class Shop
             return self::$type;
         }
 
-        self::$type = $Config->get('general', 'businessType');
+        $type = $Config?->get('general', 'businessType');
+
+        if (is_string($type)) {
+            self::$type = $type;
+        } else {
+            self::$type = 'B2C';
+        }
 
         switch (self::$type) {
             case 'B2C':

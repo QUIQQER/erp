@@ -7,6 +7,9 @@ use QUI\Dashboard\DashboardProviderInterface;
 
 class DashboardProvider implements DashboardProviderInterface
 {
+    /**
+     * @param QUI\Locale|null $Locale
+     */
     public function getTitle($Locale = null): string
     {
         if ($Locale === null) {
@@ -17,7 +20,7 @@ class DashboardProvider implements DashboardProviderInterface
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public static function getBoards(): array
     {
@@ -27,7 +30,7 @@ class DashboardProvider implements DashboardProviderInterface
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public static function getCards(): array
     {

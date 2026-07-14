@@ -18,10 +18,10 @@ use QUI\System\Log;
  *
  * @return float
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_calcBruttoPrice',
     function ($price, $formatted, $vat) {
-        $price = QUI\ERP\Money\Price::validatePrice($price);
+        $price = QUI\ERP\Money\Price::parsePrice($price);
         $Currency = QUI\ERP\Defaults::getCurrency();
 
         if (empty($vat)) {

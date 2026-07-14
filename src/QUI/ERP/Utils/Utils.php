@@ -13,6 +13,9 @@ use function trim;
  */
 class Utils
 {
+    /**
+     * @var array<class-string|string, string>
+     */
     public static array $entityIcons = [
         'QUI\ERP\Order\Order' => 'fa-shopping-basket',
         'QUI\ERP\Accounting\Invoice\InvoiceTemporary' => 'fa-file-text-o',
@@ -34,7 +37,7 @@ class Utils
         $description = trim($description);
 
         // Filter tag attributes
-        $description = preg_replace('#<([a-z][a-z0-9]*)[^>]*?(\/?)>#i', '<$1$2>', $description);
+        $description = preg_replace('#<([a-z][a-z0-9]*)[^>]*?(\/?)>#i', '<$1$2>', $description) ?? '';
 
         // Allow specific tags only
         return strip_tags(
@@ -60,6 +63,9 @@ class Utils
         );
     }
 
+    /**
+     * @param class-string|string $className
+     */
     public static function getEntityIcon($className): string
     {
         if (isset(self::$entityIcons[$className])) {

@@ -70,7 +70,7 @@ class ArticleView extends QUI\QDOM
     /**
      * Set the position
      *
-     * @param $position
+     * @param int|float $position
      */
     public function setPosition($position): void
     {
@@ -94,11 +94,11 @@ class ArticleView extends QUI\QDOM
             return $this->Currency;
         }
 
-        return QUI\ERP\Currency\Handler::getDefaultCurrency();
+        return QUI\ERP\Defaults::getCurrency();
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getCustomFields(): array
     {
@@ -179,7 +179,7 @@ class ArticleView extends QUI\QDOM
      */
     public function getImageUrl(): string
     {
-        return $this->Article->getImage()->getUrl();
+        return $this->Article->getImage()?->getUrl() ?? '';
     }
 
     /**
@@ -246,7 +246,7 @@ class ArticleView extends QUI\QDOM
             'hasAppliedVat' => !empty($articleData['calculated']['vatArray']['vat'])
         ]);
 
-        if ($template && file_exists($template)) {
+        if (is_string($template) && file_exists($template)) {
             return $Engine->fetch($template);
         }
 

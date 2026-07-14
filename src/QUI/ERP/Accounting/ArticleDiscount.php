@@ -89,7 +89,7 @@ class ArticleDiscount
 
         if (is_numeric($string)) {
             // number, float, int -> 5.99
-            $data['value'] = QUI\ERP\Money\Price::validatePrice($string);
+            $data['value'] = QUI\ERP\Money\Price::parsePrice($string);
             $data['type'] = Calc::CALCULATION_COMPLEMENT;
         } elseif (strpos($string, '{') !== false || strpos($string, '[') !== false) {
             // json string
@@ -104,7 +104,7 @@ class ArticleDiscount
                 $data['value'] = floatval(str_replace('%', '', $string));
                 $data['type'] = Calc::CALCULATION_PERCENTAGE;
             } else {
-                $data['value'] = QUI\ERP\Money\Price::validatePrice($string);
+                $data['value'] = QUI\ERP\Money\Price::parsePrice($string);
                 $data['type'] = Calc::CALCULATION_COMPLEMENT;
             }
         }
@@ -167,7 +167,7 @@ class ArticleDiscount
      *
      * @return Currency
      */
-    public function getCurrency(): ?Currency
+    public function getCurrency(): Currency
     {
         if ($this->Currency === null) {
             return QUI\ERP\Defaults::getCurrency();
@@ -180,6 +180,7 @@ class ArticleDiscount
      * Set the currency
      *
      * @param Currency $Currency
+     * @return void
      */
     public function setCurrency(Currency $Currency)
     {
@@ -189,7 +190,7 @@ class ArticleDiscount
     /**
      * Parse the discount to an array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {
@@ -207,7 +208,7 @@ class ArticleDiscount
      */
     public function toJSON(): string
     {
-        return json_encode($this->toArray());
+        return json_encode($this->toArray()) ?: '';
     }
 
     /**
@@ -241,6 +242,7 @@ class ArticleDiscount
 
     /**
      * @param ArticleInterface $Article
+     * @return void
      */
     public function setArticle(ArticleInterface $Article)
     {

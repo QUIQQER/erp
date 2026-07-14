@@ -12,6 +12,7 @@ use QUI\ERP\Discount\Discount;
 use QUI\Interfaces\Users\User;
 
 use function floatval;
+use function is_array;
 use function is_float;
 use function is_int;
 use function mb_strpos;
@@ -45,7 +46,7 @@ class Price
     protected bool $isMinimalPrice = false;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected array $discounts;
 
@@ -84,7 +85,7 @@ class Price
 
     /**
      * Return the price as array notation
-     * @return array
+     * @return array<mixed>
      */
     public function toArray(): array
     {
@@ -99,19 +100,19 @@ class Price
     /**
      * Return the real price
      *
-     * @return float|int|null
+     * @return float|int
      */
-    public function getPrice(): float | int | null
+    public function getPrice(): float | int
     {
-        return $this->validatePrice($this->price);
+        return round($this->price, QUI\ERP\Defaults::getPrecision());
     }
 
     /**
      * Alias for getPrice
      *
-     * @return float|int|null
+     * @return float|int
      */
-    public function value(): float | int | null
+    public function value(): float | int
     {
         return $this->getPrice();
     }
@@ -119,9 +120,9 @@ class Price
     /**
      * Alias for getPrice
      *
-     * @return float|int|null
+     * @return float|int
      */
-    public function getValue(): float | int | null
+    public function getValue(): float | int
     {
         return $this->getPrice();
     }
@@ -169,7 +170,7 @@ class Price
     /**
      * Return the assigned discounts
      *
-     * @return array [Discount, Discount, Discount]
+     * @return array<mixed> [Discount, Discount, Discount]
      */
     public function getDiscounts(): array
     {
@@ -193,11 +194,27 @@ class Price
     /**
      * Validates a price value
      *
+     * @deprecated Use Price::parsePrice() instead.
+     *
      * @param mixed $value
      * @param QUI\Locale|null $Locale - based locale, in which the price is
      * @return float|int|null
      */
     public static function validatePrice(
+        mixed $value,
+        null | QUI\Locale $Locale = null
+    ): float | int | null {
+        return self::parsePrice($value, $Locale);
+    }
+
+    /**
+     * Parses and normalizes a price value
+     *
+     * @param mixed $value
+     * @param QUI\Locale|null $Locale - based locale, in which the price is
+     * @return float|int|null
+     */
+    public static function parsePrice(
         mixed $value,
         null | QUI\Locale $Locale = null
     ): float | int | null {
@@ -213,7 +230,7 @@ class Price
         $isNegative = str_starts_with($value, '-');
 
         // value cleanup
-        $value = preg_replace('#[^\d,.]#i', '', $value);
+        $value = preg_replace('#[^\d,.]#i', '', $value) ?? '';
 
         if (trim($value) === '') {
             return null;
@@ -231,6 +248,12 @@ class Price
 
         $decimalSeparator = $Locale->getDecimalSeparator();
         $thousandSeparator = $Locale->getGroupingSeparator();
+
+        if (is_array($decimalSeparator)) {
+            $decimalSeparator = isset($decimalSeparator[0])
+                ? (string)$decimalSeparator[0]
+                : '';
+        }
 
         $decimal = mb_strpos($value, $decimalSeparator);
         $thousands = mb_strpos($value, $thousandSeparator);

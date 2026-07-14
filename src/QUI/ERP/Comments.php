@@ -35,7 +35,7 @@ class Comments
     /**
      * Comments constructor.
      *
-     * @param list<array<string, mixed>>|null $comments
+     * @param array<int|string, mixed>|null $comments
      */
     public function __construct(?array $comments = [])
     {
@@ -44,6 +44,10 @@ class Comments
         }
 
         foreach ($comments as $comment) {
+            if (!is_array($comment)) {
+                continue;
+            }
+
             if (!isset($comment['id'])) {
                 $comment['id'] = QUI\Utils\Uuid::get();
             }
@@ -57,7 +61,7 @@ class Comments
     /**
      * Creates a comment list from a stored representation
      *
-     * @param array|string $data
+     * @param array<int, array<string, mixed>>|string $data
      * @return Comments
      */
     public static function unserialize(array | string $data): Comments
@@ -80,13 +84,13 @@ class Comments
      */
     public function serialize(): string
     {
-        return json_encode($this->toArray());
+        return json_encode($this->toArray()) ?: '';
     }
 
     /**
      * Comments are empty?
      *
-     * @retun bool
+     * @return bool
      */
     public function isEmpty(): bool
     {
