@@ -113,9 +113,10 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
      * ArticleList constructor.
      *
      * @param array<mixed> $attributes
+     * @param User|null $User
      * @throws Exception|QUI\Exception
      */
-    public function __construct(array $attributes = [])
+    public function __construct(array $attributes = [], ?User $User = null)
     {
         if (!isset($attributes['calculations'])) {
             $attributes['calculations'] = [];
@@ -129,7 +130,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
             $attributes['priceFactors'] = [];
         }
 
-        parent::__construct($attributes);
+        parent::__construct($attributes, $User);
 
         if (!empty($this->calculations)) {
             $this->calculated = true;
@@ -495,7 +496,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
             $precision = $this->getCurrency()->getPrecision();
 
             if (count($this->vatArray)) {
-                $vat = key($this->vatArray);
+                $vat = (float)key($this->vatArray);
             }
 
             if ($PriceFactor->getVat()) {

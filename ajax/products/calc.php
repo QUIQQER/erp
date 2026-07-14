@@ -39,13 +39,18 @@ QUI::getAjax()->registerFunction(
 
         $User = $Calc->getUser();
 
+        if ($User === null) {
+            $User = QUI::getUserBySession();
+            $Calc->setUser($User);
+        }
+
         if ($nettoInput) {
             $User->setAttribute('RUNTIME_NETTO_BRUTTO_STATUS', QUI\ERP\Utils\User::IS_NETTO_USER);
         } else {
             $User->setAttribute('RUNTIME_NETTO_BRUTTO_STATUS', QUI\ERP\Utils\User::IS_BRUTTO_USER);
         }
 
-        $Articles = new QUI\ERP\Accounting\ArticleList($articles);
+        $Articles = new QUI\ERP\Accounting\ArticleList($articles, $User);
 
         if (!empty($priceFactors)) {
             foreach ($priceFactors as $priceFactor) {
@@ -55,7 +60,6 @@ QUI::getAjax()->registerFunction(
             }
         }
 
-        $Articles->setUser($User);
         $Articles->calc($Calc);
 
         try {

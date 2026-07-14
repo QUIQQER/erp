@@ -21,7 +21,7 @@ class CalculationValue
 
     protected int | float $number = 0;
 
-    protected int | float $precision = 8;
+    protected int $precision = 8;
 
     /**
      * CalculationValue constructor.
@@ -39,7 +39,7 @@ class CalculationValue
             return;
         }
 
-        $this->number = $number;
+        $this->number = $number + 0; // Preserve numeric type: "19" -> int, "19.5" -> float.
 
         // precision
         if (is_numeric($precision)) {

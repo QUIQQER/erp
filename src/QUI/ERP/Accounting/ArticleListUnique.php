@@ -20,6 +20,7 @@ use function count;
 use function dirname;
 use function file_exists;
 use function file_get_contents;
+use function is_bool;
 use function is_string;
 use function json_decode;
 use function json_encode;
@@ -136,7 +137,9 @@ class ArticleListUnique implements IteratorAggregate
             $interfaces = class_implements($class);
 
             if (isset($interfaces[ArticleInterface::class])) {
-                $this->articles[] = new $class($article);
+                /** @var Article $Article */
+                $Article = new $class($article);
+                $this->articles[] = $Article;
                 continue;
             }
 
@@ -469,10 +472,18 @@ class ArticleListUnique implements IteratorAggregate
                 class_exists('QUI\ERP\CryptoCurrency\Currency')
                 && $Currency instanceof QUI\ERP\CryptoCurrency\Currency
             ) {
-                $ExchangeCurrency->setExchangeRate($this->exchangeRate);
+                if ($this->exchangeRate !== null) {
+                    $ExchangeCurrency->setExchangeRate($this->exchangeRate);
+                }
+
                 $exchangeRate = $Currency->convertFormat(1, $ExchangeCurrency);
             } else {
                 $exchangeRate = $Currency->getExchangeRate($ExchangeCurrency);
+
+                if (is_bool($exchangeRate)) {
+                    $exchangeRate = (float)$exchangeRate;
+                }
+
                 $exchangeRate = $ExchangeCurrency->format($exchangeRate);
             }
 
@@ -493,10 +504,18 @@ class ArticleListUnique implements IteratorAggregate
                 class_exists('QUI\ERP\CryptoCurrency\Currency')
                 && $Currency instanceof QUI\ERP\CryptoCurrency\Currency
             ) {
-                $DefaultCurrency->setExchangeRate($this->exchangeRate);
+                if ($this->exchangeRate !== null) {
+                    $DefaultCurrency->setExchangeRate($this->exchangeRate);
+                }
+
                 $exchangeRate = $Currency->convertFormat(1, $DefaultCurrency);
             } else {
                 $exchangeRate = $Currency->getExchangeRate($DefaultCurrency);
+
+                if (is_bool($exchangeRate)) {
+                    $exchangeRate = (float)$exchangeRate;
+                }
+
                 $exchangeRate = $DefaultCurrency->format($exchangeRate);
             }
 

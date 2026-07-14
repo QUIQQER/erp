@@ -395,7 +395,7 @@ class Article implements ArticleInterface
             $unitPrice = $this->attributes['unitPrice'];
         }
 
-        return new Price($unitPrice, $this->Currency);
+        return new Price($unitPrice, $this->getCurrency());
     }
 
     /**
@@ -406,18 +406,18 @@ class Article implements ArticleInterface
     public function getUnitPriceUnRounded(): Price
     {
         if (isset($this->attributes['nettoPriceNotRounded'])) {
-            return new Price($this->attributes['nettoPriceNotRounded'], $this->Currency);
+            return new Price($this->attributes['nettoPriceNotRounded'], $this->getCurrency());
         }
 
         if ($this->nettoPriceNotRounded !== null) {
-            return new Price($this->nettoPriceNotRounded, $this->Currency);
+            return new Price($this->nettoPriceNotRounded, $this->getCurrency());
         }
 
         if (isset($this->attributes['unitPrice'])) {
             $this->nettoPriceNotRounded = $this->attributes['unitPrice'];
         }
 
-        return new Price($this->nettoPriceNotRounded, $this->Currency);
+        return new Price($this->nettoPriceNotRounded, $this->getCurrency());
     }
 
     /**
@@ -429,7 +429,7 @@ class Article implements ArticleInterface
     {
         $this->calc();
 
-        return new Price($this->sum, $this->Currency);
+        return new Price($this->sum, $this->getCurrency());
     }
 
     /**
@@ -448,8 +448,14 @@ class Article implements ArticleInterface
             try {
                 $Area = null;
 
-                if ($this->getUser()) {
-                    $Area = QUI\ERP\Areas\Utils::getAreaByCountry($this->getUser()->getCountry());
+                $User = $this->getUser();
+
+                if ($User) {
+                    $Country = $User->getCountry();
+
+                    if ($Country) {
+                        $Area = QUI\ERP\Areas\Utils::getAreaByCountry($Country);
+                    }
                 }
 
                 if (!$Area) {
@@ -584,7 +590,7 @@ class Article implements ArticleInterface
     {
         $this->calc();
 
-        return new Price($this->sum, $this->Currency);
+        return new Price($this->sum, $this->getCurrency());
     }
 
     /**
