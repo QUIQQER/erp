@@ -31,7 +31,7 @@ class CalculationValue
      * @param bool|int $precision - The optional number of decimal digits to round to.
      */
     public function __construct(
-        $number,
+        int | float | string $number,
         null | QUI\ERP\Currency\Currency $Currency = null,
         bool | int $precision = false
     ) {

@@ -46,7 +46,7 @@ class Processes
      * @param string|false $entityPlugin
      * @throws Exception
      */
-    public function getEntity($entityHash, $entityPlugin = false): ErpEntityInterface
+    public function getEntity(string $entityHash, string | false $entityPlugin = false): ErpEntityInterface
     {
         if ($entityPlugin === false || $entityPlugin === 'quiqqer/booking') {
             try {

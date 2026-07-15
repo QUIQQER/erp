@@ -6,8 +6,10 @@
 
 namespace QUI\ERP\Accounting;
 
+use QUI\ERP\Currency\Currency;
 use QUI\ERP\Money\Price;
 use QUI\Exception;
+use QUI\Interfaces\Users\User;
 
 /**
  * Article
@@ -67,6 +69,21 @@ interface ArticleInterface
      * @return float|int|bool
      */
     public function getQuantity(): float|int|bool;
+
+    /**
+     * @return float|int
+     */
+    public function getVat(): float|int;
+
+    public function getUser(): ?User;
+
+    public function setUser(?User $User): void;
+
+    public function getCurrency(): Currency;
+
+    public function setCurrency(Currency $Currency): void;
+
+    public function calc(null|Calc|\QUI\ERP\User $Instance = null): ArticleInterface;
 
     /**
      * @return ArticleDiscount|null

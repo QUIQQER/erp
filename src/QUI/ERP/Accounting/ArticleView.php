@@ -72,7 +72,7 @@ class ArticleView extends QUI\QDOM
      *
      * @param int|float $position
      */
-    public function setPosition($position): void
+    public function setPosition(int | float $position): void
     {
         $this->position = (float)$position;
     }

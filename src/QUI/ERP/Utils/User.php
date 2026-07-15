@@ -370,7 +370,7 @@ class User
      */
     public static function setUserCurrentAddress(
         QUI\Interfaces\Users\User $User,
-        $Address
+        mixed $Address
     ): void {
         if (class_exists('QUI\ERP\Tax\Utils')) {
             QUI\ERP\Tax\Utils::cleanUpUserTaxCache($User);

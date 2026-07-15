@@ -93,9 +93,9 @@ interface ErpEntityInterface
      * Set a customer to the erp entity
      *
      * @param array<mixed>|User $User
-     * @return mixed
+     * @return void
      */
-    public function setCustomer(array | QUI\Interfaces\Users\User $User);
+    public function setCustomer(array | QUI\Interfaces\Users\User $User): void;
 
     /**
      * Returns the erp entity as an array

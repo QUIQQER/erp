@@ -66,7 +66,7 @@ class Utils
     /**
      * @param class-string|string $className
      */
-    public static function getEntityIcon($className): string
+    public static function getEntityIcon(string $className): string
     {
         if (isset(self::$entityIcons[$className])) {
             return self::$entityIcons[$className];

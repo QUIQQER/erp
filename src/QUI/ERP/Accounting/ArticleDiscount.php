@@ -182,7 +182,7 @@ class ArticleDiscount
      * @param Currency $Currency
      * @return void
      */
-    public function setCurrency(Currency $Currency)
+    public function setCurrency(Currency $Currency): void
     {
         $this->Currency = $Currency;
     }
@@ -225,11 +225,11 @@ class ArticleDiscount
         }
 
         if ($this->type === Calc::CALCULATION_COMPLEMENT) {
-            if ($this->Article && method_exists($this->Article, 'getUser') && $this->Article->getUser()) {
+            if ($this->Article && $this->Article->getUser()) {
                 $User = $this->Article->getUser();
                 $isNetto = QUI\ERP\Utils\User::isNettoUser($User);
 
-                if (!$isNetto && method_exists($this->Article, 'getVat')) {
+                if (!$isNetto) {
                     $value = $value * ($this->Article->getVat() / 100 + 1);
                 }
             }
@@ -244,7 +244,7 @@ class ArticleDiscount
      * @param ArticleInterface $Article
      * @return void
      */
-    public function setArticle(ArticleInterface $Article)
+    public function setArticle(ArticleInterface $Article): void
     {
         $this->Article = $Article;
     }

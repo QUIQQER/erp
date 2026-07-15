@@ -398,9 +398,9 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * Add an article to the list
      *
-     * @param Article $Article
+     * @param ArticleInterface $Article
      */
-    public function addArticle(Article $Article): void
+    public function addArticle(ArticleInterface $Article): void
     {
         $this->articles[] = $Article;
         $this->calculated = false;
@@ -428,9 +428,9 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
 
     /**
      * @param int $pos
-     * @return Article|null
+     * @return ArticleInterface|null
      */
-    public function getArticle($pos): ?Article
+    public function getArticle(int $pos): ?ArticleInterface
     {
         if (isset($this->articles[$pos])) {
             return $this->articles[$pos];
@@ -442,10 +442,10 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     /**
      * Replace an article at a specific position
      *
-     * @param Article $Article
+     * @param ArticleInterface $Article
      * @param integer $index
      */
-    public function replaceArticle(Article $Article, int $index): void
+    public function replaceArticle(ArticleInterface $Article, int $index): void
     {
         $this->articles[$index] = $Article;
     }

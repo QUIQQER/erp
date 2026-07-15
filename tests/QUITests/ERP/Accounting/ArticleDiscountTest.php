@@ -106,9 +106,24 @@ class ArticleDiscountTest extends TestCase
                 return $this->User;
             }
 
+            public function setCurrency(Currency $Currency): void
+            {
+            }
+
+            public function getCurrency(): Currency
+            {
+                throw new \RuntimeException('Not used in this test');
+            }
+
             public function getVat(): float
             {
                 return $this->vat;
+            }
+
+            public function calc(
+                null|\QUI\ERP\Accounting\Calc|\QUI\ERP\User $Instance = null
+            ): ArticleInterface {
+                return $this;
             }
 
             public function getId(): int

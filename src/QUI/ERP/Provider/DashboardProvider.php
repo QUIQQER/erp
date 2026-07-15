@@ -10,7 +10,7 @@ class DashboardProvider implements DashboardProviderInterface
     /**
      * @param QUI\Locale|null $Locale
      */
-    public function getTitle($Locale = null): string
+    public function getTitle(?QUI\Locale $Locale = null): string
     {
         if ($Locale === null) {
             $Locale = QUI::getLocale();
