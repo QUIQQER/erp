@@ -20,7 +20,7 @@ class Calculations
     protected array $attributes = [];
 
     /**
-     * @var Article[]
+     * @var ArticleInterface[]
      */
     protected array $articles = [];
 
@@ -33,7 +33,7 @@ class Calculations
      * Calculations constructor.
      *
      * @param array<string, mixed> $attributes - calculation array
-     * @param array<Article> $articles - list of articles
+     * @param array<ArticleInterface> $articles - list of articles
      *
      * @throws Exception
      */
@@ -68,7 +68,7 @@ class Calculations
         }
 
         foreach ($articles as $Article) {
-            if ($Article instanceof Article) {
+            if ($Article instanceof ArticleInterface) {
                 $this->articles[] = $Article;
             }
         }
@@ -189,7 +189,7 @@ class Calculations
     //region articles
 
     /**
-     * @return Article[]
+     * @return ArticleInterface[]
      */
     public function getArticles(): array
     {
