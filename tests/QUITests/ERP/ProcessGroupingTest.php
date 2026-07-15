@@ -9,6 +9,21 @@ use QUI\ERP\Process;
 
 class ProcessGroupingTest extends TestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        $stubFiles = [
+            'QUI/ERP/Accounting/Invoice/Invoice.php',
+            'QUI/ERP/Accounting/Invoice/InvoiceTemporary.php',
+            'QUI/ERP/Order/AbstractOrder.php',
+            'QUI/ERP/Order/Order.php',
+            'QUI/ERP/SalesOrders/SalesOrder.php'
+        ];
+
+        foreach ($stubFiles as $stubFile) {
+            require_once dirname(__DIR__, 2) . '/stubs/' . $stubFile;
+        }
+    }
+
     protected function createTransactionalEntityMock(string $uuid, array $payload): object
     {
         $Entity = $this->createMockForIntersectionOfInterfaces([
