@@ -14,6 +14,13 @@ use QUI\ERP\Money\Price;
  */
 class PriceTest extends TestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        if (!class_exists(Discount::class, false)) {
+            require_once dirname(__DIR__, 3) . '/stubs/QUI/ERP/Discount/Discount.php';
+        }
+    }
+
     protected function createPriceObject(float|int $value = 10.0): Price
     {
         $Reflection = new ReflectionClass(Price::class);

@@ -10,6 +10,13 @@ use QUI\ERP\Products\Utils\PriceFactor;
 
 class ArticleListTest extends TestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        if (!class_exists(PriceFactor::class, false)) {
+            require_once dirname(__DIR__, 3) . '/stubs/QUI/ERP/Products/Utils/PriceFactor.php';
+        }
+    }
+
     public function testKeepsArticleInterfaceInstance(): void
     {
         $Article = $this->createMock(ArticleInterface::class);
