@@ -52,6 +52,9 @@ $optionalClassStubs = [
     QUI\ERP\Customer\Utils::class => 'QUI/ERP/Customer/Utils.php',
     QUI\ERP\Customer\CustomerFiles::class => 'QUI/ERP/Customer/CustomerFiles.php',
     QUI\ERP\Customer\NumberRange::class => 'QUI/ERP/Customer/NumberRange.php',
+    QUI\ERP\Discount\Discount::class => 'QUI/ERP/Discount/Discount.php',
+    QUI\FrontendUsers\Controls\Address\Address::class => 'QUI/FrontendUsers/Controls/Address/Address.php',
+    QUI\HtmlToPdf\Document::class => 'QUI/HtmlToPdf/Document.php',
     QUI\ERP\SalesOrders\Handler::class => 'QUI/ERP/SalesOrders/Handler.php',
     QUI\ERP\SalesOrders\SalesOrder::class => 'QUI/ERP/SalesOrders/SalesOrder.php'
 ];
