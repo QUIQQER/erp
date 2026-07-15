@@ -3,12 +3,23 @@
 namespace QUITests\ERP\Accounting;
 
 use PHPUnit\Framework\TestCase;
+use QUI\ERP\Accounting\ArticleInterface;
 use QUI\ERP\Accounting\ArticleList;
 use QUI\ERP\Currency\Currency;
 use QUI\ERP\Products\Utils\PriceFactor;
 
 class ArticleListTest extends TestCase
 {
+    public function testKeepsArticleInterfaceInstance(): void
+    {
+        $Article = $this->createMock(ArticleInterface::class);
+        $List = new ArticleList();
+
+        $List->addArticle($Article);
+
+        $this->assertSame($Article, $List->getArticle(0));
+    }
+
     public function testDecimalVatArrayKeyIsUsedForPriceFactorCalculation(): void
     {
         $Currency = $this->createMock(Currency::class);

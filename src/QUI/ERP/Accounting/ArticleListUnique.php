@@ -34,7 +34,7 @@ use function json_encode;
 class ArticleListUnique implements IteratorAggregate
 {
     /**
-     * @var Article[]
+     * @var ArticleInterface[]
      */
     protected array $articles = [];
 
@@ -137,7 +137,7 @@ class ArticleListUnique implements IteratorAggregate
             $interfaces = class_implements($class);
 
             if (isset($interfaces[ArticleInterface::class])) {
-                /** @var Article $Article */
+                /** @var ArticleInterface $Article */
                 $Article = new $class($article);
                 $this->articles[] = $Article;
                 continue;
@@ -307,7 +307,7 @@ class ArticleListUnique implements IteratorAggregate
     /**
      * Return the list articles
      *
-     * @return Article[]
+     * @return ArticleInterface[]
      */
     public function getArticles(): array
     {

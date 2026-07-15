@@ -533,11 +533,11 @@ class Calc
     /**
      * Calculate the price of an article
      *
-     * @param Article $Article
+     * @param ArticleInterface $Article
      * @param bool|callable $callback
      * @return mixed
      */
-    public function calcArticlePrice(Article $Article, $callback = false)
+    public function calcArticlePrice(ArticleInterface $Article, $callback = false)
     {
         // calc data
         if (!is_callable($callback)) {

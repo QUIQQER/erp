@@ -225,11 +225,11 @@ class ArticleDiscount
         }
 
         if ($this->type === Calc::CALCULATION_COMPLEMENT) {
-            if ($this->Article && method_exists($this->Article, 'getUser') && $this->Article->getUser()) {
+            if ($this->Article && $this->Article->getUser()) {
                 $User = $this->Article->getUser();
                 $isNetto = QUI\ERP\Utils\User::isNettoUser($User);
 
-                if (!$isNetto && method_exists($this->Article, 'getVat')) {
+                if (!$isNetto) {
                     $value = $value * ($this->Article->getVat() / 100 + 1);
                 }
             }
