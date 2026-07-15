@@ -12,6 +12,10 @@ putenv("QUIQQER_OTHER_AUTOLOADERS=KEEP");
 
 require_once __DIR__ . '/../../../../bootstrap.php';
 
+if (!interface_exists(QUI\ERP\ErpEntityInterface::class, false)) {
+    require_once __DIR__ . '/../src/QUI/ERP/ErpEntityInterface.php';
+}
+
 $optionalClassStubs = [
     QUI\ERP\Accounting\Invoice\Handler::class => 'QUI/ERP/Accounting/Invoice/Handler.php',
     QUI\ERP\Accounting\Invoice\Invoice::class => 'QUI/ERP/Accounting/Invoice/Invoice.php',
@@ -31,7 +35,7 @@ $optionalClassStubs = [
 ];
 
 foreach ($optionalClassStubs as $className => $stubFile) {
-    if (!class_exists($className)) {
+    if (!class_exists($className, false)) {
         require_once __DIR__ . '/stubs/' . $stubFile;
     }
 }
