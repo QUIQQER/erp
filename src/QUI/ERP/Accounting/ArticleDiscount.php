@@ -182,7 +182,7 @@ class ArticleDiscount
      * @param Currency $Currency
      * @return void
      */
-    public function setCurrency(Currency $Currency)
+    public function setCurrency(Currency $Currency): void
     {
         $this->Currency = $Currency;
     }
@@ -244,7 +244,7 @@ class ArticleDiscount
      * @param ArticleInterface $Article
      * @return void
      */
-    public function setArticle(ArticleInterface $Article)
+    public function setArticle(ArticleInterface $Article): void
     {
         $this->Article = $Article;
     }

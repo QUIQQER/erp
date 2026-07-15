@@ -142,7 +142,7 @@ class Installer extends QUI\Utils\Singleton
      * @return array<mixed>
      * @throws Exception
      */
-    protected function getPackageRequirements($packageName): array
+    protected function getPackageRequirements(string $packageName): array
     {
         if (!in_array($packageName, $this->getPackageList())) {
             throw new Exception([
@@ -168,7 +168,7 @@ class Installer extends QUI\Utils\Singleton
      * @param string $packageName
      * @throws Exception
      */
-    public function setPackageRequirements($packageName): void
+    public function setPackageRequirements(string $packageName): void
     {
         if (!in_array($packageName, $this->getPackageList())) {
             throw new Exception([

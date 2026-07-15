@@ -444,7 +444,7 @@ class EventHandler
      * @return string
      * @example {erpGetPrefixedNumber assign=prefixedNumber var=$erpUUID}
      */
-    public static function getPrefixedNumber(array $params, $smarty): string
+    public static function getPrefixedNumber(array $params, mixed $smarty): string
     {
         $prefixedNumber = '';
 

@@ -26,9 +26,9 @@ interface OutputProviderInterface
      * Get title for the output entity
      *
      * @param Locale|null $Locale $Locale (optional) - If omitted use \QUI::getLocale()
-     * @return mixed
+     * @return string|array<mixed>
      */
-    public static function getEntityTypeTitle(null | Locale $Locale = null): mixed;
+    public static function getEntityTypeTitle(null | Locale $Locale = null): string | array;
 
     /**
      * Get the entity the output is created for

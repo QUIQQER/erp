@@ -19,7 +19,7 @@ abstract class AbstractErpProvider
      * @param Map $Map
      * @return void
      */
-    public static function addMenuItems(Map $Map)
+    public static function addMenuItems(Map $Map): void
     {
     }
 

@@ -535,9 +535,9 @@ class Calc
      *
      * @param ArticleInterface $Article
      * @param bool|callable $callback
-     * @return mixed
+     * @return Price
      */
-    public function calcArticlePrice(ArticleInterface $Article, $callback = false)
+    public function calcArticlePrice(ArticleInterface $Article, callable | bool $callback = false): Price
     {
         // calc data
         if (!is_callable($callback)) {
@@ -797,7 +797,7 @@ class Calc
      *
      * @throws QUI\ERP\Exception|QUI\Exception
      */
-    public static function calculatePayments($ToCalculate): array
+    public static function calculatePayments(mixed $ToCalculate): array
     {
         if (self::isAllowedForCalculation($ToCalculate) === false) {
             QUI\ERP\Debug::getInstance()->log(
@@ -1207,7 +1207,7 @@ class Calc
      * @param string|array<mixed> $vatArray
      * @return float|int
      */
-    public static function calculateTotalVatOfInvoice($vatArray)
+    public static function calculateTotalVatOfInvoice(string | array $vatArray): float | int
     {
         if (is_string($vatArray)) {
             $vatArray = json_decode($vatArray, true);

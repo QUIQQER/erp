@@ -239,7 +239,7 @@ class ArticleListUnique implements IteratorAggregate
      * @param ?QUI\ERP\Accounting\Calc $Calc
      * @return void
      */
-    public function recalculate(?QUI\ERP\Accounting\Calc $Calc = null)
+    public function recalculate(?QUI\ERP\Accounting\Calc $Calc = null): void
     {
         // placeholder. unique list cant be recalculate
     }

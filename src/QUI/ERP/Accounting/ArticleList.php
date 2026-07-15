@@ -430,7 +430,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
      * @param int $pos
      * @return ArticleInterface|null
      */
-    public function getArticle($pos): ?ArticleInterface
+    public function getArticle(int $pos): ?ArticleInterface
     {
         if (isset($this->articles[$pos])) {
             return $this->articles[$pos];

@@ -577,7 +577,7 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Does nothing
      */
-    public function setGroups(array | string $groups)
+    public function setGroups(array | string $groups): void
     {
     }
 
@@ -628,7 +628,7 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Does nothing
      */
-    public function setPassword(string $new, null | UserInterface $PermissionUser = null)
+    public function setPassword(string $new, null | UserInterface $PermissionUser = null): void
     {
     }
 
@@ -665,28 +665,28 @@ class User extends QUI\QDOM implements UserInterface
     /**
      * Does nothing
      */
-    public function setCompanyStatus(bool $status)
+    public function setCompanyStatus(bool $status): void
     {
     }
 
     /**
      * Does nothing
      */
-    public function addToGroup(int | string $groupId)
+    public function addToGroup(int | string $groupId): void
     {
     }
 
     /**
      * Does nothing
      */
-    public function removeGroup(Group | int | string $Group)
+    public function removeGroup(Group | int | string $Group): void
     {
     }
 
     /**
      * Does nothing
      */
-    public function refresh()
+    public function refresh(): void
     {
     }
 
