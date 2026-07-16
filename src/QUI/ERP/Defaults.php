@@ -222,9 +222,9 @@ class Defaults
      * Return the main timestamp format
      *
      * @param bool|string $lang - language of the wanted timestamp
-     * @return int|null|string
+     * @return int|string
      */
-    public static function getTimestampFormat(bool | string $lang = false): int | string | null
+    public static function getTimestampFormat(bool | string $lang = false): int | string
     {
         if (!is_string($lang) || $lang === '') {
             $lang = QUI::getLocale()->getCurrent();
