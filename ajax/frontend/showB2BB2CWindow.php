@@ -22,7 +22,7 @@ QUI::getAjax()->registerFunction(
             return false;
         }
 
-        $status = QUI::getSession()?->get('quiqqer.erp.b2b.status');
+        $status = QUI::getSession()->get('quiqqer.erp.b2b.status');
 
         if (is_numeric($status)) {
             return false;
