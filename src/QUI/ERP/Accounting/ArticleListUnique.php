@@ -421,23 +421,27 @@ class ArticleListUnique implements IteratorAggregate
             $vatArray = $this->calculations['vatArray'];
         }
 
+        // Keep the original calculation values numeric because the article list may be saved or recalculated after rendering.
+        // Formatting is only needed by the template and must therefore happen on a local copy.
+        $calculations = $this->calculations;
+
         // price display
-        if (is_numeric($this->calculations['sum'])) {
+        if (is_numeric($calculations['sum'])) {
             foreach ($vatArray as $key => $vat) {
                 $vatArray[$key]['sum'] = $Currency->format($vat['sum']);
             }
 
-            $this->calculations['sum'] = $Currency->format($this->calculations['sum']);
-            $this->calculations['subSum'] = $Currency->format($this->calculations['subSum']);
+            $calculations['sum'] = $Currency->format($calculations['sum']);
+            $calculations['subSum'] = $Currency->format($calculations['subSum']);
 
             // Fallback for older unique article lists
-            if (!isset($this->calculations['grandSubSum'])) {
-                $this->calculations['grandSubSum'] = $this->calculations['sum'];
+            if (!isset($calculations['grandSubSum'])) {
+                $calculations['grandSubSum'] = $calculations['sum'];
             }
 
-            $this->calculations['grandSubSum'] = $Currency->format($this->calculations['grandSubSum']);
-            $this->calculations['nettoSum'] = $Currency->format($this->calculations['nettoSum']);
-            $this->calculations['nettoSubSum'] = $Currency->format($this->calculations['nettoSubSum']);
+            $calculations['grandSubSum'] = $Currency->format($calculations['grandSubSum']);
+            $calculations['nettoSum'] = $Currency->format($calculations['nettoSum']);
+            $calculations['nettoSubSum'] = $Currency->format($calculations['nettoSubSum']);
         }
 
         $articles = [];
@@ -545,7 +549,7 @@ class ArticleListUnique implements IteratorAggregate
             'this' => $this,
             'articles' => $articles,
             'articleTemplate' => $articleTemplate,
-            'calculations' => $this->calculations,
+            'calculations' => $calculations,
             'vatArray' => $vatArray,
             'Locale' => $this->Locale,
             'showExchangeRate' => $showExchangeRate,

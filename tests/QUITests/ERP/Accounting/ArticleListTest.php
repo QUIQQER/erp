@@ -3,6 +3,7 @@
 namespace QUITests\ERP\Accounting;
 
 use PHPUnit\Framework\TestCase;
+use QUI\ERP\Accounting\Article;
 use QUI\ERP\Accounting\ArticleInterface;
 use QUI\ERP\Accounting\ArticleList;
 use QUI\ERP\Currency\Currency;
@@ -93,5 +94,25 @@ class ArticleListTest extends TestCase
         $this->assertNotNull($Factor);
         $this->assertSame(19.5, $Factor->getVat());
         $this->assertSame(119.5, $Factor->getSum());
+    }
+
+    public function testRenderingDoesNotFormatStoredCalculationValues(): void
+    {
+        $List = new ArticleList();
+        $List->addArticle(new Article([
+            'id' => 1,
+            'articleNo' => 'RENDER-1',
+            'title' => 'Rendering regression test',
+            'unitPrice' => 10,
+            'quantity' => 1,
+            'vat' => 19
+        ]));
+        $List->calc();
+
+        $beforeRendering = $List->getCalculations();
+
+        self::assertNotSame('', $List->toHTML());
+        self::assertSame($beforeRendering, $List->getCalculations());
+        self::assertIsNotString($List->getCalculations()['subSum']);
     }
 }
