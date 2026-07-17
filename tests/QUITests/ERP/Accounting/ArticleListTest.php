@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use QUI\ERP\Accounting\Article;
 use QUI\ERP\Accounting\ArticleInterface;
 use QUI\ERP\Accounting\ArticleList;
+use QUI\ERP\Accounting\Articles\Text;
 use QUI\ERP\Currency\Currency;
 use QUI\ERP\Products\Utils\PriceFactor;
 
@@ -114,5 +115,14 @@ class ArticleListTest extends TestCase
         self::assertNotSame('', $List->toHTML());
         self::assertSame($beforeRendering, $List->getCalculations());
         self::assertIsNotString($List->getCalculations()['subSum']);
+    }
+
+    public function testTextArticleCanBeConvertedToArrayBeforeListCalculation(): void
+    {
+        $data = (new Text(['title' => 'Information']))->toArray();
+
+        self::assertSame('Information', $data['title']);
+        self::assertSame(0.0, $data['sum']);
+        self::assertFalse($data['displayPrice']);
     }
 }

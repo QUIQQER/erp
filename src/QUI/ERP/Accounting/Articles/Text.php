@@ -68,6 +68,10 @@ class Text extends QUI\ERP\Accounting\Article
      */
     public function toArray(): array
     {
+        // Text articles override getSum(), so the calculation normally triggered by Article::getSum() is skipped.
+        // Initialize the calculated properties before Article::toArray() reads them.
+        $this->calc();
+
         return array_merge(parent::toArray(), [
             'class' => get_class($this),
             'control' => 'package/quiqqer/erp/bin/backend/controls/articles/Text',
