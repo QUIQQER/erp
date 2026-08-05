@@ -362,7 +362,8 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
                     break;
             }
 
-            To.setHours(23);
+            From.setHours(0, 0, 0, 0);
+            To.setHours(23, 59, 59, 0);
 
             this.$Current = From;
             this.$To      = To;
