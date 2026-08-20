@@ -54,12 +54,13 @@ class Address extends QUI\Users\Address
     public function getDisplay(array $options = []): string
     {
         $Engine = QUI::getTemplateManager()->getEngine(true);
+        $User = isset($this->User) ? $this->User : null;
 
         $contactPerson = '';
         $isCompany = false;
 
-        if ($this->User && $this->User->isCompany()) {
-            $isCompany = $this->User->isCompany();
+        if ($User && $User->isCompany()) {
+            $isCompany = $User->isCompany();
         } elseif (
             !empty($this->getAttribute('isCompany'))
             && !empty($this->getAttribute('company'))
@@ -69,8 +70,8 @@ class Address extends QUI\Users\Address
 
         if (!empty($this->getAttribute('contactPerson'))) {
             $contactPerson = $this->getAttribute('contactPerson');
-        } elseif ($this->User) {
-            $ContactPersonAddress = CustomerUtils::getInstance()->getContactPersonAddress($this->User);
+        } elseif ($User) {
+            $ContactPersonAddress = CustomerUtils::getInstance()->getContactPersonAddress($User);
 
             if ($ContactPersonAddress) {
                 $contactPerson = $ContactPersonAddress->getName();
@@ -95,17 +96,17 @@ class Address extends QUI\Users\Address
         $firstname = $this->getAttribute('firstname');
         $lastname = $this->getAttribute('lastname');
 
-        if (empty($firstname) && $this->User) {
-            $firstname = $this->User->getAttribute('firstname');
+        if (empty($firstname) && $User) {
+            $firstname = $User->getAttribute('firstname');
         }
 
-        if (empty($lastname) && $this->User) {
-            $lastname = $this->User->getAttribute('lastname');
+        if (empty($lastname) && $User) {
+            $lastname = $User->getAttribute('lastname');
         }
 
 
         $Engine->assign([
-            'User' => $this->User,
+            'User' => $User,
             'Address' => $this,
             'Countries' => new QUI\Countries\Manager(),
             'options' => $options,

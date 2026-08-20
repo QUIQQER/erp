@@ -27,3 +27,20 @@ spl_autoload_register(static function (string $className): void {
 }, true, true);
 
 require_once __DIR__ . '/../../../autoload.php';
+
+foreach (
+    [
+    'QUI/ERP/Accounting/Invoice/Handler.php',
+    'QUI/ERP/Accounting/Offers/Handler.php',
+    'QUI/ERP/Accounting/Payments/Transactions/Factory.php',
+    'QUI/ERP/Accounting/Payments/Transactions/Handler.php',
+    'QUI/ERP/Order/Handler.php',
+    'QUI/ERP/SalesOrders/Handler.php'
+    ] as $stubFile
+) {
+    $className = str_replace(['/', '.php'], ['\\', ''], $stubFile);
+
+    if (!class_exists($className, false)) {
+        require_once __DIR__ . '/stubs/' . $stubFile;
+    }
+}

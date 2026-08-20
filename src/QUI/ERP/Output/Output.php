@@ -31,9 +31,9 @@ class Output
      * Get the ERP Output Provider for a specific package
      *
      * @param string $package
-     * @return OutputProviderInterface|false - OutputProvider class (static) or false if none found
+     * @return class-string<OutputProviderInterface>|false OutputProvider class or false if none found
      */
-    public static function getOutputProviderByPackage(string $package): bool | OutputProviderInterface
+    public static function getOutputProviderByPackage(string $package): string | false
     {
         foreach (self::getAllOutputProviders() as $outputProvider) {
             if ($outputProvider['package'] === $package) {
