@@ -391,7 +391,7 @@ class User extends QUI\QDOM implements UserInterface
         $attributes['isCompany'] = $this->isCompany();
         $attributes['firstname'] = $this->getAttribute('firstname');
         $attributes['lastname'] = $this->getAttribute('lastname');
-        $attributes['username'] = $this->getAttribute('username');
+        $attributes['username'] = $this->getUsername();
         $attributes['address'] = $this->getAddress()->getAttributes();
 
         if ($this->getAttribute('quiqqer.erp.euVatId')) {

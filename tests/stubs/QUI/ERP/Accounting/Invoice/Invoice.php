@@ -2,7 +2,10 @@
 
 namespace QUI\ERP\Accounting\Invoice;
 
-abstract class Invoice implements \QUI\ERP\ErpEntityInterface
+abstract class Invoice implements
+    \QUI\ERP\ErpEntityInterface,
+    \QUI\ERP\ErpTransactionsInterface,
+    \QUI\ERP\ErpCopyInterface
 {
     public function getPrefixedNumber(): string
     {
@@ -20,6 +23,10 @@ abstract class Invoice implements \QUI\ERP\ErpEntityInterface
     {
     }
 
+    public function getProcessingStatus(): mixed
+    {
+    }
+
     /** @return array<string, mixed> */
     public function getPaymentData(string $key): array
     {
@@ -27,6 +34,11 @@ abstract class Invoice implements \QUI\ERP\ErpEntityInterface
 
     /** @return array<string, mixed> */
     public function getAttributes(): array
+    {
+    }
+
+    /** @param array<mixed> $files */
+    public function setCustomFiles(array $files = []): void
     {
     }
 }

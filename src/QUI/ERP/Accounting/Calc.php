@@ -918,7 +918,10 @@ class Calc
                  */
                 if ($targetCurrencyCode === $CalculateCurrency->getCode() && $targetCurrencyExchangeRate) {
                     $amount /= $targetCurrencyExchangeRate;
-                } elseif ($ShopCurrency === $CalculateCurrency->getCode() && $shopCurrencyExchangeRate) {
+                } elseif (
+                    $ShopCurrency->getCode() === $CalculateCurrency->getCode()
+                    && $shopCurrencyExchangeRate
+                ) {
                     $amount /= $shopCurrencyExchangeRate;
                 } else {
                     $amount = $TransactionCurrency->convert($amount, $CalculateCurrency);
@@ -1185,7 +1188,7 @@ class Calc
             'display_netto_paid' => $Currency->format($nettoPaid),
             'display_netto_total' => $Currency->format($nettoTotal),
 
-            'vat_toPay' => $nettoPaid,
+            'vat_toPay' => $vatToPay,
             'vat_paid' => $vatPaid,
             'vat_total' => $vatTotal,
             'display_vat_toPay' => $Currency->format($vatToPay),

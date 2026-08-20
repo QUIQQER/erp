@@ -2,7 +2,7 @@
 
 namespace QUI\ERP\Order;
 
-abstract class AbstractOrder implements \QUI\ERP\ErpEntityInterface
+abstract class AbstractOrder implements \QUI\ERP\ErpEntityInterface, \QUI\ERP\ErpTransactionsInterface
 {
     public function getDeliveryAddress(): \QUI\ERP\Address
     {

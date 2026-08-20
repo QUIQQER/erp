@@ -103,11 +103,35 @@ class Coordinator extends QUI\Utils\Singleton
 
         $result = $Map->toArray();
 
-        $sorting = function ($a, $b) use ($Locale) {
+        $sorting = function (array $a, array $b) use ($Locale): int {
             if (!isset($a['priority']) && !isset($b['priority'])) {
+                $aText = $a['text'] ?? null;
+                $bText = $b['text'] ?? null;
+
+                $aTextIsValid = is_array($aText)
+                    && isset($aText[0], $aText[1])
+                    && is_string($aText[0])
+                    && is_string($aText[1]);
+                $bTextIsValid = is_array($bText)
+                    && isset($bText[0], $bText[1])
+                    && is_string($bText[0])
+                    && is_string($bText[1]);
+
+                if (!$aTextIsValid && !$bTextIsValid) {
+                    return 0;
+                }
+
+                if (!$aTextIsValid) {
+                    return 1;
+                }
+
+                if (!$bTextIsValid) {
+                    return -1;
+                }
+
                 // sort by text
-                $aLocale = $Locale->get($a['text'][0], $a['text'][1]);
-                $bLocale = $Locale->get($b['text'][0], $b['text'][1]);
+                $aLocale = $Locale->get($aText[0], $aText[1]);
+                $bLocale = $Locale->get($bText[0], $bText[1]);
 
                 return strcmp($aLocale, $bLocale);
             }
