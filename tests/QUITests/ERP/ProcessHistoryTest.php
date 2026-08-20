@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use QUI;
 use QUI\ERP\Comments;
 use QUI\ERP\Process;
+use QUI\Package\Manager;
 
 require_once __DIR__ . '/Fixtures/ProcessHistoryEntity.php';
 require_once __DIR__ . '/Fixtures/ProcessHistoryFixture.php';
@@ -19,6 +20,7 @@ class ProcessHistoryTest extends TestCase
     private Connection $Connection;
     private ?QUI\Events\Manager $originalEvents;
     private ?QUI\Locale $originalLocale;
+    private ?Manager $originalPackageManager;
 
     protected function setUp(): void
     {
@@ -28,6 +30,7 @@ class ProcessHistoryTest extends TestCase
         );
         $this->originalEvents = QUI::$Events;
         $this->originalLocale = QUI::$Locale;
+        $this->originalPackageManager = QUI::$PackageManager;
 
         $Events = $this->createMock(QUI\Events\Manager::class);
         $Events->expects(self::exactly(2))->method('fireEvent');
@@ -39,12 +42,19 @@ class ProcessHistoryTest extends TestCase
                 $key . (is_array($replacements) && isset($replacements['hash']) ? ':' . $replacements['hash'] : '')
         );
         QUI::$Locale = $Locale;
+
+        $PackageManager = $this->createMock(Manager::class);
+        $PackageManager->method('isInstalled')->willReturnCallback(
+            static fn(string $package): bool => $package === 'quiqqer/offers'
+        );
+        QUI::$PackageManager = $PackageManager;
     }
 
     protected function tearDown(): void
     {
         QUI::$Events = $this->originalEvents;
         QUI::$Locale = $this->originalLocale;
+        QUI::$PackageManager = $this->originalPackageManager;
         $this->Connection->close();
     }
 
