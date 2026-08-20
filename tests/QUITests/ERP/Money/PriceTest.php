@@ -116,9 +116,14 @@ class PriceTest extends TestCase
 
     public function testValidatePriceAcceptsPriceInstance(): void
     {
-        $PriceObject = $this->createPriceObject(4.56789);
+        $value = 4.56789;
+        $PriceObject = $this->createPriceObject($value);
+        $Config = QUI::getPackage('quiqqer/erp')->getConfig();
 
-        $this->assertSame(4.56789, Price::parsePrice($PriceObject));
+        $this->assertInstanceOf(QUI\Config::class, $Config);
+        $precision = (int)($Config->get('general', 'precision') ?: 8);
+
+        $this->assertSame(round($value, $precision), Price::parsePrice($PriceObject));
     }
 
     public function testDeprecatedValidatePriceDelegatesToParsePrice(): void
