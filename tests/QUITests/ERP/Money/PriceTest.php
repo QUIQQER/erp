@@ -118,12 +118,14 @@ class PriceTest extends TestCase
     {
         $value = 4.56789;
         $PriceObject = $this->createPriceObject($value);
-        $Config = QUI::getPackage('quiqqer/erp')->getConfig();
+        $Locale = $this->createMock(QUI\Locale::class);
+        $Locale->method('getDecimalSeparator')->willReturn('.');
+        $Locale->method('getGroupingSeparator')->willReturn(',');
 
-        $this->assertInstanceOf(QUI\Config::class, $Config);
-        $precision = (int)($Config->get('general', 'precision') ?: 8);
-
-        $this->assertSame(round($value, $precision), Price::parsePrice($PriceObject));
+        $this->assertSame(
+            round($value, QUI\ERP\Defaults::getPrecision()),
+            Price::parsePrice($PriceObject, $Locale)
+        );
     }
 
     public function testDeprecatedValidatePriceDelegatesToParsePrice(): void
