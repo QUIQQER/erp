@@ -2,19 +2,17 @@
 
 namespace QUI\ERP\Accounting\Payments\Transactions;
 
-class Handler
+class Handler extends \QUI\Utils\Singleton
 {
-    public static function getInstance(): self
-    {
-    }
-
     /** @return list<Transaction> */
     public function getTransactionsByHash(string $hash): array
     {
+        return [];
     }
 
     /** @return list<Transaction> */
     public function getTransactionsByProcessId(string $processId): array
     {
+        return [];
     }
 }

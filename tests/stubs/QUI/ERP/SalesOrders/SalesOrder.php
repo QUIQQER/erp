@@ -2,7 +2,7 @@
 
 namespace QUI\ERP\SalesOrders;
 
-abstract class SalesOrder implements \QUI\ERP\ErpEntityInterface
+abstract class SalesOrder implements \QUI\ERP\ErpEntityInterface, \QUI\ERP\ErpTransactionsInterface
 {
     public function getHash(): string
     {
