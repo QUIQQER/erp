@@ -12,6 +12,7 @@ class CoordinatorFixtureProvider extends AbstractErpProvider
     {
         $Map->appendChild(new Item(['name' => 'zeta', 'text' => ['test', 'zeta']]));
         $Map->appendChild(new Item(['name' => 'priority', 'text' => ['test', 'last'], 'priority' => 1]));
+        $Map->appendChild(new Item(['name' => 'invalid-locale', 'text' => [[], []]]));
 
         $Alpha = new Item(['name' => 'alpha', 'text' => ['test', 'alpha']]);
         $Alpha->appendChild(new Item(['name' => 'child-zeta', 'text' => ['test', 'zeta']]));

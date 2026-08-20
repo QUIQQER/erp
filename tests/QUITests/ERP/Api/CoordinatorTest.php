@@ -81,7 +81,10 @@ class CoordinatorTest extends TestCase
 
         $result = Coordinator::getInstance()->getMenuItems();
 
-        self::assertSame(['priority', 'alpha', 'zeta'], array_column($result['items'], 'name'));
+        self::assertSame(
+            ['priority', 'alpha', 'zeta', 'invalid-locale'],
+            array_column($result['items'], 'name')
+        );
         self::assertSame(
             ['child-alpha', 'child-zeta'],
             array_column($result['items'][1]['items'], 'name')
