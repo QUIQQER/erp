@@ -3,9 +3,8 @@
 namespace QUITests\ERP;
 
 use DateTimeImmutable;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
-use PHPUnit\Framework\TestCase;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Types;
 use QUI;
 use QUI\ERP\Comments;
 use QUI\ERP\Process;
@@ -15,19 +14,23 @@ require_once __DIR__ . '/Fixtures/ProcessHistoryEntity.php';
 require_once __DIR__ . '/Fixtures/ProcessHistoryFixture.php';
 require_once __DIR__ . '/Fixtures/ProcessTransactionFixture.php';
 
-class ProcessHistoryTest extends TestCase
+class ProcessHistoryTest extends DatabaseTestCase
 {
-    private Connection $Connection;
+    private string $historyTable;
     private ?QUI\Events\Manager $originalEvents;
     private ?QUI\Locale $originalLocale;
     private ?Manager $originalPackageManager;
 
     protected function setUp(): void
     {
-        $this->Connection = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]);
-        $this->Connection->executeStatement(
-            'CREATE TABLE process_history (id TEXT PRIMARY KEY, history TEXT)'
-        );
+        parent::setUp();
+
+        $this->historyTable = $this->testTableName('history');
+        $Table = new Table($this->historyTable);
+        $Table->addColumn('id', Types::STRING, ['length' => 250]);
+        $Table->addColumn('history', Types::TEXT, ['notnull' => false]);
+        $Table->setPrimaryKey(['id']);
+        $this->createTestTable($Table);
         $this->originalEvents = QUI::$Events;
         $this->originalLocale = QUI::$Locale;
         $this->originalPackageManager = QUI::$PackageManager;
@@ -52,15 +55,18 @@ class ProcessHistoryTest extends TestCase
 
     protected function tearDown(): void
     {
-        QUI::$Events = $this->originalEvents;
-        QUI::$Locale = $this->originalLocale;
-        QUI::$PackageManager = $this->originalPackageManager;
-        $this->Connection->close();
+        try {
+            QUI::$Events = $this->originalEvents;
+            QUI::$Locale = $this->originalLocale;
+            QUI::$PackageManager = $this->originalPackageManager;
+        } finally {
+            parent::tearDown();
+        }
     }
 
     public function testCompleteHistoryCombinesAllEntityTypesAndMetadata(): void
     {
-        $Process = new ProcessHistoryFixture('process-history', $this->Connection);
+        $Process = new ProcessHistoryFixture('process-history', $this->Connection, $this->historyTable);
         $Process->invoices = [new ProcessHistoryEntity(
             'invoice-1',
             'INV-1',
@@ -125,7 +131,7 @@ class ProcessHistoryTest extends TestCase
 
     public function testCompleteHistoryFiltersLegacyEntriesAndAddsEmptyInformation(): void
     {
-        $this->Connection->insert('process_history', [
+        $this->Connection->insert($this->historyTable, [
             'id' => 'legacy-only',
             'history' => json_encode([[
                 'message' => 'Legacy comment',
@@ -133,7 +139,7 @@ class ProcessHistoryTest extends TestCase
                 'id' => 'legacy'
             ]], JSON_THROW_ON_ERROR)
         ]);
-        $Process = new ProcessHistoryFixture('legacy-only', $this->Connection);
+        $Process = new ProcessHistoryFixture('legacy-only', $this->Connection, $this->historyTable);
 
         $comments = $Process->getCompleteHistory()->toArray();
 

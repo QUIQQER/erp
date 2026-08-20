@@ -2,39 +2,45 @@
 
 namespace QUITests\ERP\Database;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DbalException;
-use PHPUnit\Framework\TestCase;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Types;
 use QUI\ERP\Database\Queries;
+use QUITests\ERP\DatabaseTestCase;
 
-class QueriesTest extends TestCase
+class QueriesTest extends DatabaseTestCase
 {
-    private Connection $Connection;
+    private string $entriesTable;
 
     protected function setUp(): void
     {
-        $this->Connection = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]);
-        $this->Connection->executeStatement(
-            'CREATE TABLE process_entries ('
-            . 'id INTEGER PRIMARY KEY, hash TEXT, global_process_id TEXT, date TEXT, ignored TEXT)'
-        );
+        parent::setUp();
 
-        $this->Connection->insert('process_entries', [
+        $this->entriesTable = $this->testTableName('entries');
+        $Table = new Table($this->entriesTable);
+        $Table->addColumn('id', Types::INTEGER);
+        $Table->addColumn('hash', Types::STRING, ['length' => 250]);
+        $Table->addColumn('global_process_id', Types::STRING, ['length' => 250]);
+        $Table->addColumn('date', Types::STRING, ['length' => 50]);
+        $Table->addColumn('ignored', Types::STRING, ['length' => 50, 'notnull' => false]);
+        $Table->setPrimaryKey(['id']);
+        $this->createTestTable($Table);
+
+        $this->Connection->insert($this->entriesTable, [
             'id' => 1,
             'hash' => 'own-hash',
             'global_process_id' => 'process-a',
             'date' => '2026-01-01',
             'ignored' => 'not-selected'
         ]);
-        $this->Connection->insert('process_entries', [
+        $this->Connection->insert($this->entriesTable, [
             'id' => 2,
             'hash' => 'process-a',
             'global_process_id' => 'process-b',
             'date' => '2026-01-02',
             'ignored' => 'not-selected'
         ]);
-        $this->Connection->insert('process_entries', [
+        $this->Connection->insert($this->entriesTable, [
             'id' => 3,
             'hash' => 'unrelated',
             'global_process_id' => 'process-c',
@@ -43,14 +49,9 @@ class QueriesTest extends TestCase
         ]);
     }
 
-    protected function tearDown(): void
-    {
-        $this->Connection->close();
-    }
-
     public function testFetchAllAssociativeReturnsOnlyRequestedColumns(): void
     {
-        $rows = Queries::fetchAllAssociative($this->Connection, 'process_entries', ['id', 'hash']);
+        $rows = Queries::fetchAllAssociative($this->Connection, $this->entriesTable, ['id', 'hash']);
 
         $this->assertCount(3, $rows);
         $this->assertSame(['id', 'hash'], array_keys($rows[0]));
@@ -87,15 +88,23 @@ class QueriesTest extends TestCase
     public function testEitherIdentifierBindsValueInsteadOfInterpolatingIt(): void
     {
         $this->assertSame([], $this->fetchByEitherIdentifier("process-a' OR 1=1 --"));
-        $this->assertSame(3, (int)$this->Connection->fetchOne('SELECT COUNT(*) FROM process_entries'));
+        $this->assertSame(
+            3,
+            (int)$this->Connection->fetchOne(
+                'SELECT COUNT(*) FROM ' . $this->Connection->quoteIdentifier($this->entriesTable)
+            )
+        );
     }
 
     public function testEitherIdentifierSupportsBookingColumnNames(): void
     {
-        $this->Connection->executeStatement(
-            'CREATE TABLE bookings (uuid TEXT, globalProcessId TEXT, createDate TEXT)'
-        );
-        $this->Connection->insert('bookings', [
+        $bookingsTable = $this->testTableName('bookings');
+        $Table = new Table($bookingsTable);
+        $Table->addColumn('uuid', Types::STRING, ['length' => 250]);
+        $Table->addColumn('globalProcessId', Types::STRING, ['length' => 250]);
+        $Table->addColumn('createDate', Types::STRING, ['length' => 50]);
+        $this->createTestTable($Table);
+        $this->Connection->insert($bookingsTable, [
             'uuid' => 'booking-id',
             'globalProcessId' => 'central-process',
             'createDate' => '2026-05-01'
@@ -103,7 +112,7 @@ class QueriesTest extends TestCase
 
         $rows = Queries::fetchAllAssociativeByEitherIdentifier(
             $this->Connection,
-            'bookings',
+            $bookingsTable,
             ['uuid', 'globalProcessId', 'createDate'],
             'globalProcessId',
             'uuid',
@@ -118,7 +127,7 @@ class QueriesTest extends TestCase
     {
         $row = Queries::fetchAssociativeByIdentifier(
             $this->Connection,
-            'process_entries',
+            $this->entriesTable,
             'hash',
             'own-hash'
         );
@@ -131,7 +140,7 @@ class QueriesTest extends TestCase
     {
         $this->assertFalse(Queries::fetchAssociativeByIdentifier(
             $this->Connection,
-            'process_entries',
+            $this->entriesTable,
             'hash',
             'missing'
         ));
@@ -139,7 +148,7 @@ class QueriesTest extends TestCase
 
     public function testInsertAndUpdatePersistData(): void
     {
-        $affected = Queries::insert($this->Connection, 'process_entries', [
+        $affected = Queries::insert($this->Connection, $this->entriesTable, [
             'id' => 4,
             'hash' => 'inserted',
             'global_process_id' => 'process-d',
@@ -147,7 +156,7 @@ class QueriesTest extends TestCase
         ]);
         $updated = Queries::update(
             $this->Connection,
-            'process_entries',
+            $this->entriesTable,
             ['date' => '2026-02-01'],
             ['id' => 4]
         );
@@ -156,7 +165,9 @@ class QueriesTest extends TestCase
         $this->assertSame(1, $updated);
         $this->assertSame(
             '2026-02-01',
-            $this->Connection->fetchOne('SELECT date FROM process_entries WHERE id = 4')
+            $this->Connection->fetchOne(
+                'SELECT date FROM ' . $this->Connection->quoteIdentifier($this->entriesTable) . ' WHERE id = 4'
+            )
         );
     }
 
@@ -164,7 +175,7 @@ class QueriesTest extends TestCase
     {
         $this->expectException(DbalException::class);
 
-        Queries::fetchAllAssociative($this->Connection, 'missing_table', ['id']);
+        Queries::fetchAllAssociative($this->Connection, $this->testTableName('missing'), ['id']);
     }
 
     /**
@@ -174,7 +185,7 @@ class QueriesTest extends TestCase
     {
         return Queries::fetchAllAssociativeByEitherIdentifier(
             $this->Connection,
-            'process_entries',
+            $this->entriesTable,
             ['id', 'hash', 'global_process_id'],
             'global_process_id',
             'hash',

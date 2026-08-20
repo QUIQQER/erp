@@ -4,14 +4,17 @@ namespace QUI\ERP\SalesOrders;
 
 class Handler
 {
+    public static string $salesOrdersTable = 'processes_sales_orders_test';
+    public static string $salesOrderDraftsTable = 'processes_sales_order_drafts_test';
+
     public static function getTableSalesOrders(): string
     {
-        return 'processes_sales_orders_test';
+        return self::$salesOrdersTable;
     }
 
     public static function getTableSalesOrderDrafts(): string
     {
-        return 'processes_sales_order_drafts_test';
+        return self::$salesOrderDraftsTable;
     }
 
     public static function getSalesOrder(int | string $id): SalesOrder

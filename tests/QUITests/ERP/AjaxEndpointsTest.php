@@ -26,6 +26,7 @@ use QUI\Users\Address;
 use QUI\Users\Manager as UsersManager;
 use QUI\Utils\Singleton;
 use ReflectionProperty;
+use RuntimeException;
 use Stash\Interfaces\ItemInterface;
 use Stash\Pool;
 
@@ -525,15 +526,30 @@ class AjaxEndpointsTest extends TestCase
         self::assertSame([], $processInformation('missing-process'));
     }
 
-    public function testProcessEndpointsUseOnlyIsolatedSqliteState(): void
+    public function testProcessEndpointsUseSelectedDatabase(): void
     {
         $originalConnection = QUI::getDataBaseConnection();
-        $Connection = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]);
+        $usesCiDatabase = DatabaseEnvironment::usesCiDatabase();
+        $Connection = $usesCiDatabase
+            ? $originalConnection
+            : DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]);
         $processTable = QUI::getDBTableName('process');
-        $Connection->executeStatement(
-            'CREATE TABLE ' . $Connection->quoteIdentifier($processTable)
-            . " (id TEXT PRIMARY KEY, history TEXT DEFAULT '')"
-        );
+        $firstProcessId = 'ajax-process-' . bin2hex(random_bytes(8));
+        $secondProcessId = 'ajax-process-' . bin2hex(random_bytes(8));
+
+        if ($usesCiDatabase) {
+            if ($Connection->isTransactionActive()) {
+                throw new RuntimeException('ERP Ajax CI tests require a connection without a transaction.');
+            }
+
+            $Connection->beginTransaction();
+        } else {
+            $Connection->executeStatement(
+                'CREATE TABLE ' . $Connection->quoteIdentifier($processTable)
+                . " (id TEXT PRIMARY KEY, history TEXT DEFAULT '')"
+            );
+        }
+
         $Manager = $this->createMock(Manager::class);
         $Manager->method('isInstalled')->willReturn(false);
         QUI::$PackageManager = $Manager;
@@ -547,8 +563,8 @@ class AjaxEndpointsTest extends TestCase
                 ['globalProcessId', 'hash'],
                 ['Permission::checkAdminUser']
             );
-            $result = $process('ajax-process-900', '');
-            self::assertSame('ajax-process-900', $result['globalProcessId']);
+            $result = $process($firstProcessId, '');
+            self::assertSame($firstProcessId, $result['globalProcessId']);
             self::assertCount(1, $result['history']);
 
             $dashboardProcess = $this->endpoint(
@@ -557,7 +573,7 @@ class AjaxEndpointsTest extends TestCase
                 ['globalProcessId'],
                 ['Permission::checkAdminUser']
             );
-            self::assertCount(1, $dashboardProcess('ajax-process-901')['history']);
+            self::assertCount(1, $dashboardProcess($secondProcessId)['history']);
 
             $processList = $this->endpoint(
                 'dashboard/globalProcess/getList.php',
@@ -567,11 +583,21 @@ class AjaxEndpointsTest extends TestCase
             );
             self::assertSame([], $processList());
             self::assertSame(2, (int)$Connection->fetchOne(
-                'SELECT COUNT(*) FROM ' . $Connection->quoteIdentifier($processTable)
+                'SELECT COUNT(*) FROM ' . $Connection->quoteIdentifier($processTable) . ' WHERE id IN (?, ?)',
+                [$firstProcessId, $secondProcessId]
             ));
         } finally {
             (new ReflectionProperty(QUI::class, 'QueryBuilder'))->setValue(null, $originalConnection);
-            $Connection->close();
+
+            if ($usesCiDatabase) {
+                if (!$Connection->isTransactionActive()) {
+                    throw new RuntimeException('The ERP Ajax CI transaction ended before cleanup.');
+                }
+
+                $Connection->rollBack();
+            } else {
+                $Connection->close();
+            }
         }
     }
 
