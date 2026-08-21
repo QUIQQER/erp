@@ -22,8 +22,11 @@ class ProcessHistoryFixture extends Process
     /** @var array<mixed> */
     public array $transactionFixtures = [];
 
-    public function __construct(string $processId, private Connection $Connection)
-    {
+    public function __construct(
+        string $processId,
+        private Connection $Connection,
+        private string $historyTable
+    ) {
         parent::__construct($processId);
     }
 
@@ -34,7 +37,7 @@ class ProcessHistoryFixture extends Process
 
     protected function table(): string
     {
-        return 'process_history';
+        return $this->historyTable;
     }
 
     public function getInvoices(): array

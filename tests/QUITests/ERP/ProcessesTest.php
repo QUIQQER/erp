@@ -3,15 +3,20 @@
 namespace QUITests\ERP;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
-use PHPUnit\Framework\TestCase;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Types;
 use QUI;
+use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
+use QUI\ERP\Accounting\Offers\Handler as OffersHandler;
+use QUI\ERP\Accounting\Payments\Transactions\Factory as TransactionFactory;
+use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\ERP\Processes;
+use QUI\ERP\SalesOrders\Handler as SalesOrdersHandler;
 use QUI\Exception;
 use QUI\Package\Manager;
 use ReflectionClass;
 
-class ProcessesTest extends TestCase
+class ProcessesTest extends DatabaseTestCase
 {
     public static function setUpBeforeClass(): void
     {
@@ -94,11 +99,18 @@ class ProcessesTest extends TestCase
 
     public function testGetListCatchesDbalExceptionsAndContinues(): void
     {
-        $Processes = new class () extends Processes {
+        $Processes = new class ($this->Connection, $this->testTableName('missing')) extends Processes {
+            public function __construct(
+                private Connection $Connection,
+                private string $missingTable
+            ) {
+            }
+
             protected function readBooking(): void
             {
-                DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true])
-                    ->executeQuery('SELECT * FROM missing_table');
+                $this->Connection->executeQuery(
+                    'SELECT * FROM ' . $this->Connection->quoteIdentifier($this->missingTable)
+                );
             }
 
             protected function readInvoices(): void
@@ -129,35 +141,32 @@ class ProcessesTest extends TestCase
         $this->assertSame([], $Processes->getList());
     }
 
-    public function testGetListCombinesAndSortsPersistedEntitiesFromSQLite(): void
+    public function testGetListCombinesAndSortsPersistedEntities(): void
     {
-        $Connection = DriverManager::getConnection([
-            'driver' => 'pdo_sqlite',
-            'memory' => true
-        ]);
+        $originalTables = $this->configureUniqueProcessTables();
 
-        $this->createProcessTables($Connection);
-        $Connection->insert('processes_invoice_test', [
+        $this->createProcessTables();
+        $this->Connection->insert(InvoiceHandler::$invoiceTable, [
             'hash' => 'invoice-shared',
             'global_process_id' => 'shared-process',
             'date' => '2026-02-05 12:00:00'
         ]);
-        $Connection->insert('processes_offers_test', [
+        $this->Connection->insert(OffersHandler::$offersTable, [
             'hash' => 'offer-shared',
             'global_process_id' => 'shared-process',
             'date' => '2026-02-01 09:00:00'
         ]);
-        $Connection->insert('processes_order_test', [
+        $this->Connection->insert(OrderHandler::$orderTable, [
             'hash' => 'order-own-process',
             'global_process_id' => '',
             'c_date' => '2026-03-10 10:00:00'
         ]);
-        $Connection->insert('processes_sales_orders_test', [
+        $this->Connection->insert(SalesOrdersHandler::$salesOrdersTable, [
             'hash' => 'sales-shared',
             'global_process_id' => 'shared-process',
             'date' => '2026-02-03 11:00:00'
         ]);
-        $Connection->insert('processes_transactions_test', [
+        $this->Connection->insert(TransactionFactory::$transactionsTable, [
             'hash' => 'transaction-shared',
             'global_process_id' => 'shared-process',
             'date' => '2026-02-04 08:00:00'
@@ -177,7 +186,7 @@ class ProcessesTest extends TestCase
         QUI::$PackageManager = $Manager;
 
         try {
-            $Processes = new class ($Connection) extends Processes {
+            $Processes = new class ($this->Connection) extends Processes {
                 public function __construct(private Connection $Connection)
                 {
                 }
@@ -191,7 +200,7 @@ class ProcessesTest extends TestCase
             $result = $Processes->getList();
         } finally {
             QUI::$PackageManager = $originalPackageManager;
-            $Connection->close();
+            $this->restoreProcessTables($originalTables);
         }
 
         self::assertSame(['order-own-process', 'shared-process'], array_keys($result));
@@ -208,24 +217,52 @@ class ProcessesTest extends TestCase
         ], $result['order-own-process']);
     }
 
-    private function createProcessTables(Connection $Connection): void
+    private function createProcessTables(): void
     {
-        $Schema = $Connection->createSchemaManager();
-
         foreach (
             [
-            'processes_invoice_test' => 'date',
-            'processes_offers_test' => 'date',
-            'processes_order_test' => 'c_date',
-            'processes_sales_orders_test' => 'date',
-            'processes_transactions_test' => 'date'
+            InvoiceHandler::$invoiceTable => 'date',
+            OffersHandler::$offersTable => 'date',
+            OrderHandler::$orderTable => 'c_date',
+            SalesOrdersHandler::$salesOrdersTable => 'date',
+            TransactionFactory::$transactionsTable => 'date'
             ] as $tableName => $dateColumn
         ) {
-            $Table = new \Doctrine\DBAL\Schema\Table($tableName);
-            $Table->addColumn('hash', 'string');
-            $Table->addColumn('global_process_id', 'string');
-            $Table->addColumn($dateColumn, 'string');
-            $Schema->createTable($Table);
+            $Table = new Table($tableName);
+            $Table->addColumn('hash', Types::STRING, ['length' => 250]);
+            $Table->addColumn('global_process_id', Types::STRING, ['length' => 250]);
+            $Table->addColumn($dateColumn, Types::STRING, ['length' => 50]);
+            $this->createTestTable($Table);
         }
+    }
+
+    /** @return array<string, string> */
+    private function configureUniqueProcessTables(): array
+    {
+        $originalTables = [
+            'invoice' => InvoiceHandler::$invoiceTable,
+            'offers' => OffersHandler::$offersTable,
+            'order' => OrderHandler::$orderTable,
+            'salesOrders' => SalesOrdersHandler::$salesOrdersTable,
+            'transactions' => TransactionFactory::$transactionsTable
+        ];
+
+        InvoiceHandler::$invoiceTable = $this->testTableName('invoices');
+        OffersHandler::$offersTable = $this->testTableName('offers');
+        OrderHandler::$orderTable = $this->testTableName('orders');
+        SalesOrdersHandler::$salesOrdersTable = $this->testTableName('sales_orders');
+        TransactionFactory::$transactionsTable = $this->testTableName('transactions');
+
+        return $originalTables;
+    }
+
+    /** @param array<string, string> $tables */
+    private function restoreProcessTables(array $tables): void
+    {
+        InvoiceHandler::$invoiceTable = $tables['invoice'];
+        OffersHandler::$offersTable = $tables['offers'];
+        OrderHandler::$orderTable = $tables['order'];
+        SalesOrdersHandler::$salesOrdersTable = $tables['salesOrders'];
+        TransactionFactory::$transactionsTable = $tables['transactions'];
     }
 }

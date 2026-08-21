@@ -19,6 +19,7 @@ use QUI\Users\Manager as UsersManager;
 use QUI\Users\SystemUser;
 use QUI\Users\User;
 use ReflectionProperty;
+use RuntimeException;
 
 require_once __DIR__ . '/Fixtures/ManufacturerUsersManagerFixture.php';
 
@@ -30,6 +31,8 @@ class ManufacturersTest extends TestCase
     private ?QUI\Locale $originalLocale;
     private Connection $originalConnection;
     private Connection $Connection;
+    private bool $ownsTestConnection = false;
+    private bool $ownsCiTransaction = false;
     /** @var array<string, mixed> */
     private array $originalAjaxCallables;
     /** @var array<string, mixed> */
@@ -42,7 +45,21 @@ class ManufacturersTest extends TestCase
         $this->originalUsers = QUI::$Users;
         $this->originalLocale = QUI::$Locale;
         $this->originalConnection = QUI::getDataBaseConnection();
-        $this->Connection = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]);
+
+        if (DatabaseEnvironment::usesCiDatabase()) {
+            $this->Connection = $this->originalConnection;
+
+            if ($this->Connection->isTransactionActive()) {
+                throw new RuntimeException('ERP manufacturer CI tests require a connection without a transaction.');
+            }
+
+            $this->Connection->beginTransaction();
+            $this->ownsCiTransaction = true;
+        } else {
+            $this->Connection = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]);
+            $this->ownsTestConnection = true;
+        }
+
         (new ReflectionProperty(QUI::class, 'QueryBuilder'))->setValue(null, $this->Connection);
         QUI::getAjax();
         $this->originalAjaxCallables = (new ReflectionProperty(QUI\Ajax::class, 'callables'))->getValue();
@@ -51,14 +68,29 @@ class ManufacturersTest extends TestCase
 
     protected function tearDown(): void
     {
-        (new ReflectionProperty(QUI::class, 'QueryBuilder'))->setValue(null, $this->originalConnection);
-        $this->Connection->close();
-        QUI::$PackageManager = $this->originalPackageManager;
-        QUI::$Groups = $this->originalGroups;
-        QUI::$Users = $this->originalUsers;
-        QUI::$Locale = $this->originalLocale;
-        (new ReflectionProperty(QUI\Ajax::class, 'callables'))->setValue(null, $this->originalAjaxCallables);
-        (new ReflectionProperty(QUI\Ajax::class, 'permissions'))->setValue(null, $this->originalAjaxPermissions);
+        try {
+            if ($this->ownsCiTransaction) {
+                if (!$this->Connection->isTransactionActive()) {
+                    throw new RuntimeException('The ERP manufacturer CI transaction ended before cleanup.');
+                }
+
+                $this->Connection->rollBack();
+                $this->ownsCiTransaction = false;
+            }
+        } finally {
+            (new ReflectionProperty(QUI::class, 'QueryBuilder'))->setValue(null, $this->originalConnection);
+
+            if ($this->ownsTestConnection) {
+                $this->Connection->close();
+            }
+
+            QUI::$PackageManager = $this->originalPackageManager;
+            QUI::$Groups = $this->originalGroups;
+            QUI::$Users = $this->originalUsers;
+            QUI::$Locale = $this->originalLocale;
+            (new ReflectionProperty(QUI\Ajax::class, 'callables'))->setValue(null, $this->originalAjaxCallables);
+            (new ReflectionProperty(QUI\Ajax::class, 'permissions'))->setValue(null, $this->originalAjaxPermissions);
+        }
     }
 
     public function testConfiguredManufacturerGroupIsNormalizedWithoutProductsPackage(): void
@@ -75,41 +107,65 @@ class ManufacturersTest extends TestCase
         self::assertSame([42], Manufacturers::getManufacturerGroupIds());
     }
 
-    public function testSearchUsesOnlyIsolatedSqliteTables(): void
+    public function testSearchUsesSelectedDatabase(): void
     {
         $usersTable = QUI::getDBTableName('users');
         $addressesTable = QUI::getDBTableName('users_address');
-        $this->Connection->executeStatement(
-            'CREATE TABLE ' . $this->Connection->quoteIdentifier($usersTable)
-            . ' (id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT, username TEXT,'
-            . ' usergroup TEXT, active INTEGER, regdate INTEGER, address INTEGER)'
-        );
-        $this->Connection->executeStatement(
-            'CREATE TABLE ' . $this->Connection->quoteIdentifier($addressesTable)
-            . ' (id INTEGER PRIMARY KEY, company TEXT)'
-        );
-        $this->Connection->insert($addressesTable, ['id' => 1, 'company' => 'Fixture GmbH']);
-        $this->Connection->insert($usersTable, [
-            'id' => 9001,
+        $this->initializeLocalManufacturerTables($usersTable, $addressesTable);
+        $fixtureId = bin2hex(random_bytes(8));
+        $company = 'Fixture GmbH ' . $fixtureId;
+        $username = 'erp-phpunit-' . $fixtureId;
+
+        $address = ['company' => $company];
+        $user = [
             'firstname' => 'Maria',
             'lastname' => 'Maker',
-            'email' => 'maria@example.test',
-            'username' => 'maker',
+            'email' => $fixtureId . '@example.test',
+            'username' => $username,
             'usergroup' => ',42,',
             'active' => 1,
             'regdate' => strtotime('2026-01-01'),
-            'address' => 1
-        ]);
+        ];
+
+        if (DatabaseEnvironment::usesCiDatabase()) {
+            $address += [
+                'uuid' => 'erp-address-' . $fixtureId,
+                'uid' => 0,
+                'userUuid' => 'erp-user-' . $fixtureId
+            ];
+            $this->Connection->insert($addressesTable, $address);
+            $addressId = $this->Connection->fetchOne(
+                'SELECT id FROM ' . $this->Connection->quoteIdentifier($addressesTable) . ' WHERE uuid = ?',
+                ['erp-address-' . $fixtureId]
+            );
+            $user += [
+                'uuid' => 'erp-user-' . $fixtureId,
+                'password' => '',
+                'address' => $addressId
+            ];
+        } else {
+            $addressId = 1;
+            $address['id'] = $addressId;
+            $this->Connection->insert($addressesTable, $address);
+            $user += ['id' => 9001, 'address' => $addressId];
+        }
+
+        $this->Connection->insert($usersTable, $user);
+        $userId = (int)$this->Connection->fetchOne(
+            'SELECT id FROM ' . $this->Connection->quoteIdentifier($usersTable) . ' WHERE username = ?',
+            [$username]
+        );
         $this->configureGroup(42);
 
-        $rows = Manufacturers::search(['search' => 'Fixture', 'limit' => '0,20']);
-        $count = Manufacturers::search(['search' => 'Fixture'], true);
+        $rows = Manufacturers::search(['search' => $company, 'limit' => '0,20']);
+        $count = Manufacturers::search(['search' => $company], true);
 
         self::assertCount(1, $rows);
-        self::assertSame(9001, $rows[0]['id']);
+        self::assertSame($userId, $rows[0]['id']);
         self::assertSame(1, $count);
         self::assertSame(1, (int)$this->Connection->fetchOne(
-            'SELECT COUNT(*) FROM ' . $this->Connection->quoteIdentifier($usersTable)
+            'SELECT COUNT(*) FROM ' . $this->Connection->quoteIdentifier($usersTable) . ' WHERE username = ?',
+            [$username]
         ));
     }
 
@@ -215,20 +271,13 @@ class ManufacturersTest extends TestCase
         self::assertSame($SystemUser, $Users->creatingUser);
     }
 
-    public function testManufacturerSearchEndpointReturnsEmptyGridFromIsolatedSqlite(): void
+    public function testManufacturerSearchEndpointReturnsEmptyGrid(): void
     {
         $usersTable = QUI::getDBTableName('users');
         $addressesTable = QUI::getDBTableName('users_address');
-        $this->Connection->executeStatement(
-            'CREATE TABLE ' . $this->Connection->quoteIdentifier($usersTable)
-            . ' (id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT, username TEXT,'
-            . ' usergroup TEXT, active INTEGER, regdate INTEGER, address INTEGER)'
-        );
-        $this->Connection->executeStatement(
-            'CREATE TABLE ' . $this->Connection->quoteIdentifier($addressesTable)
-            . ' (id INTEGER PRIMARY KEY, company TEXT)'
-        );
+        $this->initializeLocalManufacturerTables($usersTable, $addressesTable);
         $this->configureGroup(42);
+        $searchTerm = 'missing-manufacturer-' . bin2hex(random_bytes(8));
 
         $search = $this->endpoint(
             'manufacturers/search.php',
@@ -236,15 +285,12 @@ class ManufacturersTest extends TestCase
             ['params']
         );
         $result = $search(json_encode([
-            'search' => 'missing manufacturer',
+            'search' => $searchTerm,
             'limit' => '0,20'
         ], JSON_THROW_ON_ERROR));
 
         self::assertSame(0, $result['total']);
         self::assertSame([], $result['data']);
-        self::assertSame(0, (int)$this->Connection->fetchOne(
-            'SELECT COUNT(*) FROM ' . $this->Connection->quoteIdentifier($usersTable)
-        ));
     }
 
     public function testManufacturerGroupsEndpointMapsConfiguredGroups(): void
@@ -309,6 +355,23 @@ class ManufacturersTest extends TestCase
         $Manager->method('getInstalledPackage')->willReturn($Package);
         $Manager->method('isInstalled')->with('quiqqer/products')->willReturn(false);
         QUI::$PackageManager = $Manager;
+    }
+
+    private function initializeLocalManufacturerTables(string $usersTable, string $addressesTable): void
+    {
+        if (DatabaseEnvironment::usesCiDatabase()) {
+            return;
+        }
+
+        $this->Connection->executeStatement(
+            'CREATE TABLE ' . $this->Connection->quoteIdentifier($usersTable)
+            . ' (id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT, username TEXT,'
+            . ' usergroup TEXT, active INTEGER, regdate INTEGER, address INTEGER)'
+        );
+        $this->Connection->executeStatement(
+            'CREATE TABLE ' . $this->Connection->quoteIdentifier($addressesTable)
+            . ' (id INTEGER PRIMARY KEY, company TEXT)'
+        );
     }
 
     /** @param list<string> $parameters */

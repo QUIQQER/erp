@@ -4,9 +4,11 @@ namespace QUI\ERP\Order;
 
 class Handler extends \QUI\Utils\Singleton
 {
+    public static string $orderTable = 'processes_order_test';
+
     public function table(): string
     {
-        return 'processes_order_test';
+        return self::$orderTable;
     }
 
     public function getOrderByHash(string $hash): Order | OrderInProcess

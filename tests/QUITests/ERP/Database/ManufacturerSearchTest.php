@@ -2,40 +2,49 @@
 
 namespace QUITests\ERP\Database;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
-use PHPUnit\Framework\TestCase;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Types;
 use QUI\ERP\Database\ManufacturerSearch;
+use QUITests\ERP\DatabaseTestCase;
 
 use function strtotime;
 
-class ManufacturerSearchTest extends TestCase
+class ManufacturerSearchTest extends DatabaseTestCase
 {
-    private Connection $Connection;
+    private string $usersTable;
+    private string $addressesTable;
 
     protected function setUp(): void
     {
-        $this->Connection = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true]);
-        $this->Connection->executeStatement(
-            'CREATE TABLE users ('
-            . 'id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT, username TEXT, '
-            . 'usergroup TEXT, active INTEGER, regdate INTEGER, address INTEGER)'
-        );
-        $this->Connection->executeStatement(
-            'CREATE TABLE users_address (id INTEGER PRIMARY KEY, company TEXT)'
-        );
+        parent::setUp();
 
-        $this->Connection->insert('users_address', ['id' => 1, 'company' => 'Acme GmbH']);
-        $this->Connection->insert('users_address', ['id' => 2, 'company' => 'Beta AG']);
+        $this->usersTable = $this->testTableName('users');
+        $UsersTable = new Table($this->usersTable);
+        $UsersTable->addColumn('id', Types::INTEGER);
+        $UsersTable->addColumn('firstname', Types::STRING, ['length' => 255, 'notnull' => false]);
+        $UsersTable->addColumn('lastname', Types::STRING, ['length' => 255, 'notnull' => false]);
+        $UsersTable->addColumn('email', Types::STRING, ['length' => 255, 'notnull' => false]);
+        $UsersTable->addColumn('username', Types::STRING, ['length' => 255]);
+        $UsersTable->addColumn('usergroup', Types::TEXT, ['notnull' => false]);
+        $UsersTable->addColumn('active', Types::INTEGER);
+        $UsersTable->addColumn('regdate', Types::INTEGER);
+        $UsersTable->addColumn('address', Types::INTEGER, ['notnull' => false]);
+        $UsersTable->setPrimaryKey(['id']);
+        $this->createTestTable($UsersTable);
+
+        $this->addressesTable = $this->testTableName('addresses');
+        $AddressesTable = new Table($this->addressesTable);
+        $AddressesTable->addColumn('id', Types::INTEGER);
+        $AddressesTable->addColumn('company', Types::STRING, ['length' => 255]);
+        $AddressesTable->setPrimaryKey(['id']);
+        $this->createTestTable($AddressesTable);
+
+        $this->Connection->insert($this->addressesTable, ['id' => 1, 'company' => 'Acme GmbH']);
+        $this->Connection->insert($this->addressesTable, ['id' => 2, 'company' => 'Beta AG']);
         $this->insertUser(1, 'Anna', 'Alpha', 'anna@example.test', 'alpha', ',10,', '2026-01-10', 1);
         $this->insertUser(2, 'Bert', 'Beta', 'bert@example.test', 'beta', ',20,', '2026-02-10', 2);
         $this->insertUser(3, 'Carla', 'Gamma', 'carla@example.test', 'gamma', ',30,', '2026-03-10', null);
         $this->insertUser(4, 'Dora', 'Delta', 'dora@example.test', 'delta', ',10,20,', '2026-04-10', null);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->Connection->close();
     }
 
     public function testManufacturerGroupsAreCombinedWithOr(): void
@@ -123,7 +132,12 @@ class ManufacturerSearchTest extends TestCase
         );
 
         $this->assertSame(['alpha', 'beta', 'delta', 'gamma'], array_column($rows, 'username'));
-        $this->assertSame(4, (int)$this->Connection->fetchOne('SELECT COUNT(*) FROM users'));
+        $this->assertSame(
+            4,
+            (int)$this->Connection->fetchOne(
+                'SELECT COUNT(*) FROM ' . $this->Connection->quoteIdentifier($this->usersTable)
+            )
+        );
     }
 
     public function testInvalidSortColumnIsNotUsedAsSql(): void
@@ -135,7 +149,12 @@ class ManufacturerSearchTest extends TestCase
         );
 
         $this->assertCount(4, $rows);
-        $this->assertSame(4, (int)$this->Connection->fetchOne('SELECT COUNT(*) FROM users'));
+        $this->assertSame(
+            4,
+            (int)$this->Connection->fetchOne(
+                'SELECT COUNT(*) FROM ' . $this->Connection->quoteIdentifier($this->usersTable)
+            )
+        );
     }
 
     public function testSearchValueIsBoundAsParameter(): void
@@ -143,7 +162,12 @@ class ManufacturerSearchTest extends TestCase
         $rows = $this->search([10, 20, 30], ['search' => "%' OR 1=1 --"]);
 
         $this->assertSame([], $rows);
-        $this->assertSame(4, (int)$this->Connection->fetchOne('SELECT COUNT(*) FROM users'));
+        $this->assertSame(
+            4,
+            (int)$this->Connection->fetchOne(
+                'SELECT COUNT(*) FROM ' . $this->Connection->quoteIdentifier($this->usersTable)
+            )
+        );
     }
 
     public function testLeftJoinKeepsManufacturerWithoutAddress(): void
@@ -186,8 +210,8 @@ class ManufacturerSearchTest extends TestCase
     ): array|int {
         return ManufacturerSearch::execute(
             $this->Connection,
-            'users',
-            'users_address',
+            $this->usersTable,
+            $this->addressesTable,
             $groupIds,
             $searchParams,
             $gridParams,
@@ -205,7 +229,7 @@ class ManufacturerSearchTest extends TestCase
         string $regdate,
         ?int $address
     ): void {
-        $this->Connection->insert('users', [
+        $this->Connection->insert($this->usersTable, [
             'id' => $id,
             'firstname' => $firstname,
             'lastname' => $lastname,

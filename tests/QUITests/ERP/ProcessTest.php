@@ -3,16 +3,18 @@
 namespace QUITests\ERP;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
-use PHPUnit\Framework\TestCase;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Types;
 use QUI;
+use QUI\ERP\Accounting\Offers\Handler as OffersHandler;
 use QUI\ERP\ErpEntityInterface;
 use QUI\ERP\ErpTransactionsInterface;
 use QUI\ERP\Process;
+use QUI\ERP\SalesOrders\Handler as SalesOrdersHandler;
 use QUI\Package\Manager;
 use ReflectionProperty;
 
-class ProcessTest extends TestCase
+class ProcessTest extends DatabaseTestCase
 {
     public static function setUpBeforeClass(): void
     {
@@ -172,14 +174,19 @@ class ProcessTest extends TestCase
 
     public function testInstalledOptionalHandlersReturnSafeObservableFallbacks(): void
     {
-        $Connection = DriverManager::getConnection([
-            'driver' => 'pdo_sqlite',
-            'memory' => true
-        ]);
-        $this->createEntityLookupTables($Connection);
+        $originalOffersTable = OffersHandler::$offersTable;
+        $originalTemporaryOffersTable = OffersHandler::$temporaryOffersTable;
+        $originalSalesOrdersTable = SalesOrdersHandler::$salesOrdersTable;
+        $originalSalesOrderDraftsTable = SalesOrdersHandler::$salesOrderDraftsTable;
 
-        foreach (['processes_offers_test', 'processes_temporary_offers_test'] as $table) {
-            $Connection->insert($table, [
+        OffersHandler::$offersTable = $this->testTableName('offers');
+        OffersHandler::$temporaryOffersTable = $this->testTableName('temporary_offers');
+        SalesOrdersHandler::$salesOrdersTable = $this->testTableName('sales_orders');
+        SalesOrdersHandler::$salesOrderDraftsTable = $this->testTableName('sales_order_drafts');
+        $this->createEntityLookupTables();
+
+        foreach ([OffersHandler::$offersTable, OffersHandler::$temporaryOffersTable] as $table) {
+            $this->Connection->insert($table, [
                 'id' => 1,
                 'hash' => 'optional-process',
                 'global_process_id' => 'optional-process',
@@ -187,8 +194,8 @@ class ProcessTest extends TestCase
             ]);
         }
 
-        foreach (['processes_sales_orders_test', 'processes_sales_order_drafts_test'] as $table) {
-            $Connection->insert($table, [
+        foreach ([SalesOrdersHandler::$salesOrdersTable, SalesOrdersHandler::$salesOrderDraftsTable] as $table) {
+            $this->Connection->insert($table, [
                 'id' => 1,
                 'hash' => 'optional-process',
                 'global_process_id' => 'optional-process',
@@ -202,7 +209,7 @@ class ProcessTest extends TestCase
         QUI::$PackageManager = $Manager;
 
         try {
-            $Process = new class ('optional-process', $Connection) extends Process {
+            $Process = new class ('optional-process', $this->Connection) extends Process {
                 public function __construct(string $processId, private Connection $Connection)
                 {
                     parent::__construct($processId);
@@ -225,7 +232,10 @@ class ProcessTest extends TestCase
             self::assertFalse($Process->hasTransactions());
         } finally {
             QUI::$PackageManager = $originalPackageManager;
-            $Connection->close();
+            OffersHandler::$offersTable = $originalOffersTable;
+            OffersHandler::$temporaryOffersTable = $originalTemporaryOffersTable;
+            SalesOrdersHandler::$salesOrdersTable = $originalSalesOrdersTable;
+            SalesOrdersHandler::$salesOrderDraftsTable = $originalSalesOrderDraftsTable;
         }
     }
 
@@ -266,24 +276,22 @@ class ProcessTest extends TestCase
         }
     }
 
-    private function createEntityLookupTables(Connection $Connection): void
+    private function createEntityLookupTables(): void
     {
-        $Schema = $Connection->createSchemaManager();
-
         foreach (
             [
-            'processes_offers_test',
-            'processes_temporary_offers_test',
-            'processes_sales_orders_test',
-            'processes_sales_order_drafts_test'
+            OffersHandler::$offersTable,
+            OffersHandler::$temporaryOffersTable,
+            SalesOrdersHandler::$salesOrdersTable,
+            SalesOrdersHandler::$salesOrderDraftsTable
             ] as $tableName
         ) {
-            $Table = new \Doctrine\DBAL\Schema\Table($tableName);
-            $Table->addColumn('id', 'integer');
-            $Table->addColumn('hash', 'string');
-            $Table->addColumn('global_process_id', 'string');
-            $Table->addColumn('date', 'string');
-            $Schema->createTable($Table);
+            $Table = new Table($tableName);
+            $Table->addColumn('id', Types::INTEGER);
+            $Table->addColumn('hash', Types::STRING, ['length' => 250]);
+            $Table->addColumn('global_process_id', Types::STRING, ['length' => 250]);
+            $Table->addColumn('date', Types::STRING, ['length' => 50]);
+            $this->createTestTable($Table);
         }
     }
 }
