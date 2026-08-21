@@ -8,6 +8,8 @@ if (!defined('QUIQQER_AJAX')) {
     define('QUIQQER_AJAX', true);
 }
 
+require_once __DIR__ . '/QUITests/ERP/DatabaseEnvironment.php';
+
 putenv('QUIQQER_OTHER_AUTOLOADERS=KEEP');
 
 require_once __DIR__ . '/../../../../bootstrap.php';
@@ -27,6 +29,7 @@ spl_autoload_register(static function (string $className): void {
 }, true, true);
 
 require_once __DIR__ . '/../../../autoload.php';
+require_once __DIR__ . '/QUITests/ERP/DatabaseTestCase.php';
 
 foreach (
     [

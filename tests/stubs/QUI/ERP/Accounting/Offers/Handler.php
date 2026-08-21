@@ -4,14 +4,17 @@ namespace QUI\ERP\Accounting\Offers;
 
 class Handler extends \QUI\Utils\Singleton
 {
+    public static string $offersTable = 'processes_offers_test';
+    public static string $temporaryOffersTable = 'processes_temporary_offers_test';
+
     public function offersTable(): string
     {
-        return 'processes_offers_test';
+        return self::$offersTable;
     }
 
     public function temporaryOffersTable(): string
     {
-        return 'processes_temporary_offers_test';
+        return self::$temporaryOffersTable;
     }
 
     public function getOffer(int | string $id): Offer
