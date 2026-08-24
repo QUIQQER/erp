@@ -9,6 +9,43 @@
             <locale group="quiqqer/erp" var="package.title"/>
         </description>
 
+        <capabilities schemaVersion="1">
+            <capability id="erp.process-tracking">
+                <title>Cross-document ERP process tracking</title>
+                <description>
+                    Groups related ERP documents and transactions into unified processes with chronological histories.
+                </description>
+            </capability>
+
+            <capability id="erp.price-calculation">
+                <title>ERP article and price calculation</title>
+                <description>
+                    Calculates article lists, price factors, discounts, VAT and net or gross totals for ERP entities.
+                </description>
+            </capability>
+
+            <capability id="erp.document-output">
+                <title>ERP document output</title>
+                <description>
+                    Renders ERP entities through configurable templates for HTML, PDF, download and email delivery.
+                </description>
+            </capability>
+
+            <capability id="commerce.manufacturer-management">
+                <title>Manufacturer management</title>
+                <description>
+                    Creates, searches and manages manufacturer accounts for product and ERP workflows.
+                </description>
+            </capability>
+
+            <capability id="finance.company-bank-accounts">
+                <title>Company bank account management</title>
+                <description>
+                    Stores company bank accounts and resolves configured default accounts for ERP documents.
+                </description>
+            </capability>
+        </capabilities>
+
         <image src="URL_OPT_DIR/quiqqer/erp/bin/images/Logo.png"/>
 
         <erp>
