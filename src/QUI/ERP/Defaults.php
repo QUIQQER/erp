@@ -315,7 +315,7 @@ class Defaults
         } catch (QUI\Exception) {
         }
 
-        return QUI::getProjectManager()->getStandard()?->getMedia()?->getLogoImage();
+        return QUI::getProjectManager()->getStandard()->getMedia()->getLogoImage();
     }
 
     /**

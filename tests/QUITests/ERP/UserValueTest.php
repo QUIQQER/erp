@@ -94,6 +94,25 @@ class UserValueTest extends TestCase
         self::assertSame('user-501', $User->getUUID());
     }
 
+    public function testAvatarUsesTheStandardProjectPlaceholderImage(): void
+    {
+        $Placeholder = $this->createMock(QUI\Projects\Media\Image::class);
+        $Media = $this->createMock(QUI\Projects\Media::class);
+        $Media->method('getPlaceholderImage')->willReturn($Placeholder);
+        $Project = $this->createMock(QUI\Projects\Project::class);
+        $Project->method('getMedia')->willReturn($Media);
+
+        $StandardProject = new \ReflectionProperty(QUI\Projects\Manager::class, 'Standard');
+        $originalStandardProject = $StandardProject->getValue();
+
+        try {
+            $StandardProject->setValue(null, $Project);
+            self::assertSame($Placeholder, $this->user()->getAvatar());
+        } finally {
+            $StandardProject->setValue(null, $originalStandardProject);
+        }
+    }
+
     public function testAuthenticatorAccessRaisesConcreteNotFoundExceptions(): void
     {
         $User = $this->user();
