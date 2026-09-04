@@ -326,10 +326,6 @@ class EventHandler
             try {
                 $Address = $User->getStandardAddress();
 
-                if ($Address === null) {
-                    return;
-                }
-
                 $Address->setAttribute(
                     'company',
                     QUI\Utils\Security\Orthos::clear($data['company'])
