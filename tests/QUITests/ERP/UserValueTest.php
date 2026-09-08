@@ -133,18 +133,47 @@ class UserValueTest extends TestCase
 
     public function testCurrencyPrefersStoredCodeThenCountryThenSystemDefault(): void
     {
-        $User = $this->getMockBuilder(User::class)->disableOriginalConstructor()->onlyMethods(['getCountry'])->getMock();
-        $Country = $this->createMock(QUI\Countries\Country::class);
-        $Country->method('getCurrencyCode')->willReturn('EUR');
-        $User->method('getCountry')->willReturnOnConsecutiveCalls($Country, null, null);
-        $User->setAttribute('currency', 'USD');
-        self::assertSame('USD', $User->getCurrency()?->getCode());
-        $User->setAttribute('currency', 'INVALID');
-        self::assertSame('EUR', $User->getCurrency()?->getCode());
-        $User->setAttribute('currency', '');
-        self::assertSame(QUI\ERP\Currency\Handler::getDefaultCurrency(), $User->getCurrency());
-        $User->setAttribute('currency', ['invalid']);
-        self::assertSame(QUI\ERP\Currency\Handler::getDefaultCurrency(), $User->getCurrency());
+        $Currencies = new \ReflectionProperty(QUI\ERP\Currency\Handler::class, 'currencies');
+        $DefaultCurrency = new \ReflectionProperty(QUI\ERP\Currency\Handler::class, 'Default');
+        $originalCurrencies = $Currencies->getValue();
+        $originalDefaultCurrency = $DefaultCurrency->getValue();
+        $currencies = [
+            'USD' => ['currency' => 'USD', 'rate' => 1, 'autoupdate' => false],
+            'EUR' => ['currency' => 'EUR', 'rate' => 1, 'autoupdate' => false]
+        ];
+        $Default = new QUI\ERP\Currency\Currency(['currency' => 'GBP', 'rate' => 1, 'autoupdate' => false]);
+
+        try {
+            $Currencies->setValue(null, $currencies);
+            $DefaultCurrency->setValue(null, $Default);
+            $User = $this->getMockBuilder(User::class)->disableOriginalConstructor()->onlyMethods(['getCountry'])->getMock();
+            $Country = $this->createMock(QUI\Countries\Country::class);
+            $Country->method('getCurrencyCode')->willReturn('EUR');
+            $User->expects(self::exactly(4))->method('getCountry')->willReturnOnConsecutiveCalls(
+                $Country,
+                null,
+                null,
+                $Country
+            );
+
+            $User->setAttribute('currency', 'USD');
+            self::assertSame('USD', $User->getCurrency()?->getCode());
+            $User->setAttribute('currency', 'INVALID');
+            self::assertSame('EUR', $User->getCurrency()?->getCode());
+            $User->setAttribute('currency', '');
+            self::assertSame($Default, $User->getCurrency());
+            $User->setAttribute('currency', ['invalid']);
+            self::assertSame($Default, $User->getCurrency());
+
+            // Minimal installations may not have the currency stored in the user snapshot.
+            unset($currencies['USD']);
+            $Currencies->setValue(null, $currencies);
+            $User->setAttribute('currency', 'USD');
+            self::assertSame('EUR', $User->getCurrency()?->getCode());
+        } finally {
+            $Currencies->setValue(null, $originalCurrencies);
+            $DefaultCurrency->setValue(null, $originalDefaultCurrency);
+        }
     }
 
     public function testAvatarUsesTheStandardProjectPlaceholderImage(): void
