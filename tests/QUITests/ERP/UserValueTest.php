@@ -94,6 +94,88 @@ class UserValueTest extends TestCase
         self::assertSame('user-501', $User->getUUID());
     }
 
+    public function testDisplayNameUsesSnapshotNameCompanyAndUsernameFallbacks(): void
+    {
+        self::assertSame('Ada Lovelace', $this->user()->getDisplayName());
+        $User = new User([
+            'username' => 'fallback',
+            'isCompany' => true,
+            'address' => ['company' => 'Snapshot Ltd.']
+        ]);
+        self::assertSame('Snapshot Ltd.', $User->getDisplayName());
+        $User = new User(['username' => 'fallback']);
+        self::assertSame('fallback', $User->getDisplayName());
+    }
+
+    public function testCurrentAddressUsesExplicitAddressOrStoredStandardAddress(): void
+    {
+        $User = $this->user();
+        self::assertSame($User->getStandardAddress()->getAttributes(), $User->getCurrentAddress()->getAttributes());
+        $CurrentAddress = $this->createMock(Address::class);
+        $User->setAttribute('CurrentAddress', $CurrentAddress);
+        self::assertSame($CurrentAddress, $User->getCurrentAddress());
+        $User->setAttribute('CurrentAddress', 'invalid-address');
+        self::assertSame($User->getStandardAddress()->getAttributes(), $User->getCurrentAddress()->getAttributes());
+    }
+
+    public function testSnapshotCannotAcquirePermissionsFromStoredAttributes(): void
+    {
+        $User = $this->user();
+        $User->setAttribute('permissions', ['admin' => true]);
+        self::assertFalse($User->hasPermission('admin'));
+        self::assertFalse($User->hasPermission('missing'));
+        self::assertFalse($User->getPermission('admin'));
+
+        $this->expectException(QUI\Permissions\Exception::class);
+        $this->expectExceptionCode(403);
+        $User->checkPermission('admin');
+    }
+
+    public function testCurrencyPrefersStoredCodeThenCountryThenSystemDefault(): void
+    {
+        $Currencies = new \ReflectionProperty(QUI\ERP\Currency\Handler::class, 'currencies');
+        $DefaultCurrency = new \ReflectionProperty(QUI\ERP\Currency\Handler::class, 'Default');
+        $originalCurrencies = $Currencies->getValue();
+        $originalDefaultCurrency = $DefaultCurrency->getValue();
+        $currencies = [
+            'USD' => ['currency' => 'USD', 'rate' => 1, 'autoupdate' => false],
+            'EUR' => ['currency' => 'EUR', 'rate' => 1, 'autoupdate' => false]
+        ];
+        $Default = new QUI\ERP\Currency\Currency(['currency' => 'GBP', 'rate' => 1, 'autoupdate' => false]);
+
+        try {
+            $Currencies->setValue(null, $currencies);
+            $DefaultCurrency->setValue(null, $Default);
+            $User = $this->getMockBuilder(User::class)->disableOriginalConstructor()->onlyMethods(['getCountry'])->getMock();
+            $Country = $this->createMock(QUI\Countries\Country::class);
+            $Country->method('getCurrencyCode')->willReturn('EUR');
+            $User->expects(self::exactly(4))->method('getCountry')->willReturnOnConsecutiveCalls(
+                $Country,
+                null,
+                null,
+                $Country
+            );
+
+            $User->setAttribute('currency', 'USD');
+            self::assertSame('USD', $User->getCurrency()?->getCode());
+            $User->setAttribute('currency', 'INVALID');
+            self::assertSame('EUR', $User->getCurrency()?->getCode());
+            $User->setAttribute('currency', '');
+            self::assertSame($Default, $User->getCurrency());
+            $User->setAttribute('currency', ['invalid']);
+            self::assertSame($Default, $User->getCurrency());
+
+            // Minimal installations may not have the currency stored in the user snapshot.
+            unset($currencies['USD']);
+            $Currencies->setValue(null, $currencies);
+            $User->setAttribute('currency', 'USD');
+            self::assertSame('EUR', $User->getCurrency()?->getCode());
+        } finally {
+            $Currencies->setValue(null, $originalCurrencies);
+            $DefaultCurrency->setValue(null, $originalDefaultCurrency);
+        }
+    }
+
     public function testAvatarUsesTheStandardProjectPlaceholderImage(): void
     {
         $Placeholder = $this->createMock(QUI\Projects\Media\Image::class);

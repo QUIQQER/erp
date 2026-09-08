@@ -361,6 +361,11 @@ class User extends QUI\QDOM implements UserInterface
         return $this->getName();
     }
 
+    public function getDisplayName(): string
+    {
+        return $this->getName() ?: ($this->getInvoiceName() ?: $this->getUsername());
+    }
+
     public function getUsername(): string
     {
         return $this->username;
@@ -469,6 +474,23 @@ class User extends QUI\QDOM implements UserInterface
         return QUI\ERP\Defaults::getCountry();
     }
 
+    public function getCurrency(): ?Currency\Currency
+    {
+        $currency = $this->getAttribute('currency');
+
+        if (is_string($currency) && Currency\Handler::existCurrency($currency)) {
+            return Currency\Handler::getCurrency($currency);
+        }
+
+        $currency = $this->getCountry()?->getCurrencyCode();
+
+        if ($currency && Currency\Handler::existCurrency($currency)) {
+            return Currency\Handler::getCurrency($currency);
+        }
+
+        return Currency\Handler::getDefaultCurrency();
+    }
+
     public function isCompany(): bool
     {
         return $this->isCompany;
@@ -562,6 +584,32 @@ class User extends QUI\QDOM implements UserInterface
     public function getPermission(string $right, bool | array | string | callable $ruleset = false): bool
     {
         return false;
+    }
+
+    public function hasPermission(string $permission): bool | string
+    {
+        return false;
+    }
+
+    /**
+     * ERP users represent stored document data, not authenticated permission holders.
+     *
+     * @throws QUI\Permissions\Exception
+     */
+    public function checkPermission(string $permission): void
+    {
+        throw new QUI\Permissions\Exception(
+            QUI::getLocale()->get('quiqqer/core', 'exception.no.permission'),
+            403,
+            ['permission' => $permission]
+        );
+    }
+
+    public function getCurrentAddress(): QUI\Users\Address
+    {
+        $Address = $this->getAttribute('CurrentAddress');
+
+        return $Address instanceof QUI\Users\Address ? $Address : $this->getStandardAddress();
     }
 
     public function getStandardAddress(): Address
