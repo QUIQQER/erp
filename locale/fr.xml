@@ -1,0 +1,1220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locales>
+
+    <groups name="quiqqer/erp" datatype="php,js">
+        <locale name="package.title">
+<fr><![CDATA[E-COYN - E-Commerce You Need]]></fr>
+        </locale>
+
+        <locale name="window.erp.title">
+<fr><![CDATA[E-COYN]]></fr>
+        </locale>
+
+        <locale name="menu.erp.company.title">
+<fr><![CDATA[Coordonnées de l'exploitant]]></fr>
+        </locale>
+        <locale name="menu.erp.general.title">
+<fr><![CDATA[Général]]></fr>
+        </locale>
+        <locale name="menu.erp.sites.title">
+<fr><![CDATA[Pages utilisées]]></fr>
+        </locale>
+        <locale name="menu.erp.general.numberRanges.title">
+<fr><![CDATA[Plages de numérotation]]></fr>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.title">
+<fr><![CDATA[Demande du type de client]]></fr>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.desc">
+<fr><![CDATA[Zones où le frontend demandera si le visiteur est un client professionnel]]></fr>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.desc.long">
+<fr><![CDATA[<p>Sélectionnez les zones où une fenêtre demandera aux nouveaux visiteurs s'ils sont des particuliers ou des clients professionnels.</p><p>Remarque : La réponse détermine si les prix sont affichés TTC ou HT.</p>]]></fr>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.frontend.text">
+<fr><![CDATA[Êtes-vous un client professionnel ?]]></fr>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.frontend.yes">
+<fr><![CDATA[Oui]]></fr>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.frontend.yes.desc">
+<fr><![CDATA[Tous les prix sont HT]]></fr>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.frontend.no">
+<fr><![CDATA[Non]]></fr>
+        </locale>
+        <locale name="menu.erp.b2cb2bFrontendWindow.frontend.no.desc">
+<fr><![CDATA[Tous les prix sont TTC]]></fr>
+        </locale>
+        <locale name="menu.erp.manufacturers.title">
+<fr><![CDATA[Fabricants]]></fr>
+        </locale>
+        <locale name="menu.erp.mails.title">
+<fr><![CDATA[Textes des e-mails]]></fr>
+        </locale>
+        <locale name="menu.erp.general.mails.title">
+<fr><![CDATA[Textes des e-mails]]></fr>
+        </locale>
+
+        <locale name="price.starting.from">
+<fr><![CDATA[à partir de]]></fr>
+        </locale>
+
+        <locale name="article.list.articles.title">
+<fr><![CDATA[Produits]]></fr>
+        </locale>
+        <locale name="article.list.articles.header.pos">
+<fr><![CDATA[N°]]></fr>
+        </locale>
+        <locale name="article.list.articles.header.image">
+<fr><![CDATA[Image]]></fr>
+        </locale>
+        <locale name="article.list.articles.header.description">
+<fr><![CDATA[Description]]></fr>
+        </locale>
+        <locale name="article.list.articles.header.quantity">
+<fr><![CDATA[Quantité]]></fr>
+        </locale>
+        <locale name="article.list.articles.header.unitprice">
+<fr><![CDATA[Prix unitaire]]></fr>
+        </locale>
+        <locale name="article.list.articles.header.price">
+<fr><![CDATA[Prix]]></fr>
+        </locale>
+        <locale name="article.list.articles.header.vat">
+<fr><![CDATA[TVA]]></fr>
+        </locale>
+        <locale name="article.list.articles.header.articleNo">
+<fr><![CDATA[N° d'article]]></fr>
+        </locale>
+        <locale name="article.list.articles.subtotal">
+<fr><![CDATA[Sous-total :]]></fr>
+        </locale>
+        <locale name="article.list.articles.sumtotal">
+<fr><![CDATA[Total général]]></fr>
+        </locale>
+        <locale name="article.list.articles.grandSubSum">
+<fr><![CDATA[Total]]></fr>
+        </locale>
+
+        <locale name="erp.panel.extras.text">
+<fr><![CDATA[Administration]]></fr>
+        </locale>
+        <locale name="erp.panel.settings.text">
+<fr><![CDATA[Paramètres]]></fr>
+        </locale>
+        <locale name="erp.panel.title">
+<fr><![CDATA[E-COYN - Administration de la boutique]]></fr>
+        </locale>
+        <locale name="user.settings.euVatId">
+<fr><![CDATA[N° de TVA]]></fr>
+        </locale>
+        <locale name="user.settings.taxId">
+<fr><![CDATA[Numéro fiscal]]></fr>
+        </locale>
+
+        <locale name="user.profile.userdata.title">
+<fr><![CDATA[Données de l'entreprise]]></fr>
+        </locale>
+        <locale name="user.profile.userdata.vatId">
+<fr><![CDATA[N° de TVA]]></fr>
+        </locale>
+        <locale name="quiqqer.erp.chUID">
+<fr><![CDATA[ID de l'entreprise (UID, Suisse)]]></fr>
+        </locale>
+
+        <locale name="global_process_id">
+<fr><![CDATA[Numéro de dossier]]></fr>
+        </locale>
+        <locale name="output.default_template.suffix">
+<fr><![CDATA[(Par défaut du système)]]></fr>
+        </locale>
+
+        <locale name="user.settings.userNettoStatus.netto">
+<fr><![CDATA[professionnel (HT)]]></fr>
+        </locale>
+        <locale name="user.settings.userNettoStatus.brutto">
+<fr><![CDATA[particulier (TTC)]]></fr>
+        </locale>
+
+        <locale name="products.articleNo">
+<fr><![CDATA[N° d'article]]></fr>
+        </locale>
+        <locale name="products.description">
+<fr><![CDATA[Description du produit]]></fr>
+        </locale>
+        <locale name="products.quantity">
+<fr><![CDATA[Quantité]]></fr>
+        </locale>
+        <locale name="products.quantityUnit">
+<fr><![CDATA[Un.]]></fr>
+        </locale>
+        <locale name="products.unitPrice">
+<fr><![CDATA[Prix unitaire]]></fr>
+        </locale>
+        <locale name="products.price">
+<fr><![CDATA[Prix]]></fr>
+        </locale>
+        <locale name="products.vat">
+<fr><![CDATA[TVA]]></fr>
+        </locale>
+        <locale name="products.table.vat">
+<fr><![CDATA[Taux de TVA]]></fr>
+        </locale>
+        <locale name="products.discount">
+<fr><![CDATA[Remise]]></fr>
+        </locale>
+        <locale name="products.sum">
+<fr><![CDATA[Total]]></fr>
+        </locale>
+        <locale name="articleList.article.button.delete">
+<fr><![CDATA[Retirer l'article]]></fr>
+        </locale>
+        <locale name="articleList.article.button.replace">
+<fr><![CDATA[Remplacer l'article]]></fr>
+        </locale>
+
+<!-- Permissions -->
+        <locale name="permission.quiqqer.erp_manufacturers._header">
+<fr><![CDATA[Boutique - Fabricants]]></fr>
+        </locale>
+        <locale name="permission.quiqqer.erp_manufacturers.create">
+<fr><![CDATA[Autoriser la création de fabricants]]></fr>
+        </locale>
+        <locale name="permission.quiqqer.erp_manufacturers.view">
+<fr><![CDATA[Autoriser l'accès à la gestion des fabricants]]></fr>
+        </locale>
+        <locale name="permission.quiqqer.erp._header">
+<fr><![CDATA[E-COYN]]></fr>
+        </locale>
+        <locale name="permission.quiqqer.erp.mail_editor_attach_files">
+<fr><![CDATA[Autoriser l'ajout de pièces jointes aux documents envoyés par e-mail]]></fr>
+        </locale>
+        <locale name="attention.abbreviation">
+<fr><![CDATA[À l'att.]]></fr>
+        </locale>
+
+<!-- Menu -->
+        <locale name="menu.erp.title">
+<fr><![CDATA[E-COYN]]></fr>
+        </locale>
+
+        <locale name="menu.erp.category.bankAccounts.title">
+<fr><![CDATA[Comptes bancaires]]></fr>
+        </locale>
+        <locale name="menu.erp.bankAccounts.title">
+<fr><![CDATA[Gérer les comptes bancaires]]></fr>
+        </locale>
+
+        <locale name="processGrid.order.open">
+<fr><![CDATA[Ouvrir la commande]]></fr>
+        </locale>
+        <locale name="processGrid.offer.open">
+<fr><![CDATA[Ouvrir le devis]]></fr>
+        </locale>
+        <locale name="processGrid.temporaryOffer.open">
+<fr><![CDATA[Ouvrir le brouillon de devis]]></fr>
+        </locale>
+        <locale name="processGrid.invoice.open">
+<fr><![CDATA[Ouvrir la facture]]></fr>
+        </locale>
+        <locale name="processGrid.invoiceTemporary.open">
+<fr><![CDATA[Ouvrir le brouillon de facture]]></fr>
+        </locale>
+        <locale name="processGrid.salesOrder.open">
+<fr><![CDATA[Ouvrir l'ordre de vente]]></fr>
+        </locale>
+        <locale name="erp.process.type">
+<fr><![CDATA[Type]]></fr>
+        </locale>
+        <locale name="erp.process.type">
+<fr><![CDATA[Type]]></fr>
+        </locale>
+        <locale name="erp.process.status">
+<fr><![CDATA[Statut]]></fr>
+        </locale>
+        <locale name="erp.process.paid_status">
+<fr><![CDATA[Statut du paiement]]></fr>
+        </locale>
+        <locale name="erp.process.prefixedNumber">
+<fr><![CDATA[Numéro de l'entité]]></fr>
+        </locale>
+        <locale name="erp.process.uuid">
+<fr><![CDATA[UUID de l'entité]]></fr>
+        </locale>
+
+
+        <locale name="payment.status.0">
+<fr><![CDATA[en attente]]></fr>
+        </locale>
+        <locale name="payment.status.1">
+<fr><![CDATA[payé]]></fr>
+        </locale>
+        <locale name="payment.status.2">
+<fr><![CDATA[paiement partiel]]></fr>
+        </locale>
+        <locale name="payment.status.3">
+<fr><![CDATA[annulé]]></fr>
+        </locale>
+        <locale name="payment.status.4">
+<fr><![CDATA[erreur]]></fr>
+        </locale>
+        <locale name="payment.status.5">
+<fr><![CDATA[annulé]]></fr>
+        </locale>
+        <locale name="payment.status.11">
+<fr><![CDATA[Prélèvement automatique]]></fr>
+        </locale>
+        <locale name="payment.status.12">
+<fr><![CDATA[Abonnement]]></fr>
+        </locale>
+
+        <locale name="entity.title.QUI\ERP\Accounting\Invoice\Invoice">
+<fr><![CDATA[Facture]]></fr>
+        </locale>
+        <locale name="entity.title.QUI\ERP\Accounting\Invoice\InvoiceTemporary">
+<fr><![CDATA[Brouillon de facture]]></fr>
+        </locale>
+        <locale name="entity.title.QUI\ERP\SalesOrders\SalesOrder">
+<fr><![CDATA[Ordre de vente]]></fr>
+        </locale>
+        <locale name="entity.title.QUI\ERP\Accounting\Offers\OfferTemporary">
+<fr><![CDATA[Brouillon de devis]]></fr>
+        </locale>
+        <locale name="entity.title.QUI\ERP\Accounting\Offers\Offer">
+<fr><![CDATA[Devis]]></fr>
+        </locale>
+        <locale name="entity.title.QUI\ERP\Order\Order">
+<fr><![CDATA[Commande]]></fr>
+        </locale>
+        <locale name="entity.title.QUI\ERP\Accounting\Contracts\Contract">
+<fr><![CDATA[Contrat]]></fr>
+        </locale>
+        <locale name="process.history.empty.info">
+<fr><![CDATA[Seules les entrées créées après le 1er août 2024 sont affichées ici.]]></fr>
+        </locale>
+        <locale name="salutation.formal.mr_lastname">
+<fr><![CDATA[Monsieur [lastname],]]></fr>
+        </locale>
+        <locale name="salutation.formal.ms_lastname">
+<fr><![CDATA[Madame [lastname],]]></fr>
+        </locale>
+        <locale name="salutation.formal.company_generic">
+<fr><![CDATA[Madame, Monsieur,]]></fr>
+        </locale>
+        <locale name="salutation.neutral.full_name">
+<fr><![CDATA[Bonjour [firstname] [lastname],]]></fr>
+        </locale>
+        <locale name="salutation.neutral.first_name">
+<fr><![CDATA[Bonjour [firstname],]]></fr>
+        </locale>
+        <locale name="salutation.neutral.generic">
+<fr><![CDATA[Bonjour,]]></fr>
+        </locale>
+    </groups>
+
+    <groups name="quiqqer/erp" datatype="php">
+        <locale name="bankAccounts.patch.bankAccount_created">
+<fr><![CDATA[Un compte bancaire par défaut a été créé automatiquement à partir des coordonnées bancaires de l'entreprise dans la configuration d'ecoyn.]]></fr>
+        </locale>
+        <locale name="manufacturers.default_group_name">
+<fr><![CDATA[Fabricants]]></fr>
+        </locale>
+        <locale name="settings.manufacturers.title">
+<fr><![CDATA[Fabricants]]></fr>
+        </locale>
+        <locale name="settings.manufacturers.groupId">
+<fr><![CDATA[Groupe principal de fabricants]]></fr>
+        </locale>
+        <locale name="settings.manufacturers.groupId.description">
+<fr><![CDATA[Tous les utilisateurs de ce groupe sont répertoriés comme fabricants. Si le module Produits d'E-COYN est installé, tous les groupes du champ produit « Fabricant » sont également considérés comme des fabricants.]]></fr>
+        </locale>
+
+        <locale name="message.ajax.manufacturers.create.newManufacturer.success" html="true">
+<fr><![CDATA[Le fabricant <b>[manufacturerId]</b> a été créé.]]></fr>
+        </locale>
+
+        <locale name="exception.ajax.output.sendMail.error">
+<fr><![CDATA[Une erreur inattendue s'est produite lors de l'envoi de l'e-mail. Réessayez, consultez les journaux d'erreurs ou contactez un administrateur.]]></fr>
+        </locale>
+        <locale name="exception.Manufacturers.createManufacturer.id_already_exists">
+<fr><![CDATA[Le numéro de fabricant saisi est déjà attribué. Choisissez un autre numéro.]]></fr>
+        </locale>
+        <locale name="exception.ajax.manufacturers.create.newManufacturer.error">
+<fr><![CDATA[Une erreur inattendue s'est produite lors de la création du fabricant. Réessayez ou contactez un administrateur.]]></fr>
+        </locale>
+        <locale name="user.settings.title">
+<fr><![CDATA[Données de facturation]]></fr>
+        </locale>
+        <locale name="user.settings.address">
+<fr><![CDATA[Adresse de facturation]]></fr>
+        </locale>
+        <locale name="user.settings.userNettoStatus">
+<fr><![CDATA[Base de calcul des prix]]></fr>
+        </locale>
+
+        <locale name="user.profile.title">
+<fr><![CDATA[Paramètres des produits]]></fr>
+        </locale>
+
+        <locale name="profile.erp.title">
+<fr><![CDATA[Commandes]]></fr>
+        </locale>
+
+        <locale name="menu.erp.sites.terms.and.conditions">
+<fr><![CDATA[Conditions générales]]></fr>
+        </locale>
+        <locale name="menu.erp.sites.revocation">
+<fr><![CDATA[Informations sur le droit de rétractation]]></fr>
+        </locale>
+        <locale name="menu.erp.sites.privacy_policy">
+<fr><![CDATA[Politique de confidentialité]]></fr>
+        </locale>
+
+        <locale name="menu.erp.company.name">
+<fr><![CDATA[Nom de l'entreprise]]></fr>
+        </locale>
+        <locale name="menu.erp.company.owner">
+<fr><![CDATA[Propriétaire / dirigeant]]></fr>
+        </locale>
+        <locale name="menu.erp.company.street">
+<fr><![CDATA[Rue]]></fr>
+        </locale>
+        <locale name="menu.erp.company.zipCode">
+<fr><![CDATA[Code postal]]></fr>
+        </locale>
+        <locale name="menu.erp.company.city">
+<fr><![CDATA[Ville]]></fr>
+        </locale>
+        <locale name="menu.erp.company.country">
+<fr><![CDATA[Pays]]></fr>
+        </locale>
+        <locale name="menu.erp.company.phone">
+<fr><![CDATA[Téléphone]]></fr>
+        </locale>
+        <locale name="menu.erp.company.fax">
+<fr><![CDATA[Fax]]></fr>
+        </locale>
+        <locale name="menu.erp.company.email">
+<fr><![CDATA[E-mail]]></fr>
+        </locale>
+        <locale name="menu.erp.company.web">
+<fr><![CDATA[Site web]]></fr>
+        </locale>
+
+        <locale name="menu.erp.company.taxId">
+<fr><![CDATA[N° de TVA]]></fr>
+        </locale>
+        <locale name="menu.erp.company.taxNumber">
+<fr><![CDATA[Numéro fiscal]]></fr>
+        </locale>
+        <locale name="menu.erp.company.register">
+<fr><![CDATA[Registre]]></fr>
+        </locale>
+        <locale name="menu.erp.company.court">
+<fr><![CDATA[Tribunal chargé du registre]]></fr>
+        </locale>
+
+        <locale name="menu.erp.company.bank.title">
+<fr><![CDATA[Coordonnées bancaires]]></fr>
+        </locale>
+        <locale name="menu.erp.company.bankName">
+<fr><![CDATA[Nom de la banque]]></fr>
+        </locale>
+        <locale name="menu.erp.company.bankCode">
+<fr><![CDATA[Code bancaire]]></fr>
+        </locale>
+        <locale name="menu.erp.company.bankAccountNumber">
+<fr><![CDATA[Numéro de compte]]></fr>
+        </locale>
+        <locale name="menu.erp.company.bankBic">
+<fr><![CDATA[BIC]]></fr>
+        </locale>
+        <locale name="menu.erp.company.bankIban">
+<fr><![CDATA[IBAN]]></fr>
+        </locale>
+        <locale name="menu.erp.company.bankSwift">
+<fr><![CDATA[SWIFT]]></fr>
+        </locale>
+        <locale name="menu.erp.company.bankAccountId">
+<fr><![CDATA[Compte bancaire principal de l'entreprise]]></fr>
+        </locale>
+
+        <locale name="menu.erp.output.title">
+<fr><![CDATA[Édition des documents / PDF]]></fr>
+        </locale>
+        <locale name="menu.erp.output.default_templates">
+<fr><![CDATA[Modèles présélectionnés]]></fr>
+        </locale>
+
+        <locale name="shop.settings.general.precision">
+<fr><![CDATA[Nombre de décimales utilisées]]></fr>
+        </locale>
+        <locale name="menu.erp.general.dateFormats.title">
+<fr><![CDATA[Formats de date]]></fr>
+        </locale>
+        <locale name="menu.erp.general.userRelatedCurrency.title">
+<fr><![CDATA[Devise de l'utilisateur]]></fr>
+        </locale>
+        <locale name="menu.erp.general.userRelatedCurrency.input.title">
+<fr><![CDATA[Activer la devise de l'utilisateur]]></fr>
+        </locale>
+        <locale name="menu.erp.general.userRelatedCurrency.input.description">
+<fr><![CDATA[Si cette option est activée, les prix sont automatiquement convertis dans le frontend à partir de la liste de gestion des devises.]]></fr>
+        </locale>
+        <locale name="shop.settings.general.precision.description">
+<fr><![CDATA[Ce paramètre détermine le nombre de décimales utilisées par le système pour les calculs.]]></fr>
+        </locale>
+        <locale name="shop.settings.general.timestampFormat" html="true">
+<fr><![CDATA[Format par défaut de la date et de l'heure]]></fr>
+        </locale>
+        <locale name="shop.settings.general.timestampFormat.description" html="true">
+<fr><![CDATA[Ce format est utilisé pour afficher la date et l'heure complètes (par ex. : dd.MM.yyyy HH:mm:ss).<br /><br />Les options et les formats disponibles sont décrits ici :<br /><a href="https://unicode-org.github.io/icu/userguide/format_parse/datetime/" target="_blank">https://unicode-org.github.io/icu/userguide/format_parse/datetime/</a>]]></fr>
+        </locale>
+        <locale name="shop.settings.general.dateFormat">
+<fr><![CDATA[Format de date par défaut]]></fr>
+        </locale>
+        <locale name="shop.settings.general.dateFormat.description">
+<fr><![CDATA[Ce format est utilisé pour afficher uniquement la date (par ex. : dd.MM.yyyy).<br /><br />Les options et les formats disponibles sont décrits ici :<br /><a href="https://unicode-org.github.io/icu/userguide/format_parse/datetime/">https://unicode-org.github.io/icu/userguide/format_parse/datetime/</a>]]></fr>
+        </locale>
+
+        <locale name="shop.settings.businessType">
+<fr><![CDATA[Type de vente]]></fr>
+        </locale>
+        <locale name="shop.settings.businessType.description">
+<fr><![CDATA[Ce paramètre détermine l'affichage de la boutique dans le frontend selon le type de client.]]></fr>
+        </locale>
+        <locale name="shop.settings.businessType.b2bOnly">
+<fr><![CDATA[B2B uniquement]]></fr>
+        </locale>
+        <locale name="shop.settings.businessType.b2cOnly">
+<fr><![CDATA[B2C uniquement]]></fr>
+        </locale>
+        <locale name="shop.settings.businessType.b2bAndB2c">
+<fr><![CDATA[B2B et B2C]]></fr>
+        </locale>
+        <locale name="shop.settings.businessType.b2cAndB2b">
+<fr><![CDATA[B2C et B2B]]></fr>
+        </locale>
+        <locale name="shop.settings.logo">
+<fr><![CDATA[Logo de l'exploitant]]></fr>
+        </locale>
+        <locale name="shop.settings.logo.description">
+<fr><![CDATA[Le logo de l'exploitant est utilisé dans différentes fonctions de la boutique, notamment les e-mails de commandes, de factures et d'autres modules ERP. S'il n'est pas défini, le logo par défaut du projet par défaut est utilisé.]]></fr>
+        </locale>
+        <locale name="shop.settings.contactPersonOnAddress">
+<fr><![CDATA[Afficher le contact dans l'adresse]]></fr>
+        </locale>
+        <locale name="shop.settings.contactPersonOnAddress.description">
+<fr><![CDATA[Sur les factures et les commandes, le contact est également affiché dans l'adresse.]]></fr>
+        </locale>
+
+        <locale name="control.profile.CustomerData.businessType">
+<fr><![CDATA[Type de compte]]></fr>
+        </locale>
+        <locale name="control.profile.CustomerData.businessType.b2b">
+<fr><![CDATA[Professionnel]]></fr>
+        </locale>
+        <locale name="control.profile.CustomerData.businessType.b2c">
+<fr><![CDATA[Particulier]]></fr>
+        </locale>
+        <locale name="control.profile.CustomerData.company">
+<fr><![CDATA[Entreprise]]></fr>
+        </locale>
+        <locale name="message.default.area.missing">
+<fr><![CDATA[Définissez une zone par défaut pour votre système de commerce électronique.]]></fr>
+        </locale>
+        <locale name="message.default.area.ok">
+<fr><![CDATA[La zone par défaut de votre système de commerce électronique est définie.]]></fr>
+        </locale>
+        <locale name="exception.something.went.wrong">
+<fr><![CDATA[Une erreur s'est produite. Contactez un administrateur.]]></fr>
+        </locale>
+
+        <locale name="Output.send.success">
+<fr><![CDATA[L'e-mail a été envoyé.]]></fr>
+        </locale>
+        <locale name="exception.Output.sendPdfViaMail.missing_recipient">
+<fr><![CDATA[Le document ne peut pas être envoyé par e-mail, car aucune adresse de destinataire valide n'a été indiquée.]]></fr>
+        </locale>
+        <locale name="exception.Output.sendPdfViaMail.recpient_address_invalid">
+<fr><![CDATA[Le document ne peut pas être envoyé par e-mail, car l'adresse du destinataire est invalide.]]></fr>
+        </locale>
+
+        <locale name="user.category.title">
+<fr><![CDATA[Données du client]]></fr>
+        </locale>
+        <locale name="user.settings.customer.button">
+<fr><![CDATA[Ouvrir la fiche client]]></fr>
+        </locale>
+
+        <locale name="article.list.discount.text">
+<fr><![CDATA[Remise de [discount]]]></fr>
+        </locale>
+
+        <locale name="dashboard.title">
+<fr><![CDATA[Tableau de bord ecoyn]]></fr>
+        </locale>
+        <locale name="dashboard.erp.title">
+<fr><![CDATA[Tableau de bord ERP]]></fr>
+        </locale>
+
+        <locale name="exchangerate.text">
+<fr><![CDATA[[startCurrency] = [rate]]]></fr>
+        </locale>
+        <locale name="created.invoice">
+<fr><![CDATA[Facture [invoiceId] créée]]></fr>
+        </locale>
+        <locale name="created.order">
+<fr><![CDATA[Commande [orderId] créée]]></fr>
+        </locale>
+
+        <locale name="process.history.invoice.created">
+<fr><![CDATA[Facture [hash] créée]]></fr>
+        </locale>
+        <locale name="process.history.order.created">
+<fr><![CDATA[Commande [hash] créée]]></fr>
+        </locale>
+        <locale name="process.history.offer.created">
+<fr><![CDATA[Devis [hash] créé]]></fr>
+        </locale>
+        <locale name="process.history.purchasing.created">
+<fr><![CDATA[Achat [hash] créé]]></fr>
+        </locale>
+        <locale name="process.history.salesorders.created">
+<fr><![CDATA[Ordre de vente [hash] créé]]></fr>
+        </locale>
+        <locale name="process.history.booking.created">
+<fr><![CDATA[Écriture [hash] créée]]></fr>
+        </locale>
+        <locale name="process.history.transaction.created">
+<fr><![CDATA[Paiement de [amount] reçu / comptabilisé. (#[hash])]]></fr>
+        </locale>
+    </groups>
+
+    <groups name="quiqqer/erp" datatype="js">
+
+        <locale name="products.product.panel.grid.ean">
+<fr><![CDATA[GTIN / EAN]]></fr>
+        </locale>
+
+        <locale name="ContactEmailSelectWindow.title">
+<fr><![CDATA[Choisir l'adresse e-mail du contact]]></fr>
+        </locale>
+        <locale name="ContactEmailSelectWindow.information">
+<fr><![CDATA[Choisissez une adresse e-mail.]]></fr>
+        </locale>
+        <locale name="UserData.tpl.labelCustomer">
+<fr><![CDATA[Client]]></fr>
+        </locale>
+        <locale name="UserData.tpl.labelContactPerson">
+<fr><![CDATA[Personne à contacter]]></fr>
+        </locale>
+        <locale name="UserData.tpl.placeholderContactPerson">
+<fr><![CDATA[(Contact par défaut)]]></fr>
+        </locale>
+        <locale name="UserData.tpl.placeholderContactEmail">
+<fr><![CDATA[(Adresse e-mail par défaut du client)]]></fr>
+        </locale>
+        <locale name="UserData.tpl.labelContactEmail">
+<fr><![CDATA[Adresse e-mail du contact]]></fr>
+        </locale>
+        <locale name="UserData.btn.extra">
+<fr><![CDATA[Ouvrir la vue détaillée]]></fr>
+        </locale>
+        <locale name="UserData.btn.extraClose">
+<fr><![CDATA[Fermer la vue détaillée]]></fr>
+        </locale>
+        <locale name="UserData.btn.userEdit">
+<fr><![CDATA[Ouvrir : [labelUser]]]></fr>
+        </locale>
+
+        <locale name="controls.BankAccounts.btn.create">
+<fr><![CDATA[Nouveau compte bancaire]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.add.title">
+<fr><![CDATA[Nouveau compte bancaire]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.add.btn.submit">
+<fr><![CDATA[Enregistrer le compte bancaire]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.labelTitle">
+<fr><![CDATA[Libellé]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.labelName">
+<fr><![CDATA[Nom de la banque]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.labelIban">
+<fr><![CDATA[IBAN]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.labelBic">
+<fr><![CDATA[BIC]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.labelCreditorId">
+<fr><![CDATA[Identifiant créancier (SEPA)]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.labelDefault">
+<fr><![CDATA[Est le compte bancaire par défaut]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.labelDefaultEntry">
+<fr><![CDATA[Compte bancaire par défaut]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.descDefault">
+<fr><![CDATA[Le compte bancaire par défaut est sélectionné automatiquement si aucun autre n'est défini. Un seul compte bancaire peut être défini par défaut.]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.titleEdit">
+<fr><![CDATA[Modifier le compte bancaire]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.titleDelete">
+<fr><![CDATA[Supprimer le compte bancaire]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.labelAccountHolder">
+<fr><![CDATA[Titulaire du compte]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.labelFinancialAccountNo">
+<fr><![CDATA[N° de compte comptable]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.tpl.descFinancialAccountNo">
+<fr><![CDATA[Numéro de compte comptable associé à ce compte bancaire. ecoyn l'utilise à différents endroits lorsque des écritures comptables font référence à ce compte bancaire.]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.edit.title">
+<fr><![CDATA[Modifier le compte bancaire]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.edit.btn.submit">
+<fr><![CDATA[Enregistrer le compte bancaire]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.delete.title">
+<fr><![CDATA[Supprimer le compte bancaire]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.delete.text">
+<fr><![CDATA[Voulez-vous supprimer définitivement le compte bancaire « [title] » auprès de « [name] » ?]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.delete.information">
+<fr><![CDATA[Le compte bancaire ne pourra pas être restauré et ne sera plus disponible dans tous les paramètres système où il est sélectionné.]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.delete.btn.submit">
+<fr><![CDATA[Confirmer la suppression]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.delete_final.title">
+<fr><![CDATA[Supprimer le compte bancaire - Confirmation finale]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.delete_final.text">
+<fr><![CDATA[Confirmez définitivement la suppression de « [title] » auprès de « [name] ».]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.delete_final.information">
+<fr><![CDATA[Cette confirmation finale marque le compte bancaire pour suppression. La suppression sera effectuée lors de l'enregistrement des paramètres.]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.Entry.delete_final.btn.submit">
+<fr><![CDATA[Supprimer le compte bancaire]]></fr>
+        </locale>
+
+        <locale name="control.DeliveryAddress.tpl.labelDifferentDeliveryAddress">
+<fr><![CDATA[L'adresse de livraison diffère de l'adresse du client]]></fr>
+        </locale>
+        <locale name="controls.DeliveryAddress.freeform_input">
+<fr><![CDATA[saisie libre]]></fr>
+        </locale>
+        <locale name="controls.DeliveryAddress.btn.select.text">
+<fr><![CDATA[Sélectionner une adresse du client]]></fr>
+        </locale>
+        <locale name="controls.DeliveryAddress.msg.select_customer">
+<fr><![CDATA[Sélectionnez d'abord un client]]></fr>
+        </locale>
+
+        <locale name="article.summary.tpl.labelPosInfo">
+<fr><![CDATA[Info. de ligne]]></fr>
+        </locale>
+        <locale name="article.summary.tpl.labelNet">
+<fr><![CDATA[HT]]></fr>
+        </locale>
+        <locale name="article.summary.tpl.labelGross">
+<fr><![CDATA[TTC]]></fr>
+        </locale>
+        <locale name="article.summary.tpl.labelVat">
+<fr><![CDATA[TVA]]></fr>
+        </locale>
+        <locale name="article.summary.tpl.labelSums">
+<fr><![CDATA[Totaux]]></fr>
+        </locale>
+
+        <locale name="comments.message.no.comments">
+<fr><![CDATA[Aucune donnée disponible]]></fr>
+        </locale>
+        <locale name="control.number.ranges.description">
+<fr><![CDATA[Double-cliquez sur le prochain numéro à attribuer pour modifier la plage de numérotation.]]></fr>
+        </locale>
+        <locale name="control.number.ranges.grid.ranges">
+<fr><![CDATA[Plage de numérotation]]></fr>
+        </locale>
+        <locale name="control.number.ranges.grid.next">
+<fr><![CDATA[Prochain numéro à attribuer]]></fr>
+        </locale>
+        <locale name="comments.comment.title">
+<fr><![CDATA[Commentaire provenant de : [source]]]></fr>
+        </locale>
+        <locale name="article.summary.window.title">
+<fr><![CDATA[Récapitulatif du calcul des articles]]></fr>
+        </locale>
+
+        <locale name="control.articleList.netto.message" html="true">
+<fr><![CDATA[Les prix sont actuellement saisis et affichés <b>HT</b>.]]></fr>
+        </locale>
+        <locale name="control.articleList.brutto.message" html="true">
+<fr><![CDATA[Attention : Les prix sont actuellement saisis et affichés <b>TTC</b>.]]></fr>
+        </locale>
+        <locale name="control.articleList.brutto.message--nettoWarning" html="true">
+<fr><![CDATA[La liste d'articles actuelle est attribuée à un utilisateur dont les prix sont TTC. Votre affichage repose toutefois sur des montants HT, ce qui peut entraîner des écarts dans les totaux. Seul l'affichage TTC fait foi.]]></fr>
+        </locale>
+
+        <locale name="control.window.price.brutto.title">
+<fr><![CDATA[Saisie du prix TTC]]></fr>
+        </locale>
+        <locale name="control.window.price.brutto.label">
+<fr><![CDATA[Prix TTC]]></fr>
+        </locale>
+        <locale name="control.window.price.brutto.description" html="true">
+<fr><![CDATA[<p>Saisissez le prix TTC. Il sera automatiquement converti en prix HT, puis inséré.</p>]]></fr>
+        </locale>
+
+<!-- Controls -->
+        <locale name="controls.OutputDialog.labelEntityId">
+<fr><![CDATA[Identifiant du document]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.labelTemplate">
+<fr><![CDATA[Modèle]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.labelOutputType">
+<fr><![CDATA[Sortie]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.labelMarkAsSent">
+<fr><![CDATA[Marquer comme envoyé]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.labelOpenMailEditor">
+<fr><![CDATA[Modifier l'e-mail]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.print">
+<fr><![CDATA[Imprimer]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.pdf">
+<fr><![CDATA[Enregistrer au format PDF]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.email">
+<fr><![CDATA[Envoyer par e-mail]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.print.btn">
+<fr><![CDATA[Imprimer]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.pdf.btn">
+<fr><![CDATA[Télécharger]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.data.output.email.btn">
+<fr><![CDATA[Envoyer]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.title">
+<fr><![CDATA[Document : impression / PDF / envoi]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.no_templates_found">
+<fr><![CDATA[Aucun modèle trouvé]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.no_pdf_preview_support">
+<fr><![CDATA[L'aperçu PDF n'est pas pris en charge]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.no_preview">
+<fr><![CDATA[Le document est actuellement indisponible, car aucun modèle n'a été sélectionné ou trouvé.]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.preview_error">
+<fr><![CDATA[L'aperçu n'a pas pu être chargé. Consultez les journaux d'erreurs ou contactez un administrateur.]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.descMarkAsSent">
+<fr><![CDATA[Marque le document comme envoyé si aucune date d'envoi n'est encore définie.]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.msg.mail_sent">
+<fr><![CDATA[Envoyé par e-mail à : [recipient]]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.msg.output_print">
+<fr><![CDATA[Document imprimé]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.msg.output_pdf">
+<fr><![CDATA[PDF du document téléchargé]]></fr>
+        </locale>
+        <locale name="controls.OutputDialog.labelPDFView">
+<fr><![CDATA[Aperçu PDF]]></fr>
+        </locale>
+
+        <locale name="controls.OutputMailEditor.title">
+<fr><![CDATA[Modifier l'e-mail du document]]></fr>
+        </locale>
+        <locale name="controls.OutputMailEditor.labelMailSubject">
+<fr><![CDATA[Objet]]></fr>
+        </locale>
+        <locale name="controls.OutputMailEditor.labelMailContent">
+<fr><![CDATA[Contenu (sans en-tête ni pied de page)]]></fr>
+        </locale>
+        <locale name="controls.OutputMailEditor.info" html="true">
+<fr><![CDATA[<b>Remarque :</b> Le document sera joint à l'e-mail au format PDF.]]></fr>
+        </locale>
+        <locale name="controls.OutputMailEditor.attachmentInfo">
+<fr><![CDATA[Pièces jointes supplémentaires]]></fr>
+        </locale>
+        <locale name="controls.OutputMailEditor.btn.attachments">
+<fr><![CDATA[Pièces jointes supplémentaires]]></fr>
+        </locale>
+        <locale name="controls.OutputMailEditor.btn.attachments_no_permission">
+<fr><![CDATA[Vous n'avez pas l'autorisation d'ajouter d'autres pièces jointes]]></fr>
+        </locale>
+
+        <locale name="controls.settings.OutputTemplates.tpl.labelHideSystemDefault">
+<fr><![CDATA[Ne pas proposer le modèle par défaut du système dans la boîte de dialogue de sortie]]></fr>
+        </locale>
+
+        <locale name="erp.articleList.article.button.delete">
+<fr><![CDATA[Retirer l'article]]></fr>
+        </locale>
+        <locale name="erp.articleList.article.button.replace">
+<fr><![CDATA[Remplacer l'article]]></fr>
+        </locale>
+        <locale name="erp.articleList.article.button.editor">
+<fr><![CDATA[Modifier le titre et la description dans l'éditeur HTML]]></fr>
+        </locale>
+
+        <locale name="journal.timeFilter.month">
+<fr><![CDATA[Mois]]></fr>
+        </locale>
+        <locale name="journal.timeFilter.quarter">
+<fr><![CDATA[Trimestre]]></fr>
+        </locale>
+        <locale name="journal.timeFilter.halfYear">
+<fr><![CDATA[Semestre]]></fr>
+        </locale>
+        <locale name="journal.timeFilter.year">
+<fr><![CDATA[Année]]></fr>
+        </locale>
+        <locale name="journal.timeFilter.period">
+<fr><![CDATA[Période]]></fr>
+        </locale>
+        <locale name="journal.timeFilter.period.select">
+<fr><![CDATA[Du [from] au [to]]]></fr>
+        </locale>
+        <locale name="journal.timeFilter.change.year">
+<fr><![CDATA[Changer d'année]]></fr>
+        </locale>
+        <locale name="journal.timeFilter.user">
+<fr><![CDATA[Personnalisé]]></fr>
+        </locale>
+
+
+        <locale name="quarter.1">
+<fr><![CDATA[1er trimestre]]></fr>
+        </locale>
+        <locale name="quarter.2">
+<fr><![CDATA[2e trimestre]]></fr>
+        </locale>
+        <locale name="quarter.3">
+<fr><![CDATA[3e trimestre]]></fr>
+        </locale>
+        <locale name="quarter.4">
+<fr><![CDATA[4e trimestre]]></fr>
+        </locale>
+
+        <locale name="user.filter.today">
+<fr><![CDATA[Aujourd'hui]]></fr>
+        </locale>
+        <locale name="user.filter.yesterday">
+<fr><![CDATA[Hier]]></fr>
+        </locale>
+        <locale name="user.filter.month">
+<fr><![CDATA[Mois en cours]]></fr>
+        </locale>
+        <locale name="user.filter.lastMonth">
+<fr><![CDATA[Mois dernier]]></fr>
+        </locale>
+
+        <locale name="halfYear.1">
+<fr><![CDATA[1er semestre]]></fr>
+        </locale>
+        <locale name="halfYear.2">
+<fr><![CDATA[2e semestre]]></fr>
+        </locale>
+
+        <locale name="dialog.edit.description.title">
+<fr><![CDATA[Description de l'article : [articleNo] [articleTitle]]]></fr>
+        </locale>
+        <locale name="dialog.delete.article.title">
+<fr><![CDATA[Supprimer l'article ?]]></fr>
+        </locale>
+        <locale name="dialog.delete.article.text">
+<fr><![CDATA[Voulez-vous vraiment supprimer cet article ?]]></fr>
+        </locale>
+        <locale name="dialog.delete.article.information">
+<fr><![CDATA[L'article sera supprimé définitivement.]]></fr>
+        </locale>
+
+        <locale name="controls.manufacturers.AdministrationPanel.title">
+<fr><![CDATA[Fabricants]]></fr>
+        </locale>
+
+        <locale name="controls.manufacturers.Administration.no_group.information">
+<fr><![CDATA[Aucun fabricant ne peut être affiché, car aucun groupe n'a encore été attribué au champ produit « Fabricant ». Ouvrez la gestion des champs produit sous <b>Administration -> Boutique -> Champs produit</b> et modifiez le champ « Fabricant » (ID 8). Attribuez-lui au moins un groupe dans les options du champ.]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.no_group.title">
+<fr><![CDATA[Impossible d'afficher les fabricants]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.no_group.text">
+<fr><![CDATA[Impossible d'afficher les fabricants]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.no_group.submit">
+<fr><![CDATA[OK]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.searchPlaceholder">
+<fr><![CDATA[Rechercher des fabricants...]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterTitle">
+<fr><![CDATA[Champs à inclure dans la recherche]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterUserId">
+<fr><![CDATA[ID utilisateur]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterUsername">
+<fr><![CDATA[Nom d'utilisateur]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterFirstname">
+<fr><![CDATA[Prénom]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterLastname">
+<fr><![CDATA[Nom]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterEmail">
+<fr><![CDATA[Adresse e-mail]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.filterCompany">
+<fr><![CDATA[Entreprise]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tbl.header.active_status">
+<fr><![CDATA[Actif]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.dateFilterTitle">
+<fr><![CDATA[Date de création]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.dateFilterFrom">
+<fr><![CDATA[du]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.tpl.dateFilterTo">
+<fr><![CDATA[au]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.Administration.btn.create">
+<fr><![CDATA[Nouveau fabricant]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.create.ManufacturerWindow.title">
+<fr><![CDATA[Créer un fabricant]]></fr>
+        </locale>
+
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerNoHeader">
+<fr><![CDATA[Créer un fabricant]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerNoText" html="true">
+<fr><![CDATA[Définissez un numéro ou un identifiant unique pour le fabricant. Il s'agit d'une valeur interne permettant de l'identifier.<br/>Vous pourrez la modifier à tout moment.<br/><br/>Caractères autorisés : lettres, chiffres et _ ä ö ü ß]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerNoInputHeader">
+<fr><![CDATA[Numéro / identifiant du fabricant]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerDataHeader">
+<fr><![CDATA[Données du fabricant]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerDataText">
+<fr><![CDATA[Saisissez les données de base du fabricant. Vous pourrez les modifier ultérieurement.]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerGroupsHeader">
+<fr><![CDATA[Groupes de fabricants]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.manufacturerGroupsText">
+<fr><![CDATA[Sélectionnez au moins un groupe de fabricants auquel le nouveau fabricant sera attribué.]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.previousButton">
+<fr><![CDATA[Retour]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.nextButton">
+<fr><![CDATA[Continuer]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.tpl.createButton">
+<fr><![CDATA[Créer un fabricant]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.create.ManufacturerWindow.title">
+<fr><![CDATA[Créer un fabricant]]></fr>
+        </locale>
+        <locale name="controls.manufacturers.create.Manufacturer.username_required">
+<fr><![CDATA[Indiquez un numéro ou un identifiant de fabricant]]></fr>
+        </locale>
+
+        <locale name="window.products.add.title">
+<fr><![CDATA[Propriétés du produit]]></fr>
+        </locale>
+
+        <locale name="panel.btn.priceFactors">
+<fr><![CDATA[Modifier les facteurs de prix]]></fr>
+        </locale>
+        <locale name="pricefactors.summary.window.title">
+<fr><![CDATA[Modifier les facteurs de prix]]></fr>
+        </locale>
+
+        <locale name="pricefactors.edit.window.title">
+<fr><![CDATA[Modifier le facteur de prix]]></fr>
+        </locale>
+
+        <locale name="controls.QuantityUnitWindow.title">
+<fr><![CDATA[Unité de mesure]]></fr>
+        </locale>
+        <locale name="window.products.variant.select.title">
+<fr><![CDATA[Sélectionnez une variante]]></fr>
+        </locale>
+        <locale name="window.products.variant.select.content">
+<fr><![CDATA[Vous avez sélectionné un article parent avec des variantes. Choisissez une variante.]]></fr>
+        </locale>
+
+        <locale name="calculationBasis">
+<fr><![CDATA[Base de calcul]]></fr>
+        </locale>
+        <locale name="calculationBasis.netto">
+<fr><![CDATA[HT]]></fr>
+        </locale>
+        <locale name="calculationBasis.calculationBasisCalcPrice">
+<fr><![CDATA[Prix calculé]]></fr>
+        </locale>
+        <locale name="calculationBasis.calculationBasisCalcBrutto">
+<fr><![CDATA[Prix TTC calculé (basé sur le prix HT intégrant tous les facteurs de prix, comme les listes de sélection)]]></fr>
+        </locale>
+
+        <locale name="title.price">
+<fr><![CDATA[Prix]]></fr>
+        </locale>
+        <locale name="title.title">
+<fr><![CDATA[Titre]]></fr>
+        </locale>
+        <locale name="title.priority">
+<fr><![CDATA[Priorité]]></fr>
+        </locale>
+        <locale name="title.vat">
+<fr><![CDATA[TVA]]></fr>
+        </locale>
+
+        <locale name="add.pricefactor.button">
+<fr><![CDATA[Ajouter un facteur de prix]]></fr>
+        </locale>
+        <locale name="message.pricefactor.empty">
+<fr><![CDATA[Aucun facteur de prix disponible]]></fr>
+        </locale>
+
+        <locale name="priceCalcInput.window.vat.title">
+<fr><![CDATA[Sélection de la TVA]]></fr>
+        </locale>
+        <locale name="priceCalcInput.window.vat.message">
+<fr><![CDATA[Sélectionnez le taux de TVA souhaité.]]></fr>
+        </locale>
+        <locale name="priceCalcInput.netto">
+<fr><![CDATA[Saisie HT]]></fr>
+        </locale>
+        <locale name="priceCalcInput.brutto">
+<fr><![CDATA[Saisie TTC]]></fr>
+        </locale>
+
+        <locale name="dashboard.erp.processId">
+<fr><![CDATA[Numéro de dossier]]></fr>
+        </locale>
+        <locale name="dashboard.erp.grid.title">
+<fr><![CDATA[Dossiers récents]]></fr>
+        </locale>
+        <locale name="dashboard.erp.date">
+<fr><![CDATA[Date]]></fr>
+        </locale>
+        <locale name="dashboard.erp.invoice">
+<fr><![CDATA[Facture]]></fr>
+        </locale>
+        <locale name="dashboard.erp.order">
+<fr><![CDATA[Commande]]></fr>
+        </locale>
+        <locale name="dashboard.erp.offer">
+<fr><![CDATA[Devis]]></fr>
+        </locale>
+        <locale name="dashboard.erp.salesOrder">
+<fr><![CDATA[Ordre de vente]]></fr>
+        </locale>
+        <locale name="dashboard.erp.purchasing">
+<fr><![CDATA[Achat]]></fr>
+        </locale>
+        <locale name="dashboard.erp.booking">
+<fr><![CDATA[Écriture comptable]]></fr>
+        </locale>
+        <locale name="dashboard.erp.contract">
+<fr><![CDATA[Contrat]]></fr>
+        </locale>
+        <locale name="dashboard.erp.transactions">
+<fr><![CDATA[Paiements / transactions]]></fr>
+        </locale>
+        <locale name="dashboard.erp.deliveryNotes">
+<fr><![CDATA[Bons de livraison]]></fr>
+        </locale>
+        <locale name="panel.globalProcess.title">
+<fr><![CDATA[Dossier : [globalProcessId]]]></fr>
+        </locale>
+        <locale name="window.delete.customer.grid.information">
+<fr><![CDATA[Les fichiers sont conservés ; seul leur lien avec l'entité sélectionnée est supprimé.]]></fr>
+        </locale>
+        <locale name="window.delete.customer.grid.text">
+<fr><![CDATA[Retirer les fichiers de [entity]]]></fr>
+        </locale>
+        <locale name="window.delete.customer.grid.title">
+<fr><![CDATA[Retirer les fichiers de [entity]]]></fr>
+        </locale>
+        <locale name="customer.grid.mail.checkbox.title">
+<fr><![CDATA[Joindre à l'e-mail]]></fr>
+        </locale>
+        <locale name="customer.grid.download.title">
+<fr><![CDATA[Télécharger le fichier]]></fr>
+        </locale>
+        <locale name="customer.grid.customerFiles">
+<fr><![CDATA[Fichiers du client]]></fr>
+        </locale>
+        <locale name="customer.grid.uploadCustomerFile">
+<fr><![CDATA[Envoyer un fichier client]]></fr>
+        </locale>
+        <locale name="customer.grid.customerFiles.title">
+<fr><![CDATA[Sélectionner un fichier parmi les fichiers du client]]></fr>
+        </locale>
+        <locale name="customer.grid.button.remove">
+<fr><![CDATA[Retirer le fichier de [entity]]]></fr>
+        </locale>
+        <locale name="customer.grid.saved">
+<fr><![CDATA[Fichiers de [entity] : Les modifications des données du client ont été enregistrées.]]></fr>
+        </locale>
+        <locale name="process.button.title">
+<fr><![CDATA[Historique du dossier]]></fr>
+        </locale>
+
+
+        <locale name="controls.elements.copyDialog.title">
+<fr><![CDATA[Copier [prefixedNumber]]]></fr>
+        </locale>
+        <locale name="controls.elements.copyDialog.text">
+<fr><![CDATA[Voulez-vous créer une copie de [prefixedNumber] ?]]></fr>
+        </locale>
+        <locale name="controls.elements.copyDialog.information" html="true">
+<fr><![CDATA[Une copie sera créée avec les données de <b>[prefixedNumber]</b>.]]></fr>
+        </locale>
+        <locale name="controls.elements.copyDialog.ok_btn">
+<fr><![CDATA[Créer une copie]]></fr>
+        </locale>
+
+        <locale name="controls.elements.copyDialog.option.title">
+<fr><![CDATA[Choisissez comment copier les données :]]></fr>
+        </locale>
+        <locale name="controls.elements.copyDialog.option.info" html="true">
+<fr><![CDATA[<ul><li>Copier dans un nouveau dossier : Cette option copie toutes les données de l'entité, sauf l'identifiant du dossier. L'entité copiée n'est donc pas rattachée au dossier actuel et peut être traitée indépendamment.</li><li>Copier dans le dossier existant : Cette option copie également toutes les données de l'entité, mais conserve le lien avec le dossier actuel. Elle permet de dupliquer les données dans le même dossier sans créer de nouvel identifiant de dossier.</li></ul>]]></fr>
+        </locale>
+        <locale name="controls.elements.copyDialog.option.new">
+<fr><![CDATA[Copier dans un nouveau dossier]]></fr>
+        </locale>
+        <locale name="controls.elements.copyDialog.option.existing">
+<fr><![CDATA[Copier dans le dossier existant]]></fr>
+        </locale>
+
+    </groups>
+</locales>
