@@ -54,7 +54,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputMailEditor', [
                 autoclose    : false,
                 cancel_button: {
                     textimage: 'fa fa-close',
-                    text     : QUILocale.get('quiqqer/system', 'close')
+                    text     : QUILocale.get('quiqqer/core', 'close')
                 }
             });
 

@@ -595,7 +595,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
 
 
                     var Accept = new QUIButton({
-                        text  : QUILocale.get('quiqqer/system', 'accept'),
+                        text  : QUILocale.get('quiqqer/core', 'accept'),
                         styles: {
                             'float': 'right',
                             margin : '0 10px 0 0'
@@ -889,7 +889,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
 
 
                     var Accept = new QUIButton({
-                        text  : QUILocale.get('quiqqer/system', 'accept'),
+                        text  : QUILocale.get('quiqqer/core', 'accept'),
                         styles: {
                             'float': 'right',
                             margin : '10px 10px 0 0'
