@@ -547,13 +547,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                         width    : 60
                     },
                     {
-                        header   : QUILocale.get('quiqqer/system', 'status'),
+                        header   : QUILocale.get('quiqqer/core', 'status'),
                         dataIndex: 'status',
                         dataType : 'node',
                         width    : 60
                     },
                     {
-                        header   : QUILocale.get('quiqqer/system', 'id'),
+                        header   : QUILocale.get('quiqqer/core', 'id'),
                         dataIndex: 'id',
                         dataType : 'number',
                         width    : 50
@@ -566,7 +566,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                         //sortable : false
                     },
                     {
-                        header   : QUILocale.get('quiqqer/system', 'title'),
+                        header   : QUILocale.get('quiqqer/core', 'title'),
                         dataIndex: 'title',
                         dataType : 'text',
                         width    : 200,
@@ -602,13 +602,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                         width    : 120,
                     },
                     {
-                        header   : QUILocale.get('quiqqer/system', 'editdate'),
+                        header   : QUILocale.get('quiqqer/core', 'editdate'),
                         dataIndex: 'e_date',
                         dataType : 'text',
                         width    : 160
                     },
                     {
-                        header   : QUILocale.get('quiqqer/system', 'createdate'),
+                        header   : QUILocale.get('quiqqer/core', 'createdate'),
                         dataIndex: 'c_date',
                         dataType : 'text',
                         width    : 160
