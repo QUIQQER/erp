@@ -1098,7 +1098,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                         );
 
                         Title.set('value', self.getAttribute('title'));
-                        Title.set('placeholder', QUILocale.get('quiqqer/system', 'title'));
+                        Title.set('placeholder', QUILocale.get('quiqqer/core', 'title'));
                         Title.focus();
 
                         Editors.getEditor(null).then(function (Editor) {
