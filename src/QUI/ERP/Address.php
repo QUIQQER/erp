@@ -131,6 +131,43 @@ class Address extends QUI\Users\Address
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        $User = $this->User ?? null;
+
+        $salutation = $this->getAttribute('salutation');
+        $firstName = $this->getAttribute('firstname');
+        $lastName = $this->getAttribute('lastname');
+
+        if (empty($firstName) && $User) {
+            $firstName = $User->getAttribute('firstname');
+        }
+
+        if (!$firstName) {
+            $firstName = '';
+        }
+
+        if (empty($lastName) && $User) {
+            $lastName = $User->getAttribute('lastname');
+        }
+
+        if (!$lastName) {
+            $lastName = '';
+        }
+
+        if (!$salutation) {
+            $salutation = '';
+        }
+
+        $result = "$salutation $firstName $lastName";
+        $result = preg_replace('/[  ]{2,}/', ' ', $result) ?? $result;
+
+        return trim($result);
+    }
+
+    /**
      * @param mixed $value
      * @return string
      */

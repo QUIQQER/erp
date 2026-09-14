@@ -92,6 +92,13 @@ class AddressTest extends TestCase
         self::assertSame('', $values['country']);
     }
 
+    public function testGetNameDoesNotAccessUninitializedUser(): void
+    {
+        $Address = new Address();
+
+        self::assertSame('', $Address->getName());
+    }
+
     private function useContactPersonConfiguration(bool $enabled): void
     {
         $Config = $this->createMock(Config::class);
