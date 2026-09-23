@@ -1,7 +1,7 @@
 {if $showHeader}
 <!-- articles -->
 <h1 class="articles-header">
-    {locale group="quiqqer/erp" var="article.list.articles.title"}
+    {locale group="quiqqer/erp" var="article.list.articles.title" Locale=$Locale}
 </h1>
 {/if}
 
@@ -17,7 +17,7 @@
                 {$Article->getAttribute('title')}
             </h2>
             <div class="articles-body-article-data-articleNo">
-                {locale group="quiqqer/erp" var="article.list.articles.header.articleNo"}:
+                {locale group="quiqqer/erp" var="article.list.articles.header.articleNo" Locale=$Locale}:
                 {$Article->getAttribute('articleNo')}
             </div>
             <div class="articles-body-article-data-description">
@@ -52,7 +52,7 @@
         <tr class="articles-sum-row-subsum">
             <td class="articles-sum-row-firstCell">
             <span class="articles-sum-row-subsum-text">
-                {locale group="quiqqer/erp" var="article.list.articles.subtotal"}
+                {locale group="quiqqer/erp" var="article.list.articles.subtotal" Locale=$Locale}
             </span>
             </td>
             <td style="width: 140px" class="articles-sum-row-sndCell">
@@ -124,7 +124,7 @@
         <tr class="articles-sum-row-sum">
             <td class="articles-sum-row-firstCell">
             <span class="articles-sum-row-sum-text">
-                {locale group="quiqqer/erp" var="article.list.articles.sumtotal"}
+                {locale group="quiqqer/erp" var="article.list.articles.sumtotal" Locale=$Locale}
             </span>
             </td>
             <td class="articles-sum-row-sndCell">

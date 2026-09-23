@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<user>
-    <attributes>
-        <attribute>quiqqer.erp.euVatId</attribute>
-        <attribute>quiqqer.erp.chUID</attribute>
-        <attribute>quiqqer.erp.taxId</attribute>
-        <attribute>quiqqer.erp.address</attribute>
-        <attribute>quiqqer.erp.isNettoUser</attribute>
-        <attribute>quiqqer.erp.discount</attribute>
-        <attribute>quiqqer.erp.company.identification.number</attribute>
-    </attributes>
-
-    <window>
-        <tab name="ERP">
-            <text>
-                <locale group="quiqqer/erp" var="user.category.title"/>
-            </text>
-            <image>fa fa-shopping-bag</image>
-            <template>OPT_DIR/quiqqer/erp/template/user/erpSettings.html</template>
-        </tab>
-    </window>
-</user>
+<quiqqer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://www.quiqqer.com/docs/schemas/2.x/user.xsd">
+    <user>
+        <attributes>
+            <attribute>quiqqer.erp.euVatId</attribute>
+            <attribute>quiqqer.erp.chUID</attribute>
+            <attribute>quiqqer.erp.taxId</attribute>
+            <attribute>quiqqer.erp.address</attribute>
+            <attribute>quiqqer.erp.isNettoUser</attribute>
+            <attribute>quiqqer.erp.discount</attribute>
+            <attribute>quiqqer.erp.company.identification.number</attribute>
+        </attributes>
+        <window>
+            <categories>
+                <category name="ERP" index="4">
+                    <title>
+                        <locale group="quiqqer/erp" var="user.category.title"/>
+                    </title>
+                    <icon>fa fa-shopping-bag</icon>
+                    <settings name="customer">
+                        <title>
+                            <locale group="quiqqer/erp" var="user.category.title"/>
+                        </title>
+                        <button type="button" label="false" data-name="open-customer"
+                                data-qui-options-textimage="fa fa-user"
+                                data-qui-options-onclick="(function (Button) { require(['package/quiqqer/erp/bin/backend/controls/ErpUserData'], function (openCustomer) { openCustomer(Button); }); })">
+                            <text>
+                                <locale group="quiqqer/erp" var="user.settings.customer.button"/>
+                            </text>
+                        </button>
+                    </settings>
+                </category>
+            </categories>
+        </window>
+    </user>
+</quiqqer>

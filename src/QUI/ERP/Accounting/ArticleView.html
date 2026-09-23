@@ -1,16 +1,16 @@
 <tr class="{$cssClasses}">
     <td class="articles-article-pos"
-        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.pos'}"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.pos' Locale=$Locale}"
     >
         {$position}
     </td>
     <td class="articles-article-articleNo"
-        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.articleNo'}"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.articleNo' Locale=$Locale}"
     >
         {$this->getAttribute('articleNo')}
     </td>
     <td class="articles-article-information"
-        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.description'}"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.description' Locale=$Locale}"
     >
         <div class="articles-article-information-title">
             {$this->getAttribute('title')}
@@ -37,7 +37,7 @@
     </td>
     {if $hasAppliedVat}
     <td class="articles-article-vat"
-        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.vat'}"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.vat' Locale=$Locale}"
     >
         {$this->getAttribute('vat')}%
     </td>
@@ -45,7 +45,7 @@
 
     {if $this->getAttribute('quantity') !== false}
     <td class="articles-article-quantity"
-        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.quantity'}"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.quantity' Locale=$Locale}"
     >
         {$this->getAttribute('quantity')}
     </td>
@@ -56,12 +56,12 @@
 
     {if $this->getAttribute('quantity') !== false}
     <td class="articles-article-unitprice"
-        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.unitprice'}"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.unitprice' Locale=$Locale}"
     >
         {if isset($Discount)}
         <span class="articles-article-unitprice-price">{$calculated_basisPrice}</span>
         <span class="articles-article-unitprice-discount">
-            {locale group='quiqqer/erp' var='article.list.discount.text' discount=$Discount->formatted()}
+            {locale group='quiqqer/erp' var='article.list.discount.text' discount=$Discount->formatted() Locale=$Locale}
         </span>
         {else}
         {if $this->getAttribute('displayPrice')}
@@ -73,7 +73,7 @@
 
     {if $this->getAttribute('quantity') !== false}
     <td class="articles-article-price"
-        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.price'}"
+        data-label="{locale group='quiqqer/erp' var='article.list.articles.header.price' Locale=$Locale}"
     >
         {if $this->getAttribute('displayPrice')}
         {$calculated_sum}

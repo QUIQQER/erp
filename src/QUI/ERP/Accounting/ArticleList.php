@@ -318,6 +318,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
         $this->calc();
 
         $List = new ArticleListUnique($this->toArray(), $this->getUser());
+        $List->setLocale($this->Locale);
 
         if ($this->ExchangeCurrency) {
             $List->setExchangeCurrency($this->ExchangeCurrency);

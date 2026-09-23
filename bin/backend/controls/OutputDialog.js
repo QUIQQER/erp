@@ -62,6 +62,10 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             entityType: false,  // Entity type (e.g. "Invoice")
             entityPlugin: false,
 
+            // Reuse the output dialog for an already reviewed, immutable PDF.
+            preparedPdfUrl: false,
+            preparedPdfName: '',
+
             comments: false,    // Comments as array [must be readble by package/quiqqer/erp/bin/backend/controls/Comments]
 
             showMarkAsSentOption: false,    // show checkbox for "Mark as sent"
@@ -95,6 +99,9 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             this.$MessagesBox = null;
 
             this.$mailSent = false;
+            this.$preparedPdf = null;
+            this.$preparedPdfAbort = null;
+            this.$preparedPdfBusy = false;
 
             this.$Mail = {
                 subject: false,
@@ -105,6 +112,8 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             this.addEvents({
                 onOpen: this.$onOpen,
                 onSubmit: this.$onSubmit,
+                onClose: () => this.$disposePreparedPdf(),
+                onDestroy: () => this.$disposePreparedPdf(),
                 onOpenBegin: function() {
                     const winSize = QUI.getWindowSize();
                     let height = 800;
@@ -133,6 +142,11 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
             this.Loader.show();
             this.getContent().set('html', '');
+
+            if (this.getAttribute('preparedPdfUrl')) {
+                this.$openPreparedPdf(Content);
+                return;
+            }
 
             const onError = function(error) {
                 self.close().then(function() {
@@ -422,6 +436,10 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          * event: on submit
          */
         $onSubmit: function() {
+            if (this.getAttribute('preparedPdfUrl')) {
+                return this.$onPreparedSubmit();
+            }
+
             const self = this;
             let Run = Promise.resolve();
 
@@ -477,6 +495,143 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             }, function() {
                 self.Loader.hide();
             });
+        },
+
+        /** Show an existing PDF without selecting templates or regenerating its contents. */
+        $openPreparedPdf: async function(Content) {
+            this.$disposePreparedPdf();
+            const Controller = new AbortController();
+            this.$preparedPdfAbort = Controller;
+            const Submit = this.getButton('submit');
+            Submit.disable();
+            Content.classList.add('quiqqer-erp-outputDialog');
+
+            const Options = document.createElement('div');
+            Options.className = 'quiqqer-erp-outputDialog-options';
+            const Form = document.createElement('form');
+            const filename = this.getAttribute('preparedPdfName') || 'document.pdf';
+            const Name = document.createElement('p');
+            Name.textContent = filename;
+            const Label = document.createElement('label');
+            Label.className = 'field-container';
+            const Caption = document.createElement('span');
+            Caption.className = 'field-container-item';
+            Caption.textContent = QUILocale.get(lg, 'controls.OutputDialog.labelOutputType');
+            const Select = document.createElement('select');
+            Select.className = 'field-container-field';
+            Select.name = 'output';
+            Select.dataset.name = 'prepared-output';
+
+            for (const value of ['print', 'pdf']) {
+                const Option = document.createElement('option');
+                Option.value = value;
+                Option.textContent = QUILocale.get(lg, 'controls.OutputDialog.data.output.' + value);
+                Select.appendChild(Option);
+            }
+
+            Select.addEventListener('change', () => {
+                Submit.setAttribute('text', QUILocale.get(lg,
+                    'controls.OutputDialog.data.output.' + Select.value + '.btn'));
+                Submit.setAttribute('textimage', Select.value === 'print' ? 'fa fa-print' : 'fa fa-file-pdf-o');
+            });
+            Submit.setAttribute('text', QUILocale.get(lg, 'controls.OutputDialog.data.output.print.btn'));
+            Submit.setAttribute('textimage', 'fa fa-print');
+            Label.append(Caption, Select);
+            Form.append(Name, Label);
+            Options.appendChild(Form);
+
+            const Preview = document.createElement('iframe');
+            Preview.className = 'quiqqer-erp-outputDialog-preview';
+            Preview.dataset.name = 'prepared-preview';
+            Preview.title = filename;
+            Content.append(Options, Preview);
+            const State = {Controller, Preview, Select, filename, url: null, ready: false};
+            this.$preparedPdf = State;
+
+            try {
+                const url = new URL(this.getAttribute('preparedPdfUrl'), window.location.href);
+
+                if (url.origin !== window.location.origin || !['http:', 'https:'].includes(url.protocol)) {
+                    throw new Error('Prepared PDF must use an authenticated same-origin URL.');
+                }
+
+                const Response = await fetch(url.href, {credentials: 'same-origin', signal: Controller.signal});
+
+                if (!Response.ok || !Response.headers.get('Content-Type')?.startsWith('application/pdf')) {
+                    throw new Error('Prepared PDF could not be loaded.');
+                }
+
+                const Pdf = await Response.blob();
+
+                if (Controller.signal.aborted || this.$preparedPdf !== State) {
+                    return;
+                }
+
+                State.url = URL.createObjectURL(Pdf);
+                Preview.addEventListener('load', () => {
+                    if (this.$preparedPdf !== State) {
+                        return;
+                    }
+
+                    State.ready = true;
+                    Submit.enable();
+                    this.Loader.hide();
+                }, {once: true});
+                Preview.src = State.url;
+            } catch (error) {
+                if (Controller.signal.aborted || this.$preparedPdf !== State) {
+                    return;
+                }
+
+                const Message = document.createElement('p');
+                Message.setAttribute('role', 'alert');
+                Message.textContent = QUILocale.get(lg, 'controls.OutputDialog.preview_error');
+                Preview.replaceWith(Message);
+                this.Loader.hide();
+            }
+        },
+
+        /** Invoking the browser print dialog does not confirm that paper was printed or signed. */
+        $onPreparedSubmit: function() {
+            const State = this.$preparedPdf;
+
+            if (!State?.ready || this.$preparedPdfBusy) {
+                return;
+            }
+
+            this.$preparedPdfBusy = true;
+
+            try {
+                if (State.Select.value === 'print') {
+                    State.Preview.contentWindow.focus();
+                    State.Preview.contentWindow.print();
+                } else if (State.Select.value === 'pdf') {
+                    const Link = document.createElement('a');
+                    Link.href = State.url;
+                    Link.download = State.filename;
+                    Link.hidden = true;
+                    this.getContent().appendChild(Link);
+                    Link.click();
+                    Link.remove();
+                } else {
+                    return;
+                }
+
+                this.fireEvent('output', [{output: State.Select.value}, this]);
+            } finally {
+                this.$preparedPdfBusy = false;
+            }
+        },
+
+        $disposePreparedPdf: function() {
+            this.$preparedPdfAbort?.abort();
+            this.$preparedPdfAbort = null;
+
+            if (this.$preparedPdf?.url) {
+                URL.revokeObjectURL(this.$preparedPdf.url);
+            }
+
+            this.$preparedPdf = null;
         },
 
         /**

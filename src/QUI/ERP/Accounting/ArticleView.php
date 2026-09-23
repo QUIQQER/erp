@@ -35,6 +35,8 @@ class ArticleView extends QUI\QDOM
      */
     protected ?QUI\ERP\Currency\Currency $Currency = null;
 
+    protected ?QUI\Locale $Locale = null;
+
     /**
      * ArticleView constructor.
      * @param Article $Article
@@ -54,7 +56,15 @@ class ArticleView extends QUI\QDOM
      */
     public function getQuantityUnit(): string
     {
-        return $this->Article->getQuantityUnit();
+        return $this->Article->getQuantityUnit($this->Locale);
+    }
+
+    /**
+     * Set the language for labels and multilingual display values.
+     */
+    public function setLocale(QUI\Locale $Locale): void
+    {
+        $this->Locale = $Locale;
     }
 
     /**
@@ -104,7 +114,7 @@ class ArticleView extends QUI\QDOM
     {
         $customFields = [];
         $article = $this->Article->toArray();
-        $current = QUI::getLocale()->getCurrent();
+        $current = ($this->Locale ?? QUI::getLocale())->getCurrent();
 
         foreach ($article['customFields'] as $field) {
             if (!isset($field['title'])) {
@@ -232,6 +242,7 @@ class ArticleView extends QUI\QDOM
 
         $Engine->assign([
             'this' => $this,
+            'Locale' => $this->Locale ?? QUI::getLocale(),
             'uuid' => $articleData['uuid'],
             'cssClasses' => implode(' ', $cssClasses),
             'productSetParentUuid' => $articleData['productSetParentUuid'],
