@@ -413,6 +413,8 @@ class ArticleListUnique implements IteratorAggregate
             $this->calculations['currencyData']['code']
         );
 
+        $Currency->setLocale($this->Locale);
+
         if (isset($this->calculations['currencyData']['rate'])) {
             $Currency->setExchangeRate($this->calculations['currencyData']['rate']);
         }
@@ -424,6 +426,16 @@ class ArticleListUnique implements IteratorAggregate
         // Keep the original calculation values numeric because the article list may be saved or recalculated after rendering.
         // Formatting is only needed by the template and must therefore happen on a local copy.
         $calculations = $this->calculations;
+
+        // Translate labels from the stored tax context, without recalculating the document.
+        foreach ($vatArray as $key => $vat) {
+            $vatArray[$key]['text'] = $this->getVatTextForDisplay($vat);
+            $calculations['vatArray'][$key]['text'] = $vatArray[$key]['text'];
+
+            if (isset($calculations['vatText'][$key]) && is_string($calculations['vatText'][$key])) {
+                $calculations['vatText'][$key] = $vatArray[$key]['text'];
+            }
+        }
 
         // price display
         if (is_numeric($calculations['sum'])) {
@@ -449,6 +461,7 @@ class ArticleListUnique implements IteratorAggregate
         foreach ($this->articles as $Article) {
             $View = $Article->getView();
             $View->setCurrency($Currency);
+            $View->setLocale($this->Locale);
             $position = $View->getPosition();
 
             if (floor($position) % 2) {
@@ -563,6 +576,37 @@ class ArticleListUnique implements IteratorAggregate
         }
 
         return $Engine->fetch(dirname(__FILE__) . '/ArticleList.html');
+    }
+
+    /**
+     * Localize a stored VAT row using its original calculation context.
+     * Older snapshots without that context retain their saved label.
+     *
+     * @param array<string, mixed> $vat
+     */
+    protected function getVatTextForDisplay(array $vat): string
+    {
+        if (
+            !isset($this->calculations['isNetto'], $this->calculations['isEuVat'], $vat['vat'])
+            || !is_numeric($vat['vat'])
+        ) {
+            return (string)($vat['text'] ?? '');
+        }
+
+        $rate = (float)$vat['vat'];
+        $isEuVat = (bool)$this->calculations['isEuVat'];
+
+        if (!$rate && !$isEuVat) {
+            return '';
+        }
+
+        $key = 'message.vat.text.' . ($this->calculations['isNetto'] ? 'netto' : 'brutto');
+
+        if ($isEuVat) {
+            $key .= '.EUVAT';
+        }
+
+        return $this->Locale->get('quiqqer/tax', $key, ['vat' => $rate]);
     }
 
     /**
