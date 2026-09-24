@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 use QUI;
 use QUI\Config;
 use QUI\ERP\EventHandler;
+use QUI\ERP\Products\Field\Field;
+use QUI\ERP\Products\Handler\Fields;
 use QUI\ERP\Utils\Shop;
 use QUI\Groups\Group;
 use QUI\Groups\Manager as GroupsManager;
@@ -120,6 +122,59 @@ class EventHandlerTest extends TestCase
         EventHandler::patchBankAccount();
 
         self::assertSame(1, $saveCount);
+    }
+
+    /**
+     * @dataProvider manufacturerFieldGroups
+     * @param array<string>|false $groupIds
+     */
+    public function testExistingManufacturerGroupIsAssignedWithoutDuplicates(array|false $groupIds): void
+    {
+        $values = ['manufacturers' => ['groupId' => 8123]];
+        $saveCount = 0;
+        $Config = $this->config($values, $saveCount);
+        $Package = $this->createMock(Package::class);
+        $Package->method('getName')->willReturn('quiqqer/erp');
+        $Package->method('getConfig')->willReturn($Config);
+        $values['bankAccounts']['isPatched'] = 1;
+        $Manager = $this->createMock(Manager::class);
+        $Manager->method('getInstalledPackage')->willReturn($Package);
+        $Manager->method('isInstalled')->with('quiqqer/products')->willReturn(true);
+        QUI::$PackageManager = $Manager;
+
+        $Group = $this->createMock(Group::class);
+        $Group->method('getUUID')->willReturn('manufacturer-group');
+        $Group->expects(self::never())->method('activate');
+        $Groups = $this->createMock(GroupsManager::class);
+        $Groups->expects(self::never())->method('firstChild');
+        $Groups->method('get')->with(8123)->willReturn($Group);
+        QUI::$Groups = $Groups;
+
+        $expected = $groupIds ?: [];
+        $alreadyAssigned = in_array('manufacturer-group', $expected, true);
+
+        if (!$alreadyAssigned) {
+            $expected[] = 'manufacturer-group';
+        }
+
+        $this->withManufacturerField($groupIds, $alreadyAssigned ? 0 : 1, static function () use ($Package): void {
+            EventHandler::onPackageSetup($Package);
+            EventHandler::onPackageSetup($Package);
+        });
+
+        self::assertSame($expected, $groupIds);
+        self::assertSame(8123, $values['manufacturers']['groupId']);
+        self::assertSame(0, $saveCount);
+    }
+
+    public static function manufacturerFieldGroups(): array
+    {
+        return [
+            'unconfigured field' => [false],
+            'empty field' => [[]],
+            'preserve other groups' => [['other-group']],
+            'already assigned' => [['other-group', 'manufacturer-group']]
+        ];
     }
 
     public function testBankMigrationCreatesConfiguredDefaultAccount(): void
@@ -282,7 +337,8 @@ class EventHandlerTest extends TestCase
         EventHandler::onFrontendUserAddressEditEnd($Collector, $User, $Address);
     }
 
-    public function testDefaultManufacturerGroupIsCreatedAndPersistedOnce(): void
+    /** @dataProvider productsInstallationStates */
+    public function testDefaultManufacturerGroupIsCreatedAndPersistedOnce(bool $productsInstalled): void
     {
         $values = ['manufacturers' => ['groupId' => null]];
         $saveCount = 0;
@@ -291,7 +347,7 @@ class EventHandlerTest extends TestCase
         $Package->method('getConfig')->willReturn($Config);
         $Manager = $this->createMock(Manager::class);
         $Manager->method('getInstalledPackage')->willReturn($Package);
-        $Manager->method('isInstalled')->with('quiqqer/products')->willReturn(false);
+        $Manager->method('isInstalled')->with('quiqqer/products')->willReturn($productsInstalled);
         QUI::$PackageManager = $Manager;
 
         $SystemUser = $this->createMock(QUI\Users\SystemUser::class);
@@ -309,12 +365,55 @@ class EventHandlerTest extends TestCase
             ->willReturn($Manufacturers);
         $Groups = $this->createMock(GroupsManager::class);
         $Groups->method('firstChild')->willReturn($Root);
+        $Groups->method('get')->with('manufacturer-group')->willReturn($Manufacturers);
         QUI::$Groups = $Groups;
 
-        EventHandler::createDefaultManufacturerGroup();
+        $groupIds = [];
+        $this->withManufacturerField($groupIds, $productsInstalled ? 1 : 0, static function (): void {
+            EventHandler::createDefaultManufacturerGroup();
+            EventHandler::createDefaultManufacturerGroup();
+        });
 
         self::assertSame('manufacturer-group', $values['manufacturers']['groupId']);
         self::assertSame(1, $saveCount);
+        self::assertSame($productsInstalled ? ['manufacturer-group'] : [], $groupIds);
+    }
+
+    public static function productsInstallationStates(): array
+    {
+        return [[false], [true]];
+    }
+
+    /** @param array<string>|false $groupIds */
+    private function withManufacturerField(array|false &$groupIds, int $saves, callable $callback): void
+    {
+        foreach ([Field::class, Fields::class] as $className) {
+            if (!class_exists($className)) {
+                require_once dirname(__DIR__, 2) . '/stubs/' . str_replace('\\', '/', $className) . '.php';
+            }
+        }
+
+        $Field = $this->createMock(Field::class);
+        $Field->method('getOption')->with('groupIds')->willReturnCallback(
+            static function () use (&$groupIds): array|false {
+                return $groupIds;
+            }
+        );
+        $Field->expects(self::exactly($saves))->method('setOption')->with('groupIds', self::isType('array'))
+            ->willReturnCallback(static function (string $name, array $value) use (&$groupIds): void {
+                $groupIds = $value;
+            });
+        $Field->expects(self::exactly($saves))->method('save');
+
+        $Fields = new ReflectionProperty(Fields::class, 'list');
+        $originalFields = $Fields->getValue();
+        $Fields->setValue(null, [Fields::FIELD_MANUFACTURER => $Field]);
+
+        try {
+            $callback();
+        } finally {
+            $Fields->setValue(null, $originalFields);
+        }
     }
 
     public function testFrontendUserSaveSanitizesCompanyAndTaxIdentifiers(): void
@@ -387,10 +486,14 @@ class EventHandlerTest extends TestCase
     {
         $Config = $this->createMock(Config::class);
         $Config->method('get')->willReturnCallback(
-            static fn(string $section, string $key): mixed => $values[$section][$key] ?? false
+            static function (string $section, string $key) use (&$values): mixed {
+                return $values[$section][$key] ?? false;
+            }
         );
         $Config->method('getValue')->willReturnCallback(
-            static fn(string $section, string $key): mixed => $values[$section][$key] ?? false
+            static function (string $section, string $key) use (&$values): mixed {
+                return $values[$section][$key] ?? false;
+            }
         );
         $Config->method('getSection')->willReturnCallback(
             static fn(string $section): array => $values[$section] ?? []
