@@ -1,22 +1,43 @@
-<div class="quiqqer-erp-settings-bankaccounts-actions"></div>
-
-<ul>
+<p class="q-message q-message-info">{{immediateSave}}</p>
+<div class="quiqqer-erp-settings-bankaccounts-toolbar">
+    <button type="button" class="qui-button" data-name="create">
+        <span class="fa fa-plus" aria-hidden="true"></span> {{labelCreate}}
+    </button>
+    <span role="status" data-name="status"></span>
+</div>
+<ul class="quiqqer-erp-settings-bankaccounts-list">
     {{#bankAccounts}}
-    <li class="quiqqer-erp-settings-bankaccounts-entry">
-        <div class="quiqqer-erp-settings-bankaccounts-entry-descriptor">
-            {{#default}} <span class="quiqqer-erp-settings-bankaccounts-entry-default">{{labelDefaultEntry}}</span><br/>{{/default}}
-            <b>{{title}}</b><br/>
-            {{name}}<br/>
-            {{iban}}
+    <li class="quiqqer-erp-settings-bankaccounts-card">
+        <div class="quiqqer-erp-settings-bankaccounts-card-header">
+            <span class="fa fa-university quiqqer-erp-settings-bankaccounts-icon" aria-hidden="true"></span>
+            <div class="quiqqer-erp-settings-bankaccounts-heading">
+                <strong>{{title}}</strong>
+                <span>{{name}}</span>
+            </div>
+            {{#default}}<span class="quiqqer-erp-settings-bankaccounts-default">{{labelDefaultEntry}}</span>{{/default}}
         </div>
-        <div class="quiqqer-erp-settings-bankaccounts-entry-actions">
-            <div class="quiqqer-erp-settings-bankaccounts-entry-actions-edit" data-id="{{id}}" title="{{titleEdit}}">
-                <span class="fa fa-edit"></span>
+        <div class="quiqqer-erp-settings-bankaccounts-details">
+            <div class="quiqqer-erp-settings-bankaccounts-iban">
+                <span>{{labelIban}}</span>
+                <bdi>{{iban}}</bdi>
             </div>
-            <div class="quiqqer-erp-settings-bankaccounts-entry-actions-delete" data-id="{{id}}" title="{{titleDelete}}">
-                <span class="fa fa-trash"></span>
-            </div>
+            <dl>
+                <div><dt>{{labelAccountHolder}}</dt><dd>{{accountHolder}}</dd></div>
+                <div><dt>{{labelBic}}</dt><dd><bdi>{{bic}}</bdi></dd></div>
+                {{#creditorId}}<div><dt>{{labelCreditorId}}</dt><dd><bdi>{{creditorId}}</bdi></dd></div>{{/creditorId}}
+            </dl>
+        </div>
+        <div class="quiqqer-erp-settings-bankaccounts-card-actions">
+            <button type="button" class="qui-button" data-name="edit" data-id="{{id}}"
+                    aria-label="{{titleEdit}}: {{title}}">
+                <span class="fa fa-edit" aria-hidden="true"></span> {{titleEdit}}
+            </button>
+            <button type="button" class="qui-button" data-name="delete" data-id="{{id}}"
+                    aria-label="{{titleDelete}}: {{title}}">
+                <span class="fa fa-trash" aria-hidden="true"></span> {{titleDelete}}
+            </button>
         </div>
     </li>
     {{/bankAccounts}}
 </ul>
+{{^bankAccounts}}<p class="quiqqer-erp-settings-bankaccounts-empty">{{empty}}</p>{{/bankAccounts}}

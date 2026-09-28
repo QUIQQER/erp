@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<quiqqer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://www.quiqqer.com/docs/schemas/2.x/locale.xsd">
 <locales>
 
     <groups name="quiqqer/erp" datatype="php,js">
@@ -662,6 +664,24 @@
 <de><![CDATA[[labelUser] öffnen]]></de>
         </locale>
 
+        <locale name="controls.BankAccounts.immediateSave">
+<de><![CDATA[Änderungen an Bankverbindungen werden sofort gespeichert.]]></de>
+        </locale>
+        <locale name="controls.BankAccounts.empty">
+<de><![CDATA[Noch keine Bankverbindungen vorhanden.]]></de>
+        </locale>
+        <locale name="controls.BankAccounts.loading">
+<de><![CDATA[Bankverbindungen werden geladen …]]></de>
+        </locale>
+        <locale name="controls.BankAccounts.loadError">
+<de><![CDATA[Die Bankverbindungen konnten nicht geladen werden. Bitte öffnen Sie die Einstellungen erneut.]]></de>
+        </locale>
+        <locale name="controls.BankAccounts.saved">
+<de><![CDATA[Änderung gespeichert.]]></de>
+        </locale>
+        <locale name="controls.BankAccounts.saveError">
+<de><![CDATA[Die Änderung konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.]]></de>
+        </locale>
         <locale name="controls.BankAccounts.btn.create">
 <de><![CDATA[Neue Bankverbindung]]></de>
         </locale>
@@ -738,8 +758,7 @@
 <de><![CDATA[Unwiderrufliche Löschung von "[title]" (bei "[name]") abschließend bestätigen!]]></de>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete_final.information">
-<de>
-                <![CDATA[Mit dieser abschließenden Bestätigung wird die Bankverbindung zur Löschung markiert. Die Löschung wird beim Speichern der Einstellungen durchgeführt.]]></de>
+<de><![CDATA[Diese Bestätigung löscht die Bankverbindung sofort und dauerhaft.]]></de>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete_final.btn.submit">
 <de><![CDATA[Bankverbindung löschen]]></de>
@@ -1284,3 +1303,4 @@ Erlaubte Zeichen: Buchstaben, Zahlen sowie _ ä ö ü ß]]></de>
 
     </groups>
 </locales>
+</quiqqer>

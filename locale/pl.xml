@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<quiqqer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://www.quiqqer.com/docs/schemas/2.x/locale.xsd">
 <locales>
 
     <groups name="quiqqer/erp" datatype="php,js">
@@ -629,6 +631,24 @@
 <pl><![CDATA[Otwórz: [labelUser]]]></pl>
         </locale>
 
+        <locale name="controls.BankAccounts.immediateSave">
+<pl><![CDATA[Zmiany danych rachunków bankowych są zapisywane natychmiast.]]></pl>
+        </locale>
+        <locale name="controls.BankAccounts.empty">
+<pl><![CDATA[Nie ma jeszcze żadnych rachunków bankowych.]]></pl>
+        </locale>
+        <locale name="controls.BankAccounts.loading">
+<pl><![CDATA[Ładowanie rachunków bankowych …]]></pl>
+        </locale>
+        <locale name="controls.BankAccounts.loadError">
+<pl><![CDATA[Nie udało się załadować rachunków bankowych. Otwórz ponownie ustawienia.]]></pl>
+        </locale>
+        <locale name="controls.BankAccounts.saved">
+<pl><![CDATA[Zmiana została zapisana.]]></pl>
+        </locale>
+        <locale name="controls.BankAccounts.saveError">
+<pl><![CDATA[Nie udało się zapisać zmiany. Spróbuj ponownie.]]></pl>
+        </locale>
         <locale name="controls.BankAccounts.btn.create">
 <pl><![CDATA[Nowy rachunek bankowy]]></pl>
         </locale>
@@ -702,7 +722,7 @@
 <pl><![CDATA[Ostatecznie potwierdź trwałe usunięcie „[title]” w banku „[name]”.]]></pl>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete_final.information">
-<pl><![CDATA[To ostateczne potwierdzenie oznacza rachunek bankowy do usunięcia. Rachunek zostanie usunięty po zapisaniu ustawień.]]></pl>
+<pl><![CDATA[To potwierdzenie powoduje natychmiastowe i trwałe usunięcie rachunku bankowego.]]></pl>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete_final.btn.submit">
 <pl><![CDATA[Usuń rachunek bankowy]]></pl>
@@ -1218,3 +1238,4 @@
 
     </groups>
 </locales>
+</quiqqer>

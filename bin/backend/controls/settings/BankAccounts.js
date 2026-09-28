@@ -1,397 +1,219 @@
 /**
- * Class BankAccounts
- *
- * Bank account managing for ecoyn.
+ * Bank accounts managed independently of the surrounding settings form.
  */
 define('package/quiqqer/erp/bin/backend/controls/settings/BankAccounts', [
-
     'qui/controls/Control',
     'qui/controls/windows/Confirm',
-    'qui/controls/loader/Loader',
-    'qui/controls/buttons/Button',
-
     'qui/utils/Form',
-
     'Locale',
     'Ajax',
     'Mustache',
-
     'text!package/quiqqer/erp/bin/backend/controls/settings/BankAccounts.html',
     'text!package/quiqqer/erp/bin/backend/controls/settings/BankAccounts.Entry.html',
-    'css!package/quiqqer/erp/bin/backend/controls/settings/BankAccounts.css',
-
-], function (QUIControl, QUIConfirm, QUILoader, QUIButton, QUIFormUtils, QUILocale, QUIAjax, Mustache,
-             template, templateEntry) {
-    "use strict";
+    'css!package/quiqqer/erp/bin/backend/controls/settings/BankAccounts.css'
+], function (QUIControl, QUIConfirm, QUIFormUtils, QUILocale, QUIAjax, Mustache, template, templateEntry) {
+    'use strict';
 
     const pkg = 'quiqqer/erp';
+    const locale = (key, params) => QUILocale.get(pkg, 'controls.BankAccounts.' + key, params);
 
     return new Class({
-
         Extends: QUIControl,
-        Type   : 'package/quiqqer/erp/bin/backend/controls/settings/BankAccounts',
-
-        Binds: [
-            '$update',
-            '$buildList',
-            '$onCreateClick',
-            '$onEditClick',
-            '$onDeleteClick',
-            '$openDeleteFinalConfirmation'
-        ],
+        Type: 'package/quiqqer/erp/bin/backend/controls/settings/BankAccounts',
 
         initialize: function (options) {
             this.parent(options);
-
-            this.$Input        = null;
-            this.$Container    = null;
-            this.Loader        = new QUILoader();
             this.$BankAccounts = {};
+            this.$Container = null;
+            this.addEvents({onImport: this.$onImport});
+        },
 
-            this.addEvents({
-                onImport: this.$onImport
+        $onImport: function () {
+            // The accounts are not form values: a global save must never restore an old snapshot.
+            const Input = this.getElm();
+            Input.removeAttribute('name');
+            this.$Container = document.createElement('div');
+            this.$Container.className = 'quiqqer-erp-settings-bankaccounts';
+            Input.after(this.$Container);
+            const Loading = document.createElement('div');
+            Loading.className = 'quiqqer-erp-settings-bankaccounts-loading';
+            Loading.setAttribute('role', 'status');
+
+            const Spinner = document.createElement('span');
+            Spinner.className = 'fa fa-spinner fa-spin';
+            Spinner.setAttribute('aria-hidden', 'true');
+
+            const Label = document.createElement('span');
+            Label.textContent = locale('loading');
+            Loading.appendChild(Spinner);
+            Loading.appendChild(Label);
+            this.$Container.appendChild(Loading);
+
+            return this.$request('getList').then((accounts) => {
+                this.$BankAccounts = accounts;
+                this.$buildList();
+            }).catch(() => {
+                this.$Container.replaceChildren();
+                const Error = document.createElement('p');
+                Error.className = 'q-message q-message-error quiqqer-erp-settings-bankaccounts-error';
+                Error.setAttribute('role', 'alert');
+                Error.textContent = locale('loadError');
+                this.$Container.appendChild(Error);
             });
         },
 
-        /**
-         * Event: onImport
-         *
-         * @return {void}
-         */
-        $onImport: function () {
-            this.$Input = this.getElm();
-
-            // Build template
-            if (this.$Input.value !== '') {
-                this.$BankAccounts = JSON.decode(this.$Input.value);
-            } else {
-                this.$BankAccounts = {};
-            }
-
-            this.$Container = new Element('div', {
-                'class': 'quiqqer-erp-settings-bankaccounts',
-            }).inject(this.$Input, 'after');
-
-            this.$buildList();
-        },
-
-        /**
-         * Build bank account list.
-         *
-         * @return {void}
-         */
         $buildList: function () {
-            this.$Container.set('html', Mustache.render(template, {
-                bankAccounts     : Object.values(this.$BankAccounts).length ? Object.values(this.$BankAccounts) : false,
-                labelDefaultEntry: QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelDefaultEntry'),
-                titleEdit        : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.titleEdit'),
-                titleDelete      : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.titleDelete'),
+            const labels = this.$labels();
+            this.$Container.innerHTML = Mustache.render(template, Object.assign(labels, {
+                bankAccounts: Object.values(this.$BankAccounts),
+                immediateSave: locale('immediateSave'),
+                empty: locale('empty'),
+                labelCreate: locale('btn.create'),
+                labelDefaultEntry: locale('Entry.tpl.labelDefaultEntry'),
+                titleEdit: locale('Entry.tpl.titleEdit'),
+                titleDelete: locale('Entry.tpl.titleDelete')
             }));
 
-            this.$Container.getElements('.quiqqer-erp-settings-bankaccounts-entry-actions-edit').addEvent(
-                'click',
-                this.$onEditClick
-            );
-
-            this.$Container.getElements('.quiqqer-erp-settings-bankaccounts-entry-actions-delete').addEvent(
-                'click',
-                this.$onDeleteClick
-            );
-
-            new QUIButton({
-                textimage: 'fa fa-plus',
-                text     : QUILocale.get(pkg, 'controls.BankAccounts.btn.create'),
-                title    : QUILocale.get(pkg, 'controls.BankAccounts.btn.create'),
-                events   : {
-                    onClick: this.$onCreateClick
-                }
-            }).inject(this.$Container.getElement('.quiqqer-erp-settings-bankaccounts-actions'));
-        },
-
-        /**
-         * Create new bank account.
-         *
-         * @return {void}
-         */
-        $onCreateClick: function () {
-            new QUIConfirm({
-                maxHeight: 700,
-                maxWidth : 600,
-
-                autoclose         : false,
-                backgroundClosable: true,
-
-                title: QUILocale.get(pkg, 'controls.BankAccounts.Entry.add.title'),
-                icon : 'fa fa-plus',
-
-                cancel_button: {
-                    text     : false,
-                    textimage: 'icon-remove fa fa-remove'
-                },
-                ok_button    : {
-                    text     : QUILocale.get(pkg, 'controls.BankAccounts.Entry.add.btn.submit'),
-                    textimage: 'icon-ok fa fa-check'
-                },
-                events       : {
-                    onOpen  : (Win) => {
-                        const Content = Win.getContent();
-
-                        Content.set('html', Mustache.render(templateEntry, {
-                            labelTitle             : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelTitle'),
-                            labelName              : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelName'),
-                            labelIban              : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelIban'),
-                            labelBic               : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelBic'),
-                            labelCreditorId        : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelCreditorId'),
-                            labelDefault           : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelDefault'),
-                            descDefault            : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.descDefault'),
-                            labelAccountHolder     : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelAccountHolder'),
-                            labelFinancialAccountNo: QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelFinancialAccountNo'),
-                            descFinancialAccountNo : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.descFinancialAccountNo'),
-                        }));
-
-                        Content.getElement('input[name="title"]').focus();
-                    },
-                    onSubmit: (Win) => {
-                        const Form = Win.getContent().getElement('form');
-
-                        if (!Form.reportValidity()) {
-                            return;
-                        }
-
-                        const BankAccount = QUIFormUtils.getFormData(Form);
-
-                        // Generate random new id
-                        let bankAccountId;
-
-                        do {
-                            bankAccountId = parseInt(performance.now());
-                        } while (bankAccountId in this.$BankAccounts);
-
-                        BankAccount.id = bankAccountId;
-
-                        if (BankAccount.default) {
-                            for (const OtherBankAccount of Object.values(this.$BankAccounts)) {
-                                OtherBankAccount.default = false;
-                            }
-                        }
-
-                        this.$BankAccounts[BankAccount.id] = BankAccount;
-                        this.$update();
-
-                        Win.close();
-                    }
-                }
-            }).open();
-        },
-
-        /**
-         * Edit existing bank account
-         *
-         * @param {Event} event
-         * @return {void}
-         */
-        $onEditClick: function (event) {
-            let bankAccountId = event.target.get('data-id');
-
-            if (!bankAccountId) {
-                bankAccountId = event.target.getParent('.quiqqer-erp-settings-bankaccounts-entry-actions-edit').get(
-                    'data-id'
-                );
-            }
-
-            const BankAccount = this.$BankAccounts[bankAccountId];
-
-            new QUIConfirm({
-                maxHeight: 700,
-                maxWidth : 600,
-
-                autoclose         : false,
-                backgroundClosable: true,
-
-                title: QUILocale.get(pkg, 'controls.BankAccounts.Entry.edit.title'),
-                icon : 'fa fa-edit',
-
-                cancel_button: {
-                    text     : false,
-                    textimage: 'icon-remove fa fa-remove'
-                },
-                ok_button    : {
-                    text     : QUILocale.get(pkg, 'controls.BankAccounts.Entry.edit.btn.submit'),
-                    textimage: 'icon-ok fa fa-check'
-                },
-                events       : {
-                    onOpen  : (Win) => {
-                        const Content = Win.getContent();
-
-                        Content.set('html', Mustache.render(templateEntry, {
-                            labelTitle             : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelTitle'),
-                            labelName              : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelName'),
-                            labelIban              : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelIban'),
-                            labelBic               : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelBic'),
-                            labelCreditorId        : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelCreditorId'),
-                            labelDefault           : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelDefault'),
-                            descDefault            : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.descDefault'),
-                            labelAccountHolder     : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelAccountHolder'),
-                            labelFinancialAccountNo: QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.labelFinancialAccountNo'),
-                            descFinancialAccountNo : QUILocale.get(pkg, 'controls.BankAccounts.Entry.tpl.descFinancialAccountNo'),
-                        }));
-
-                        const Form = Content.getElement('form');
-
-                        QUIFormUtils.setDataToForm(BankAccount, Form);
-                    },
-                    onSubmit: (Win) => {
-                        const Form = Win.getContent().getElement('form');
-
-                        if (!Form.reportValidity()) {
-                            return;
-                        }
-
-                        const BankAccountData = QUIFormUtils.getFormData(Form);
-
-                        if (BankAccountData.default) {
-                            for (const OtherBankAccount of Object.values(this.$BankAccounts)) {
-                                OtherBankAccount.default = false;
-                            }
-                        }
-
-                        this.$BankAccounts[bankAccountId] = Object.merge(BankAccount, BankAccountData);
-                        this.$update();
-
-                        Win.close();
-                    }
-                }
-            }).open();
-        },
-
-        /**
-         * Delete existing bank account
-         *
-         * @param {Event} event
-         * @return {void}
-         */
-        $onDeleteClick: function (event) {
-            let bankAccountId = event.target.get('data-id');
-
-            if (!bankAccountId) {
-                bankAccountId = event.target.getParent('.quiqqer-erp-settings-bankaccounts-entry-actions-delete').get(
-                    'data-id'
-                );
-            }
-
-            const BankAccount = this.$BankAccounts[bankAccountId];
-
-            new QUIConfirm({
-                maxHeight: 350,
-                maxWidth : 700,
-
-                autoclose         : false,
-                backgroundClosable: true,
-
-                title   : QUILocale.get(pkg, 'controls.BankAccounts.Entry.delete.title'),
-                icon    : 'fa fa-trash',
-                texticon: 'fa fa-trash',
-
-                text       : QUILocale.get(pkg, 'controls.BankAccounts.Entry.delete.text', BankAccount),
-                information: QUILocale.get(pkg, 'controls.BankAccounts.Entry.delete.information', BankAccount),
-
-                cancel_button: {
-                    text     : false,
-                    textimage: 'fa fa-close'
-                },
-                ok_button    : {
-                    text     : QUILocale.get(pkg, 'controls.BankAccounts.Entry.delete.btn.submit'),
-                    textimage: 'fa fa-trash'
-                },
-                events       : {
-                    onSubmit: (Win) => {
-                        this.$openDeleteFinalConfirmation(bankAccountId);
-                        Win.close();
-                    }
-                }
-            }).open();
-        },
-
-        /**
-         * Final confirmation of deletion.
-         *
-         * @param {Number} bankAccountId
-         * @return {void}
-         */
-        $openDeleteFinalConfirmation: function (bankAccountId) {
-            const BankAccount = this.$BankAccounts[bankAccountId];
-
-            new QUIConfirm({
-                maxHeight: 350,
-                maxWidth : 700,
-
-                autoclose         : false,
-                backgroundClosable: true,
-
-                title   : QUILocale.get(pkg, 'controls.BankAccounts.Entry.delete_final.title'),
-                icon    : 'fa fa-exclamation-triangle',
-                texticon: 'fa fa-exclamation-triangle',
-
-                text       : QUILocale.get(pkg, 'controls.BankAccounts.Entry.delete_final.text', BankAccount),
-                information: QUILocale.get(pkg, 'controls.BankAccounts.Entry.delete_final.information', BankAccount),
-
-                cancel_button: {
-                    text     : false,
-                    textimage: 'fa fa-close'
-                },
-                ok_button    : {
-                    text     : QUILocale.get(pkg, 'controls.BankAccounts.Entry.delete_final.btn.submit'),
-                    textimage: 'fa fa-trash'
-                },
-                events       : {
-                    onOpen  : (Win) => {
-                        Win.getButton('submit').getElm().addClass('btn-red');
-                    },
-                    onSubmit: (Win) => {
-                        delete this.$BankAccounts[bankAccountId];
-                        this.$update();
-
-                        Win.close();
-                    }
-                }
-            }).open();
-        },
-
-        /**
-         * Update internal input value for settings.
-         *
-         * @return {void}
-         */
-        $update: function () {
-            this.$Input.value = JSON.encode(this.$BankAccounts);
-            this.$buildList();
-        },
-
-        /**
-         * GET
-         *
-         * @return {Promise}
-         */
-        getMethod: function () {
-            return new Promise(function (resolve, reject) {
-                QUIAjax.get('ajax_get_method', resolve, {
-                    'package': pkg,
-                    onError  : reject
-                });
+            this.$Container.querySelector('[data-name="create"]').addEventListener('click', () => this.$openEditor());
+            this.$Container.querySelectorAll('[data-name="edit"]').forEach((Button) => {
+                Button.addEventListener('click', () => this.$openEditor(Button.dataset.id));
+            });
+            this.$Container.querySelectorAll('[data-name="delete"]').forEach((Button) => {
+                Button.addEventListener('click', () => this.$openDeleteConfirmation(Button.dataset.id));
             });
         },
 
-        /**
-         * POST
-         *
-         * @return {Promise}
-         */
-        postMethod: function () {
-            return new Promise(function (resolve, reject) {
-                QUIAjax.post('ajax_post_method', resolve, {
-                    'package': pkg,
-                    onError  : reject
-                });
+        $labels: function () {
+            const labels = {};
+            [
+                'labelTitle', 'labelName', 'labelIban', 'labelBic', 'labelCreditorId', 'labelDefault',
+                'descDefault', 'labelAccountHolder', 'labelFinancialAccountNo', 'descFinancialAccountNo'
+            ].forEach((key) => {
+                labels[key] = locale('Entry.tpl.' + key);
+            });
+            return labels;
+        },
+
+        $openEditor: function (id) {
+            const action = typeof id === 'undefined' ? 'add' : 'edit';
+            new QUIConfirm({
+                maxHeight: 700,
+                maxWidth: 600,
+                autoclose: false,
+                backgroundClosable: true,
+                title: locale('Entry.' + action + '.title'),
+                icon: action === 'add' ? 'fa fa-plus' : 'fa fa-edit',
+                cancel_button: {text: false, textimage: 'fa fa-remove'},
+                ok_button: {text: locale('Entry.' + action + '.btn.submit'), textimage: 'fa fa-check'},
+                events: {
+                    onOpen: (Win) => {
+                        const Content = Win.getContent();
+                        Content.innerHTML = Mustache.render(templateEntry, this.$labels());
+                        const Form = Content.querySelector('[data-name="bank-account-form"]');
+
+                        if (action === 'edit') {
+                            QUIFormUtils.setDataToForm(this.$BankAccounts[id], Form);
+                        }
+
+                        Content.querySelector('[data-name="title"]').focus();
+                    },
+                    onSubmit: (Win) => {
+                        const Form = Win.getContent().querySelector('[data-name="bank-account-form"]');
+                        if (!Form.reportValidity()) {
+                            return;
+                        }
+
+                        return this.$persist(Win, 'save', {
+                            id: typeof id === 'undefined' ? '' : id,
+                            data: JSON.stringify(QUIFormUtils.getFormData(Form))
+                        });
+                    }
+                }
+            }).open();
+        },
+
+        $openDeleteConfirmation: function (id, finalConfirmation) {
+            const key = finalConfirmation ? 'delete_final' : 'delete';
+            // Confirm renders HTML. Escape account data before interpolating translated text.
+            const account = {};
+            Object.entries(this.$BankAccounts[id]).forEach(([name, value]) => {
+                account[name] = Mustache.escape(String(value));
+            });
+
+            new QUIConfirm({
+                maxHeight: 350,
+                maxWidth: 700,
+                autoclose: false,
+                backgroundClosable: true,
+                title: locale('Entry.' + key + '.title'),
+                icon: 'fa fa-trash',
+                texticon: finalConfirmation ? 'fa fa-exclamation-triangle' : 'fa fa-trash',
+                text: locale('Entry.' + key + '.text', account),
+                information: locale('Entry.' + key + '.information', account),
+                cancel_button: {text: false, textimage: 'fa fa-close'},
+                ok_button: {text: locale('Entry.' + key + '.btn.submit'), textimage: 'fa fa-trash'},
+                events: {
+                    onOpen: (Win) => {
+                        if (finalConfirmation) {
+                            Win.getButton('submit').getElm().classList.add('btn-red');
+                        }
+                    },
+                    onSubmit: (Win) => {
+                        if (finalConfirmation) {
+                            return this.$persist(Win, 'delete', {id: id});
+                        }
+
+                        Win.close();
+                        this.$openDeleteConfirmation(id, true);
+                    }
+                }
+            }).open();
+        },
+
+        $persist: function (Win, action, params) {
+            if (Win.$bankAccountSaving) {
+                return;
+            }
+
+            Win.$bankAccountSaving = true;
+            const Submit = Win.getButton('submit');
+            Submit.disable();
+            let saved = false;
+            const Content = Win.getContent();
+            const previousError = Content.querySelector('[data-name="save-error"]');
+            if (previousError) {
+                previousError.remove();
+            }
+
+            return this.$request(action, params).then((accounts) => {
+                this.$BankAccounts = accounts;
+                this.$buildList();
+                this.$Container.querySelector('[data-name="status"]').textContent = locale('saved');
+                saved = true;
+                Win.close();
+                this.$Container.querySelector('[data-name="create"]').focus();
+            }).catch(() => {
+                const Error = document.createElement('p');
+                Error.dataset.name = 'save-error';
+                Error.className = 'q-message q-message-error quiqqer-erp-settings-bankaccounts-error';
+                Error.setAttribute('role', 'alert');
+                Error.textContent = locale('saveError');
+                Content.appendChild(Error);
+            }).finally(() => {
+                Win.$bankAccountSaving = false;
+                if (!saved) {
+                    Submit.enable();
+                }
+            });
+        },
+
+        $request: function (action, params) {
+            return new Promise((resolve, reject) => {
+                QUIAjax[action === 'getList' ? 'get' : 'post'](
+                    'package_quiqqer_erp_ajax_settings_bankAccounts_' + action,
+                    resolve,
+                    Object.assign({package: pkg, onError: reject}, params)
+                );
             });
         }
     });
