@@ -10,13 +10,11 @@ use QUI;
 use QUI\ERP\Currency\Currency;
 use QUI\ERP\Currency\Handler as CurrencyHandler;
 
-use function floatval;
 use function is_array;
 use function is_numeric;
 use function json_decode;
 use function json_encode;
 use function method_exists;
-use function str_replace;
 use function strpos;
 
 /**
@@ -68,11 +66,11 @@ class ArticleDiscount
         }
 
         $this->type = $type;
-        $this->value = $discount;
+        $this->value = QUI\ERP\Money\Price::validateNumericPrice($discount);
     }
 
     /**
-     * Unserialize a discount string
+     * Unserialize a discount, preserving numeric amounts independently of the locale
      *
      * The string can be in the following format:
      * - 10%
@@ -80,16 +78,19 @@ class ArticleDiscount
      * - 10
      * - {"value": 10, "type": 1}
      *
-     * @param string $string
+     * @param string|float|int $string
      * @return null|ArticleDiscount
      */
-    public static function unserialize(string $string): ?ArticleDiscount
+    public static function unserialize(string | float | int $string): ?ArticleDiscount
     {
         $data = [];
 
-        if (is_numeric($string)) {
+        if (is_int($string) || is_float($string)) {
+            $data['value'] = QUI\ERP\Money\Price::validateNumericPrice($string);
+            $data['type'] = Calc::CALCULATION_COMPLEMENT;
+        } elseif (is_numeric($string)) {
             // number, float, int -> 5.99
-            $data['value'] = QUI\ERP\Money\Price::parsePrice($string);
+            $data['value'] = QUI\ERP\Money\Price::parsePriceInput($string);
             $data['type'] = Calc::CALCULATION_COMPLEMENT;
         } elseif (strpos($string, '{') !== false || strpos($string, '[') !== false) {
             // json string
@@ -101,10 +102,14 @@ class ArticleDiscount
         } else {
             // is normal string 5% or 5.99 €
             if (strpos($string, '%') !== false) {
-                $data['value'] = floatval(str_replace('%', '', $string));
+                if (!str_ends_with(rtrim($string), '%')) {
+                    throw new QUI\ERP\Exception('Invalid percentage discount', 400);
+                }
+
+                $data['value'] = QUI\ERP\Money\Price::validateNumericPrice(trim(substr(rtrim($string), 0, -1)));
                 $data['type'] = Calc::CALCULATION_PERCENTAGE;
             } else {
-                $data['value'] = QUI\ERP\Money\Price::parsePrice($string);
+                $data['value'] = QUI\ERP\Money\Price::parsePriceInput($string);
                 $data['type'] = Calc::CALCULATION_COMPLEMENT;
             }
         }
@@ -113,7 +118,7 @@ class ArticleDiscount
             return null;
         }
 
-        $Discount = new self($data['value'], (int)$data['type']);
+        $Discount = new self(QUI\ERP\Money\Price::validateNumericPrice($data['value']), (int)$data['type']);
 
         // discount
         if (isset($data['currency']) && isset($data['currency']['code'])) {

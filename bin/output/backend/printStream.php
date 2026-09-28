@@ -3,13 +3,17 @@
 define('QUIQQER_SYSTEM', true);
 define('QUIQQER_AJAX', true);
 
+define('QUIQQER_BACKEND', true);
+
 require_once dirname(__FILE__, 6) . '/header.php';
 
+use QUI\ERP\Output\BackendOutputResponse;
 use QUI\Utils\Security\Orthos;
 
 $User = QUI::getUserBySession();
 
 if (!$User->canUseBackend()) {
+    BackendOutputResponse::permissionDenied()->send();
     exit;
 }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<quiqqer>
+<quiqqer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://www.quiqqer.com/docs/schemas/2.x/settings.xsd">
     <settings>
 
         <config>
@@ -106,11 +107,7 @@
                 </conf>
             </section>
 
-            <section name="bankAccounts">
-                <conf name="accounts">
-                    <type><![CDATA[string]]></type>
-                </conf>
-            </section>
+            <!-- bankAccounts.accounts is managed by dedicated endpoints, not the global settings save. -->
         </config>
 
         <window name="ERP">
@@ -427,7 +424,6 @@
                         </title>
 
                         <input type="hidden"
-                               conf="bankAccounts.accounts"
                                data-qui="package/quiqqer/erp/bin/backend/controls/settings/BankAccounts"
                                label="false"/>
                     </settings>

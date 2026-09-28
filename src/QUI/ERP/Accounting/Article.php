@@ -147,6 +147,12 @@ class Article implements ArticleInterface
      */
     public function __construct(array $attributes = [])
     {
+        foreach (['unitPrice', 'nettoPriceNotRounded'] as $field) {
+            if (isset($attributes[$field])) {
+                $attributes[$field] = QUI\ERP\Money\Price::validateNumericPrice($attributes[$field]);
+            }
+        }
+
         $defaults = [
             'id',
             'uuid',
@@ -178,6 +184,13 @@ class Article implements ArticleInterface
         }
 
         if (isset($attributes['discount'])) {
+            if (
+                !is_string($attributes['discount']) && !is_int($attributes['discount']) &&
+                !is_float($attributes['discount'])
+            ) {
+                throw new QUI\ERP\Exception('Invalid discount input type', 400);
+            }
+
             $this->Discount = ArticleDiscount::unserialize($attributes['discount']);
             $this->Discount?->setArticle($this);
         }

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<quiqqer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://www.quiqqer.com/docs/schemas/2.x/locale.xsd">
 <locales>
 
     <groups name="quiqqer/erp" datatype="php,js">
@@ -661,6 +663,24 @@
 <en><![CDATA[Open [labelUser]]]></en>
         </locale>
 
+        <locale name="controls.BankAccounts.immediateSave">
+<en><![CDATA[Changes to bank accounts are saved immediately.]]></en>
+        </locale>
+        <locale name="controls.BankAccounts.empty">
+<en><![CDATA[No bank accounts yet.]]></en>
+        </locale>
+        <locale name="controls.BankAccounts.loading">
+<en><![CDATA[Loading bank accounts …]]></en>
+        </locale>
+        <locale name="controls.BankAccounts.loadError">
+<en><![CDATA[The bank accounts could not be loaded. Please reopen the settings.]]></en>
+        </locale>
+        <locale name="controls.BankAccounts.saved">
+<en><![CDATA[Change saved.]]></en>
+        </locale>
+        <locale name="controls.BankAccounts.saveError">
+<en><![CDATA[The change could not be saved. Please try again.]]></en>
+        </locale>
         <locale name="controls.BankAccounts.btn.create">
 <en><![CDATA[New bank account]]></en>
         </locale>
@@ -737,8 +757,7 @@
 <en><![CDATA[Final confirmation of permanent deletion of "[title]" (at "[name]")!]]></en>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete_final.information">
-<en>
-                <![CDATA[This final confirmation marks the bank account for deletion. The account will be deleted when the settings are saved.]]></en>
+<en><![CDATA[This confirmation deletes the bank account immediately and permanently.]]></en>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete_final.btn.submit">
 <en><![CDATA[Delete bank account]]></en>
@@ -1271,3 +1290,4 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
 
     </groups>
 </locales>
+</quiqqer>

@@ -1,46 +1,180 @@
 .quiqqer-erp-settings-bankaccounts {
+    --bank-account-border: var(--qui-colors-gray-100);
+    --bank-account-muted: var(--qui-colors-gray-600);
+    color: var(--qui-colors-text, var(--qui-colors-dark));
     width: 100%;
 }
 
-.quiqqer-erp-settings-bankaccounts ul {
-    list-style-type: none;
-    padding: 0;
-    width: 100%
-}
-
-.quiqqer-erp-settings-bankaccounts ul li:nth-child(2n+1) {
-    background-color: #f7f7f7;
-}
-
-.quiqqer-erp-settings-bankaccounts ul li {
-    padding: 10px;
-}
-
-.quiqqer-erp-settings-bankaccounts-actions button {
-    float: none !important;
-}
-
-.quiqqer-erp-settings-bankaccounts-entry {
+.quiqqer-erp-settings-bankaccounts-loading {
+    align-items: center;
     display: flex;
+    gap: .5rem;
+    padding: 1rem 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .quiqqer-erp-settings-bankaccounts-loading .fa-spin {
+        animation: none;
+    }
+}
+
+.quiqqer-erp-settings-bankaccounts > .q-message {
+    clear: both;
+    display: block;
+    float: none;
+    margin: 0 0 1rem;
+    padding: 1rem;
+    width: 100%;
+}
+
+.quiqqer-erp-settings-bankaccounts > .q-message-info {
+    background: var(--qui-colors-info-100);
+    border: 1px solid var(--qui-colors-info-200);
+    color: var(--qui-colors-info-800);
+}
+
+.quiqqer-erp-settings-bankaccounts-error {
+    background: var(--qui-colors-danger-100);
+    border: 1px solid var(--qui-colors-danger-200);
+    clear: both;
+    color: var(--qui-colors-danger-800);
+    padding: 1rem;
+    width: 100%;
+}
+
+.quiqqer-erp-settings-bankaccounts-toolbar {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.quiqqer-erp-settings-bankaccounts-list {
+    clear: both;
+    display: flex;
+    flex-wrap: wrap;
+    float: none;
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.quiqqer-erp-settings-bankaccounts-card {
+    background: var(--qui-colors-white);
+    border: 1px solid var(--bank-account-border);
+    border-radius: 8px;
+    display: flex;
+    flex: 0 1 34rem;
+    flex-direction: column;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.quiqqer-erp-settings-bankaccounts-card-header {
+    align-items: start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    padding: 1rem;
+}
+
+.quiqqer-erp-settings-bankaccounts-icon {
+    color: var(--bank-account-muted);
+    font-size: 1.4rem;
+    padding-top: .2rem;
+}
+
+.quiqqer-erp-settings-bankaccounts-heading {
+    display: grid;
+    flex: 1;
+    gap: .3rem;
+    min-width: min(100%, 10rem);
+    overflow-wrap: anywhere;
+}
+
+.quiqqer-erp-settings-bankaccounts-heading strong {
+    font-size: 1.1em;
+}
+
+.quiqqer-erp-settings-bankaccounts-heading > span,
+.quiqqer-erp-settings-bankaccounts-details dt,
+.quiqqer-erp-settings-bankaccounts-iban > span {
+    color: var(--bank-account-muted);
+}
+
+.quiqqer-erp-settings-bankaccounts-default {
+    background: var(--qui-colors-primary-50);
+    border-radius: 4px;
+    color: var(--qui-colors-primary-700);
+    font-size: .85em;
+    padding: .25rem .5rem;
+}
+
+.quiqqer-erp-settings-bankaccounts-details {
+    flex: 1;
+    padding: 0 1rem 1rem;
+}
+
+.quiqqer-erp-settings-bankaccounts-iban {
+    background: var(--qui-colors-gray-25);
+    border-radius: 4px;
+    display: grid;
+    gap: .4rem;
+    padding: .75rem;
+}
+
+.quiqqer-erp-settings-bankaccounts-iban bdi {
+    font-family: monospace;
+    font-size: 1.1em;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.quiqqer-erp-settings-bankaccounts-details dl {
+    display: grid;
+    gap: .65rem;
+    margin: 1rem 0 0;
+}
+
+.quiqqer-erp-settings-bankaccounts-details dl > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem .75rem;
     justify-content: space-between;
 }
 
-.quiqqer-erp-settings-bankaccounts-entry-actions {
+.quiqqer-erp-settings-bankaccounts-details dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.quiqqer-erp-settings-bankaccounts-card-actions {
+    background: var(--qui-colors-gray-25);
+    border-top: 1px solid var(--bank-account-border);
     display: flex;
-    font-size: 18px;
+    flex-wrap: wrap;
+    gap: .5rem;
+    justify-content: space-between;
+    padding: .75rem 1rem;
 }
 
-.quiqqer-erp-settings-bankaccounts-entry-actions-edit {
-    padding-right: 10px;
+.quiqqer-erp-settings-bankaccounts button {
+    align-items: center;
+    display: inline-flex;
+    float: none;
+    gap: .4rem;
 }
 
-.quiqqer-erp-settings-bankaccounts-entry-actions > div:hover {
-    cursor: pointer;
-    color: #dedede;
-}
-.quiqqer-erp-settings-bankaccounts-entry-default {
-    color: #2f8fc6;
-    font-size: 11px;
-    font-style: italic;
+.quiqqer-erp-settings-bankaccounts button:focus-visible {
+    outline: 2px solid var(--qui-colors-primary);
+    outline-offset: 2px;
 }
 
+.quiqqer-erp-settings-bankaccounts-empty {
+    color: var(--bank-account-muted);
+    padding: 1rem 0;
+}

@@ -91,6 +91,120 @@ class HandlerTest extends TestCase
         self::assertSame(['id' => 10001, 'default' => false], Handler::getBankAccountById(10001));
     }
 
+    public function testUpdatesArePersistentAndOnlyChangeTheSelectedAccount(): void
+    {
+        $data = array_fill_keys(['title', 'name', 'iban', 'bic', 'accountHolder'], 'Original');
+        $first = Handler::addBankAccount($data + ['default' => true]);
+        $second = Handler::addBankAccount($data);
+        $second['title'] = 'Updated';
+        $second['creditorId'] = 'Creditor ID';
+        Handler::updateBankAccount($second['id'], $second);
+
+        self::assertSame($first, Handler::getDefaultBankAccount());
+        self::assertSame('Updated', Handler::getBankAccountById($second['id'])['title']);
+        self::assertSame('Creditor ID', Handler::getBankAccountById($second['id'])['creditorId']);
+        self::assertSame(3, $this->saveCount);
+
+        $second['default'] = true;
+        Handler::updateBankAccount($second['id'], $second);
+        self::assertSame($second['id'], Handler::getDefaultBankAccount()['id']);
+        self::assertFalse(Handler::getBankAccountById($first['id'])['default']);
+        self::assertCount(2, Handler::getList());
+    }
+
+    public function testCreateDefaultAndDeletePersistWithoutChoosingAnotherAccount(): void
+    {
+        $data = array_fill_keys(['title', 'name', 'iban', 'bic', 'accountHolder'], 'Account');
+        $first = Handler::addBankAccount($data + ['default' => true]);
+        $second = Handler::addBankAccount($data + ['default' => true]);
+        self::assertFalse(Handler::getBankAccountById($first['id'])['default']);
+        self::assertSame($second, Handler::getDefaultBankAccount());
+
+        Handler::deleteBankAccount($first['id']);
+        self::assertSame($second, Handler::getDefaultBankAccount());
+        self::assertFalse(Handler::getBankAccountById($first['id']));
+        Handler::deleteBankAccount($second['id']);
+        self::assertSame([], Handler::getList());
+        self::assertFalse(Handler::getDefaultBankAccount());
+        self::assertSame(4, $this->saveCount);
+    }
+
+    public function testInvalidUpdatesAndUnknownIdsDoNotChangeStoredAccounts(): void
+    {
+        $data = array_fill_keys(['title', 'name', 'iban', 'bic', 'accountHolder'], 'Account');
+        $created = Handler::addBankAccount($data);
+
+        foreach ([['title' => '  '], ['iban' => []], ['default' => 'false']] as $invalid) {
+            try {
+                Handler::updateBankAccount($created['id'], array_replace($data, $invalid));
+                self::fail('Invalid account data must be rejected.');
+            } catch (QUI\Exception) {
+                self::assertSame($created, Handler::getBankAccountById($created['id']));
+            }
+        }
+
+        foreach (['update', 'delete'] as $action) {
+            try {
+                if ($action === 'update') {
+                    Handler::updateBankAccount(-1, $data);
+                } else {
+                    Handler::deleteBankAccount(-1);
+                }
+
+                self::fail('Unknown account IDs must be rejected.');
+            } catch (QUI\Exception) {
+                self::assertCount(1, Handler::getList());
+            }
+        }
+
+        self::assertSame(1, $this->saveCount);
+    }
+
+    public function testGlobalSettingsDoNotDeclareTheIndependentlyManagedAccounts(): void
+    {
+        $settings = QUI\Utils\Text\XML::getConfigParamsFromXml(dirname(__DIR__, 4) . '/settings.xml');
+        self::assertArrayNotHasKey('accounts', $settings['bankAccounts'] ?? []);
+        self::assertArrayHasKey('bankAccountId', $settings['company']);
+    }
+
+    public function testWriteEndpointsEnforceSettingsPermissionAndReturnPersistedList(): void
+    {
+        $permissions = new \ReflectionProperty(QUI\Ajax::class, 'permissions');
+        $originalPermissions = $permissions->getValue();
+        $callablesProperty = new \ReflectionProperty(QUI\Ajax::class, 'callables');
+        $originalCallables = $callablesProperty->getValue();
+
+        try {
+            require dirname(__DIR__, 4) . '/ajax/settings/bankAccounts/save.php';
+            require dirname(__DIR__, 4) . '/ajax/settings/bankAccounts/delete.php';
+            $callables = QUI\Ajax::getRegisteredCallables();
+            $registeredPermissions = $permissions->getValue();
+            $prefix = 'package_quiqqer_erp_ajax_settings_bankAccounts_';
+
+            foreach (['save', 'delete'] as $action) {
+                self::assertSame(
+                    ['Permission::checkAdminUser', 'quiqqer.settings'],
+                    $registeredPermissions[$prefix . $action]
+                );
+            }
+
+            $save = $callables[$prefix . 'save']['callable'];
+            $delete = $callables[$prefix . 'delete']['callable'];
+            $data = array_fill_keys(['title', 'name', 'iban', 'bic', 'accountHolder'], 'Account');
+            $list = $save('', json_encode($data));
+            self::assertSame(Handler::getList(), $list);
+            $id = array_key_first($list);
+            $data['title'] = 'Edited via endpoint';
+            $list = $save((string)$id, json_encode($data));
+            self::assertSame('Edited via endpoint', $list[$id]['title']);
+            self::assertSame([], $delete((string)$id));
+            self::assertSame(3, $this->saveCount);
+        } finally {
+            $permissions->setValue(null, $originalPermissions);
+            $callablesProperty->setValue(null, $originalCallables);
+        }
+    }
+
     private function installPackageConfig(): void
     {
         /** @var Config&MockObject $Config */

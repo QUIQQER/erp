@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<quiqqer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://www.quiqqer.com/docs/schemas/2.x/locale.xsd">
 <locales>
 
     <groups name="quiqqer/erp" datatype="php,js">
@@ -629,6 +631,24 @@
 <fr><![CDATA[Ouvrir : [labelUser]]]></fr>
         </locale>
 
+        <locale name="controls.BankAccounts.immediateSave">
+<fr><![CDATA[Les modifications des comptes bancaires sont enregistrées immédiatement.]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.empty">
+<fr><![CDATA[Aucun compte bancaire pour le moment.]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.loading">
+<fr><![CDATA[Chargement des comptes bancaires …]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.loadError">
+<fr><![CDATA[Impossible de charger les comptes bancaires. Veuillez rouvrir les paramètres.]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.saved">
+<fr><![CDATA[Modification enregistrée.]]></fr>
+        </locale>
+        <locale name="controls.BankAccounts.saveError">
+<fr><![CDATA[Impossible d’enregistrer la modification. Veuillez réessayer.]]></fr>
+        </locale>
         <locale name="controls.BankAccounts.btn.create">
 <fr><![CDATA[Nouveau compte bancaire]]></fr>
         </locale>
@@ -702,7 +722,7 @@
 <fr><![CDATA[Confirmez définitivement la suppression de « [title] » auprès de « [name] ».]]></fr>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete_final.information">
-<fr><![CDATA[Cette confirmation finale marque le compte bancaire pour suppression. La suppression sera effectuée lors de l'enregistrement des paramètres.]]></fr>
+<fr><![CDATA[Cette confirmation supprime le compte bancaire immédiatement et définitivement.]]></fr>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete_final.btn.submit">
 <fr><![CDATA[Supprimer le compte bancaire]]></fr>
@@ -1218,3 +1238,4 @@
 
     </groups>
 </locales>
+</quiqqer>

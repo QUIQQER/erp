@@ -926,17 +926,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 type = '%';
             }
 
-            let Prom;
-
-            if (discount && type === '%') {
-                Prom = Promise.resolve(discount);
-            } else {
-                if (discount) {
-                    Prom = MoneyUtils.validatePrice(discount);
-                } else {
-                    Prom = Promise.resolve('-');
-                }
-            }
+            // Stored percentages use canonical numbers; user text is normalized by the edit handlers.
+            const input = type === '%' ? Number(discount.replace(/%\s*$/, '').trim()) : discount;
+            const Prom = MoneyUtils.validatePrice(input);
 
             return Prom.then(function (discountResult) {
                 if (discountResult && type === '%') {
@@ -1268,13 +1260,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         $onEditUnitPriceQuantity: function () {
             const self = this;
 
-            this.$createEditField(
+            return this.$createEditField(
                 this.$UnitPrice,
                 this.getAttribute('unitPrice'),
                 'number'
             ).then(function (value) {
-                self.setUnitPrice(value);
-            });
+                return MoneyUtils.validatePrice(value);
+            }).then(function (value) {
+                return self.setUnitPrice(value);
+            }).catch(console.error);
         },
 
         /**
@@ -1283,15 +1277,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         $onEditBruttoPrice: function () {
             const self = this;
 
-            this.$createEditField(
+            return this.$createEditField(
                 this.$UnitPriceBrutto,
                 this.$UnitPriceBrutto.get('data-value'),
                 'number'
             ).then(function (value) {
                 return self.getNettoPrice(value, false);
             }).then(function (value) {
-                self.setUnitPrice(value);
-            });
+                return self.setUnitPrice(value);
+            }).catch(console.error);
         },
 
         /**
@@ -1328,16 +1322,26 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 discount = '';
             } else {
                 if (!discount.toString().match('%')) {
-                    discount = parseFloat(discount);
+                    discount = QUILocale.getNumberFormatter({
+                        useGrouping: false,
+                        maximumFractionDigits: 20
+                    }).format(Number(discount));
+                } else {
+                    discount = QUILocale.getNumberFormatter({
+                        useGrouping: false,
+                        maximumFractionDigits: 20
+                    }).format(Number(discount.replace('%', ''))) + '%';
                 }
             }
 
-            this.$createEditField(
+            return this.$createEditField(
                 this.$Discount,
                 discount
             ).then(function (value) {
-                this.setDiscount(value);
-            }.bind(this));
+                return MoneyUtils.validateDiscount(value);
+            }).then(function (value) {
+                return this.setDiscount(value);
+            }.bind(this)).catch(console.error);
         },
 
         /**
@@ -1351,23 +1355,27 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 discount = '';
             } else {
                 if (!discount.toString().match('%')) {
-                    discount = parseFloat(discount);
+                    discount = QUILocale.getNumberFormatter({
+                        useGrouping: false,
+                        maximumFractionDigits: 20
+                    }).format(Number(discount));
+                } else {
+                    discount = QUILocale.getNumberFormatter({
+                        useGrouping: false,
+                        maximumFractionDigits: 20
+                    }).format(Number(discount.replace('%', ''))) + '%';
                 }
             }
 
-            this.$createEditField(this.$DiscountBrutto, discount).then(function (value) {
+            return this.$createEditField(this.$DiscountBrutto, discount).then(function (value) {
                 if (value.match('%')) {
-                    return self.setDiscount(value);
-                }
-
-                if (parseFloat(value) === 0) {
-                    return self.setDiscount(0);
+                    return MoneyUtils.validateDiscount(value).then(discount => self.setDiscount(discount));
                 }
 
                 return self.getNettoPrice(value).then(function (nettoValue) {
-                    self.setDiscount(nettoValue);
+                    return self.setDiscount(nettoValue);
                 });
-            });
+            }).catch(console.error);
         },
 
         /**
@@ -1417,7 +1425,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 }
 
                 if (type === 'number') {
-                    Edit.set('step', 'any');
+                    Edit.step = 'any';
+                    Edit.required = true;
                 }
 
                 if (typeof inputAttributes !== 'undefined') {
@@ -1428,8 +1437,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 Edit.select();
 
                 const onFinish = function () {
+                    if (type === 'number' && (!Edit.checkValidity() || !Number.isFinite(Edit.valueAsNumber))) {
+                        Edit.reportValidity();
+                        return;
+                    }
+
+                    const result = type === 'number' ? Edit.valueAsNumber : Edit.value;
                     Edit.destroy();
-                    resolve(Edit.value);
+                    resolve(result);
                 };
 
                 Edit.addEvents({
@@ -1588,12 +1603,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         getNettoPrice: function (value, formatted) {
             const self = this;
 
-            return new Promise(function (resolve) {
+            return new Promise(function (resolve, reject) {
                 QUIAjax.get('package_quiqqer_erp_ajax_calcNettoPrice', resolve, {
                     'package': 'quiqqer/erp',
-                    price: value,
+                    price: MoneyUtils.serializeInput(value),
                     vat: self.getAttribute('vat'),
-                    formatted: formatted ? 1 : 0
+                    formatted: formatted ? 1 : 0,
+                    onError: reject
                 });
             });
         },
@@ -1608,12 +1624,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         getBruttoPrice: function (value, formatted) {
             const self = this;
 
-            return new Promise(function (resolve) {
+            return new Promise(function (resolve, reject) {
                 QUIAjax.get('package_quiqqer_erp_ajax_calcBruttoPrice', resolve, {
                     'package': 'quiqqer/erp',
-                    price: value,
+                    price: MoneyUtils.serializeInput(value),
                     vat: self.getAttribute('vat'),
-                    formatted: formatted ? 1 : 0
+                    formatted: formatted ? 1 : 0,
+                    onError: reject
                 });
             });
         },
