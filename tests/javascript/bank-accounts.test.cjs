@@ -7,6 +7,7 @@ const {test} = require('node:test');
 function fixture() {
     const requests = [];
     const dialogs = [];
+    const messages = [];
     class Element {
         constructor() { this.children = []; this.dataset = {}; this.attributes = {}; }
         setAttribute(name, value) { this.attributes[name] = value; }
@@ -26,7 +27,9 @@ function fixture() {
         Class: function(value) { return value; },
         define(name, dependencies, factory) {
             const request = method => (name, resolve, options) => requests.push({method, name, resolve, ...options});
-            definition = factory({}, function(options) {
+            definition = factory({
+                getMessageHandler: () => Promise.resolve({addSuccess: message => messages.push(message)})
+            }, {}, function(options) {
                 this.open = () => dialogs.push(options);
             }, {getFormData: form => form.data}, {get: (pkg, key) => key}, {
                 get: request('get'), post: request('post')
@@ -41,9 +44,7 @@ function fixture() {
     Input.attributes.name = 'bankAccounts.accounts';
     control.getElm = () => Input;
     control.$Container = new Element();
-    const status = new Element(); status.dataset.name = 'status';
     const create = new Element(); create.dataset.name = 'create';
-    control.$Container.appendChild(status);
     control.$Container.appendChild(create);
     let builds = 0;
     control.$buildList = () => builds++;
@@ -55,7 +56,7 @@ function fixture() {
     Content.appendChild(Form);
     const Submit = {disabled: false, disable() { this.disabled = true; }, enable() { this.disabled = false; }};
     const Win = {closed: false, getContent: () => Content, getButton: () => Submit, close() { this.closed = true; }};
-    return {control, requests, dialogs, Input, Win, Submit, Content, Form, status, builds: () => builds};
+    return {control, requests, dialogs, Input, Win, Submit, Content, Form, messages, builds: () => builds};
 }
 
 test('opening accounts reads persisted state instead of the surrounding settings snapshot', async () => {
@@ -91,12 +92,13 @@ test('save waits for the server, prevents duplicate submissions and then adopts 
     assert.equal(f.control.$BankAccounts, before);
     assert.equal(f.Win.closed, false);
     assert.equal(f.Submit.disabled, true);
+    assert.equal(f.messages.length, 0);
     const persisted = {5: {id: 5, title: 'Edited', default: true}, 6: {id: 6, default: false}};
     f.requests[0].resolve(persisted);
     await promise;
     assert.equal(f.control.$BankAccounts, persisted);
     assert.equal(f.Win.closed, true);
-    assert.match(f.status.textContent, /saved$/);
+    assert.deepEqual(f.messages, ['controls.BankAccounts.saved']);
     assert.equal(f.Input.value, '{"123":{"title":"Stale settings"}}');
 });
 
@@ -109,6 +111,7 @@ test('failed save leaves the dialog and form intact and allows retry', async () 
     assert.equal(f.control.$BankAccounts, before);
     assert.equal(f.Win.closed, false);
     assert.equal(f.Form.data.title, 'Edited');
+    assert.equal(f.messages.length, 0);
     assert.equal(f.Submit.disabled, false);
     assert.equal(f.Content.querySelector('[data-name="save-error"]').attributes.role, 'alert');
     const retry = f.control.$persist(f.Win, 'save', {id: '5', data: '{}'});

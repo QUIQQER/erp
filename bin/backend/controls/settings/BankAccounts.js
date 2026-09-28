@@ -2,6 +2,7 @@
  * Bank accounts managed independently of the surrounding settings form.
  */
 define('package/quiqqer/erp/bin/backend/controls/settings/BankAccounts', [
+    'qui/QUI',
     'qui/controls/Control',
     'qui/controls/windows/Confirm',
     'qui/utils/Form',
@@ -11,7 +12,7 @@ define('package/quiqqer/erp/bin/backend/controls/settings/BankAccounts', [
     'text!package/quiqqer/erp/bin/backend/controls/settings/BankAccounts.html',
     'text!package/quiqqer/erp/bin/backend/controls/settings/BankAccounts.Entry.html',
     'css!package/quiqqer/erp/bin/backend/controls/settings/BankAccounts.css'
-], function (QUIControl, QUIConfirm, QUIFormUtils, QUILocale, QUIAjax, Mustache, template, templateEntry) {
+], function (QUI, QUIControl, QUIConfirm, QUIFormUtils, QUILocale, QUIAjax, Mustache, template, templateEntry) {
     'use strict';
 
     const pkg = 'quiqqer/erp';
@@ -188,10 +189,12 @@ define('package/quiqqer/erp/bin/backend/controls/settings/BankAccounts', [
             return this.$request(action, params).then((accounts) => {
                 this.$BankAccounts = accounts;
                 this.$buildList();
-                this.$Container.querySelector('[data-name="status"]').textContent = locale('saved');
                 saved = true;
                 Win.close();
                 this.$Container.querySelector('[data-name="create"]').focus();
+                QUI.getMessageHandler().then((MessageHandler) => {
+                    MessageHandler.addSuccess(locale('saved'));
+                });
             }).catch(() => {
                 const Error = document.createElement('p');
                 Error.dataset.name = 'save-error';
