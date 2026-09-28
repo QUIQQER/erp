@@ -101,7 +101,12 @@ class AjaxEndpointsTest extends TestCase
             ['value']
         );
         self::assertSame(1234.56, $validate(1234.56));
-        self::assertNull($validate('not a price'));
+        try {
+            $validate('not a price');
+            self::fail('Invalid prices must be rejected by the server.');
+        } catch (QUI\ERP\Exception $Exception) {
+            self::assertSame(400, $Exception->getCode());
+        }
 
         $sanitize = $this->endpoint(
             'utils/sanitizeArticleDescription.php',
@@ -134,6 +139,77 @@ class AjaxEndpointsTest extends TestCase
         self::assertSame(100.0, $netto(119, false, 19));
         self::assertSame(0, $netto('', false, 19));
         self::assertIsString($netto(119, true, 19));
+    }
+
+    public function testGrossDiscountSurvivesArticleCalculationWithThreeDecimalPlaces(): void
+    {
+        $validate = $this->endpoint(
+            'money/validatePrice.php',
+            'package_quiqqer_erp_ajax_money_validatePrice',
+            ['value']
+        );
+        $netto = $this->endpoint(
+            'calcNettoPrice.php',
+            'package_quiqqer_erp_ajax_calcNettoPrice',
+            ['price', 'formatted', 'vat'],
+            false
+        );
+        $calculate = $this->endpoint(
+            'products/calc.php',
+            'package_quiqqer_erp_ajax_products_calc',
+            ['articles', 'priceFactors', 'user', 'currency', 'nettoInput']
+        );
+        $Locale = QUI::getSystemLocale();
+        $originalLanguage = $Locale->getCurrent();
+        $User = QUI::getUserBySession();
+        $originalStatus = $User->getAttribute('RUNTIME_NETTO_BRUTTO_STATUS');
+
+        try {
+            foreach (
+                [
+                    ['en', 'de-DE', '5,5', 4.622, 5.5, 4.5],
+                    ['en', 'de-DE', '5.5', 4.622, 5.5, 4.5],
+                    ['en', 'de-DE', '0,5', 0.42, 0.5, 9.5],
+                    ['de', 'en-US', '5.5', 4.622, 5.5, 4.5],
+                    ['de', 'en-GB', '0.5', 0.42, 0.5, 9.5],
+                    ['en', 'fr-FR', '5,5', 4.622, 5.5, 4.5],
+                    ['en', 'de-CH', '5.5', 4.622, 5.5, 4.5]
+                ] as [$systemLanguage, $inputLocale, $input, $expectedNet, $expectedGross, $expectedTotal]
+            ) {
+                $Locale->setCurrent($systemLanguage);
+                // PHPUnit uses precision 8; exercise the package default of 3 explicitly.
+                $payload = json_encode(['value' => $input, 'locale' => $inputLocale], JSON_THROW_ON_ERROR);
+                $discount = round($netto($payload, false, 19), 3);
+                $discount = $validate(json_encode(
+                    ['value' => $discount, 'locale' => $inputLocale],
+                    JSON_THROW_ON_ERROR
+                ));
+                self::assertSame($expectedNet, $discount);
+                $articles = ['articles' => [[
+                    'id' => 101,
+                    'articleNo' => 'ISSUE-101',
+                    'title' => 'Gross discount regression',
+                    'unitPrice' => round($netto('10', false, 19), 3),
+                    'quantity' => 1,
+                    'vat' => 19,
+                    'discount' => $discount
+                ]]];
+                $result = $calculate(
+                    json_encode($articles, JSON_THROW_ON_ERROR),
+                    '[]',
+                    '[]',
+                    'EUR',
+                    0
+                );
+
+                self::assertSame($expectedGross, $result['brutto']['articles'][0]['discount']);
+                self::assertSame($expectedTotal, $result['brutto']['articles'][0]['sum']);
+                self::assertSame($expectedTotal, $result['brutto']['calculations']['sum']);
+            }
+        } finally {
+            $Locale->setCurrent($originalLanguage);
+            $User->setAttribute('RUNTIME_NETTO_BRUTTO_STATUS', $originalStatus);
+        }
     }
 
     public function testPriceFactorEndpointReturnsNettoBruttoAndSignedDisplay(): void

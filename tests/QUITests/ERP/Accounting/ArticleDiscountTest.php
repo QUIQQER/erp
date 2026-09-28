@@ -3,6 +3,7 @@
 namespace QUITests\ERP\Accounting;
 
 use PHPUnit\Framework\TestCase;
+use QUI;
 use QUI\ERP\Accounting\ArticleDiscount;
 use QUI\ERP\Accounting\ArticleInterface;
 use QUI\ERP\Accounting\ArticleView;
@@ -13,6 +14,31 @@ use QUI\Interfaces\Users\User as UserInterface;
 
 class ArticleDiscountTest extends TestCase
 {
+    public function testNumericDiscountsKeepTheirTypeWhileStringsUseLocaleSeparators(): void
+    {
+        $Locale = QUI::getSystemLocale();
+        $originalLanguage = $Locale->getCurrent();
+
+        try {
+            $Locale->setCurrent('de');
+
+            foreach ([4.622, -4.622, 0.42, 0, 5500] as $value) {
+                $Discount = ArticleDiscount::unserialize($value);
+                self::assertNotNull($Discount);
+                self::assertSame((float)$value, $Discount->getValue());
+            }
+
+            foreach (['4.622' => 4622.0, '4,622' => 4.622, '5,5' => 5.5, '5.5' => 5.5] as $input => $expected) {
+                self::assertSame($expected, ArticleDiscount::unserialize($input)?->getValue());
+            }
+
+            $Discount = ArticleDiscount::unserialize('{"value":4.622,"type":2}');
+            self::assertSame(4.622, $Discount?->getValue());
+        } finally {
+            $Locale->setCurrent($originalLanguage);
+        }
+    }
+
     public function testConstructorFallsBackToComplementForUnknownType(): void
     {
         $Discount = new ArticleDiscount(10.0, 999);
