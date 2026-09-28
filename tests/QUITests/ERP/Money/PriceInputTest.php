@@ -29,6 +29,7 @@ class PriceInputTest extends TestCase
         yield ['fr-FR', '1 234,56', 1234.56];
         yield ['hi-IN', '12,34,567.89', 1234567.89];
         yield ['ar-EG', '١٬٢٣٤٫٥٦', 1234.56];
+        yield ['en-US', '𝟙𝟚𝟛.𝟜𝟝', 123.45];
         yield ['de-DE', '-5,5', -5.5];
         yield ['en-US', '0.5', 0.5];
         yield ['de-DE', '0', 0.0];
@@ -81,6 +82,20 @@ class PriceInputTest extends TestCase
         yield ['{invalid json}'];
         yield ['€'];
         yield ['$5€'];
+
+        foreach (
+            [
+                ['de-CH', '1’234.56abc'],
+                ['fr-FR', '1 234,56abc'],
+                ['fr-FR', '1 234,56abc'],
+                ['ar-EG', '١٬٢٣٤٫٥٦abc'],
+                ['en-US', '١a'],
+                ['en-US', '𝟙𝟚𝟛.𝟜𝟝abc'],
+                ['en-US', '123💶']
+            ] as [$locale, $value]
+        ) {
+            yield [json_encode(['value' => $value, 'locale' => $locale], JSON_THROW_ON_ERROR)];
+        }
     }
 
     #[DataProvider('invalidInput')]

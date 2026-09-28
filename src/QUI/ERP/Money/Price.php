@@ -334,7 +334,7 @@ class Price
         $position = 0;
         $value = $Formatter->parse($input, NumberFormatter::TYPE_DOUBLE, $position);
 
-        if ($value !== false && $position === strlen($input)) {
+        if ($value !== false && $position === self::getNumberFormatterInputLength($input)) {
             return round(self::validateNumericPrice($value), QUI\ERP\Defaults::getPrecision());
         }
 
@@ -345,6 +345,26 @@ class Price
         }
 
         throw new QUI\ERP\Exception('Invalid localized price input', 400);
+    }
+
+    /**
+     * Match the offset unit used by the installed intl extension (PHP bug GH-23094).
+     */
+    private static function getNumberFormatterInputLength(string $input): int
+    {
+        static $usesByteOffsets = null;
+
+        if ($usesByteOffsets === null) {
+            $Probe = new NumberFormatter('en-US', NumberFormatter::DECIMAL);
+            $position = 0;
+            $Probe->parse('١', NumberFormatter::TYPE_DOUBLE, $position);
+            $usesByteOffsets = $position === strlen('١');
+        }
+
+        // Older PHP builds return UTF-16 code units, including surrogate pairs.
+        return $usesByteOffsets
+            ? strlen($input)
+            : intdiv(strlen(mb_convert_encoding($input, 'UTF-16LE', 'UTF-8')), 2);
     }
 
     /**
