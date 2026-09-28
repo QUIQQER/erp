@@ -18,6 +18,7 @@ use function array_flip;
 use function class_exists;
 use function dirname;
 use function explode;
+use function in_array;
 use function is_array;
 use function is_object;
 use function is_string;
@@ -82,7 +83,7 @@ class EventHandler
     }
 
     /**
-     * Create a default manufacturer group if none exists yet.
+     * Ensure the default manufacturer group exists and is assigned to the product field.
      *
      * @return void
      */
@@ -97,25 +98,25 @@ class EventHandler
 
             $defaultGroupId = $Conf->get('manufacturers', 'groupId');
 
-            if (!empty($defaultGroupId)) {
-                return;
+            if (empty($defaultGroupId)) {
+                $Root = QUI::getGroups()->firstChild();
+
+                $Manufacturers = $Root->createChild(
+                    QUI::getLocale()->get('quiqqer/erp', 'manufacturers.default_group_name'),
+                    QUI::getUsers()->getSystemUser()
+                );
+
+                $defaultGroupId = $Manufacturers->getUUID();
+                $Conf->setValue('manufacturers', 'groupId', $defaultGroupId);
+                $Conf->save();
+
+                $Manufacturers->activate();
             }
-
-            $Root = QUI::getGroups()->firstChild();
-
-            $Manufacturers = $Root->createChild(
-                QUI::getLocale()->get('quiqqer/erp', 'manufacturers.default_group_name'),
-                QUI::getUsers()->getSystemUser()
-            );
-
-            $Conf->setValue('manufacturers', 'groupId', $Manufacturers->getUUID());
-            $Conf->save();
-
-            $Manufacturers->activate();
 
             // Add manufacturer group ID to product manufacturer field
             if (QUI::getPackageManager()->isInstalled('quiqqer/products')) {
                 try {
+                    $groupUUID = QUI::getGroups()->get($defaultGroupId)->getUUID();
                     /** @var QUI\ERP\Products\Field\Types\GroupList $ProductField */
                     $ProductField = ProductFields::getField(ProductFields::FIELD_MANUFACTURER);
                     $groupIds = $ProductField->getOption('groupIds');
@@ -124,7 +125,11 @@ class EventHandler
                         $groupIds = [];
                     }
 
-                    $groupIds[] = $Manufacturers->getUUID();
+                    if (in_array($groupUUID, $groupIds, true)) {
+                        return;
+                    }
+
+                    $groupIds[] = $groupUUID;
                     $ProductField->setOption('groupIds', $groupIds);
                     $ProductField->save();
                 } catch (\Exception $Exception) {

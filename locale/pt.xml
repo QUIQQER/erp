@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<quiqqer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://www.quiqqer.com/docs/schemas/2.x/locale.xsd">
 <locales>
 
     <groups name="quiqqer/erp" datatype="php,js">
@@ -629,6 +631,24 @@
 <pt><![CDATA[Abrir: [labelUser]]]></pt>
         </locale>
 
+        <locale name="controls.BankAccounts.immediateSave">
+<pt><![CDATA[As alterações às contas bancárias são guardadas imediatamente.]]></pt>
+        </locale>
+        <locale name="controls.BankAccounts.empty">
+<pt><![CDATA[Ainda não existem contas bancárias.]]></pt>
+        </locale>
+        <locale name="controls.BankAccounts.loading">
+<pt><![CDATA[A carregar contas bancárias …]]></pt>
+        </locale>
+        <locale name="controls.BankAccounts.loadError">
+<pt><![CDATA[Não foi possível carregar as contas bancárias. Abra novamente as definições.]]></pt>
+        </locale>
+        <locale name="controls.BankAccounts.saved">
+<pt><![CDATA[Alteração guardada.]]></pt>
+        </locale>
+        <locale name="controls.BankAccounts.saveError">
+<pt><![CDATA[Não foi possível guardar a alteração. Tente novamente.]]></pt>
+        </locale>
         <locale name="controls.BankAccounts.btn.create">
 <pt><![CDATA[Nova conta bancária]]></pt>
         </locale>
@@ -702,7 +722,7 @@
 <pt><![CDATA[Confirma a eliminação permanente de "[title]" em "[name]".]]></pt>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete_final.information">
-<pt><![CDATA[Esta confirmação final marca a conta bancária para eliminação. A eliminação será efetuada ao guardar as definições.]]></pt>
+<pt><![CDATA[Esta confirmação elimina a conta bancária de forma imediata e permanente.]]></pt>
         </locale>
         <locale name="controls.BankAccounts.Entry.delete_final.btn.submit">
 <pt><![CDATA[Eliminar conta bancária]]></pt>
@@ -1218,3 +1238,4 @@
 
     </groups>
 </locales>
+</quiqqer>

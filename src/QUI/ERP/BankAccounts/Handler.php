@@ -26,6 +26,65 @@ class Handler
      */
     public static function addBankAccount(array $data): array
     {
+        $bankAccount = self::validateBankAccount($data);
+        $list = self::getList();
+
+        do {
+            $id = mt_rand(10000, 99999);
+        } while (isset($list[$id]));
+
+        $bankAccount['id'] = $id;
+        self::storeBankAccount($list, $bankAccount);
+
+        return $bankAccount;
+    }
+
+    /**
+     * Update an existing account without replacing other accounts.
+     *
+     * @param array<mixed> $data
+     * @return array<mixed>
+     * @throws QUI\Exception
+     */
+    public static function updateBankAccount(int $id, array $data): array
+    {
+        $list = self::getList();
+
+        if (!isset($list[$id])) {
+            throw new QUI\Exception('Bank account not found.');
+        }
+
+        $bankAccount = array_merge($list[$id], self::validateBankAccount($data));
+        $bankAccount['id'] = $id;
+        self::storeBankAccount($list, $bankAccount);
+
+        return $bankAccount;
+    }
+
+    /**
+     * Delete an account immediately. Other accounts keep their default selection.
+     *
+     * @throws QUI\Exception
+     */
+    public static function deleteBankAccount(int $id): void
+    {
+        $list = self::getList();
+
+        if (!isset($list[$id])) {
+            throw new QUI\Exception('Bank account not found.');
+        }
+
+        unset($list[$id]);
+        self::saveList($list);
+    }
+
+    /**
+     * @param array<mixed> $data
+     * @return array<mixed>
+     * @throws QUI\Exception
+     */
+    private static function validateBankAccount(array $data): array
+    {
         $fields = [
             'title' => true,
             'name' => true,
@@ -33,39 +92,70 @@ class Handler
             'bic' => true,
             'accountHolder' => true,
             'creditorId' => false,
-            'default' => false,
             'financialAccountNo' => false
         ];
-
         $bankAccount = [];
 
         foreach ($fields as $field => $isRequired) {
-            if ($isRequired && empty($data[$field])) {
-                throw new QUI\Exception('Cannot add bank account. Required field "' . $field . '" is empty.');
+            $value = $data[$field] ?? '';
+
+            if (!is_string($value) && !is_int($value)) {
+                throw new QUI\Exception('Invalid bank account field "' . $field . '".');
             }
 
-            $bankAccount[$field] = !empty($data[$field]) ? $data[$field] : '';
+            $value = trim((string)$value);
+
+            if ($isRequired && $value === '') {
+                throw new QUI\Exception('Required bank account field "' . $field . '" is empty.');
+            }
+
+            $bankAccount[$field] = $value;
         }
 
-        $list = self::getList();
+        $default = $data['default'] ?? false;
 
-        do {
-            $id = mt_rand(10000, 99999);
-        } while (!empty($list[$id]));
+        if (!in_array($default, [true, false, 0, 1, '0', '1', ''], true)) {
+            throw new QUI\Exception('Invalid default bank account selection.');
+        }
 
+        $bankAccount['default'] = (bool)$default;
+
+        return $bankAccount;
+    }
+
+    /**
+     * @param array<mixed> $list
+     * @param array<mixed> $bankAccount
+     * @throws QUI\Exception
+     */
+    private static function storeBankAccount(array $list, array $bankAccount): void
+    {
+        if ($bankAccount['default']) {
+            foreach ($list as &$account) {
+                $account['default'] = false;
+            }
+
+            unset($account);
+        }
+
+        $list[$bankAccount['id']] = $bankAccount;
+        self::saveList($list);
+    }
+
+    /**
+     * @param array<mixed> $list
+     * @throws QUI\Exception
+     */
+    private static function saveList(array $list): void
+    {
         $Conf = QUI::getPackage('quiqqer/erp')->getConfig();
 
         if ($Conf === null) {
             throw new QUI\Exception('ERP configuration is not available');
         }
 
-        $bankAccount['id'] = $id;
-        $list[$id] = $bankAccount;
-
-        $Conf->setValue('bankAccounts', 'accounts', json_encode($list) ?: '[]');
+        $Conf->setValue('bankAccounts', 'accounts', json_encode($list, JSON_THROW_ON_ERROR));
         $Conf->save();
-
-        return $bankAccount;
     }
 
     /**
@@ -150,13 +240,19 @@ class Handler
             return [];
         }
 
-        $bankAccounts = $config['accounts'];
+        $bankAccounts = $config['accounts'] ?? '';
 
         if (empty($bankAccounts)) {
             return [];
         }
 
-        return json_decode($bankAccounts, true);
+        $list = json_decode($bankAccounts, true);
+
+        if (!is_array($list)) {
+            throw new QUI\Exception('Invalid bank account configuration.');
+        }
+
+        return $list;
     }
 
     /**

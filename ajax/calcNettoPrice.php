@@ -21,7 +21,7 @@ use QUI\System\Log;
 QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_calcNettoPrice',
     function ($price, $formatted, $vat) {
-        $price = QUI\ERP\Money\Price::parsePrice($price);
+        $price = QUI\ERP\Money\Price::parsePriceInput($price);
 
         if (empty($price)) {
             if (isset($formatted) && $formatted) {

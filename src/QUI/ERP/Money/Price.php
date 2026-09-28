@@ -6,6 +6,8 @@
 
 namespace QUI\ERP\Money;
 
+use JsonException;
+use NumberFormatter;
 use QUI;
 use QUI\ERP\Currency\Currency;
 use QUI\ERP\Discount\Discount;
@@ -281,6 +283,110 @@ class Price
         $value = round($value, QUI\ERP\Defaults::getPrecision());
 
         return $value * $negativeTurn;
+    }
+
+    /**
+     * Validate number input or a JSON envelope containing a value and its display locale.
+     * Unlike parsePrice(), malformed input is rejected rather than cleaned up.
+     */
+    public static function parsePriceInput(mixed $input): ?float
+    {
+        $locale = QUI::getSystemLocale()->getCurrent();
+
+        if (is_string($input) && str_starts_with(ltrim($input), '{')) {
+            try {
+                $data = json_decode($input, true, 512, JSON_THROW_ON_ERROR);
+            } catch (JsonException) {
+                throw new QUI\ERP\Exception('Invalid price input', 400);
+            }
+
+            if (
+                !is_array($data) || !array_key_exists('value', $data) ||
+                !isset($data['locale']) || !is_string($data['locale']) ||
+                !preg_match('/^[a-zA-Z]{2,3}(?:[-_][a-zA-Z0-9]{2,8})*$/D', $data['locale'])
+            ) {
+                throw new QUI\ERP\Exception('Invalid price input format', 400);
+            }
+
+            $input = $data['value'];
+            $locale = $data['locale'];
+        }
+
+        if (is_int($input) || is_float($input)) {
+            return round(self::validateNumericPrice($input), QUI\ERP\Defaults::getPrecision());
+        }
+
+        if (!is_string($input)) {
+            throw new QUI\ERP\Exception('Invalid price input type', 400);
+        }
+
+        $input = trim($input);
+
+        if ($input === '' || $input === '-') {
+            return null;
+        }
+
+        // Discount inputs historically also accept a currency symbol at either edge.
+        $input = trim(preg_replace('/^\p{Sc}\s*|\s*\p{Sc}$/u', '', $input, 1) ?? $input);
+
+        $Formatter = new NumberFormatter(str_replace('_', '-', $locale), NumberFormatter::DECIMAL);
+        $Formatter->setAttribute(NumberFormatter::LENIENT_PARSE, 0);
+        $position = 0;
+        $value = $Formatter->parse($input, NumberFormatter::TYPE_DOUBLE, $position);
+
+        if ($value !== false && $position === self::getNumberFormatterInputLength($input)) {
+            return round(self::validateNumericPrice($value), QUI\ERP\Defaults::getPrecision());
+        }
+
+        // Keep decimal-point input usable in comma locales, but never partially parse a value.
+        // Locale-valid grouping (e.g. German "4.622") has already been handled above.
+        if (preg_match('/^[+-]?[0-9]+(?:\.[0-9]+)?$/D', $input)) {
+            return round(self::validateNumericPrice($input), QUI\ERP\Defaults::getPrecision());
+        }
+
+        throw new QUI\ERP\Exception('Invalid localized price input', 400);
+    }
+
+    /**
+     * Match the offset unit used by the installed intl extension (PHP bug GH-23094).
+     */
+    private static function getNumberFormatterInputLength(string $input): int
+    {
+        static $usesByteOffsets = null;
+
+        if ($usesByteOffsets === null) {
+            $Probe = new NumberFormatter('en-US', NumberFormatter::DECIMAL);
+            $position = 0;
+            $Probe->parse('١', NumberFormatter::TYPE_DOUBLE, $position);
+            $usesByteOffsets = $position === strlen('١');
+        }
+
+        // Older PHP builds return UTF-16 code units, including surrogate pairs.
+        return $usesByteOffsets
+            ? strlen($input)
+            : intdiv(strlen(mb_convert_encoding($input, 'UTF-16LE', 'UTF-8')), 2);
+    }
+
+    /**
+     * Validate canonical amounts received in article JSON, including legacy numeric strings.
+     */
+    public static function validateNumericPrice(mixed $value): float
+    {
+        if (
+            !(is_int($value) || is_float($value) ||
+                (is_string($value) && preg_match('/^[+-]?[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$/D', $value)))
+        ) {
+            throw new QUI\ERP\Exception('Invalid numeric price', 400);
+        }
+
+        $value = (float)$value;
+
+        // JSON numbers are consumed by JavaScript too; reject amounts outside its safe integer range.
+        if (!is_finite($value) || abs($value) > 9007199254740991) {
+            throw new QUI\ERP\Exception('Price outside the supported numeric range', 400);
+        }
+
+        return $value;
     }
 
     /**

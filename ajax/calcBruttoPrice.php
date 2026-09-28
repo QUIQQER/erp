@@ -21,7 +21,7 @@ use QUI\System\Log;
 QUI::getAjax()->registerFunction(
     'package_quiqqer_erp_ajax_calcBruttoPrice',
     function ($price, $formatted, $vat) {
-        $price = QUI\ERP\Money\Price::parsePrice($price);
+        $price = QUI\ERP\Money\Price::parsePriceInput($price);
         $Currency = QUI\ERP\Defaults::getCurrency();
 
         if (empty($vat)) {

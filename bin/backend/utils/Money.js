@@ -7,20 +7,47 @@ define('package/quiqqer/erp/bin/backend/utils/Money', [
 
     return {
         /**
+         * Preserve number types and identify the regional format of text input.
+         */
+        serializeInput: function (value) {
+            if ((typeof value !== 'string' && typeof value !== 'number') ||
+                (typeof value === 'number' && !Number.isFinite(value))) {
+                throw new TypeError('Invalid price input');
+            }
+
+            return JSON.stringify({
+                value: value,
+                locale: QUILocale.getNumberFormatter().resolvedOptions().locale
+            });
+        },
+
+        /**
          * Validate the price and return a validated price
          *
          * @param {String|Number} value
          * @return {Promise}
          */
         validatePrice: function (value) {
-            return new Promise(function (resolve) {
+            return new Promise((resolve, reject) => {
+                const input = this.serializeInput(value);
                 require(['Ajax'], function (QUIAjax) {
                     QUIAjax.get('package_quiqqer_erp_ajax_money_validatePrice', resolve, {
                         'package': 'quiqqer/erp',
-                        value    : value
+                        value    : input,
+                        onError  : reject
                     });
                 });
             });
+        },
+
+        /**
+         * Normalize a user-entered discount before storing it as an amount or percentage.
+         */
+        validateDiscount: function (value) {
+            const percentage = typeof value === 'string' && /%\s*$/.test(value);
+            const input = percentage ? value.replace(/%\s*$/, '').trim() : value;
+
+            return this.validatePrice(input).then(amount => percentage ? amount + '%' : amount);
         },
 
         /**

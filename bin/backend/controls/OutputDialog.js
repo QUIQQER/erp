@@ -399,8 +399,7 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             };
 
             if (this.$PDFView && this.$PDFView.getStatus()) {
-                this.showAsPDF();
-                return;
+                return this.showAsPDF().catch(error => this.$showPdfPreviewError(error));
             }
 
             this.$getPreview().then(function(previewHtml) {
@@ -492,8 +491,9 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
 
                 self.$resizeCommentsBox();
                 self.Loader.hide();
-            }, function() {
+            }, function(error) {
                 self.Loader.hide();
+                self.$showPdfPreviewError(error);
             });
         },
 
@@ -653,39 +653,59 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
          *
          * @return {Promise}
          */
-        print: function() {
-            const self = this,
-                entityId = this.getAttribute('entityId');
+        print: async function() {
+            const {data, filename} = await this.$fetchOutputPdf();
+            const url = URL.createObjectURL(new Blob([data], {type: 'application/pdf'}));
+            const Frame = document.createElement('iframe');
+            Frame.title = filename;
+            Frame.dataset.name = 'print-document';
+            Frame.style.position = 'absolute';
+            Frame.style.left = '-10000px';
+            Frame.tabIndex = -1;
+            Frame.setAttribute('aria-hidden', 'true');
 
-            return new Promise(function(resolve) {
-                const id = 'print-document-' + entityId;
-
-                self.Loader.show();
-
-                new Element('iframe', {
-                    src: URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/print.php?' + Object.toQueryString({
-                        id: entityId,
-                        t: self.getAttribute('entityType'),
-                        ep: self.getAttribute('entityPlugin'),
-                        oid: self.getId(),
-                        tpl: self.$Template.id,
-                        tplpr: self.$Template.provider
-                    }),
-                    id: id,
-                    styles: {
-                        position: 'absolute',
-                        top: -200,
-                        left: -200,
-                        width: 50,
-                        height: 50
+            return new Promise((resolve, reject) => {
+                let timer;
+                let disposed = false;
+                const cleanup = () => {
+                    if (disposed) {
+                        return;
                     }
-                }).inject(document.body);
 
-                self.addEvent('onPrintFinish', function(self, pId) {
-                    if (pId === entityId) {
+                    disposed = true;
+                    window.clearTimeout(timer);
+                    Frame.remove();
+                    URL.revokeObjectURL(url);
+                };
+
+                timer = window.setTimeout(() => {
+                    cleanup();
+                    reject(new Error(QUILocale.get(lg, 'controls.OutputDialog.preview_error')));
+                }, 60000);
+
+                Frame.addEventListener('error', () => {
+                    cleanup();
+                    reject(new Error(QUILocale.get(lg, 'controls.OutputDialog.preview_error')));
+                }, {once: true});
+
+                Frame.addEventListener('load', () => {
+                    if (disposed) {
+                        return;
+                    }
+
+                    try {
+                        Frame.contentWindow.addEventListener('afterprint', cleanup, {once: true});
+                        Frame.contentWindow.focus();
+                        Frame.contentWindow.print();
                         resolve();
+                    } catch (error) {
+                        cleanup();
+                        reject(error);
                     }
-                });
+                }, {once: true});
+
+                Frame.src = url;
+                document.body.appendChild(Frame);
             });
         },
 
@@ -706,57 +726,28 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
             }).delay(1000, this);
         },
 
-        /**
-         * Export the document as PDF
-         *
-         * @return {Promise}
-         */
-        saveAsPdf: function() {
-            const self = this,
-                entityId = this.getAttribute('entityId');
+        /** Download through fetch so installed request signers can add their headers. */
+        saveAsPdf: async function() {
+            const {data, filename} = await this.$fetchOutputPdf();
+            const url = URL.createObjectURL(new Blob([data], {type: 'application/pdf'}));
+            const Link = document.createElement('a');
+            Link.href = url;
+            Link.download = filename;
+            Link.hidden = true;
+            document.body.appendChild(Link);
 
-            return new Promise(function(resolve) {
-                const id = 'download-document-' + entityId,
-                    Content = self.getContent(),
-                    Form = Content.getElement('form');
-
-                new Element('iframe', {
-                    src: URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/download.php?' + Object.toQueryString({
-                        id: entityId,
-                        t: self.getAttribute('entityType'),
-                        ep: self.getAttribute('entityPlugin'),
-                        oid: self.getId(),
-                        tpl: self.$Template.id,
-                        tplpr: self.$Template.provider
-                    }),
-                    id: id,
-                    styles: {
-                        position: 'absolute',
-                        top: -200,
-                        left: -200,
-                        width: 50,
-                        height: 50
-                    }
-                }).inject(document.body);
-
-                (function() {
-                    resolve();
-                }).delay(2000, this);
-
-                (function() {
-                    document.getElements('#' + id).destroy();
-                }).delay(20000, this);
-            });
+            try {
+                Link.click();
+            } finally {
+                Link.remove();
+                // Allow the browser to consume the download before releasing the PDF.
+                window.setTimeout(() => URL.revokeObjectURL(url), 60000);
+            }
         },
 
-        showAsPDF: function() {
-            this.Loader.show();
-
-            const PreviewContent = this.getContent().getElement('.quiqqer-erp-outputDialog-preview');
-            const entityId = this.getAttribute('entityId');
-
-            const pdfUrl = URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/download.php?' + Object.toQueryString({
-                id: entityId,
+        $fetchOutputPdf: async function() {
+            const query = new URLSearchParams({
+                id: this.getAttribute('entityId'),
                 t: this.getAttribute('entityType'),
                 ep: this.getAttribute('entityPlugin'),
                 oid: this.getId(),
@@ -764,51 +755,77 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 tplpr: this.$Template.provider,
                 show: 1
             });
+            const pdfUrl = URL_OPT_DIR + 'quiqqer/erp/bin/output/backend/download.php?' + query;
+            const Response = await fetch(pdfUrl, {credentials: 'same-origin'});
+            const contentType = Response.headers.get('Content-Type') || '';
 
-            PreviewContent.set('html', '');
+            if (!Response.ok || contentType.split(';')[0].trim().toLowerCase() !== 'application/pdf') {
+                const error = new Error(QUILocale.get(lg, 'controls.OutputDialog.preview_error'));
+                error.status = Response.status;
+                throw error;
+            }
 
-            return new Promise((resolve, reject) => {
-                (async () => {
-                    try {
-                        const module = await import(URL_OPT_DIR + 'bin/quiqqer-asset/pdfjs-dist/pdfjs-dist/build/pdf.mjs');
-                        module.GlobalWorkerOptions.workerSrc = URL_OPT_DIR + 'bin/quiqqer-asset/pdfjs-dist/pdfjs-dist/build/pdf.worker.min.mjs';
+            const data = new Uint8Array(await Response.arrayBuffer());
 
-                        const pdf = await module.getDocument(pdfUrl).promise;
-                        PreviewContent.setStyle('backgroundColor', '#232721');
-                        PreviewContent.setStyle('textAlign', 'center');
+            if (!data.byteLength) {
+                throw new Error(QUILocale.get(lg, 'controls.OutputDialog.preview_error'));
+            }
 
-                        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                            const page = await pdf.getPage(pageNum);
+            const disposition = Response.headers.get('Content-Disposition') || '';
+            const filenameMatch = disposition.match(/filename="([^"\r\n]+)"/i);
+            const filename = filenameMatch?.[1] || this.getAttribute('entityId') + '.pdf';
 
-                            // Canvas für die Seite erstellen
-                            const canvas = document.createElement('canvas');
-                            canvas.id = `pdf-page-${pageNum}`;
-                            canvas.style.backgroundColor = '#ffffff';
-                            canvas.style.marginTop = '20px';
-                            PreviewContent.appendChild(canvas);
+            return {data, filename};
+        },
 
-                            const scale = 1.5;
-                            const viewport = page.getViewport({scale});
+        $showPdfPreviewError: function(error) {
+            const PreviewContent = this.getContent().querySelector('[data-name="preview"]');
+            const Message = document.createElement('p');
+            Message.className = 'quiqqer-erp-outputDialog-nopreview';
+            Message.setAttribute('role', 'alert');
+            Message.textContent = error?.status === 401 || error?.status === 403
+                ? QUILocale.get('quiqqer/core', 'exception.no.permission')
+                : QUILocale.get(lg, 'controls.OutputDialog.preview_error');
+            PreviewContent.replaceChildren(Message);
+        },
 
-                            const context = canvas.getContext('2d');
-                            canvas.height = viewport.height;
-                            canvas.width = viewport.width;
+        showAsPDF: async function() {
+            this.Loader.show();
 
-                            await page.render({
-                                canvasContext: context,
-                                viewport: viewport
-                            }).promise;
-                        }
+            try {
+                const PreviewContent = this.getContent().querySelector('[data-name="preview"]');
+                PreviewContent.replaceChildren();
+                const {data} = await this.$fetchOutputPdf();
 
-                        this.Loader.hide();
-                        resolve();
-                    } catch (error) {
-                        console.error('Fehler beim Laden des Moduls:', error);
-                        this.Loader.hide();
-                        reject();
-                    }
-                })();
-            });
+                const module = await import(URL_OPT_DIR + 'bin/quiqqer-asset/pdfjs-dist/pdfjs-dist/build/pdf.mjs');
+                module.GlobalWorkerOptions.workerSrc = URL_OPT_DIR + 'bin/quiqqer-asset/pdfjs-dist/pdfjs-dist/build/pdf.worker.min.mjs';
+
+                const pdf = await module.getDocument({data}).promise;
+                PreviewContent.style.backgroundColor = '#232721';
+                PreviewContent.style.textAlign = 'center';
+
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    const page = await pdf.getPage(pageNum);
+                    const canvas = document.createElement('canvas');
+                    canvas.id = `pdf-page-${pageNum}`;
+                    canvas.style.backgroundColor = '#ffffff';
+                    canvas.style.marginTop = '20px';
+                    PreviewContent.appendChild(canvas);
+
+                    const scale = 1.5;
+                    const viewport = page.getViewport({scale});
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    await page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    }).promise;
+                }
+            } finally {
+                this.Loader.hide();
+            }
         },
 
         /**
