@@ -91,6 +91,40 @@ class HandlerTest extends TestCase
         self::assertSame(['id' => 10001, 'default' => false], Handler::getBankAccountById(10001));
     }
 
+    public function testLegacyOptionalFalseValuesAreStoredAsEmptyStrings(): void
+    {
+        $data = array_fill_keys(['title', 'name', 'iban', 'bic', 'accountHolder'], 'Account');
+        $data['creditorId'] = false;
+        $data['financialAccountNo'] = false;
+
+        $created = Handler::addBankAccount($data);
+        self::assertSame('', $created['creditorId']);
+        self::assertSame('', $created['financialAccountNo']);
+        self::assertSame($created, Handler::getBankAccountById($created['id']));
+
+        $updated = Handler::updateBankAccount($created['id'], $data);
+        self::assertSame($created, $updated);
+        self::assertSame(2, $this->saveCount);
+    }
+
+    public function testBooleanRequiredFieldsAndInvalidOptionalValuesAreRejected(): void
+    {
+        $data = array_fill_keys(['title', 'name', 'iban', 'bic', 'accountHolder'], 'Account');
+
+        foreach (['accountHolder', 'creditorId', 'financialAccountNo'] as $field) {
+            foreach ([true, [], new \stdClass()] as $value) {
+                try {
+                    Handler::addBankAccount(array_replace($data, [$field => $value]));
+                    self::fail('Invalid field types must be rejected.');
+                } catch (QUI\Exception $Exception) {
+                    self::assertStringContainsString($field, $Exception->getMessage());
+                }
+            }
+        }
+
+        self::assertSame(0, $this->saveCount);
+    }
+
     public function testUpdatesArePersistentAndOnlyChangeTheSelectedAccount(): void
     {
         $data = array_fill_keys(['title', 'name', 'iban', 'bic', 'accountHolder'], 'Original');

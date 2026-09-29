@@ -99,6 +99,11 @@ class Handler
         foreach ($fields as $field => $isRequired) {
             $value = $data[$field] ?? '';
 
+            // Legacy configuration readers return false for unset optional values.
+            if (!$isRequired && $value === false) {
+                $value = '';
+            }
+
             if (!is_string($value) && !is_int($value)) {
                 throw new QUI\Exception('Invalid bank account field "' . $field . '".');
             }
