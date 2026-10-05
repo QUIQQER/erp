@@ -142,6 +142,7 @@ table.articles-article {
     --_focus: var(--quiqqer-erp-article-list-focus-color, var(--qui-colors-primary));
     --_cell-padding: var(--quiqqer-erp-article-list-cell-padding, 7px 10px);
     --_radius: var(--quiqqer-erp-article-list-radius, 4px);
+    --_max-width: var(--quiqqer-erp-article-list-max-width, 1100px);
 
     background: var(--_surface);
     border: 1px solid var(--_border);
@@ -151,6 +152,7 @@ table.articles-article {
     color: var(--_text);
     font-size: 12px;
     line-height: 1.4;
+    max-width: var(--_max-width);
     width: 100%;
 }
 
@@ -217,14 +219,16 @@ table.articles-article {
 }
 
 .quiqqer-erp-article-list table.articles-article .articles-article-header-pos,
-.quiqqer-erp-article-list table.articles-article .articles-article-pos,
-.quiqqer-erp-article-list table.articles-article .articles-article-header-vat,
-.quiqqer-erp-article-list table.articles-article .articles-article-vat {
+.quiqqer-erp-article-list table.articles-article .articles-article-pos {
     text-align: center;
     white-space: nowrap;
     width: 1%;
 }
 
+.quiqqer-erp-article-list table.articles-article .articles-article-header-vat,
+.quiqqer-erp-article-list table.articles-article .articles-article-vat,
+.quiqqer-erp-article-list table.articles-article .articles-article-header-quantity,
+.quiqqer-erp-article-list table.articles-article .articles-article-quantityUnit,
 .quiqqer-erp-article-list table.articles-article .articles-article-header-unitprice,
 .quiqqer-erp-article-list table.articles-article .articles-article-header-price,
 .quiqqer-erp-article-list table.articles-article .articles-article-quantity,
@@ -235,8 +239,10 @@ table.articles-article {
     white-space: nowrap;
 }
 
-.quiqqer-erp-article-list table.articles-article .articles-article-header-quantity {
-    text-align: center;
+.quiqqer-erp-article-list table.articles-article .articles-article-header-vat,
+.quiqqer-erp-article-list table.articles-article .articles-article-vat,
+.quiqqer-erp-article-list table.articles-article .articles-article-quantityUnit {
+    width: 1%;
 }
 
 .quiqqer-erp-article-list table.articles-article .articles-article-quantity {
@@ -353,5 +359,5 @@ table.articles-article {
 
 .omnigrid .section .quiqqer-erp-article-list {
     margin-bottom: 12px;
-    max-width: min(100%, calc(100cqi - 20px));
+    max-width: min(100%, var(--_max-width), calc(100cqi - 20px));
 }
