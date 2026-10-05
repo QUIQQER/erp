@@ -129,3 +129,229 @@ table.articles-article {
     font-size: 12px;
     margin-top: 20px;
 }
+
+/* Shared screen presentation; legacy/custom templates retain the rules above. */
+.quiqqer-erp-article-list {
+    --_surface: var(--quiqqer-erp-article-list-background, var(--qui-colors-white));
+    --_heading-background: var(--quiqqer-erp-article-list-heading-background, var(--qui-colors-gray-50));
+    --_stripe-background: var(--quiqqer-erp-article-list-stripe-background, var(--qui-colors-gray-25));
+    --_border: var(--quiqqer-erp-article-list-border-color, var(--qui-colors-gray-100));
+    --_text: var(--quiqqer-erp-article-list-color, var(--qui-colors-gray-900));
+    --_muted: var(--quiqqer-erp-article-list-muted-color, var(--qui-colors-gray-700));
+    --_total-background: var(--quiqqer-erp-article-list-total-background, var(--qui-colors-gray-50));
+    --_focus: var(--quiqqer-erp-article-list-focus-color, var(--qui-colors-primary));
+    --_cell-padding: var(--quiqqer-erp-article-list-cell-padding, 7px 10px);
+    --_radius: var(--quiqqer-erp-article-list-radius, 4px);
+
+    background: var(--_surface);
+    border: 1px solid var(--_border);
+    border-radius: var(--_radius);
+    box-sizing: border-box;
+    overflow: hidden;
+    color: var(--_text);
+    font-size: 12px;
+    line-height: 1.4;
+    width: 100%;
+}
+
+.quiqqer-erp-article-list .articles-header {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 12px;
+}
+
+.quiqqer-erp-article-list .articles-table-scroll {
+    background: var(--_surface);
+    border: 0;
+    overflow-x: auto;
+}
+
+.quiqqer-erp-article-list .articles-table-scroll:focus-visible {
+    outline: 2px solid var(--_focus);
+    outline-offset: -2px;
+}
+
+.quiqqer-erp-article-list table.articles-article {
+    border: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font: inherit;
+    margin: 0;
+    min-width: 640px;
+    width: 100%;
+}
+
+.quiqqer-erp-article-list table.articles-article .articles-article-header {
+    line-height: inherit;
+}
+
+.quiqqer-erp-article-list table.articles-article th,
+.quiqqer-erp-article-list table.articles-article td {
+    background: var(--_surface);
+    border: 0;
+    border-bottom: 1px solid var(--_border);
+    line-height: inherit;
+    padding: var(--_cell-padding);
+    text-align: left;
+    vertical-align: top;
+}
+
+.quiqqer-erp-article-list table.articles-article th {
+    background: var(--_heading-background);
+    color: var(--_muted);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.quiqqer-erp-article-list table.articles-article tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.quiqqer-erp-article-list table.articles-article tbody tr:nth-child(even) td {
+    background: var(--_stripe-background);
+}
+
+.quiqqer-erp-article-list table.articles-article .articles-article-header-information {
+    width: 45%;
+}
+
+.quiqqer-erp-article-list table.articles-article .articles-article-header-pos,
+.quiqqer-erp-article-list table.articles-article .articles-article-pos,
+.quiqqer-erp-article-list table.articles-article .articles-article-header-vat,
+.quiqqer-erp-article-list table.articles-article .articles-article-vat {
+    text-align: center;
+    white-space: nowrap;
+    width: 1%;
+}
+
+.quiqqer-erp-article-list table.articles-article .articles-article-header-unitprice,
+.quiqqer-erp-article-list table.articles-article .articles-article-header-price,
+.quiqqer-erp-article-list table.articles-article .articles-article-quantity,
+.quiqqer-erp-article-list table.articles-article .articles-article-unitprice,
+.quiqqer-erp-article-list table.articles-article .articles-article-price {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.quiqqer-erp-article-list table.articles-article .articles-article-header-quantity {
+    text-align: center;
+}
+
+.quiqqer-erp-article-list table.articles-article .articles-article-quantity {
+    padding-right: 4px;
+}
+
+.quiqqer-erp-article-list table.articles-article .articles-article-quantityUnit {
+    padding-left: 0;
+    white-space: nowrap;
+}
+
+.quiqqer-erp-article-list .articles-article-information-title {
+    font-size: inherit;
+    font-weight: 600;
+}
+
+.quiqqer-erp-article-list .articles-article-information-description {
+    overflow-wrap: anywhere;
+}
+
+.quiqqer-erp-article-list .articles-article-information-description > :first-child {
+    margin-top: 4px;
+}
+
+.quiqqer-erp-article-list .articles-article-information-description > :last-child {
+    margin-bottom: 0;
+}
+
+.quiqqer-erp-article-list .articles-article-information-description ul,
+.quiqqer-erp-article-list .articles-article-information-description ol,
+.quiqqer-erp-article-list .quiqqer-order-basket-articles-article-fields {
+    margin-left: 20px;
+}
+
+.quiqqer-erp-article-list .quiqqer-order-basket-articles-article-fields:empty {
+    display: none;
+}
+
+.quiqqer-erp-article-list .articles-article-unitprice-discount {
+    color: var(--_muted);
+    display: block;
+    font-size: 12px;
+}
+
+.quiqqer-erp-article-list .articles-sum-container {
+    border-top: 1px solid var(--_border);
+    display: flow-root;
+    padding-top: 16px;
+}
+
+.quiqqer-erp-article-list table.articles-sum {
+    background: var(--_surface);
+    border: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    float: none;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    margin: 0 0 0 auto;
+    overflow: hidden;
+    width: 100%;
+}
+
+.quiqqer-erp-article-list table.articles-sum td {
+    background: transparent;
+    border: 0;
+    padding: 5px 10px;
+    text-align: right;
+    vertical-align: top;
+}
+
+.quiqqer-erp-article-list table.articles-sum td:first-child {
+    color: var(--_muted);
+    text-align: right;
+}
+
+.quiqqer-erp-article-list table.articles-sum td:last-child {
+    white-space: nowrap;
+}
+
+.quiqqer-erp-article-list .articles-sum-row-subsum-text,
+.quiqqer-erp-article-list .articles-sum-row-subsum-value,
+.quiqqer-erp-article-list .articles-sum-row-grandSubSum-text,
+.quiqqer-erp-article-list .articles-sum-row-grandSubSum-value,
+.quiqqer-erp-article-list .articles-sum-row-sum-text,
+.quiqqer-erp-article-list .articles-sum-row-sum-value {
+    border: 0;
+}
+
+.quiqqer-erp-article-list table.articles-sum .articles-sum-row-grandSubSum td {
+    border-top: 1px solid var(--_border);
+}
+
+.quiqqer-erp-article-list table.articles-sum .articles-sum-row-sum td {
+    background: var(--_total-background);
+    border-top: 1px solid var(--_border);
+    color: var(--_text);
+    font-weight: 700;
+    padding: var(--_cell-padding);
+}
+
+.quiqqer-erp-article-list .articles-sum-exchange-rate {
+    color: var(--_muted);
+    float: none;
+    font-size: 12px;
+    margin: 0;
+    padding: var(--_cell-padding);
+}
+
+/* Grid sections span all columns, including columns outside the viewport. */
+.omnigrid div.bDiv:has(.quiqqer-erp-article-list) {
+    container-type: inline-size;
+}
+
+.omnigrid .section .quiqqer-erp-article-list {
+    margin-bottom: 12px;
+    max-width: min(100%, calc(100cqi - 20px));
+}

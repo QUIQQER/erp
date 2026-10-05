@@ -58,6 +58,10 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                     }, {
                         header: QUILocale.get(lg, 'erp.process.status'),
                         dataIndex: 'status',
+                        styles: {
+                            'text-align': 'center',
+                            'justify-content': 'center'
+                        },
                         dataType: 'node',
                         width: 150,
                         className: 'grid-align-center'
@@ -74,6 +78,10 @@ define('package/quiqqer/erp/bin/backend/controls/process/ProcessGrid', [
                     }, {
                         header: QUILocale.get(lg, 'erp.process.paid_status'),
                         dataIndex: 'paid_status',
+                        styles: {
+                            'text-align': 'center',
+                            'justify-content': 'center'
+                        },
                         dataType: 'node',
                         width: 100,
                         className: 'grid-align-center'
