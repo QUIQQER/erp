@@ -1,0 +1,133 @@
+.qui-panel-content.quiqqer-erp-navigation {
+    --_surface: var(--quiqqer-erp-navigation-surface, var(--qui-colors-gray-50));
+    --_line: var(--quiqqer-erp-navigation-line, var(--qui-colors-gray-100));
+    --_hover: var(--quiqqer-erp-navigation-hover, var(--qui-colors-primary-25));
+    --_focus: var(--quiqqer-erp-navigation-focus, var(--qui-colors-primary-700));
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.quiqqer-erp-navigation-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 12px;
+    scrollbar-gutter: stable;
+}
+
+.quiqqer-erp-navigation-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.quiqqer-erp-navigation-scroll > .quiqqer-erp-navigation-list > .quiqqer-erp-navigation-entry {
+    margin-bottom: 8px;
+}
+
+.quiqqer-erp-navigation-scroll > .quiqqer-erp-navigation-list > .quiqqer-erp-navigation-entry > .quiqqer-erp-navigation-row {
+    background: var(--_surface);
+    font-weight: 600;
+    min-height: 38px;
+}
+
+.quiqqer-erp-navigation-row {
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+}
+
+.quiqqer-erp-navigation-row button {
+    appearance: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    float: none;
+    min-height: 32px;
+    height: auto;
+    padding: 6px 10px;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+}
+
+.quiqqer-erp-navigation-link {
+    flex: 1;
+    min-width: 0;
+}
+
+.quiqqer-erp-navigation-label {
+    flex: 1;
+    overflow-wrap: anywhere;
+}
+
+.quiqqer-erp-navigation-row .fa {
+    flex-shrink: 0;
+    width: 18px;
+    text-align: center;
+}
+
+.quiqqer-erp-navigation-row button:hover:not(:disabled) {
+    background: var(--_hover);
+}
+
+.quiqqer-erp-navigation-row button:focus-visible {
+    outline: 2px solid var(--_focus);
+    outline-offset: -2px;
+}
+
+.quiqqer-erp-navigation-row button:disabled {
+    cursor: default;
+}
+
+.quiqqer-erp-navigation-row [aria-expanded="true"] .quiqqer-erp-navigation-chevron {
+    transform: rotate(90deg);
+}
+
+.quiqqer-erp-navigation-entry > .quiqqer-erp-navigation-list {
+    margin: 4px 0;
+}
+
+.quiqqer-erp-navigation-list .quiqqer-erp-navigation-list .quiqqer-erp-navigation-list {
+    margin: 4px 0 8px 18px;
+    padding-left: 8px;
+    border-left: 1px solid var(--_line);
+}
+
+.quiqqer-erp-navigation-group > .quiqqer-erp-navigation-row {
+    font-weight: 600;
+}
+
+.quiqqer-erp-navigation-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    padding: 8px 12px;
+    border-top: 1px solid var(--_line);
+    background: var(--_surface);
+}
+
+.quiqqer-erp-navigation-search input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+}
+
+.quiqqer-erp-navigation-status {
+    padding: 12px;
+    margin: 0;
+}
+
+.quiqqer-erp-navigation [hidden] {
+    display: none !important;
+}

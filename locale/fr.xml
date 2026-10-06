@@ -313,6 +313,27 @@
         <locale name="salutation.neutral.generic">
 <fr><![CDATA[Bonjour,]]></fr>
         </locale>
+        <locale name="erp.panel.navigation.search">
+            <fr>Rechercher une fonction …</fr>
+        </locale>
+        <locale name="erp.panel.navigation.retry">
+            <fr>Réessayer</fr>
+        </locale>
+        <locale name="erp.panel.navigation.empty">
+            <fr>Aucune entrée correspondante trouvée.</fr>
+        </locale>
+        <locale name="erp.panel.navigation.loadError">
+            <fr>Impossible de charger la navigation. Veuillez réessayer.</fr>
+        </locale>
+        <locale name="erp.panel.navigation.actionError">
+            <fr>Impossible d’ouvrir la fonction. Veuillez réessayer.</fr>
+        </locale>
+        <locale name="erp.panel.navigation.expandAll">
+            <fr>Tout développer</fr>
+        </locale>
+        <locale name="erp.panel.navigation.collapseAll">
+            <fr>Tout réduire</fr>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
