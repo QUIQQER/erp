@@ -314,6 +314,27 @@
         <locale name="salutation.neutral.generic">
 <en><![CDATA[Dear Sir or Madam,]]></en>
         </locale>
+        <locale name="erp.panel.navigation.search">
+            <en>Find a function …</en>
+        </locale>
+        <locale name="erp.panel.navigation.retry">
+            <en>Try again</en>
+        </locale>
+        <locale name="erp.panel.navigation.empty">
+            <en>No matching entries found.</en>
+        </locale>
+        <locale name="erp.panel.navigation.loadError">
+            <en>The navigation could not be loaded. Please try again.</en>
+        </locale>
+        <locale name="erp.panel.navigation.actionError">
+            <en>The function could not be opened. Please try again.</en>
+        </locale>
+        <locale name="erp.panel.navigation.expandAll">
+            <en>Expand all</en>
+        </locale>
+        <locale name="erp.panel.navigation.collapseAll">
+            <en>Collapse all</en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
