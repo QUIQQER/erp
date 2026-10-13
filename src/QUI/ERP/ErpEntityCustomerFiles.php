@@ -7,6 +7,8 @@ use QUI\ERP\Customer\CustomerFiles;
 use QUI\ERP\User as ErpUser;
 
 use function is_array;
+use function is_int;
+use function is_string;
 
 trait ErpEntityCustomerFiles // @phpstan-ignore-line
 {
@@ -127,6 +129,10 @@ trait ErpEntityCustomerFiles // @phpstan-ignore-line
             return [];
         }
 
+        if ($Customer === null) {
+            return [];
+        }
+
         $result = [];
 
         foreach ($customerFiles as $customerFile) {
@@ -134,8 +140,21 @@ trait ErpEntityCustomerFiles // @phpstan-ignore-line
                 // check if file is from customer
                 $file = CustomerFiles::getFileByHash($Customer->getUUID(), $customerFile['hash']);
 
+                if (empty($file)) {
+                    continue;
+                }
+
                 if ($parsing) {
-                    $file['uploadTime_formatted'] = QUI::getLocale()->formatDate($file['uploadTime']);
+                    $uploadTime = $file['uploadTime'] ?? null;
+                    $file['uploadTime_formatted'] = '';
+
+                    if (
+                        is_int($uploadTime)
+                        || (is_string($uploadTime) && $uploadTime !== '')
+                    ) {
+                        $file['uploadTime_formatted'] = QUI::getLocale()->formatDate($uploadTime);
+                    }
+
                     $file['icon'] = QUI\Projects\Media\Utils::getIconByExtension($file['extension']);
 
                     $customerFile['file'] = $file;
