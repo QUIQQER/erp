@@ -1,33 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<events>
-    <event on="onAdminLoadFooter" fire="\QUI\ERP\EventHandler::onAdminLoadFooter"/>
-    <event on="onPackageSetup" fire="\QUI\ERP\EventHandler::onPackageSetup"/>
+<quiqqer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://www.quiqqer.com/docs/schemas/2.x/events.xsd">
+    <events>
+        <event on="onAdminLoadFooter" fire="\QUI\ERP\EventHandler::onAdminLoadFooter"/>
+        <event on="onSetupAllEnd" fire="\QUI\ERP\EventHandler::onSetupAllEnd"/>
+        <event on="onPackageSetup" fire="\QUI\ERP\EventHandler::onPackageSetup"/>
 
-    <event on="onUserSave" fire="\QUI\ERP\EventHandler::onUserSave"/>
-    <event on="onUserSaveBegin" fire="\QUI\ERP\EventHandler::onUserSaveBegin"/>
-    <event on="onUserAddressSave" fire="\QUI\ERP\EventHandler::onUserAddressSave"/>
-    <event on="onPackageConfigSave" fire="\QUI\ERP\EventHandler::onPackageConfigSave"/>
-    <event on="onTemplateGetHeader" fire="\QUI\ERP\EventHandler::onTemplateGetHeader"/>
-    <event on="onSmartyInit" fire="\QUI\ERP\EventHandler::onSmartyInit"/>
+        <event on="onUserSave" fire="\QUI\ERP\EventHandler::onUserSave"/>
+        <event on="onUserSaveBegin" fire="\QUI\ERP\EventHandler::onUserSaveBegin"/>
+        <event on="onUserAddressSave" fire="\QUI\ERP\EventHandler::onUserAddressSave"/>
+        <event on="onPackageConfigSave" fire="\QUI\ERP\EventHandler::onPackageConfigSave"/>
+        <event on="onTemplateGetHeader" fire="\QUI\ERP\EventHandler::onTemplateGetHeader"/>
+        <event on="onSmartyInit" fire="\QUI\ERP\EventHandler::onSmartyInit"/>
 
-    <event on="onQuiqqer::frontend-users::profile::customer-data-begin"
-           fire="\QUI\ERP\EventHandler::onFrontendUserCustomerBegin"
-    />
-    <event on="onQuiqqer::frontend-users::profile::user-data-middle"
-           fire="\QUI\ERP\EventHandler::onFrontendUserDataMiddle"
-    />
+        <event on="onQuiqqer::frontend-users::profile::customer-data-begin"
+               fire="\QUI\ERP\EventHandler::onFrontendUserCustomerBegin"
+        />
+        <event on="onQuiqqer::frontend-users::profile::user-data-middle"
+               fire="\QUI\ERP\EventHandler::onFrontendUserDataMiddle"
+        />
 
-    <event on="onQuiqqer::frontend-users::user-address-create-begin"
-           fire="\QUI\ERP\EventHandler::onFrontendUserAddressCreateBegin"
-    />
-    <event on="onQuiqqer::frontend-users::user-address-create-end"
-           fire="\QUI\ERP\EventHandler::onFrontendUserAddressCreateEnd"
-    />
+        <event on="onQuiqqer::frontend-users::user-address-create-begin"
+               fire="\QUI\ERP\EventHandler::onFrontendUserAddressCreateBegin"
+        />
+        <event on="onQuiqqer::frontend-users::user-address-create-end"
+               fire="\QUI\ERP\EventHandler::onFrontendUserAddressCreateEnd"
+        />
 
-    <event on="onQuiqqer::frontend-users::user-address-edit-begin"
-           fire="\QUI\ERP\EventHandler::onFrontendUserAddressEditBegin"
-    />
-    <event on="onQuiqqer::frontend-users::user-address-edit-end"
-           fire="\QUI\ERP\EventHandler::onFrontendUserAddressEditEnd"
-    />
-</events>
+        <event on="onQuiqqer::frontend-users::user-address-edit-begin"
+               fire="\QUI\ERP\EventHandler::onFrontendUserAddressEditBegin"
+        />
+        <event on="onQuiqqer::frontend-users::user-address-edit-end"
+               fire="\QUI\ERP\EventHandler::onFrontendUserAddressEditEnd"
+        />
+    </events>
+</quiqqer>

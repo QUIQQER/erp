@@ -67,6 +67,14 @@ class EventHandler
     }
 
     /**
+     * Invalidate ERP providers after package imports and setup cache suppression end.
+     */
+    public static function onSetupAllEnd(): void
+    {
+        QUI\Cache\Manager::clear('erp/provider');
+    }
+
+    /**
      * event: on package setup
      *
      * @param Package $Package
