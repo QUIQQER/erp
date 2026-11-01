@@ -43,7 +43,7 @@ define('package/quiqqer/erp/bin/backend/utils/Discount', function () {
 
             if (discount.toString().indexOf('%') !== -1) {
                 return {
-                    value: discount,
+                    value: discount.toString().replace(/%\s*$/, '').trim(),
                     type : 1
                 };
             }
