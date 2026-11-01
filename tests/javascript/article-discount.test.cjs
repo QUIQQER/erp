@@ -4,6 +4,34 @@ const path = require('node:path');
 const vm = require('node:vm');
 const {test} = require('node:test');
 
+let Discount;
+vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../../bin/backend/utils/Discount.js'), 'utf8'), {
+    define(name, factory) { Discount = factory(); },
+    typeOf: value => typeof value,
+    JSON: {decode: JSON.parse}
+});
+
+for (const [input, expected] of [
+    ['10%', '10%'],
+    ['12.5%', '12.5%'],
+    ['0%', '0%'],
+    ['-5%', '-5%'],
+    [' 10 % ', '10%'],
+    [{value: 10, type: 1}, '10%'],
+    ['{"value":12.5,"type":1}', '12.5%'],
+    [5.5, 5.5],
+    [0, 0]
+]) {
+    test(`reopening discount ${JSON.stringify(input)} preserves its value`, () => {
+        let value = input;
+
+        for (let opening = 0; opening < 3; opening++) {
+            value = Discount.parseToString(Discount.unserialize(value));
+            assert.equal(value, expected);
+        }
+    });
+}
+
 function fixture(input, locale = 'de-DE') {
     let definition;
     let Money;
