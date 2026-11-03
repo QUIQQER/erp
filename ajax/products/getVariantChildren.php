@@ -22,9 +22,20 @@ QUI::getAjax()->registerFunction(
             return [];
         }
 
-        return array_map(function ($Variant) {
+        $rows = array_map(function ($Variant) {
             return $Variant->getAttributes();
         }, $variants);
+
+        $variantIds = array_map('intval', array_column($rows, 'id'));
+
+        QUI::getEvents()->fireEvent('quiqqerProductsVariantGridData', [
+            &$rows,
+            $variantIds,
+            $Product,
+            'erp.variant-selection'
+        ]);
+
+        return $rows;
     },
     ['productId'],
     'Permission::checkAdminUser'
