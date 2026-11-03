@@ -382,13 +382,24 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                             }).inject(Win.getContent());
 
                             self.$getVariantColumns(productId).then(function (columns) {
-                                Win.$VariantGrid = new Grid(GridContainer, {
+                                const gridOptions = {
                                     columnModel: columns,
                                     pagination : false,
                                     width      : Win.getContent().getSize().x - 40,
                                     height     : 800,
                                     storageKey : 'quiqqer-erp-addproductwindow-variants',
-                                });
+                                };
+
+                                QUI.fireEvent('quiqqerProductsVariantGridCreate', [
+                                    self,
+                                    gridOptions,
+                                    {
+                                        context: 'erp.variant-selection',
+                                        productId: productId
+                                    }
+                                ]);
+
+                                Win.$VariantGrid = new Grid(GridContainer, gridOptions);
 
                                 Win.$VariantGrid.addEvents({
                                     onDblClick: function () {
@@ -418,8 +429,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                     };
 
                                     // add variant fields to field object
-                                    for (i = 0, len = columns.length; i < len; i++) {
-                                        fields['field-' + columns[i].fieldId] = columns[i].fieldId;
+                                    for (const column of gridOptions.columnModel) {
+                                        if (column.fieldId !== undefined) {
+                                            fields['field-' + column.fieldId] = column.fieldId;
+                                        }
                                     }
 
                                     const lang = QUILocale.getCurrent();
@@ -447,8 +460,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                     };
 
                                     for (i = 0, len = variants.length; i < len; i++) {
-                                        entry   = {};
                                         variant = variants[i];
+                                        entry = {...variant};
 
                                         // status
                                         if (variant.active) {
@@ -469,7 +482,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                         for (n = 0, nLen = needles.length; n < nLen; n++) {
                                             needle = needles[n];
 
-                                            if (typeof variant[needle] === 'undefined' || !variant[needle]) {
+                                            if (
+                                                variant[needle] === undefined
+                                                || variant[needle] === null
+                                                || variant[needle] === ''
+                                            ) {
                                                 entry[needle] = '-';
                                             } else {
                                                 entry[needle] = variant[needle];
