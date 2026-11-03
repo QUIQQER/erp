@@ -506,6 +506,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 const product = result[0];
                 const Formatter = result[1];
 
+                const vat = this.getAttribute('vat');
+
+                if ((vat === '' || vat === null || typeof vat === 'undefined') &&
+                    typeof product.vat === 'number' && Number.isFinite(product.vat)) {
+                    // Save the rate shown to the user instead of resolving it again for the supplier.
+                    this.setAttribute('vat', product.vat);
+                }
+
                 const unitPrice = Formatter.format(product.unitPrice);
                 const price = Formatter.format(product.calculated.nettoSubSum);
                 const total = Formatter.format(product.calculated.nettoSum);
@@ -881,16 +889,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @return {Promise}
          */
         setVat: function (vat) {
-            if (vat === '-' || vat === '') {
+            if (vat === '-' || vat === '' || vat === null || typeof vat === 'undefined') {
                 this.setAttribute('vat', '');
                 this.$VAT.set('html', '-');
 
                 return this.calc();
             }
 
-            vat = parseInt(vat);
+            vat = Number(vat);
 
-            if (vat > 100 || vat < 0) {
+            if (!Number.isFinite(vat) || vat > 100 || vat < 0) {
                 return Promise.resolve();
             }
 
