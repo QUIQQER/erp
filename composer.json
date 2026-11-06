@@ -30,7 +30,7 @@
         "quiqqer/frontend-users": "^2",
         "quiqqer/erp-accounting-templates": "^2 || ^3",
         "quiqqer/areas": "^2",
-        "quiqqer-asset/pdfjs-dist": "^4.8",
+        "quiqqer-asset/pdfjs-dist": "^4.8 || ^6",
         "quiqqer/htmltopdf": "^4"
     },
     "suggest": {

@@ -797,10 +797,18 @@ define('package/quiqqer/erp/bin/backend/controls/OutputDialog', [
                 PreviewContent.replaceChildren();
                 const {data} = await this.$fetchOutputPdf();
 
-                const module = await import(URL_OPT_DIR + 'bin/quiqqer-asset/pdfjs-dist/pdfjs-dist/build/pdf.mjs');
-                module.GlobalWorkerOptions.workerSrc = URL_OPT_DIR + 'bin/quiqqer-asset/pdfjs-dist/pdfjs-dist/build/pdf.worker.min.mjs';
+                const pdfjsBaseUrl = URL_OPT_DIR + 'bin/quiqqer-asset/pdfjs-dist/pdfjs-dist/';
+                const module = await import(pdfjsBaseUrl + 'build/pdf.mjs');
+                module.GlobalWorkerOptions.workerSrc = pdfjsBaseUrl + 'build/pdf.worker.min.mjs';
 
-                const pdf = await module.getDocument({data}).promise;
+                const pdf = await module.getDocument({
+                    data,
+                    cMapUrl: pdfjsBaseUrl + 'cmaps/',
+                    cMapPacked: true,
+                    standardFontDataUrl: pdfjsBaseUrl + 'standard_fonts/',
+                    wasmUrl: pdfjsBaseUrl + 'wasm/',
+                    iccUrl: pdfjsBaseUrl + 'iccs/'
+                }).promise;
                 PreviewContent.style.backgroundColor = '#232721';
                 PreviewContent.style.textAlign = 'center';
 
