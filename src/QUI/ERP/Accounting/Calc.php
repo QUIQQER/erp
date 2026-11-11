@@ -987,7 +987,10 @@ class Calc
         $toPay = Price::parsePrice($calculations['sum']);
 
         // workaround fix
-        if ($ToCalculate->getAttribute('paid_date') != $paidDate) {
+        if (
+            $ToCalculate instanceof Invoice
+            && $ToCalculate->getAttribute('paid_date') != $paidDate
+        ) {
             try {
                 Queries::update(
                     QUI::getDataBaseConnection(),
