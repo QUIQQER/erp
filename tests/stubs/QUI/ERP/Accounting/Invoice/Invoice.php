@@ -7,6 +7,14 @@ abstract class Invoice implements
     \QUI\ERP\ErpTransactionsInterface,
     \QUI\ERP\ErpCopyInterface
 {
+    public function getHash(): string
+    {
+    }
+
+    public function getCleanId(): int
+    {
+    }
+
     public function getPrefixedNumber(): string
     {
     }

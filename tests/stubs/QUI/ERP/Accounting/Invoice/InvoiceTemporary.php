@@ -4,6 +4,14 @@ namespace QUI\ERP\Accounting\Invoice;
 
 abstract class InvoiceTemporary implements \QUI\ERP\ErpEntityInterface
 {
+    public function getHash(): string
+    {
+    }
+
+    public function getCleanId(): int
+    {
+    }
+
     public function getPrefixedNumber(): string
     {
     }
