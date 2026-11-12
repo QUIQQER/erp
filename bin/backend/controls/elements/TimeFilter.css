@@ -1,3 +1,65 @@
+.quiqqer-erp-timefilter {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    height: 34px;
+    border: 1px solid var(--qui-colors-gray-200);
+    border-radius: 5px;
+    background: var(--qui-colors-primary--accent);
+    color: var(--qui-colors-gray-800);
+}
+
+.qui-panel-buttons .qui-toolbar-tabs > .quiqqer-erp-timefilter {
+    margin-block: 8px;
+}
+
+.quiqqer-erp-timefilter .quiqqer-erp-timefilter-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    line-height: 1;
+    box-shadow: none;
+}
+
+.quiqqer-erp-timefilter .quiqqer-erp-timefilter-navigation:not(:disabled):hover {
+    background: var(--qui-colors-gray-50);
+}
+
+.quiqqer-erp-timefilter .quiqqer-erp-timefilter-navigation:disabled {
+    background: transparent;
+    color: var(--qui-colors-gray-400);
+    box-shadow: none;
+}
+
+.quiqqer-erp-timefilter .qui-select {
+    flex: 0 1 200px;
+    min-width: 0;
+    height: 32px;
+    margin: 0;
+    border: 0;
+    border-inline: 1px solid var(--qui-colors-gray-100);
+    border-radius: 0;
+    background: transparent;
+}
+
+.quiqqer-erp-timefilter .qui-select:not(.qui-select-disable):hover {
+    background: var(--qui-colors-gray-50);
+}
+
+.quiqqer-erp-timefilter .text,
+.quiqqer-erp-timefilter .drop-icon {
+    height: 32px;
+    line-height: 32px;
+}
+
 .timefilter-user-select,
 .timefilter-period-select {
     background: #FFFFFF;

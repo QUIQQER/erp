@@ -61,12 +61,14 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
          */
         create: function () {
             this.$Elm = this.parent();
+            this.$Elm.classList.add('quiqqer-erp-timefilter');
 
             if (this.getAttribute('styles')) {
                 this.$Elm.setStyles(this.getAttribute('styles'));
             }
 
             this.$Prev = new QUIButton({
+                'class': 'quiqqer-erp-timefilter-navigation',
                 icon  : 'fa fa-chevron-left',
                 events: {
                     onClick: this.previous
@@ -74,6 +76,7 @@ define('package/quiqqer/erp/bin/backend/controls/elements/TimeFilter', [
             });
 
             this.$Next = new QUIButton({
+                'class': 'quiqqer-erp-timefilter-navigation',
                 icon  : 'fa fa-chevron-right',
                 events: {
                     onClick: this.next
