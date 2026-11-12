@@ -1,7 +1,9 @@
 .qui-panel-content.quiqqer-erp-navigation {
     --_surface: var(--quiqqer-erp-navigation-surface, var(--qui-colors-gray-50));
     --_line: var(--quiqqer-erp-navigation-line, var(--qui-colors-gray-100));
-    --_hover: var(--quiqqer-erp-navigation-hover, var(--qui-colors-primary-25));
+    --_hover-turquoise: color-mix(in srgb, var(--qui-colors-primary) 65%, var(--qui-colors-success));
+    --_hover: var(--quiqqer-erp-navigation-hover, color-mix(in srgb, var(--_hover-turquoise) 65%, var(--qui-colors-white)));
+    --_hover-text: var(--quiqqer-erp-navigation-hover-text, color-mix(in srgb, var(--_hover-turquoise) 35%, var(--qui-colors-black)));
     --_focus: var(--quiqqer-erp-navigation-focus, var(--qui-colors-primary-700));
     display: flex;
     flex-direction: column;
@@ -51,13 +53,14 @@
     padding: 6px 10px;
     margin: 0;
     border: 0;
-    border-radius: 0;
+    border-radius: 5px;
     box-shadow: none;
     background: transparent;
     color: inherit;
     font: inherit;
     text-align: start;
     cursor: pointer;
+    transition: background-color 80ms ease, color 80ms ease;
 }
 
 .quiqqer-erp-navigation-link {
@@ -78,6 +81,7 @@
 
 .quiqqer-erp-navigation-row button:hover:not(:disabled) {
     background: var(--_hover);
+    color: var(--_hover-text);
 }
 
 .quiqqer-erp-navigation-row button:focus-visible {
@@ -87,6 +91,12 @@
 
 .quiqqer-erp-navigation-row button:disabled {
     cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .quiqqer-erp-navigation-row button {
+        transition: none;
+    }
 }
 
 .quiqqer-erp-navigation-row [aria-expanded="true"] .quiqqer-erp-navigation-chevron {
