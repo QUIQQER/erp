@@ -55,6 +55,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/AdministrationPan
             this.getContent().setStyle('padding', 0);
 
             this.$Administration = new Administration({
+                toolbar: this.getButtonBar(),
                 events: {
                     onRefreshBegin: function () {
                         self.Loader.show();

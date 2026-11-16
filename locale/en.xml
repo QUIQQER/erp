@@ -1078,8 +1078,14 @@
         <locale name="controls.manufacturers.Administration.tpl.dateFilterTo">
 <en><![CDATA[to]]></en>
         </locale>
-        <locale name="controls.manufacturers.Administration.btn.create">
-<en><![CDATA[New manufacturer]]></en>
+        <locale name="controls.manufacturers.Administration.btn.create" context="administration">
+<en><![CDATA[Create manufacturer]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.filter.period" context="administration">
+<en><![CDATA[Filter by period]]></en>
+        </locale>
+        <locale name="controls.manufacturers.Administration.btn.filter" context="administration">
+<en><![CDATA[Filter]]></en>
         </locale>
         <locale name="controls.manufacturers.create.ManufacturerWindow.title">
 <en><![CDATA[Create new manufacturer]]></en>
