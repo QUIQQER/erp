@@ -9,9 +9,12 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
 
     'qui/controls/Control',
     'qui/controls/windows/Confirm',
+    'qui/controls/buttons/Button',
+    'qui/controls/toolbar/Bar',
     'utils/Panels',
 
     'package/quiqqer/erp/bin/backend/Manufacturers',
+    'package/quiqqer/erp/bin/backend/controls/elements/TimeFilter',
 
     'controls/grid/Grid',
     'Mustache',
@@ -22,7 +25,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
     'text!package/quiqqer/erp/bin/backend/controls/manufacturers/Administration.html',
     'css!package/quiqqer/erp/bin/backend/controls/manufacturers/Administration.css'
 
-], function (QUIControl, QUIConfirm, QUIPanelUtils, Manufacturers, Grid, Mustache, QUILocale, QUIAjax, Users,
+], function (QUIControl, QUIConfirm, QUIButton, QUIToolbar, QUIPanelUtils, Manufacturers, TimeFilter, Grid, Mustache, QUILocale, QUIAjax, Users,
              template) {
     "use strict";
 
@@ -48,6 +51,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
         ],
 
         options: {
+            toolbar       : null,
             page          : 1,
             perPage       : 50,
             editable      : true,
@@ -59,7 +63,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
         initialize: function (options) {
             this.parent(options);
 
-            this.$SearchContainer      = null;
+            this.$SearchForm           = null;
             this.$SearchInput          = null;
             this.$FilterButton         = null;
             this.$manufacturerGroupIds = [];
@@ -88,61 +92,113 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
         create: function () {
             var self = this;
 
-            this.$Elm = new Element('div', {
-                'class': 'quiqqer-erp-manufacturers-administration',
-                html   : Mustache.render(template, {
-                    searchPlaceholder: QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.searchPlaceholder'),
-                    filterTitle      : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterTitle'),
-                    filterUserId     : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterUserId'),
-                    filterUsername   : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterUsername'),
-                    filterFirstname  : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterFirstname'),
-                    filterLastname   : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterLastname'),
-                    filterEmail      : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterEmail'),
-                    filterCompany    : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterCompany'),
-                    dateFilterTitle  : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.dateFilterTitle'),
-                    dateFilterFrom   : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.dateFilterFrom'),
-                    dateFilterTo     : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.dateFilterTo')
-                })
+            this.$Elm = document.createElement('div');
+            this.$Elm.className = 'quiqqer-erp-manufacturers-administration';
+            this.$Elm.innerHTML = Mustache.render(template, {
+                searchPlaceholder: QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.searchPlaceholder'),
+                filterLabel      : QUILocale.get(lg, 'controls.manufacturers.Administration.btn.filter'),
+                filterTitle      : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterTitle'),
+                filterUserId     : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterUserId'),
+                filterUsername   : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterUsername'),
+                filterFirstname  : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterFirstname'),
+                filterLastname   : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterLastname'),
+                filterEmail      : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterEmail'),
+                filterCompany    : QUILocale.get(lg, 'controls.manufacturers.Administration.tpl.filterCompany')
             });
 
-            this.$SearchContainer = this.$Elm.getElement('.quiqqer-erp-manufacturers-administration-search');
-            this.$GridContainer   = this.$Elm.getElement('.quiqqer-erp-manufacturers-administration-grid');
-            this.$SearchInput     = this.$Elm.getElement('[name="search"]');
-            this.$SubmitButton    = this.$Elm.getElement('[name="submit"]');
-            this.$FilterButton    = this.$Elm.getElement('button[name="filter"]');
-
-            this.$FilterButton.addEvent('click', function (event) {
-                event.stop();
-                self.toggleFilter();
-            });
-
-            this.$SearchContainer.getElement('form').addEvent('submit', function (event) {
-                event.stop();
-            });
-
-            this.$SubmitButton.addEvent('click', function () {
-                self.refresh();
-            });
-
-            this.$SearchInput.addEvent('keydown', function (event) {
-                if (event.key === 'enter') {
-                    event.stop();
-                }
-            });
-
-            this.$SearchInput.addEvent('keyup', function (event) {
-                if (event.key === 'enter') {
-                    self.refresh();
-                }
-            });
-
-            if (!this.getAttribute('add')) {
-                this.$AddButton.setStyle('display', 'none');
+            this.$SearchForm = this.$Elm.querySelector('[data-name="search-form"]');
+            this.$GridContainer = this.$Elm.querySelector('[data-name="grid"]');
+            this.$SearchInput = this.$Elm.querySelector('[data-name="search-input"]');
+            this.$SubmitButton = this.$Elm.querySelector('[data-name="search-submit"]');
+            this.$Filters = this.$Elm.querySelector('[data-name="filters"]');
+            this.$Filters.id = 'manufacturer-filters-' + this.getId();
+            this.$SearchForm.id = 'manufacturer-search-' + this.getId();
+            for (const Input of this.$Filters.querySelectorAll('[data-name="filter-field"]')) {
+                Input.setAttribute('form', this.$SearchForm.id);
             }
+            document.body.appendChild(this.$Filters);
+            this.$Filters.addEventListener('change', () => this.$submitSearch());
+            this.$filterOutside = event => {
+                if (!this.$Filters.contains(event.target) && !this.$FilterButton.contains(event.target)) {
+                    this.closeFilter();
+                }
+            };
+            this.$filterKeydown = event => {
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    this.closeFilter(true);
+                }
+            };
+            this.$filterReposition = () => this.$positionFilter();
+
+            this.$Toolbar = this.getAttribute('toolbar');
+            this.$ownsToolbar = !this.$Toolbar;
+            if (this.$ownsToolbar) {
+                this.$Toolbar = new QUIToolbar().inject(this.$Elm, 'top');
+            }
+            this.$Toolbar.getElm().classList.add('quiqqer-erp-manufacturers-toolbar');
+            this.$Toolbar.appendChild(this.$SearchForm);
+            this.$periodEnabled = false;
+            this.$PeriodToggle = document.createElement('label');
+            this.$PeriodToggle.className = 'quiqqer-erp-manufacturers-period-toggle';
+            this.$PeriodEnabled = document.createElement('input');
+            this.$PeriodEnabled.type = 'checkbox';
+            this.$PeriodEnabled.dataset.name = 'period-enabled';
+            this.$PeriodToggle.append(
+                this.$PeriodEnabled,
+                document.createTextNode(QUILocale.get(lg, 'controls.manufacturers.Administration.filter.period'))
+            );
+            this.$PeriodEnabled.addEventListener('change', () => {
+                this.$periodEnabled = this.$PeriodEnabled.checked;
+                this.$TimeFilter[this.$periodEnabled ? 'enable' : 'disable']();
+                this.$submitSearch();
+            });
+            this.$Toolbar.appendChild(this.$PeriodToggle);
+            this.$TimeFilter = new TimeFilter({
+                events: {
+                    onChange: () => {
+                        if (this.$Grid && this.$periodEnabled) {
+                            this.$submitSearch();
+                        }
+                    }
+                }
+            });
+            this.$Toolbar.appendChild(this.$TimeFilter);
+            this.$TimeFilter.getElm().classList.add('quiqqer-erp-manufacturers-period');
+            this.$TimeFilter.disable();
+            this.$FilterControl = new QUIButton({
+                name: 'filter',
+                'class': 'quiqqer-erp-manufacturers-administration-filter-button',
+                text: QUILocale.get(lg, 'controls.manufacturers.Administration.btn.filter'),
+                textimage: 'fa fa-filter',
+                events: {onClick: () => this.toggleFilter()}
+            });
+            this.$Toolbar.appendChild(this.$FilterControl);
+            this.$FilterButton = this.$FilterControl.getElm();
+            this.$FilterButton.tabIndex = 0;
+            this.$FilterButton.style.removeProperty('outline');
+            this.$FilterButton.firstElementChild?.setAttribute('aria-hidden', 'true');
+            this.$FilterButton.setAttribute('aria-expanded', 'false');
+            this.$FilterButton.setAttribute('aria-haspopup', 'dialog');
+            this.$FilterButton.setAttribute('aria-controls', this.$Filters.id);
+            const Arrow = document.createElement('span');
+            Arrow.className = 'fa fa-chevron-down';
+            Arrow.setAttribute('aria-hidden', 'true');
+            this.$FilterButton.appendChild(Arrow);
+
+            this.$SearchForm.addEventListener('submit', event => {
+                event.preventDefault();
+                this.$submitSearch();
+            });
+            this.$SearchInput.addEventListener('input', () => {
+                if (!this.$SearchInput.value) {
+                    this.$submitSearch();
+                }
+            });
 
             // create grid
-            this.$Container = new Element('div');
-            this.$Container.inject(this.$GridContainer);
+            this.$Container = document.createElement('div');
+            this.$GridContainer.appendChild(this.$Container);
 
             var columnModel = [];
 
@@ -226,27 +282,15 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
                 width    : 150
             });
 
-            this.$Grid = new Grid(this.$Container, {
-                buttons: [{
-                    name     : 'add',
-                    textimage: 'fa fa-plus',
-                    text     : QUILocale.get(lg, 'controls.manufacturers.Administration.btn.create'),
-                    events   : {
-                        onClick: self.openAddWindow
-                    }
-                }/*, {
-                    name     : 'delete',
-                    textimage: 'fa fa-trash',
-                    text     : QUILocale.get(lg, 'manufacturer.window.delete.title'),
-                    disabled : true,
-                    styles   : {
-                        'float': 'right'
-                    },
-                    events   : {
-                        onClick: self.openDeleteWindow
-                    }
-                }*/],
+            const buttons = this.getAttribute('add') ? [{
+                name: 'add',
+                textimage: 'fa fa-plus',
+                text: QUILocale.get(lg, 'controls.manufacturers.Administration.btn.create'),
+                events: {onClick: self.openAddWindow}
+            }] : [];
 
+            this.$Grid = new Grid(this.$Container, {
+                buttons: buttons,
                 columnModel      : columnModel,
                 pagination       : true,
                 filterInput      : true,
@@ -262,6 +306,14 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
                 multipleSelection: true,
                 resizeHeaderOnly : true
             });
+
+            const Create = this.$Grid.getButton('add');
+
+            if (Create) {
+                const Button = Create.getElm();
+                Button.style.removeProperty('outline');
+                Button.firstElementChild?.setAttribute('aria-hidden', 'true');
+            }
 
             // Events
             this.$Grid.addEvents({
@@ -372,6 +424,15 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
          * event: on control destroy
          */
         $onDestroy: function () {
+            this.closeFilter();
+            this.$Filters?.remove();
+            this.$SearchForm?.remove();
+            this.$FilterControl?.destroy();
+            this.$PeriodToggle?.remove();
+            this.$TimeFilter?.destroy();
+            if (this.$ownsToolbar) {
+                this.$Toolbar?.destroy();
+            }
             Users.removeEvents({
                 onSwitchStatus: this.$onUserChange,
                 onDelete      : this.$onUserChange,
@@ -417,8 +478,8 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
             var size = this.$GridContainer.getSize();
 
             return Promise.all([
-                this.$Grid.setHeight(size.y - 40),
-                this.$Grid.setWidth(size.x - 40)
+                this.$Grid.setHeight(size.y - 20),
+                this.$Grid.setWidth(size.x - 20)
             ]);
         },
 
@@ -428,7 +489,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
         refresh: function () {
             var self    = this,
                 options = this.$Grid.options,
-                Form    = this.$SearchContainer.getElement('form');
+                Form    = this.$SearchForm;
 
             var sortOn = options.sortOn;
 
@@ -455,8 +516,7 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
                     lastname    : Form.elements.lastname.checked ? 1 : 0,
                     email       : Form.elements.email.checked ? 1 : 0,
                     company     : Form.elements.company.checked ? 1 : 0,
-                    regdate_from: Form.elements['registration-from'].value,
-                    regdate_to  : Form.elements['registration-to'].value
+                    ...this.$getPeriodFilters()
                 }
             };
 
@@ -607,13 +667,33 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
 
         //region filter
 
+        $getPeriodFilters: function () {
+            if (!this.$periodEnabled) {
+                return {regdate_from: '', regdate_to: ''};
+            }
+
+            const period = this.$TimeFilter.getValue();
+            const format = timestamp => {
+                const DateValue = new Date(timestamp * 1000);
+                return [
+                    DateValue.getFullYear(),
+                    String(DateValue.getMonth() + 1).padStart(2, '0'),
+                    String(DateValue.getDate()).padStart(2, '0')
+                ].join('-');
+            };
+            return {regdate_from: format(period.from), regdate_to: format(period.to)};
+        },
+
+        $submitSearch: function () {
+            this.$Grid.options.page = 1;
+            return this.refresh();
+        },
+
         /**
          * Toggle the filter
          */
         toggleFilter: function () {
-            var FilterContainer = this.getElm().getElement('.quiqqer-erp-manufacturers-administration-search-filter');
-
-            if (FilterContainer.getStyle('display') === 'none') {
+            if (this.$Filters.hidden) {
                 this.openFilter();
             } else {
                 this.closeFilter();
@@ -624,65 +704,44 @@ define('package/quiqqer/erp/bin/backend/controls/manufacturers/Administration', 
          * Open the filter
          */
         openFilter: function () {
-            var self            = this,
-                FilterContainer = this.getElm().getElement('.quiqqer-erp-manufacturers-administration-search-filter');
-
-            FilterContainer.setStyle('position', 'absolute');
-            FilterContainer.setStyle('opacity', 0);
-            FilterContainer.setStyle('overflow', 'hidden');
-
-            // reset
-            FilterContainer.setStyle('display', null);
-            FilterContainer.setStyle('height', null);
-            FilterContainer.setStyle('paddingBottom', null);
-            FilterContainer.setStyle('paddingTop', null);
-
-            var height = FilterContainer.getSize().y;
-
-            FilterContainer.setStyle('height', 0);
-            FilterContainer.setStyle('paddingBottom', 0);
-            FilterContainer.setStyle('paddingTop', 0);
-            FilterContainer.setStyle('position', null);
-
-            moofx(FilterContainer).animate({
-                height       : height,
-                marginTop    : 20,
-                opacity      : 1,
-                paddingBottom: 10,
-                paddingTop   : 10
-            }, {
-                duration: 300,
-                callback: function () {
-                    self.resize();
-                }
-            });
+            this.$Filters.hidden = false;
+            this.$FilterButton.setAttribute('aria-expanded', 'true');
+            this.$positionFilter();
+            document.addEventListener('pointerdown', this.$filterOutside);
+            document.addEventListener('keydown', this.$filterKeydown);
+            document.addEventListener('scroll', this.$filterReposition, true);
+            window.addEventListener('resize', this.$filterReposition);
+            this.$Filters.querySelector('[data-name="filter-field"]')?.focus();
         },
 
         /**
          * Close the filter
          */
-        closeFilter: function () {
-            var self            = this,
-                FilterContainer = this.getElm().getElement('.quiqqer-erp-manufacturers-administration-search-filter');
+        closeFilter: function (restoreFocus = false) {
+            if (!this.$Filters) {
+                return;
+            }
 
-            moofx(FilterContainer).animate({
-                height       : 0,
-                marginTop    : 0,
-                opacity      : 1,
-                paddingBottom: 0,
-                paddingTop   : 0
-            }, {
-                duration: 300,
-                callback: function () {
-                    FilterContainer.setStyle('display', 'none');
+            this.$Filters.hidden = true;
+            this.$FilterButton?.setAttribute('aria-expanded', 'false');
+            document.removeEventListener('pointerdown', this.$filterOutside);
+            document.removeEventListener('keydown', this.$filterKeydown);
+            document.removeEventListener('scroll', this.$filterReposition, true);
+            window.removeEventListener('resize', this.$filterReposition);
+            if (restoreFocus) {
+                this.$FilterButton.focus();
+            }
+        },
 
-                    FilterContainer.setStyle('height', null);
-                    FilterContainer.setStyle('paddingBottom', null);
-                    FilterContainer.setStyle('paddingTop', null);
-
-                    self.resize();
-                }
-            });
+        $positionFilter: function () {
+            const button = this.$FilterButton.getBoundingClientRect();
+            const overlay = this.$Filters.getBoundingClientRect();
+            const left = Math.max(8, Math.min(button.right - overlay.width, window.innerWidth - overlay.width - 8));
+            const top = button.bottom + overlay.height + 8 <= window.innerHeight
+                ? button.bottom + 8
+                : Math.max(8, button.top - overlay.height - 8);
+            this.$Filters.style.left = left + 'px';
+            this.$Filters.style.top = top + 'px';
         }
 
         //endregion
