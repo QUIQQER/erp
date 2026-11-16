@@ -3,6 +3,7 @@
 namespace QUITests\ERP\Accounting;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use QUI\ERP\Accounting\Article;
 use QUI\ERP\Accounting\Calc;
 use QUI\ERP\Currency\Currency;
@@ -165,6 +166,43 @@ class ArticleTest extends TestCase
         $fields = $View->getCustomFields();
         self::assertCount(1, $fields);
         self::assertSame('Engraving (+5.00 EUR)', $fields[0]['custom_calc']['valueText']);
+    }
+
+    #[DataProvider('customFieldPriceAdditionProvider')]
+    public function testArticleViewDisplaysSignedCustomFieldAdjustments(
+        float $value,
+        int $calculation,
+        bool $displayDiscounts,
+        string $expectedText
+    ): void {
+        $Article = $this->createMock(Article::class);
+        $Article->method('toArray')->willReturn([
+            'customFields' => [[
+                'title' => 'Option',
+                'custom_calc' => [
+                    'value' => $value,
+                    'valueText' => 'Option',
+                    'displayDiscounts' => $displayDiscounts,
+                    'calculation' => $calculation
+                ]
+            ]]
+        ]);
+        $View = new \QUI\ERP\Accounting\ArticleView($Article);
+        $View->setCurrency($this->currency());
+
+        self::assertSame($expectedText, $View->getCustomFields()[0]['custom_calc']['valueText']);
+    }
+
+    public static function customFieldPriceAdditionProvider(): iterable
+    {
+        yield 'positive percentage' => [10.0, Calc::CALCULATION_PERCENTAGE, true, 'Option (+10%)'];
+        yield 'negative percentage' => [-10.0, Calc::CALCULATION_PERCENTAGE, true, 'Option (-10%)'];
+        yield 'zero percentage' => [0.0, Calc::CALCULATION_PERCENTAGE, true, 'Option'];
+        yield 'positive amount' => [5.0, Calc::CALCULATION_COMPLEMENT, true, 'Option (+5.00 EUR)'];
+        yield 'negative amount' => [-5.0, Calc::CALCULATION_COMPLEMENT, true, 'Option (-5.00 EUR)'];
+        yield 'zero amount' => [0.0, Calc::CALCULATION_COMPLEMENT, true, 'Option'];
+        yield 'hidden positive adjustment' => [10.0, Calc::CALCULATION_PERCENTAGE, false, 'Option'];
+        yield 'hidden negative adjustment' => [-10.0, Calc::CALCULATION_PERCENTAGE, false, 'Option'];
     }
 
     private function currency(): Currency

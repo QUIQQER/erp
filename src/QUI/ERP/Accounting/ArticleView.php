@@ -136,13 +136,9 @@ class ArticleView extends QUI\QDOM
                 if (
                     !empty($field['custom_calc']['displayDiscounts']) &&
                     (!QUI::isFrontend() || !QUI\ERP\Products\Utils\Package::hidePrice()) &&
-                    $sum > 0
+                    $sum != 0
                 ) {
-                    if ($sum >= 0) {
-                        $priceAddition = '+';
-                    } else {
-                        $priceAddition = '-';
-                    }
+                    $priceAddition = $sum > 0 ? '+' : '';
 
                     switch ((int)$field['custom_calc']['calculation']) {
                         case ErpCalc::CALCULATION_PERCENTAGE:
