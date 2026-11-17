@@ -20,6 +20,8 @@ function fixture({variants = [], onGridCreate} = {}) {
 
     class Grid {
         constructor(container, options) {
+            this.$columnModel = options.columnModel;
+            delete options.columnModel;
             this.options = options;
             grid = this;
         }
@@ -114,7 +116,7 @@ test('ERP variant grid uses the shared column hook and preserves extension value
     assert.equal(hook.Control, f.control);
     assert.equal(hook.metadata.context, 'erp.variant-selection');
     assert.equal(hook.metadata.productId, 21);
-    assert.equal(grid.options.columnModel.at(-1).dataIndex, 'packageQuantity');
+    assert.equal(grid.$columnModel.at(-1).dataIndex, 'packageQuantity');
     assert.equal(grid.options.storageKey, 'test-erp-variants');
     assert.deepEqual(Array.from(grid.data.data, row => row.packageQuantity), [0, -1.25, 12.3456]);
     assert.equal(grid.data.data[0].priority, 0);
@@ -133,7 +135,7 @@ test('ERP variant selection keeps its standard columns and data without extensio
     await f.open();
 
     assert.equal(f.getGrid().options.storageKey, 'quiqqer-erp-addproductwindow-variants');
-    assert.equal(f.getGrid().options.columnModel.some(column => column.dataIndex === 'productNo'), true);
+    assert.equal(f.getGrid().$columnModel.some(column => column.dataIndex === 'productNo'), true);
     assert.equal(f.getGrid().data.data[0].id, 31);
     assert.equal(f.getGrid().data.data[0].title, '-');
     assert.equal(await f.select(0), 31);
