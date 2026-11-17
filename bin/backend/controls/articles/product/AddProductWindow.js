@@ -399,7 +399,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWind
                                     }
                                 ]);
 
-                                Win.$VariantGrid = new Grid(GridContainer, gridOptions);
+                                Win.$VariantGrid = new Grid(GridContainer, {...gridOptions});
 
                                 Win.$VariantGrid.addEvents({
                                     onDblClick: function () {
