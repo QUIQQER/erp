@@ -7,6 +7,7 @@
 namespace QUI\ERP\Accounting;
 
 use QUI;
+use QUI\ERP\Enums\Accounting\CalculationMode;
 use QUI\ERP\Money\Price;
 use QUI\ERP\Tax\Utils as TaxUtils;
 use QUI\Exception;
@@ -57,6 +58,8 @@ class Article implements ArticleInterface
      * @var bool
      */
     protected bool $calculated = false;
+
+    protected CalculationMode $calculationMode = CalculationMode::AUTOMATIC;
 
     /**
      * @var float|int
@@ -662,13 +665,31 @@ class Article implements ArticleInterface
 
     //endregion
 
+    //region Calculation mode
+
+    public function getCalculationMode(): CalculationMode
+    {
+        return $this->calculationMode;
+    }
+
+    public function setCalculationMode(CalculationMode $mode): void
+    {
+        if ($this->calculationMode === CalculationMode::MANUAL && $mode === CalculationMode::AUTOMATIC) {
+            $this->calculated = false;
+        }
+
+        $this->calculationMode = $mode;
+    }
+
+    //endregion
+
     /**
      * @param null|Calc|QUI\ERP\User $Instance
      * @return self
      */
     public function calc(null | Calc | QUI\ERP\User $Instance = null): Article
     {
-        if ($this->calculated) {
+        if ($this->calculationMode === CalculationMode::MANUAL || $this->calculated) {
             return $this;
         }
 

@@ -139,14 +139,24 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
         }
     }
 
-    /**
-     * Store the document policy without changing the current amounts or calculation cache.
-     * Calculation guards and manual amount editing are implemented separately.
-     */
+    //region Calculation mode
+
     public function setCalculationMode(CalculationMode $mode): void
     {
+        if ($this->calculationMode === CalculationMode::MANUAL && $mode === CalculationMode::AUTOMATIC) {
+            $this->calculated = false;
+        }
+
         $this->calculationMode = $mode;
+
+        foreach ($this->articles as $Article) {
+            if ($Article instanceof Article) {
+                $Article->setCalculationMode($mode);
+            }
+        }
     }
+
+    //endregion
 
     /**
      * Set the user for the list
@@ -264,7 +274,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
     {
         $data = parent::toArray();
 
-        if (empty($data['calculations'])) {
+        if ($this->calculationMode === CalculationMode::MANUAL || empty($data['calculations'])) {
             return $data;
         }
 
@@ -342,6 +352,10 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
      */
     public function recalculate(?QUI\ERP\Accounting\Calc $Calc = null): void
     {
+        if ($this->calculationMode === CalculationMode::MANUAL) {
+            return;
+        }
+
         $this->calculated = false;
 
         foreach ($this->articles as $Article) {
@@ -359,7 +373,7 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
      */
     public function calc(?QUI\ERP\Accounting\Calc $Calc = null): ArticleList
     {
-        if ($this->calculated) {
+        if ($this->calculationMode === CalculationMode::MANUAL || $this->calculated) {
             return $this;
         }
 
@@ -413,6 +427,10 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
      */
     public function addArticle(ArticleInterface $Article): void
     {
+        if ($Article instanceof Article) {
+            $Article->setCalculationMode($this->calculationMode);
+        }
+
         $this->articles[] = $Article;
         $this->calculated = false;
 
@@ -458,6 +476,10 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
      */
     public function replaceArticle(ArticleInterface $Article, int $index): void
     {
+        if ($Article instanceof Article) {
+            $Article->setCalculationMode($this->calculationMode);
+        }
+
         $this->articles[$index] = $Article;
     }
 
@@ -501,6 +523,13 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
      */
     public function addPriceFactor(Factor | QUI\ERP\Products\Utils\PriceFactor $PriceFactor): void
     {
+        if ($this->calculationMode === CalculationMode::MANUAL) {
+            $this->PriceFactors->addFactor(
+                $PriceFactor instanceof Factor ? $PriceFactor : new Factor($PriceFactor->toArray())
+            );
+            return;
+        }
+
         if ($PriceFactor instanceof QUI\ERP\Products\Utils\PriceFactor) {
             $isNetto = $this->isNetto;
             $vat = 0;

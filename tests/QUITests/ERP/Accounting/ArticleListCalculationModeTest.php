@@ -4,9 +4,12 @@ namespace QUITests\ERP\Accounting;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use QUI\ERP\Accounting\Article;
 use QUI\ERP\Accounting\ArticleList;
 use QUI\ERP\Accounting\ArticleListUnique;
+use QUI\ERP\Accounting\Calc;
 use QUI\ERP\Accounting\Calculations;
+use QUI\ERP\Accounting\PriceFactors\Factor;
 use QUI\ERP\Defaults;
 use QUI\ERP\Enums\Accounting\CalculationMode;
 use QUI\ERP\Exception;
@@ -61,18 +64,130 @@ class ArticleListCalculationModeTest extends TestCase
         }
     }
 
-    public function testModeCanBeChangedWithoutRecalculatingOrReplacingTheSnapshot(): void
+    public function testEnteringManualModeDoesNotRecalculateOrReplaceTheSnapshot(): void
     {
         $List = new ArticleList($this->snapshot());
+        $beforeTotals = $List->getCalculations();
+        $beforeArticle = $List->getArticles()[0]->toArray();
+
+        $List->setCalculationMode(CalculationMode::MANUAL);
+
+        self::assertSame($beforeTotals, $List->toArray()['calculations']);
+        self::assertSame($beforeArticle, $List->toArray()['articles'][0]);
+        self::assertSame(CalculationMode::MANUAL, $List->getArticles()[0]->getCalculationMode());
+    }
+
+    public function testManualAmountsSurviveCustomerChangesGettersAndRecalculation(): void
+    {
+        $snapshot = $this->snapshot();
+        $snapshot['calculationMode'] = 'manual';
+        // Deliberately inconsistent: manual values belong to the user and must not be corrected.
+        $snapshot['calculations']['sum'] = 42.1234;
+        $snapshot['calculations']['vatSum'] = 0.123456;
+        $User = $this->createMock(\QUI\Interfaces\Users\User::class);
+        $List = new ArticleList($snapshot, $User);
         $before = $List->toArray();
+        $Calc = $this->createMock(Calc::class);
+        $Calc->expects(self::never())->method('calcArticleList');
+        $Calc->expects(self::never())->method('calcArticlePrice');
 
-        foreach ([CalculationMode::MANUAL, CalculationMode::AUTOMATIC] as $mode) {
-            $List->setCalculationMode($mode);
-            $expected = $before;
-            $expected['calculationMode'] = $mode->value;
+        $List->setUser($this->createMock(\QUI\Interfaces\Users\User::class));
+        $List->calc($Calc);
+        $List->recalculate($Calc);
+        $Article = $List->getArticles()[0];
+        $Article->setUser($User);
+        $Article->calc($Calc);
 
-            self::assertSame($expected, $List->toArray());
+        self::assertSame(8.395, $Article->getPrice()->value());
+        self::assertSame(8.395, $Article->getSum()->value());
+        self::assertSame($before, $List->toArray());
+        self::assertSame($before, $List->toUniqueList()->toArray());
+        self::assertSame($List->serialize(), ArticleListUnique::unserialize($List->serialize())->serialize());
+    }
+
+    public function testDirectCalcEntryPointsReturnManualValuesIncludingCallbacks(): void
+    {
+        $snapshot = $this->snapshot();
+        $snapshot['calculationMode'] = 'manual';
+        $List = new ArticleList($snapshot);
+        $Article = $List->getArticles()[0];
+        // No initialized user/tax context: the manual path must not enter the automatic calculator.
+        $Calc = (new \ReflectionClass(Calc::class))->newInstanceWithoutConstructor();
+        $totals = null;
+        $position = null;
+
+        self::assertSame($List, $Calc->calcArticleList($List));
+        $Calc->calcArticleList($List, static function (array $data) use (&$totals): void {
+            $totals = $data;
+        });
+        self::assertSame(8.395, $Calc->calcArticlePrice($Article)->value());
+        $Calc->calcArticlePrice($Article, static function (array $data) use (&$position): void {
+            $position = $data;
+        });
+
+        self::assertSame($snapshot['calculations'], $totals);
+        self::assertSame($Article->toArray()['calculated'], $position);
+    }
+
+    public function testAddedAndReplacedArticlesInheritTheManualMode(): void
+    {
+        $snapshot = $this->snapshot();
+        $List = new ArticleList($snapshot);
+        $List->setCalculationMode(CalculationMode::MANUAL);
+        $Added = new Article($snapshot['articles'][0]);
+        $Replacement = new Article($snapshot['articles'][0]);
+
+        $List->addArticle($Added);
+        $List->replaceArticle($Replacement, 0);
+
+        foreach ([$Added, $Replacement] as $Article) {
+            $Article->setUser($this->createMock(\QUI\Interfaces\Users\User::class));
+            self::assertSame(CalculationMode::MANUAL, $Article->getCalculationMode());
+            self::assertSame(8.395, $Article->getSum()->value());
         }
+
+        self::assertSame($snapshot['calculations'], $List->getCalculations());
+    }
+
+    public function testManualPriceFactorsKeepTheirAmountsAndDoNotRecalculateTotals(): void
+    {
+        $List = new ArticleList($this->snapshot());
+        $List->setCalculationMode(CalculationMode::MANUAL);
+        $totals = $List->getCalculations();
+        $Factor = new Factor([
+            'title' => 'Manual surcharge', 'description' => '',
+            'sum' => 1.2345, 'sumFormatted' => '',
+            'nettoSum' => 0.9876, 'nettoSumFormatted' => '',
+            'visible' => 1, 'value' => 0.2469, 'vat' => 19
+        ]);
+        $before = $Factor->toArray();
+
+        $List->addPriceFactor($Factor);
+
+        self::assertSame($before, $List->getPriceFactors()->getFactor(0)->toArray());
+        self::assertSame($totals, $List->getCalculations());
+    }
+
+    public function testSwitchingBackToAutomaticResumesCalculation(): void
+    {
+        $snapshot = $this->snapshot();
+        $List = new ArticleList($snapshot);
+        $List->setCalculationMode(CalculationMode::MANUAL);
+        $List->setCalculationMode(CalculationMode::AUTOMATIC);
+        $Calc = $this->createMock(Calc::class);
+        $totals = $snapshot['calculations'];
+        $totals['sum'] = 123.456;
+        $Calc->expects(self::once())->method('calcArticleList')->willReturnCallback(
+            static function (ArticleList $List, callable $callback) use ($totals): ArticleList {
+                $callback($totals);
+                return $List;
+            }
+        );
+
+        $List->calc($Calc);
+
+        self::assertSame(123.456, $List->getCalculations()['sum']);
+        self::assertSame(CalculationMode::AUTOMATIC, $List->getArticles()[0]->getCalculationMode());
     }
 
     public function testUniqueSnapshotRetainsItsModeWhenConvertedBackToAMutableList(): void

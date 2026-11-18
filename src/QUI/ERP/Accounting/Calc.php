@@ -14,6 +14,7 @@ use QUI\ERP\Accounting\Invoice\Handler;
 use QUI\ERP\Accounting\Invoice\Invoice;
 use QUI\ERP\Currency\Currency;
 use QUI\ERP\Database\Queries;
+use QUI\ERP\Enums\Accounting\CalculationMode;
 use QUI\ERP\Money\Price;
 use QUI\Interfaces\Users\User as UserInterface;
 use QUI\Locale;
@@ -204,6 +205,11 @@ class Calc
         // calc data
         if (!is_callable($callback)) {
             return $List->calc();
+        }
+
+        if ($List->getCalculationMode() === CalculationMode::MANUAL) {
+            $callback($List->getCalculations());
+            return $List;
         }
 
         // user order address
@@ -543,6 +549,11 @@ class Calc
         if (!is_callable($callback)) {
             $Article->calc($this);
 
+            return $Article->getPrice();
+        }
+
+        if ($Article instanceof Article && $Article->getCalculationMode() === CalculationMode::MANUAL) {
+            $callback($Article->toArray()['calculated']);
             return $Article->getPrice();
         }
 

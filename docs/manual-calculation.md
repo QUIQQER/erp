@@ -1,10 +1,10 @@
 # Manual calculation: document model
 
-This is step 1 of the manual amount entry work described in
+This covers steps 1 and 2 of the manual amount entry work described in
 [pcsg/buero#551](https://dev.quiqqer.com/pcsg/buero/-/issues/551#note_352699).
-It introduces the persisted policy only. Calculation guards, amount editing,
-validation and the purchasing endpoints are subsequent steps. Setting the mode
-does **not yet disable calculation** or protect values against recalculation.
+The persisted mode now also controls calculation. In manual mode, `calc()` and
+`recalculate()` keep the existing values. UI editing and purchasing endpoints
+are subsequent steps.
 
 ## Calculation mode
 
@@ -13,8 +13,9 @@ and document totals. Individual articles do not have a separate mode.
 
 `QUI\ERP\Enums\Accounting\CalculationMode` defines `AUTOMATIC` (`automatic`)
 and `MANUAL` (`manual`). `ArticleListUnique::getCalculationMode()` exposes it;
-the editable `ArticleList::setCalculationMode()` changes it without calculating
-or replacing amounts. Immutable lists expose no mode setter.
+the editable `ArticleList::setCalculationMode()` passes it to its articles.
+`Article` uses the same enum. Its mode is inherited at runtime and is not stored
+separately. Immutable lists expose no mode setter.
 
 The existing `$calculated` properties indicate the validity of the calculation
 cache, not the document's mode. Cache invalidation must not change the mode.
@@ -69,10 +70,20 @@ The precision regression fixture retains net 8.3950, VAT 1.5951 and final gross
 required to store those values. Do not enforce exact unrounded equality in the
 model: validation and the handling of supplier rounding belong to later steps.
 
-## Next integration step
+## Calculation behavior
 
-Add manual calculation guards to `ArticleList`, `Article` and calculation entry
-points. In particular, serialization calls `calc()`, `toUniqueList()` can set the
-user on articles, and `setUser()` invalidates calculation caches. Those paths
-must eventually respect the persisted policy. This model change alone does not
-make manual entry available in the UI or support its complete save/post lifecycle.
+Manual mode skips calculation in `ArticleList`, `Article` and the direct
+`Calc::calcArticleList()` / `Calc::calcArticlePrice()` entry points. Callbacks
+receive the stored values. The mode also applies to loaded, added and replaced
+articles, so customer changes and price getters cannot silently recalculate them.
+Serialization retains the original totals, including any supplied `vatSum`,
+without regenerating amounts or display values.
+
+Adding a price factor in manual mode keeps its supplied amounts and does not
+update document totals. Currency assignment keeps its existing behavior; it does
+not convert manual amounts. Switching back to automatic invalidates the cache,
+allowing the next calculation to run normally.
+
+There are no additional validation rules or exception paths. Inconsistent
+amounts remain unchanged; a possible UI hint is deferred to the UI work. Manual
+entry still needs to be connected to the UI and purchasing save/post endpoints.

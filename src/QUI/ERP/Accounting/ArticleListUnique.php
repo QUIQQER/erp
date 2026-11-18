@@ -163,6 +163,14 @@ class ArticleListUnique implements IteratorAggregate
             $this->articles[] = new Article($article);
         }
 
+        if ($this->calculationMode === CalculationMode::MANUAL) {
+            foreach ($this->articles as $Article) {
+                if ($Article instanceof Article) {
+                    $Article->setCalculationMode(CalculationMode::MANUAL);
+                }
+            }
+        }
+
         if ($User) {
             $this->User = $User;
 
@@ -321,6 +329,8 @@ class ArticleListUnique implements IteratorAggregate
         return $this->calculations;
     }
 
+    //region Calculation mode
+
     /**
      * Return the persisted document policy, independently of whether its prices have been calculated.
      */
@@ -328,6 +338,8 @@ class ArticleListUnique implements IteratorAggregate
     {
         return $this->calculationMode;
     }
+
+    //endregion
 
     /**
      * Return the list articles
