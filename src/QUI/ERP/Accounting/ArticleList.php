@@ -10,6 +10,7 @@ use IteratorAggregate;
 use QUI;
 use QUI\ERP\Accounting\PriceFactors\Factor;
 use QUI\ERP\Currency\Currency;
+use QUI\ERP\Enums\Accounting\CalculationMode;
 use QUI\ERP\Exception;
 use QUI\Interfaces\Users\User;
 
@@ -136,6 +137,15 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
         if (!empty($this->calculations)) {
             $this->calculated = true;
         }
+    }
+
+    /**
+     * Store the document policy without changing the current amounts or calculation cache.
+     * Calculation guards and manual amount editing are implemented separately.
+     */
+    public function setCalculationMode(CalculationMode $mode): void
+    {
+        $this->calculationMode = $mode;
     }
 
     /**
