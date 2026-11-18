@@ -45,7 +45,7 @@ function article(vat, calculatedVat = 19) {
     });
     return Object.assign(Object.create(Article), {
         $created: true,
-        $calculate: true,
+        $calculationMode: 'automatic',
         $bruttoCalc: {},
         $Total: cell(),
         $UnitPrice: cell(),

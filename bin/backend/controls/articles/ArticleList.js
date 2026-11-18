@@ -11,22 +11,24 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
     'qui/QUI',
     'qui/controls/Control',
-    'qui/controls/buttons/Switch',
+    'package/quiqqer/erp/bin/backend/controls/articles/PriceDisplay',
     'qui/controls/loader/Loader',
     'Mustache',
     'Ajax',
     'Locale',
+    'Packages',
 
     'package/quiqqer/erp/bin/backend/controls/articles/product/AddProductWindow',
     'package/quiqqer/erp/bin/backend/controls/articles/Article',
+    'package/quiqqer/erp/bin/backend/controls/articles/CalculationMode',
     'package/quiqqer/erp/bin/backend/classes/Sortable',
 
     'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleList.html',
     'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleList.sortablePlaceholder.html',
     'css!package/quiqqer/erp/bin/backend/controls/articles/ArticleList.css'
 
-], function (QUI, QUIControl, QUISwitch, QUILoader, Mustache,
-             QUIAjax, QUILocale, AddProductWindow, Article, Sortables, template, templateSortablePlaceholder
+], function (QUI, QUIControl, PriceDisplay, QUILoader, Mustache,
+             QUIAjax, QUILocale, Packages, AddProductWindow, Article, CalculationMode, Sortables, template, templateSortablePlaceholder
 ) {
     'use strict';
 
@@ -66,7 +68,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             this.$calculationTimer = null;
             this.$isIncalculationFrame = false;
 
-            this.$calculate = true; // calculation is running or not
+            this.$calculationMode = 'automatic';
+            this.$calculationVersion = 0;
 
             this.$calculations = {
                 currencyData: {},
@@ -83,10 +86,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             this.$Container = null;
             this.$Sortables = null;
             this.$priceFactors = [];
-            this.$Switch = null;
+            this.$PriceDisplay = null;
+            this.$shopIsNetto = null;
+            this.$shopPricingRequest = null;
+            this.$destroyed = false;
 
             this.addEvents({
-                onInject: this.$onInject
+                onInject: this.$onInject,
+                onDestroy: () => {
+                    this.$destroyed = true;
+                }
             });
         },
 
@@ -102,19 +111,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             this.$Elm.addClass('quiqqer-erp-backend-erpItems');
             this.$Elm.set('data-qui', 'package/quiqqer/erp/bin/backend/controls/articles/ArticleList');
 
-            this.$Elm.set({
-                html: Mustache.render(template, {
-                    titleArticleNo: QUILocale.get(lg, 'products.articleNo'),
-                    titleDescription: QUILocale.get(lg, 'products.description'),
-                    titleQuantity: QUILocale.get(lg, 'products.quantity'),
-                    titleQuantityUnit: QUILocale.get(lg, 'products.quantityUnit'),
-                    titleUnitPrice: QUILocale.get(lg, 'products.unitPrice'),
-                    titlePrice: QUILocale.get(lg, 'products.price'),
-                    titleVAT: QUILocale.get(lg, 'products.table.vat'),
-                    titleDiscount: QUILocale.get(lg, 'products.discount'),
-                    titleSum: QUILocale.get(lg, 'products.sum')
-                })
-            });
+            this.$Elm.innerHTML = template;
 
             this.$Loader = new QUILoader().inject(this.$Elm);
 
@@ -122,33 +119,27 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 this.setStyles(this.getAttribute('styles'));
             }
 
-            this.$Container = this.$Elm.getElement('.quiqqer-erp-backend-erpItems-items');
-            const SwitchDesc = this.$Elm.getElement('.quiqqer-erp-backend-erpItems-container-switch-desc');
-
-            this.$Switch = new QUISwitch({
-                switchTextOn: 'netto',
-                switchTextOnIcon: false,
-                switchTextOff: 'brutto',
-                switchTextOffIcon: false,
+            this.$Container = this.$Elm.querySelector('[data-name="items"]');
+            this.$PriceDisplay = new PriceDisplay({
+                netto: !!this.getAttribute('nettoinput'),
                 events: {
-                    onChange: function () {
-                        self.$Loader.show();
-                        self.setAttribute('nettoinput', !!self.$Switch.getStatus());
-                        self.$refreshNettoBruttoDisplay();
-                        self.$calc().then(() => {
-                            self.$Loader.hide();
-                        });
+                    onChange: (Control, netto) => {
+                        this.$Loader.show();
+                        this.setAttribute('nettoinput', netto);
+                        this.$refreshNettoBruttoDisplay();
+                        this.$calc().finally(() => this.$Loader.hide()).catch(console.error);
                     }
                 }
-            }).inject(
-                this.$Elm.getElement('.quiqqer-erp-backend-erpItems-container-switch-btn')
-            );
-
-            SwitchDesc.addEvent('click', function () {
-                self.$Switch.toggle();
-            });
+            }).inject(this.$Elm.querySelector('[data-name="price-display"]'));
+            this.addEvent('onDestroy', () => this.$PriceDisplay.destroy());
 
             this.$refreshNettoBruttoDisplay();
+            this.$loadShopPricing();
+
+            this.$Mode = new CalculationMode({
+                ArticleList: this
+            }).inject(this.$Elm.querySelector('[data-name="calculation-mode"]'));
+            this.addEvent('onDestroy', () => this.$Mode.destroy());
 
             return this.$Elm;
         },
@@ -170,15 +161,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * @returns {Object}
          */
         serialize: function () {
-            const articles = this.$getArticles().map(function (ArticleInstance) {
-                const attr = ArticleInstance.getAttributes();
-                attr.control = typeOf(ArticleInstance);
-
-                return attr;
-            });
-
             return {
-                articles: articles,
+                articles: this.save(),
+                calculationMode: this.getCalculationMode(),
+                calculations: this.$calculations.calculations,
                 priceFactors: this.$priceFactors
             };
         },
@@ -226,7 +212,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             if (typeOf(list) === 'string') {
                 try {
-                    data = JSON.stringify(list);
+                    data = JSON.parse(list);
                 } catch (e) {
                 }
             } else {
@@ -245,6 +231,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     this.$refreshNettoBruttoDisplay();
                 }
             }
+
+            this.setCalculationMode(data.calculationMode || 'automatic');
 
             if (!('articles' in data)) {
                 return Promise.resolve();
@@ -269,33 +257,39 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 return 'package/quiqqer/erp/bin/backend/controls/articles/Article';
             }).unique();
 
-            require(controls, function () { // dont use () => {
-                let i, len, article, index;
+            return new Promise((resolve) => {
+                require(controls, function () { // dont use () => {
+                    let i, len, article, index;
 
-                for (i = 0, len = data.articles.length; i < len; i++) {
-                    article = data.articles[i];
-                    index = controls.indexOf(article.control);
+                    for (i = 0, len = data.articles.length; i < len; i++) {
+                        article = data.articles[i];
+                        index = controls.indexOf(article.control);
 
-                    if (index === -1) {
-                        self.addArticle(new Article(article));
-                        continue;
+                        if (index === -1) {
+                            self.addArticle(new Article(article));
+                            continue;
+                        }
+
+                        try {
+                            self.addArticle(new arguments[index](article));
+                        } catch (e) {
+                            console.log(e);
+                        }
                     }
 
-                    try {
-                        self.addArticle(new arguments[index](article));
-                    } catch (e) {
-                        console.log(e);
+                    if (selectedPosition && typeof self.$articles[selectedPosition - 1] !== 'undefined') {
+                        self.$articles[selectedPosition - 1].select();
                     }
-                }
 
-                if (selectedPosition && typeof self.$articles[selectedPosition - 1] !== 'undefined') {
-                    self.$articles[selectedPosition - 1].select();
-                }
-
-                self.fireEvent('calc', [
-                    self,
-                    self.$calculations
-                ]);
+                    self.fireEvent('calc', [
+                        self,
+                        self.$calculations
+                    ]);
+                    if (self.getCalculationMode() === 'manual') {
+                        self.$syncManualArticles();
+                    }
+                    resolve();
+                });
             });
         },
 
@@ -340,11 +334,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 Child.setCurrency(this.getAttribute('currency'));
             }
 
-            if (!this.$calculate) {
-                if (typeof Child.disableCalculation === 'function') Child.disableCalculation();
-            } else {
-                if (typeof Child.enableCalculation === 'function') Child.enableCalculation();
-            }
+            Child.setCalculationMode(this.getCalculationMode());
 
             this.$articles.push(Child);
 
@@ -358,7 +348,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 onUnSelect: this.$onArticleUnSelect,
                 onReplace: this.$onArticleReplace,
                 onEditCustomFields: this.$onArticleEditCustomFields,
-                onCalc: this.$executeCalculation
+                onCalc: this.$onArticleCalc
             });
 
             if (this.$Container) {
@@ -415,9 +405,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          */
         save: function () {
             return this.$articles.map(function (ArticleInstance) {
-                return Object.merge(ArticleInstance.getAttributes(), {
+                const data = Object.assign({}, ArticleInstance.getAttributes(), {
                     control: ArticleInstance.getType()
                 });
+                delete data.List;
+                delete data.User;
+                return data;
             });
         },
 
@@ -425,8 +418,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * Calculate the list
          */
         $calc: function () {
-            if (!this.$calculate) {
-                return Promise.resolve();
+            if (this.getCalculationMode() === 'manual') {
+                return Promise.resolve(this.$calculations);
             }
 
             return new Promise((resolve) => {
@@ -453,11 +446,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * @returns {Promise}
          */
         $executeCalculation: function () {
-            if (!this.$calculate) {
-                return Promise.resolve();
+            if (this.getCalculationMode() === 'manual') {
+                return Promise.resolve(this.$calculations);
             }
 
             const self = this;
+            const version = this.$calculationVersion;
 
             if (this.$isIncalculationFrame) {
                 this.fireEvent('calc', [
@@ -485,6 +479,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 const articles = this.$getArticleDataForCalculation();
 
                 QUIAjax.get('package_quiqqer_erp_ajax_products_calc', (result) => {
+                    if (this.getCalculationMode() === 'manual' || version !== this.$calculationVersion) {
+                        resolve(this.$calculations);
+                        return;
+                    }
+
                     this.$calculations = result;
                     this.$priceFactors = result.priceFactors;
 
@@ -493,7 +492,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
                     // performance double request -> quiqqer/invoice#104
                     setTimeout(() => {
-                        self.$isIncalculationFrame = false;
+                        if (version === self.$calculationVersion) {
+                            self.$isIncalculationFrame = false;
+                        }
                     }, 100);
 
                     this.fireEvent('calc', [
@@ -509,7 +510,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                     user: JSON.encode(this.$user),
                     currency: this.getAttribute('currency'),
                     nettoInput: this.getAttribute('nettoinput') ? 1 : 0,
-                    onError: function (err) {
+                    onError: (err) => {
+                        if (version !== this.$calculationVersion) {
+                            resolve(this.$calculations);
+                            return;
+                        }
+
+                        this.$calculationRunning = false;
                         console.error(err);
                         reject();
                     }
@@ -523,8 +530,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * @return {Array}
          */
         $getArticleDataForCalculation: function () {
-            return this.$articles.map(function (ArticleInstance) {
-                return ArticleInstance.getAttributes();
+            return this.save().map((data) => {
+                delete data.calculated;
+                return data;
             });
         },
 
@@ -553,26 +561,100 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
             ]);
         },
 
-        disableCalculations: function () {
-            this.$calculate = false;
-            this.$calculations.calculate = 0;
+        //region Calculation mode
 
-            this.$articles.forEach((Article) => {
-                Article.disableCalculations();
-            });
+        getCalculationMode: function () {
+            return this.$calculationMode || 'automatic';
         },
 
-        enableCalculations: function () {
-            this.$calculate = true;
+        changeCalculationMode: function (mode) {
+            this.setCalculationMode(mode);
+            const calculated = mode === 'automatic' ? this.$executeCalculation() : Promise.resolve();
 
-            if (typeof this.$calculations.calculate !== 'undefined') {
+            return calculated.then(() => Promise.all(this.$articles.map((Article) => Article.calc())));
+        },
+
+        setCalculationMode: function (mode) {
+            const calculationMode = mode === 'manual' ? 'manual' : 'automatic';
+
+            if (this.getCalculationMode() !== calculationMode) {
+                this.$calculationVersion = (this.$calculationVersion || 0) + 1;
+                this.$calculationRunning = false;
+                this.$isIncalculationFrame = false;
+            }
+
+            this.$calculationMode = calculationMode;
+            this.$calculations.calculationMode = this.getCalculationMode();
+
+            if (this.$Elm) {
+                const manual = calculationMode === 'manual';
+                this.$Elm.classList.toggle('quiqqer-erp-backend-erpItems-manual', manual);
+            }
+
+            if (calculationMode === 'automatic') {
                 delete this.$calculations.calculate;
+            } else {
+                this.$calculations.calculate = 0;
+                this.$calculations.calculations = this.$calculations.calculations || {
+                    sum: 0,
+                    subSum: 0,
+                    grandSubSum: 0,
+                    nettoSum: 0,
+                    nettoSubSum: 0,
+                    vatArray: {},
+                    vatText: {},
+                    isNetto: true,
+                    isEuVat: false,
+                    currencyData: {code: this.getAttribute('currency') || 'EUR'}
+                };
             }
 
             this.$articles.forEach((Article) => {
-                Article.disableCalculations();
+                if (calculationMode === 'manual') {
+                    const data = (this.$calculations.articles || []).find((entry) => {
+                        return Number(entry.position) === Number(Article.getAttribute('position'));
+                    });
+                    const gross = (this.$calculations.brutto?.articles || []).find((entry) => {
+                        return Number(entry.position) === Number(Article.getAttribute('position'));
+                    });
+
+                    if (data) Article.setCalculations(data);
+                    if (gross) Article.$bruttoCalc = gross;
+                }
+
+                Article.setCalculationMode(this.getCalculationMode());
             });
+
+            if (calculationMode === 'manual') {
+                this.$syncManualArticles();
+            }
+
+            this.fireEvent('calc', [this, this.$calculations]);
         },
+
+        disableCalculations: function () {
+            this.setCalculationMode('manual');
+        },
+
+        enableCalculations: function () {
+            this.setCalculationMode('automatic');
+        },
+
+        $syncManualArticles: function () {
+            this.$calculations.articles = this.save();
+        },
+
+        $onArticleCalc: function () {
+            if (this.getCalculationMode() === 'manual') {
+                this.$syncManualArticles();
+                this.fireEvent('calc', [this, this.$calculations]);
+                return Promise.resolve(this.$calculations);
+            }
+
+            return this.$executeCalculation();
+        },
+
+        //endregion
 
         /**
          * Return the first / main vat of the list
@@ -732,7 +814,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
                 new Element('div', {
                     'class': 'quiqqer-erp-sortableClone-placeholder',
-                    html: Mustache.render(templateSortablePlaceholder, attributes)
+                    html: Mustache.render(templateSortablePlaceholder, Object.assign({}, attributes, {
+                        hasAmounts: ArticleInstance.getType() !== 'package/quiqqer/erp/bin/backend/controls/articles/Text',
+                        labelArticleNo: QUILocale.get(lg, 'products.articleNo'),
+                        labelDescription: QUILocale.get(lg, 'products.description'),
+                        labelQuantity: QUILocale.get(lg, 'products.quantity'),
+                        labelUnitPrice: QUILocale.get(lg, 'products.unitPrice'),
+                        labelPrice: QUILocale.get(lg, 'products.price')
+                    }))
                 }).inject(Node);
             });
 
@@ -890,6 +979,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
 
             this.$articles = articles;
 
+            if (this.getCalculationMode() === 'manual') {
+                this.$onArticleCalc();
+            }
+
             this.$executeCalculation().then(function () {
                 if (self.$articles.length) {
                     self.$articles[0].select();
@@ -999,66 +1092,54 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
         },
 
         /**
+         * Load the shop reference once; mixed shops allow both price displays.
+         */
+        $loadShopPricing: function () {
+            if (this.$shopPricingRequest || this.$destroyed) {
+                return this.$shopPricingRequest || Promise.resolve();
+            }
+
+            this.$shopPricingRequest = Promise.resolve().then(() => Promise.all([
+                Packages.getConfig('quiqqer/tax'),
+                Packages.getConfig('quiqqer/erp')
+            ])).then(([taxConfig, erpConfig]) => {
+                if (this.$destroyed) {
+                    return;
+                }
+
+                const businessType = erpConfig?.general?.businessType;
+                const shopIsNetto = taxConfig?.shop?.isNetto;
+
+                if ((businessType === 'B2B' || businessType === 'B2C') &&
+                    [true, false, 0, 1, '0', '1'].includes(shopIsNetto)) {
+                    this.$shopIsNetto = shopIsNetto === true || shopIsNetto === 1 || shopIsNetto === '1';
+                }
+
+                this.$refreshNettoBruttoDisplay();
+            }).catch(() => {
+                // A missing or inaccessible shop configuration must not produce a warning.
+            });
+
+            return this.$shopPricingRequest;
+        },
+
+        /**
          * refresh the brutto / netto switch display
          */
         $refreshNettoBruttoDisplay: function () {
-            const SwitchDesc = this.$Elm.getElement('.quiqqer-erp-backend-erpItems-container-switch-desc');
-            const Container = this.$Elm.getElement('.quiqqer-erp-backend-erpItems-container-switch');
+            const netto = !!this.getAttribute('nettoinput');
+            this.$PriceDisplay.setValue(netto);
+            this.$Elm.classList.toggle('netto-view', netto);
+            this.$Elm.classList.toggle('brutto-view', !netto);
 
-            Container.removeClass('quiqqer-erp-backend-erpItems-container-switch--warning');
-            Container.getElements('.netto-warning').destroy();
+            let warning = '';
 
-            if (this.getAttribute('nettoinput')) {
-                SwitchDesc.set('html', QUILocale.get(lg, 'control.articleList.netto.message'));
-
-                this.$Switch.setSilentOn();
-                this.$Elm.addClass('netto-view');
-                this.$Elm.removeClass('brutto-view');
-
-                // hinweis, wenn die grundeinstellung brutto ist
-                // aber netto angezeigt werden soll, kann dies zu unterschiedlichen anzeigen führen
-                if (this.$calculations.calculations &&
-                    typeof this.$calculations.calculations.isNetto !== 'undefined' &&
-                    this.$calculations.calculations.isNetto === false
-                ) {
-                    let warning = QUILocale.get(lg, 'control.articleList.brutto.message--nettoWarning');
-
-                    Container.addClass('quiqqer-erp-backend-erpItems-container-switch--warning');
-
-                    const Warning = new Element('span', {
-                        html: '<span class="fa fa-warning"></span>',
-                        'class': 'netto-warning',
-                        styles: {
-                            height: 40,
-                            lineHeight: 40,
-                            right: 0,
-                            position: 'absolute',
-                            textAlign: 'center',
-                            top: 0,
-                            width: 40
-                        }
-                    }).inject(Container);
-
-                    require([
-                        URL_OPT_DIR + 'quiqqer/core/bin/QUI/lib/tippy/tippy.min.js',
-                        'css!' + URL_OPT_DIR + 'quiqqer/core/bin/QUI/lib/tippy/tippy.css'
-                    ], function (tippy) {
-                        tippy(Warning, {
-                            animateFill: false,
-                            animation: 'shift-away',
-                            allowHTML: true,
-                            content: function () {
-                                return warning.replace(/ +(?= )/g, '').replace('\n', '').trim();
-                            }
-                        });
-                    });
-                }
-            } else {
-                SwitchDesc.set('html', QUILocale.get(lg, 'control.articleList.brutto.message'));
-                this.$Switch.setSilentOff();
-                this.$Elm.addClass('brutto-view');
-                this.$Elm.removeClass('netto-view');
+            if (typeof this.$shopIsNetto === 'boolean' && netto !== this.$shopIsNetto) {
+                warning = QUILocale.get(lg, 'article.priceDisplay.mismatch');
             }
+
+            this.$PriceDisplay.setWarning(warning);
         }
+
     });
 });

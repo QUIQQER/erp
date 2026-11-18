@@ -1,37 +1,19 @@
 .quiqqer-erp-backend-erpArticleText {
-    align-items: stretch;
-    border-bottom: 1px solid #DEDEDE;
-    border-left: 2px solid #FFFFFF;
-    clear: both;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    float: left;
-    min-height: 50px;
-    position: relative;
-    width: 100%;
-}
-
-.quiqqer-erp-backend-erpArticle-select {
-    border-left: 2px solid #2F8FC6;
-}
-
-.quiqqer-erp-backend-erpArticleText .cell {
-    padding: 10px;
-    position: relative;
-}
-
-.quiqqer-erp-backend-erpArticleText .cell-editable:hover {
-    background: rgba(0, 0, 0, 0.1);
-    cursor: pointer;
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
 }
 
 .quiqqer-erp-backend-erpArticleText-pos {
-    width: 50px;
+    color: var(--_article-accent);
+    font-weight: 600;
+}
+
+.quiqqer-erp-backend-erpArticleText .cell::before {
+    content: attr(data-label);
 }
 
 .quiqqer-erp-backend-erpArticleText-text {
-    width: calc(100% - 120px);
+    min-width: 0;
 }
 
 .quiqqer-erp-backend-erpArticleText-text-title {
@@ -49,14 +31,14 @@
 }
 
 .quiqqer-erp-backend-erpArticleText-text-description-edit {
-    background: #EFEFEF;
-    border: 1px solid #EFEFEF;
+    background: var(--qui-colors-gray-50);
+    border: 1px solid var(--qui-colors-gray-200);
     height: 100%;
     left: 0;
     overflow: hidden;
     position: absolute;
     top: 0;
-    width: 100%
+    width: 100%;
 }
 
 .quiqqer-erp-backend-erpArticleText-text-description-buttons {
@@ -64,26 +46,6 @@
     text-align: center;
 }
 
-
-
-
 .quiqqer-erp-backend-erpArticleText-buttons {
-    background: #DEDEDE;
-    display: none;
-    width: 100%;
-}
-
-.quiqqer-erp-backend-erpArticleText-buttons button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    line-height: 20px;
-}
-
-.quiqqer-erp-backend-erpArticle-select .quiqqer-erp-backend-erpArticleText-buttons {
-    display: inline-block;
-}
-
-.quiqqer-erp-backend-erpArticleText-buttons button:hover {
-    background: #eaeaea;
+    grid-column: 1 / -1;
 }

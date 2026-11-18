@@ -1,49 +1,62 @@
-
 .quiqqer-erp-backend-temporaryErp-summary {
-    background: #FFFFFF;
-    border-top: 2px solid #DEDEDE;
-    cursor: pointer;
-    float: left;
+    --_summary-background: var(--quiqqer-erp-summary-background, var(--qui-colors-gray-50));
+    --_summary-hover: var(--quiqqer-erp-summary-hover, var(--qui-colors-gray-100));
+
+    display: flow-root;
+    flex: 0 0 auto;
+    position: relative;
     width: 100%;
+    padding: 8px 20px;
+    box-sizing: border-box;
+    background: var(--_summary-background);
+    cursor: pointer;
+}
+
+.quiqqer-erp-backend-temporaryErp-summary[hidden] {
+    display: none;
 }
 
 .quiqqer-erp-backend-temporaryErp-summary:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: var(--_summary-hover);
 }
 
 .quiqqer-erp-backend-temporaryErp-summary-pos,
 .quiqqer-erp-backend-temporaryErp-summary-total {
-    border-top: 1px solid #DEDEDE;
-    clear: both;
-    float: left;
-    padding: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 16px;
     width: 100%;
+    padding: 5px 0;
+}
+
+.quiqqer-erp-backend-temporaryErp-summary-pos > div,
+.quiqqer-erp-backend-temporaryErp-summary-total > div {
+    min-width: 0;
+    max-width: 100%;
 }
 
 .quiqqer-erp-backend-temporaryErp-summary-pos-title,
+.quiqqer-erp-backend-temporaryErp-summary-total-vat {
+    flex: 1 1 auto;
+}
+
 .quiqqer-erp-backend-temporaryErp-summary-pos-netto,
 .quiqqer-erp-backend-temporaryErp-summary-pos-brutto,
-.quiqqer-erp-backend-temporaryErp-summary-total-title,
-.quiqqer-erp-backend-temporaryErp-summary-total-vat,
 .quiqqer-erp-backend-temporaryErp-summary-total-netto,
 .quiqqer-erp-backend-temporaryErp-summary-total-brutto {
-    float: left;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 200px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
 }
 
-.quiqqer-erp-backend-temporaryErp-summary-total-vat {
-    width: 400px;
+.quiqqer-erp-backend-temporaryErp-summary .netto-value,
+.quiqqer-erp-backend-temporaryErp-summary .brutto-value {
+    font-variant-numeric: tabular-nums;
 }
 
-.quiqqer-erp-backend-temporaryErp-summary-pos-title {
-    width: calc(100% - 400px);
-}
-
-.quiqqer-erp-backend-temporaryErp-summary-total-title {
-    width: calc(100% - 800px);
+.quiqqer-erp-backend-temporaryErp-summary-total .brutto-value {
+    font-weight: 600;
 }
 
 .quiqqer-erp-backend-temporaryErp-priceFactors {
@@ -99,4 +112,97 @@
 
 .quiqqer-erp-backend-temporaryErp-priceFactors .articles-sum td + td {
     text-align: right;
+}
+
+.quiqqer-erp-summary-manual .quiqqer-erp-backend-temporaryErp-summary-total {
+    display: grid;
+    gap: 12px;
+}
+
+.quiqqer-erp-summary-manual .quiqqer-erp-backend-temporaryErp-summary-total > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    float: none;
+    overflow: visible;
+    white-space: normal;
+    width: auto;
+    min-width: 0;
+}
+
+.quiqqer-erp-summary-manual .vat-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.quiqqer-erp-summary-add-tax {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: stretch;
+    padding-block: 0;
+    padding-inline: 4px;
+    line-height: normal;
+}
+
+.quiqqer-erp-summary-manual-extra {
+    clear: both;
+    padding: 8px 0;
+    cursor: default;
+}
+
+.quiqqer-erp-summary-manual-extra summary {
+    cursor: pointer;
+}
+
+.quiqqer-erp-summary-manual-subtotals {
+    display: grid;
+    gap: 8px;
+    padding-top: 12px;
+}
+
+.quiqqer-erp-summary-manual-subtotals label {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 160px);
+    align-items: center;
+    gap: 12px;
+    margin-inline-end: 60px;
+}
+
+.quiqqer-erp-summary-tax-editor {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+}
+
+.quiqqer-erp-summary-manual .quiqqer-erp-summary-tax-editor {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 28px;
+    gap: 8px 4px;
+}
+
+.quiqqer-erp-summary-manual .vat-value {
+    display: contents;
+}
+
+.quiqqer-erp-summary-tax-editor .quiqqer-erp-taxAmount {
+    grid-column: 1;
+}
+
+.quiqqer-erp-backend-temporaryErp-summary input {
+    min-width: 0;
+    max-width: 160px;
+    width: 100%;
+    text-align: right;
+    box-sizing: border-box;
+}
+
+.quiqqer-erp-summary-manual .quiqqer-erp-backend-temporaryErp-summary-total .netto-value,
+.quiqqer-erp-summary-manual .quiqqer-erp-backend-temporaryErp-summary-total .brutto-value {
+    display: block;
+    flex: 0 1 160px;
+    min-width: 0;
+    margin-inline-end: 60px;
 }

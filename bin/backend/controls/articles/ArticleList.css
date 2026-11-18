@@ -1,97 +1,68 @@
 .quiqqer-erp-backend-erpItems {
-    display: block;
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
     position: relative;
     width: 100%;
-}
-
-.quiqqer-erp-backend-erpItems::-webkit-scrollbar {
-    height: 10px;
 }
 
 .quiqqer-erp-backend-erpItems-container {
-    min-width: 1100px;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
 }
 
 .quiqqer-erp-backend-erpItems-container-switch {
-    background: #FAF6D4;
-    color: #ab8327;
-    height: 40px;
-    width: 100%;
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--qui-colors-gray-200);
+    background: var(--qui-colors-gray-25);
 }
 
-.quiqqer-erp-backend-erpItems-container-switch--warning {
-    background: #fcebea;
-    color: #cc1f1a;
+.quiqqer-erp-backend-erpItems-container-switch > .btn {
+    margin-inline-start: auto;
 }
 
-.quiqqer-erp-backend-erpItems-container-switch-btn {
-    display: inline-block;
-    float: left;
-    padding: 10px 10px 0 10px;
+.quiqqer-erp-backend-erpItems .quiqqer-erp-backend-erpItems-container-switch > .btn {
+    --padding-block: 0;
+
+    height: 34px;
+    min-height: 34px;
+    box-sizing: border-box;
 }
 
-.quiqqer-erp-backend-erpItems-container-switch-desc {
-    cursor: pointer;
-    float: left;
-    line-height: 40px;
+.quiqqer-erp-backend-erpItems-calculation-mode {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
 }
 
-.quiqqer-erp-backend-erpItems-header {
-    background: #DEDEDE;
-    float: left;
-    margin-bottom: 5px;
-    width: 100%;
+.quiqqer-erp-backend-erpItems-calculation-mode > button {
+    min-height: 34px;
+}
+
+.quiqqer-erp-backend-erpItems-price-display {
+    display: flex;
+    flex: 0 1 auto;
+    min-width: 0;
 }
 
 .quiqqer-erp-backend-erpItems-items {
-    display: inline-block;
-    height: calc(100% - 30px);
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 0;
     overflow: auto;
+    padding: 16px 24px;
     position: relative;
-    width: 100%;
-}
-
-.header-cell {
-    float: left;
-    padding: 5px 10px;
-}
-
-.quiqqer-erp-backend-erpItems-header-pos {
-    width: 50px;
-}
-
-.quiqqer-erp-backend-erpItems-header-description {
-    width: calc(100% - 900px);
-}
-
-.quiqqer-erp-backend-erpItems-header-quantity {
-    text-align: right;
-    width: 100px;
-}
-
-.quiqqer-erp-backend-erpItems-header-quantity-unit {
-    text-align: left;
-    width: 100px;
-}
-
-.quiqqer-erp-backend-erpItems-header-articleNo,
-.quiqqer-erp-backend-erpItems-header-unitPrice,
-.quiqqer-erp-backend-erpItems-header-price,
-.quiqqer-erp-backend-erpItems-header-vat,
-.quiqqer-erp-backend-erpItems-header-discount,
-.quiqqer-erp-backend-erpItems-header-total {
-    overflow: hidden;
-    text-align: right;
-    text-overflow: ellipsis;
-    width: 100px;
-    white-space: nowrap;
-}
-
-.quiqqer-erp-backend-erpItems-header-articleNo {
-    text-align: left;
-}
-
-.quiqqer-erp-backend-erpItems-header-total {
-    width: 150px;
 }
