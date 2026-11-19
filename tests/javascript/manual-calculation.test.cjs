@@ -460,8 +460,8 @@ test('all package languages provide each manual-entry text once in administratio
     for (const language of languages) {
         const catalog = readFileSync(join(__dirname, '../../locale', language + '.xml'), 'utf8');
         const keys = [...catalog.matchAll(/<locale name="(manual\.[^"]+)"[^>]*>/g)];
-        assert.equal(keys.length, 15, language);
-        assert.equal(new Set(keys.map(match => match[1])).size, 15, language);
+        assert.equal(keys.length, 16, language);
+        assert.equal(new Set(keys.map(match => match[1])).size, 16, language);
         assert.ok(keys.every(match => match[0].includes('context="administration"')), language);
     }
 });

@@ -1,155 +1,174 @@
 define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors', [
-
     'qui/QUI',
-    'qui/controls/windows/Popup',
+    'qui/controls/windows/SimpleWindow',
     'qui/controls/windows/Confirm',
     'package/quiqqer/currency/bin/Currency',
     'Ajax',
     'Locale',
     'Mustache',
-
-    "text!package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors.html",
-    "text!package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors.Add.html",
-    "css!package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors.css"
-
-], function (QUI, QUIPopup, QUIConfirm, Currency, QUIAjax, QUILocale, Mustache, template, templateAdd) {
-    "use strict";
+    'package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary',
+    'text!package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors.html',
+    'text!package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors.Add.html',
+    'text!package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors.Factors.html',
+    'css!package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors.css'
+], function (QUI, SimpleWindow, QUIConfirm, Currency, QUIAjax, QUILocale, Mustache, ArticleSummary,
+             template, templateAdd, templateFactors) {
+    'use strict';
 
     const lg = 'quiqqer/erp';
 
     return new Class({
+        Extends: SimpleWindow,
+        Type: 'package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
 
-        Extends: QUIPopup,
-        Type   : 'package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
-
-        Binds: [
-            '$onOpen'
-        ],
+        Binds: ['$onOpen', 'refresh'],
 
         options: {
             ArticleList: null
         },
 
-        initialize: function (option) {
-            this.setAttributes({
-                title      : QUILocale.get(lg, 'pricefactors.summary.window.title'),
-                buttons    : true,
-                closeButton: false,
-                maxHeight  : 600,
-                maxWidth   : 600,
-            });
-
-            this.parent(option);
+        initialize: function (options) {
+            this.parent(Object.assign({
+                maxWidth: 680,
+                maxHeight: 680,
+                autoresize: true,
+                resizable: false,
+                'class': 'quiqqer-erp-totals-window'
+            }, options));
 
             this.$Formatter = null;
-
+            this.$Summary = null;
+            this.$Factors = null;
+            this.$factorSnapshot = null;
+            this.$closed = true;
+            const cleanup = () => {
+                this.$closed = true;
+                this.getArticleList()?.removeEvent('onCalc', this.refresh);
+                this.$Summary?.destroy();
+                this.$Summary = null;
+            };
             this.addEvents({
-                onOpen: this.$onOpen
+                onOpen: this.$onOpen,
+                onCloseBegin: cleanup,
+                onDestroy: cleanup
             });
         },
 
         $onOpen: function () {
-            this.refresh();
+            const List = this.getArticleList();
 
-            this.addButton(
-                new Element('button', {
-                    'class': 'qui-button',
-                    html   : QUILocale.get('quiqqer/core', 'close'),
-                    events : {
-                        click: () => {
-                            this.close();
-                        }
+            if (!List) {
+                this.close();
+                return;
+            }
+
+            this.$closed = false;
+            this.$factorSnapshot = null;
+            const title = QUILocale.get(lg, 'article.summary.totalsWindow.title');
+            const Content = this.getContent();
+            Content.innerHTML = Mustache.render(template, {
+                title: title,
+                labelFactors: QUILocale.get(lg, 'article.summary.totalsWindow.factors'),
+                labelClose: QUILocale.get('quiqqer/core', 'close')
+            });
+            this.getElm().setAttribute('role', 'dialog');
+            this.getElm().setAttribute('aria-modal', 'true');
+            this.getElm().setAttribute('aria-label', title);
+            const Description = Content.querySelector('[data-name="description"]');
+            Description.id = 'erp-totals-description-' + this.getId();
+            this.getElm().setAttribute('aria-describedby', Description.id);
+
+            this.$Summary = new ArticleSummary({
+                List: List,
+                currency: List.getAttribute('currency'),
+                showPosSummary: false,
+                manualTotalsInline: true,
+                openOnClick: false
+            }).inject(Content.querySelector('[data-name="totals"]'));
+
+            this.$Factors = Content.querySelector('[data-name="price-factors"]');
+            this.$Factors.addEventListener('click', (event) => {
+                const Button = event.target.closest('button[data-name]');
+
+                if (!Button || !this.$Factors.contains(Button)) {
+                    return;
+                }
+
+                if (Button.dataset.name === 'add-pricefactor') {
+                    this.addPriceFactor();
+                } else if (Button.dataset.name === 'edit-pricefactor') {
+                    this.editPriceFactor(Number(Button.dataset.index));
+                } else if (Button.dataset.name === 'remove-pricefactor') {
+                    List.removePriceFactor(Number(Button.dataset.index));
+                    this.refresh();
+                    this.$Factors.querySelector('[data-name="add-pricefactor"]').focus();
+                }
+            });
+            Content.querySelector('[data-name="close-totals"]').addEventListener('click', () => this.close());
+            this.getElm().addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.close();
+                } else if (event.key === 'Tab') {
+                    const controls = Array.from(this.getElm().querySelectorAll('[data-name]'))
+                        .filter((Element) => Element.matches('button, input, summary') &&
+                            !Element.disabled && Element.getClientRects().length > 0);
+                    const First = controls[0];
+                    const Last = controls[controls.length - 1];
+
+                    if (event.shiftKey && document.activeElement === First) {
+                        event.preventDefault();
+                        Last.focus();
+                    } else if (!event.shiftKey && document.activeElement === Last) {
+                        event.preventDefault();
+                        First.focus();
                     }
-                })
-            );
+                }
+            });
+            List.addEvent('onCalc', this.refresh);
+            this.refresh();
+            Content.querySelector('[data-name="close-totals"]').focus();
         },
 
-        /**
-         * Return the article list
-         *
-         * @returns {*}
-         */
         getArticleList: function () {
             return this.getAttribute('ArticleList');
         },
 
         refresh: function () {
-            if (!this.getAttribute('ArticleList')) {
-                this.close();
+            if (this.$closed || !this.$Factors) {
                 return;
             }
 
-            this.Loader.show();
-
-            const ArticleList = this.getAttribute('ArticleList');
+            const List = this.getArticleList();
+            const manual = List.getCalculationMode() === 'manual';
             const Content = this.getContent();
+            Content.querySelector('[data-name="mode"]').textContent = QUILocale.get(lg,
+                manual ? 'manual.manual' : 'manual.automatic');
+            Content.querySelector('[data-name="description"]').textContent = QUILocale.get(lg,
+                manual ? 'manual.hint' : 'article.summary.totalsWindow.automaticHint');
 
-            let priceFactors = ArticleList.getPriceFactors();
-            let calculations = ArticleList.getCalculation();
+            const priceFactors = List.getPriceFactors();
+            const snapshot = JSON.stringify(priceFactors);
 
-            if (typeof calculations.vatArray === 'undefined') {
-                calculations.vatArray = {};
+            if (snapshot === this.$factorSnapshot) {
+                return;
             }
 
-            for (let i = 0, len = priceFactors.length; i < len; i++) {
-                priceFactors[i].index = i;
-                priceFactors[i].priority = i + 1;
-            }
-
-            Content.set({
-                html: Mustache.render(template, {
-                    textAddButton: QUILocale.get(lg, 'add.pricefactor.button'),
-                    textNoFactors: QUILocale.get(lg, 'message.pricefactor.empty'),
-                    textNetto    : QUILocale.get(lg, 'article.summary.tpl.labelNet'),
-                    textBrutto   : QUILocale.get(lg, 'article.summary.tpl.labelGross'),
-                    priceFactors : priceFactors,
-                    vatArray     : Object.values(calculations.vatArray)
-                })
+            this.$factorSnapshot = snapshot;
+            this.$Factors.innerHTML = Mustache.render(templateFactors, {
+                textAddButton: QUILocale.get(lg, 'add.pricefactor.button'),
+                textNoFactors: QUILocale.get(lg, 'message.pricefactor.empty'),
+                labelEdit: QUILocale.get(lg, 'pricefactors.edit.window.title'),
+                labelRemove: QUILocale.get('quiqqer/core', 'delete'),
+                priceFactors: priceFactors.map((factor, index) => Object.assign({}, factor, {
+                    index: index,
+                    priority: index + 1
+                }))
             });
-
-            const PriceFactorButton = Content.getElement('[name="add-pricefactor"]');
-
-            this.getCurrencyFormatter().then((Formatter) => {
-                const Total = Content.getElement('.quiqqer-erp-backend-temporaryErp-summaryWin-total');
-                let calc = calculations.calculations;
-
-                if (!calc) {
-                    calc = {
-                        nettoSum: 0,
-                        sum     : 0
-                    };
-                }
-
-                Total.getElement('.netto-value').set('html', Formatter.format(calc.nettoSum));
-                Total.getElement('.brutto-value').set('html', Formatter.format(calc.sum));
-
-                Content.getElements('.delete').addEvent('click', (e) => {
-                    e.stop();
-                    let index = e.target.getParent('tr').get('data-index');
-
-                    ArticleList.removePriceFactor(index);
-                    this.refresh();
-                });
-
-                Content.getElements('.edit').addEvent('click', (e) => {
-                    e.stop();
-                    let index = e.target.getParent('tr').get('data-index');
-
-                    this.editPriceFactor(index);
-                });
-
-                PriceFactorButton.addEvent('click', (e) => {
-                    e.stop();
-                    this.addPriceFactor();
-                });
-
-                PriceFactorButton.disabled = false;
-
-                this.fireEvent('quiqqerErpPriceFactorWindow', [this]);
-                QUI.fireEvent('quiqqerErpPriceFactorWindow', [this]);
-
-                this.Loader.hide();
-            });
+            this.fireEvent('quiqqerErpPriceFactorWindow', [this]);
+            QUI.fireEvent('quiqqerErpPriceFactorWindow', [this]);
+            this.Loader.hide();
         },
 
         /**
@@ -336,7 +355,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors',
                             Form.elements.price.value = factor.nettoSum;
                             Form.elements.title.value = factor.title;
                             Form.elements.vat.value = factor.vat;
-                            Form.elements.priority.value = factor.priority;
+                            Form.elements.priority.value = index + 1;
 
                             Win.Loader.hide();
                         });

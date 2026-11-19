@@ -334,6 +334,18 @@
         <locale name="erp.panel.navigation.collapseAll">
             <it>Comprimi tutto</it>
         </locale>
+        <locale name="article.summary.totalsWindow.title" context="administration">
+<it><![CDATA[Totali e fattori di prezzo]]></it>
+        </locale>
+        <locale name="article.summary.totalsWindow.factors" context="administration">
+<it><![CDATA[Fattori di prezzo]]></it>
+        </locale>
+        <locale name="article.summary.totalsWindow.automaticHint" context="administration">
+<it><![CDATA[I totali vengono calcolati automaticamente dalle voci e dai fattori di prezzo.]]></it>
+        </locale>
+        <locale name="manual.editTotals" context="administration">
+<it><![CDATA[Modifica totali]]></it>
+        </locale>
         <locale name="manual.totalsActions" context="administration">
 <it><![CDATA[Azioni sui totali]]></it>
         </locale>

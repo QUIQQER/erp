@@ -336,6 +336,18 @@
             <en>Collapse all</en>
         </locale>
 
+        <locale name="article.summary.totalsWindow.title" context="administration">
+<en><![CDATA[Totals and price factors]]></en>
+        </locale>
+        <locale name="article.summary.totalsWindow.factors" context="administration">
+<en><![CDATA[Price factors]]></en>
+        </locale>
+        <locale name="article.summary.totalsWindow.automaticHint" context="administration">
+<en><![CDATA[Totals are calculated automatically from the positions and price factors.]]></en>
+        </locale>
+        <locale name="manual.editTotals" context="administration">
+<en><![CDATA[Edit totals]]></en>
+        </locale>
         <locale name="manual.totalsActions" context="administration">
 <en><![CDATA[Total actions]]></en>
         </locale>

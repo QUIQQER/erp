@@ -1,14 +1,17 @@
+<button type="button" class="quiqqer-erp-summary-icon" data-name="open-totals" aria-label="{{labelOpenTotals}}" title="{{labelOpenTotals}}" hidden>
+    <span class="fa fa-calculator" data-name="totals-icon" aria-hidden="true"></span>
+</button>
 {{#showPosSummary}}
-<div class="quiqqer-erp-backend-temporaryErp-summary-pos">
+<div class="quiqqer-erp-backend-temporaryErp-summary-pos" data-name="position-summary" hidden>
     <div class="quiqqer-erp-backend-temporaryErp-summary-pos-title">{{labelPosInfo}}:</div>
 
     <div class="quiqqer-erp-backend-temporaryErp-summary-pos-netto">
         <span class="netto-title">{{labelNet}}:</span>
-        <span class="netto-value"></span>
+        <span class="netto-value" data-name="position-net-total"></span>
     </div>
     <div class="quiqqer-erp-backend-temporaryErp-summary-pos-brutto">
         <span class="brutto-title">{{labelGross}}:</span>
-        <span class="brutto-value"></span>
+        <span class="brutto-value" data-name="position-gross-total"></span>
     </div>
 </div>
 {{/showPosSummary}}
@@ -41,7 +44,7 @@
     </div>
     <div class="quiqqer-erp-summary-manual-extra" data-name="manual-extra" hidden>
         <details>
-            <summary>{{labelOtherTotals}}</summary>
+            <summary data-name="other-totals">{{labelOtherTotals}}</summary>
             <div class="quiqqer-erp-summary-manual-subtotals">
                 <label><span>{{labelNetBefore}}:</span><input type="number" step="any" required data-name="manual-total" data-field="nettoSubSum"></label>
                 <label><span>{{labelSubtotal}}</span><input type="number" step="any" required data-name="manual-total" data-field="subSum"></label>

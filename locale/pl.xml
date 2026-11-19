@@ -334,6 +334,18 @@
         <locale name="erp.panel.navigation.collapseAll">
             <pl>Zwiń wszystko</pl>
         </locale>
+        <locale name="article.summary.totalsWindow.title" context="administration">
+<pl><![CDATA[Sumy i współczynniki cenowe]]></pl>
+        </locale>
+        <locale name="article.summary.totalsWindow.factors" context="administration">
+<pl><![CDATA[Współczynniki cenowe]]></pl>
+        </locale>
+        <locale name="article.summary.totalsWindow.automaticHint" context="administration">
+<pl><![CDATA[Sumy są obliczane automatycznie na podstawie pozycji i współczynników cenowych.]]></pl>
+        </locale>
+        <locale name="manual.editTotals" context="administration">
+<pl><![CDATA[Edytuj sumy]]></pl>
+        </locale>
         <locale name="manual.totalsActions" context="administration">
 <pl><![CDATA[Działania na sumach]]></pl>
         </locale>

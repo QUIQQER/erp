@@ -334,6 +334,18 @@
         <locale name="erp.panel.navigation.collapseAll">
             <pt>Recolher tudo</pt>
         </locale>
+        <locale name="article.summary.totalsWindow.title" context="administration">
+<pt><![CDATA[Totais e fatores de preço]]></pt>
+        </locale>
+        <locale name="article.summary.totalsWindow.factors" context="administration">
+<pt><![CDATA[Fatores de preço]]></pt>
+        </locale>
+        <locale name="article.summary.totalsWindow.automaticHint" context="administration">
+<pt><![CDATA[Os totais são calculados automaticamente a partir das posições e dos fatores de preço.]]></pt>
+        </locale>
+        <locale name="manual.editTotals" context="administration">
+<pt><![CDATA[Editar totais]]></pt>
+        </locale>
         <locale name="manual.totalsActions" context="administration">
 <pt><![CDATA[Ações dos totais]]></pt>
         </locale>
