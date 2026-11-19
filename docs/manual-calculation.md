@@ -1,10 +1,10 @@
 # Manual calculation: document model
 
-This covers steps 1–4 of the manual amount entry work described in
+This covers steps 1–5 of the manual amount entry work described in
 [pcsg/buero#551](https://dev.quiqqer.com/pcsg/buero/-/issues/551#note_352699).
 The persisted mode now also controls calculation. In manual mode, `calc()` and
 `recalculate()` keep the existing values. The shared editor and purchasing save/post paths preserve the complete
-manual snapshot. Connecting the remaining ERP document types is a subsequent step.
+manual snapshot. The other ERP editors and document transitions use the same representation.
 
 ## Calculation mode
 
@@ -40,8 +40,8 @@ $Unique = $Reloaded->toUniqueList();
 The mode survives array/JSON serialization, loading, conversion to
 `ArticleListUnique` and construction of an editable list from a stored snapshot.
 No database column or migration is needed: ERP documents already persist the
-complete article list as JSON in their `articles` field. Purchasing accepts the complete snapshot; the other
-document types still need their save endpoints connected.
+complete article list as JSON in their `articles` field. Purchasing, invoices, offers, orders, sales orders and
+contracts accept the complete snapshot through their existing save/import paths.
 
 ## Amount fields to reuse
 
@@ -151,13 +151,14 @@ callbacks from accessing the destroyed DOM.
 
 ## Purchasing persistence and posting
 
-QuickEntry and ProcessDraft send the complete `ArticleList.serialize()` result in `data.articles`:
+In manual mode, QuickEntry and ProcessDraft send the complete `ArticleList.serialize()` result in `data.articles`:
 `articles`, `calculationMode`, `calculations` and `priceFactors`. Draft loading, category changes and saving retain
-that snapshot, including empty manual lists. Opening the article category waits for its asynchronous restoration.
+that snapshot, including empty manual lists. Opening a manual article list waits for its asynchronous restoration.
+Automatic editors keep their historical positions payload and loading sequence.
 
-`PurchasingProcessDraft::importArticles()` accepts that existing list representation and replaces the full list.
-Legacy arrays of positions remain automatic and keep their append behavior. For automatic snapshots, browser
-calculation caches are discarded so the server derives fresh amounts. Manual snapshots retain their independently
+`PurchasingProcessDraft::importArticles()` replaces the full list only for manual data.
+Automatic wrappers retain the original recursive positions import; legacy arrays keep their append behavior,
+existing position caches and separate price-factor handling. Manual snapshots retain their independently
 entered net, gross and tax amounts, including `calculated.bruttoCalculated` on positions. Switching back to automatic
 discards that manual gross cache.
 
@@ -175,10 +176,55 @@ recalculating tax from a rate and base. The complete source invoice remains in `
 Journal, statistics, document views and payment receivers use the saved process columns. The PDF output path uses
 the same stored article list; template formatting works on a copy. CSV/DATEV purchase exports also read stored
 amounts rather than recalculating positions. Their existing tax-rate selection uses the first tax row and does not
-split a document into separate bookings per rate. Credit-note/reversal and cross-document transitions still require
-their own manual-mode handling in the subsequent transition work; they are not covered by the save/reload/post path.
+split a document into separate bookings per rate. Credit notes, reversals and complete document transitions are
+handled separately from the save/reload/post path as described below.
 
 Regression coverage uses SQLite in memory for real draft updates, reloads and posting, with runtime services
 isolated from the installed database. The fixtures cover the Drillisch amounts, multiple tax rates, extra decimal
 places and separately entered gross values. Ajax tests preserve the original control-sum checks; JavaScript tests
 cover full snapshots, restoration and submission. No installed purchase data is created or posted by these tests.
+
+## Other editors and document transitions
+
+In manual mode, invoice drafts, offer drafts, orders, sales orders and contracts send the complete list data.
+Mode and list totals survive loading, category changes and saving. Its price factors take precedence over the
+legacy separate `priceFactors` argument, including an empty factor list. Automatic documents retain their original
+positions payloads, recursive imports, add loops, factor handling and position caches. Complete transfers use the
+new full-list path only for manual sources; automatic sources use the previous transfer code. Returning from
+manual to automatic explicitly resets the mode and resumes calculation. Manual document columns and article
+JSON retain the entered precision when saved or posted.
+
+The manual pricing context comes from `calculations.isNetto`, independently of a changed customer or shop default.
+Each target document keeps its existing `isbrutto` representation: invoice drafts use 0/1, whereas offers and
+contracts retain their existing customer-status constants. This transport detail does not change the list mode.
+
+| Operation | Resulting calculation mode and amounts |
+| --- | --- |
+| Copy a complete manual document | Manual; retain all stored amounts and factors |
+| Convert a complete manual offer, order, sales order or purchase | Manual; transfer the complete snapshot into the target draft |
+| Create a complete credit note or reversal | Manual; negate stored money amounts without deriving them again |
+| Create a partial invoice from selected sales-order positions/quantities | Automatic, using the existing partial-invoice calculation; leave the source document unchanged |
+| Generate the next invoice for a manual contract | Manual; retain the stored amounts and substitute only period/title/description placeholders |
+| Create a plan contract from selected order positions | Automatic, using the existing plan-selection path; leave the source order unchanged |
+| Create a normal shop order without an explicit manual snapshot | Automatic, as before |
+
+The partial-invoice policy was explicitly agreed: the new invoice draft starts automatic and can subsequently be
+switched to manual using its regular editor. Existing partial-invoice rules for price factors remain unchanged.
+There is no automatic allocation of a manual source total's rounding discrepancy across partial invoices, and no
+new financial residual-balancing mechanism. When the source is manual, its calculation caches and manual mode are
+not copied into the newly calculated subset. Automatic sources retain the historical partial-invoice path.
+
+`ArticleList::negate()` handles the manual full-document reversal. It changes the sign of independently stored
+position prices, net/gross amounts, tax amounts, list totals and monetary price factors. Quantities, VAT rates,
+percentage discounts and unrelated metadata stay unchanged; flat monetary discounts are negated. A reversal does
+not require net plus tax to equal gross and does not round the original values. The existing automatic reversal
+paths retain their behavior. Invoice and purchasing credit-note/reversal paths use the same implementation.
+
+Existing manual orders are not rebuilt from Product Calc or basket products during recalculation. Normal baskets
+and new shop orders continue through their existing automatic calculation. Contract invoice output retains the
+mode while adapting placeholder text; automatic bulk VAT updates leave manual contract snapshots unchanged.
+
+Transition regression tests use isolated SQLite databases and controlled runtime services. They cover stored
+snapshots, complete copies and transfers, exact manual negation, contract invoice generation and automatic partial
+invoice behavior. Full interactive acceptance and comparison of actual PDF/export files remain the separate
+acceptance work in step 6.
