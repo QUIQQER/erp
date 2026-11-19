@@ -15,8 +15,11 @@ use QUI\ERP\Exception;
 use QUI\Interfaces\Users\User;
 
 use function count;
+use function is_array;
 use function is_bool;
 use function is_null;
+use function is_numeric;
+use function json_encode;
 use function key;
 use function round;
 
@@ -154,6 +157,115 @@ class ArticleList extends ArticleListUnique implements IteratorAggregate
                 $Article->setCalculationMode($mode);
             }
         }
+    }
+
+    //endregion
+
+    //region Reversal
+
+    /**
+     * Reverse a manual document's stored amounts without deriving new prices or totals.
+     * Quantities, tax rates and percentage discounts keep their original meaning.
+     */
+    public function negate(): void
+    {
+        if ($this->calculationMode !== CalculationMode::MANUAL) {
+            return;
+        }
+
+        $Currency = $this->getCurrency();
+        $negate = static function (array $values) use (&$negate, $Currency): array {
+            foreach (
+                [
+                    'unitPrice',
+                    'price',
+                    'basisPrice',
+                    'sum',
+                    'quantity_sum',
+                    'nettoPriceNotRounded',
+                    'nettoPrice',
+                    'nettoBasisPrice',
+                    'nettoSubSum',
+                    'nettoSum',
+                    'subSum',
+                    'grandSubSum',
+                    'vatSum',
+                    'duePayableAmount',
+                    'totalPrepaidAmount',
+                    'roundingAmount',
+                    'chargeTotalAmount',
+                    'allowanceTotalAmount'
+                ] as $field
+            ) {
+                if (isset($values[$field]) && is_numeric($values[$field])) {
+                    $values[$field] *= -1;
+
+                    if (isset($values['display_' . $field])) {
+                        $values['display_' . $field] = $Currency->format($values[$field]);
+                    }
+                }
+            }
+
+            foreach (['calculated', 'bruttoCalculated'] as $field) {
+                if (isset($values[$field]) && is_array($values[$field])) {
+                    $values[$field] = $negate($values[$field]);
+                }
+            }
+
+            if (isset($values['vatArray']) && is_array($values['vatArray'])) {
+                if (isset($values['vatArray']['sum'])) {
+                    $values['vatArray'] = $negate($values['vatArray']);
+                } else {
+                    foreach ($values['vatArray'] as $rate => $tax) {
+                        if (is_array($tax)) {
+                            $values['vatArray'][$rate] = $negate($tax);
+                        }
+                    }
+                }
+            }
+
+            return $values;
+        };
+
+        $data = $this->toArray();
+        $data['calculations'] = $negate($data['calculations']);
+
+        foreach ($data['articles'] as $key => $article) {
+            $data['articles'][$key] = $negate($article);
+            $Discount = $this->articles[$key]->getDiscount();
+
+            if ($Discount && $Discount->getCalculation() === Calc::CALCULATION_COMPLEMENT) {
+                $discount = $Discount->toArray();
+                $discount['value'] *= -1;
+                $data['articles'][$key]['discount'] = json_encode($discount);
+
+                $gross = $data['articles'][$key]['calculated']['bruttoCalculated'] ?? [];
+
+                if (isset($gross['discount']) && is_numeric($gross['discount'])) {
+                    $gross['discount'] *= -1;
+                    $gross['display_discount'] = $Currency->format($gross['discount']);
+                    $data['articles'][$key]['calculated']['bruttoCalculated'] = $gross;
+                }
+            }
+        }
+
+        foreach ($data['priceFactors'] as $key => $factor) {
+            $factor = $negate($factor);
+            $factor['sumFormatted'] = $Currency->format($factor['sum']);
+            $factor['nettoSumFormatted'] = $Currency->format($factor['nettoSum']);
+
+            if ($factor['calculation'] === Calc::CALCULATION_COMPLEMENT && is_numeric($factor['value'])) {
+                $factor['value'] *= -1;
+                $factor['valueText'] = $Currency->format($factor['value']);
+            }
+
+            $data['priceFactors'][$key] = $factor;
+        }
+
+        $Reversed = new self($data, $this->User);
+        $this->articles = $Reversed->getArticles();
+        $this->calculations = $Reversed->getCalculations();
+        $this->PriceFactors = $Reversed->getPriceFactors();
     }
 
     //endregion
