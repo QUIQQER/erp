@@ -222,3 +222,85 @@
 .quiqqer-erp-summary-manual-actions[hidden] {
     display: none;
 }
+
+.quiqqer-erp-backend-temporaryErp-summary > .quiqqer-erp-summary-icon {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 4px;
+    color: var(--qui-colors-gray-600);
+    cursor: pointer;
+    display: grid;
+    font-size: 26px;
+    height: 40px;
+    inset-block-start: 50%;
+    inset-inline-start: 20px;
+    justify-items: center;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    transform: translateY(-50%);
+    width: 40px;
+}
+
+.quiqqer-erp-summary-icon:focus-visible {
+    outline: 2px solid var(--qui-colors-primary);
+    outline-offset: 2px;
+}
+
+.quiqqer-erp-backend-temporaryErp-summary > .quiqqer-erp-summary-icon[hidden] {
+    display: none;
+}
+
+.quiqqer-erp-summary-display {
+    --_summary-background: var(--quiqqer-erp-summary-display-background, var(--qui-colors-warning-25));
+    --_summary-hover: var(--quiqqer-erp-summary-display-hover, var(--qui-colors-warning-50));
+    --_net-background: color-mix(in srgb, var(--qui-colors-warning-200) 55%, var(--qui-colors-gray-100));
+    --_gross-background: color-mix(in srgb, var(--qui-colors-success-200) 65%, var(--_summary-background));
+    --_gross-color: var(--qui-colors-success-950);
+
+    padding-block: 12px;
+    padding-inline-start: 76px;
+}
+
+.quiqqer-erp-summary-display .quiqqer-erp-backend-temporaryErp-summary-total-title {
+    font-weight: 600;
+}
+
+.quiqqer-erp-summary-display .quiqqer-erp-backend-temporaryErp-summary-total-vat {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.quiqqer-erp-summary-display .quiqqer-erp-backend-temporaryErp-summary-total-netto,
+.quiqqer-erp-summary-display .quiqqer-erp-backend-temporaryErp-summary-total-brutto {
+    border-radius: 6px;
+    gap: 12px;
+    padding: 8px 12px;
+}
+
+.quiqqer-erp-summary-display .quiqqer-erp-backend-temporaryErp-summary-total-netto {
+    background: var(--_net-background);
+}
+
+.quiqqer-erp-summary-display .quiqqer-erp-backend-temporaryErp-summary-total-brutto {
+    background: var(--_gross-background);
+    color: var(--_gross-color);
+}
+
+.quiqqer-erp-summary-display .quiqqer-erp-backend-temporaryErp-summary-total-brutto .brutto-value {
+    font-size: 1.1em;
+}
+
+.quiqqer-erp-summary-display .quiqqer-erp-backend-temporaryErp-summary-pos {
+    border-bottom: 1px solid var(--qui-colors-gray-100);
+    color: var(--qui-colors-gray-700);
+    margin-bottom: 6px;
+    padding-bottom: 8px;
+}
+
+.quiqqer-erp-backend-temporaryErp-summary-pos[hidden] {
+    display: none;
+}

@@ -334,6 +334,18 @@
         <locale name="erp.panel.navigation.collapseAll">
             <es>Contraer todo</es>
         </locale>
+        <locale name="article.summary.totalsWindow.title" context="administration">
+<es><![CDATA[Totales y factores de precio]]></es>
+        </locale>
+        <locale name="article.summary.totalsWindow.factors" context="administration">
+<es><![CDATA[Factores de precio]]></es>
+        </locale>
+        <locale name="article.summary.totalsWindow.automaticHint" context="administration">
+<es><![CDATA[Los totales se calculan automáticamente a partir de las posiciones y los factores de precio.]]></es>
+        </locale>
+        <locale name="manual.editTotals" context="administration">
+<es><![CDATA[Editar totales]]></es>
+        </locale>
         <locale name="manual.totalsActions" context="administration">
 <es><![CDATA[Acciones de totales]]></es>
         </locale>

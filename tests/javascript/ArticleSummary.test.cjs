@@ -4,7 +4,7 @@ const {join} = require('node:path');
 const {test} = require('node:test');
 const vm = require('node:vm');
 
-function fixture({count = 1, reducedMotion = false} = {}) {
+function fixture({count = 1, reducedMotion = false, mode = 'automatic', inline = false} = {}) {
     const pending = {};
     const callbacks = {};
     const listeners = new Map();
@@ -13,7 +13,7 @@ function fixture({count = 1, reducedMotion = false} = {}) {
     const animations = [];
     const visibilityAnimations = [];
     const observers = [];
-    const state = {count};
+    const state = {count, mode};
     const formatter = {format: value => String(value)};
     const currencyPromise = new Promise(resolve => pending.currency = resolve);
     const data = {calculations: {nettoSum: 8.395, sum: 9.99, vatArray: {19: {sum: 1.5951, text: '19%'}}}};
@@ -21,7 +21,7 @@ function fixture({count = 1, reducedMotion = false} = {}) {
         count: () => state.count,
         getElm: () => ({querySelector: () => ({})}),
         getCalculations: () => data,
-        getCalculationMode: () => 'automatic',
+        getCalculationMode: () => state.mode,
         getPriceFactors: () => [],
         addEvent(name, callback) {
             if (!listeners.has(name)) listeners.set(name, new Set());
@@ -49,6 +49,7 @@ function fixture({count = 1, reducedMotion = false} = {}) {
         },
         require(names, callback) { requires.push(callback); },
         window: {matchMedia: () => ({matches: reducedMotion})},
+        document: {createElement: () => ({})},
         MutationObserver: class {
             constructor(callback) {
                 this.callback = callback;
@@ -60,7 +61,7 @@ function fixture({count = 1, reducedMotion = false} = {}) {
         },
         typeOf: value => Array.isArray(value) ? 'array' : typeof value
     });
-    const attributes = {List, currency: 'EUR', showPosSummary: false};
+    const attributes = {List, currency: 'EUR', showPosSummary: false, manualTotalsInline: inline};
     const Control = Object.assign(Object.create(Summary.prototype), {
         parent() {},
         getAttribute: name => attributes[name],
@@ -82,11 +83,20 @@ function fixture({count = 1, reducedMotion = false} = {}) {
             return Animation;
         },
         classList: {toggle: (...values) => writes.push(values)},
-        querySelector: () => ({set hidden(value) { writes.push(['hidden', value]); }})
+        querySelector: selector => ({
+            set hidden(value) { writes.push(['hidden', value]); },
+            set className(value) { writes.push(['icon', selector, value]); },
+            setAttribute(name, value) { writes.push(['attribute', selector, name, value]); }
+        })
     };
     Control.$NettoSum = {set: (...values) => writes.push(values)};
     Control.$BruttoSum = {set: (...values) => writes.push(values)};
-    Control.$VAT = {set: (...values) => writes.push(values)};
+    Control.$VAT = {
+        rows: [],
+        set: (...values) => writes.push(values),
+        replaceChildren() { this.rows = []; },
+        appendChild(Row) { this.rows.push(Row); }
+    };
     Control.$PriceFactors = {style: {}};
     Control.$PFFX = {
         animate(values, options) { animations.push({values, options}); },
@@ -237,4 +247,84 @@ test('reinjection replaces observation and retains one listener per list event',
     assert.equal(observers[1].disconnected, false);
     assert.equal(listeners.get('onCalc').size, 1);
     assert.equal(listeners.get('onArticleSelect').size, 1);
+});
+
+test('manual summaries display formatted totals without editing or mutating stored amounts', async () => {
+    const {Control, List, data, pending, writes} = fixture({mode: 'manual'});
+    const before = JSON.stringify(data);
+    Control.$renderManualTotals = () => assert.fail('The compact summary must not create inputs.');
+    Control.$refreshArticleSelect(List);
+    pending.currency({code: 'EUR', precision: 2});
+    await flush();
+
+    assert.ok(writes.some(entry => entry[0] === 'html' && entry[1] === '8.395'));
+    assert.ok(writes.some(entry => entry[0] === 'html' && entry[1] === '9.99'));
+    assert.ok(writes.some(entry => entry[0] === 'quiqqer-erp-summary-editable' && entry[1] === true));
+    assert.equal(Control.$VAT.rows[0].textContent, '19% (1.5951)');
+    assert.equal(JSON.stringify(data), before);
+});
+
+test('inline manual summaries retain their existing editor for quick entry and the popup', () => {
+    const {Control, List, data, writes} = fixture({mode: 'manual', inline: true});
+    let rendered = 0;
+    Control.$renderManualTotals = (EditorList, amounts) => {
+        assert.equal(EditorList, List);
+        assert.equal(amounts, data.calculations);
+        rendered++;
+    };
+    Control.$refreshArticleSelect(List);
+    assert.equal(rendered, 1);
+    assert.ok(writes.some(entry => entry[0] === 'quiqqer-erp-summary-manual' && entry[1] === true));
+    assert.ok(writes.some(entry => entry[0] === 'quiqqer-erp-summary-editable' && entry[1] === false));
+});
+
+test('the shared display icon follows the mode and exposes the corresponding accessible action', () => {
+    const {Control, List, state, writes} = fixture();
+    Control.$refreshArticleSelect(List);
+    assert.ok(writes.some(entry => entry[0] === 'icon' && entry[2] === 'fa fa-calculator'));
+    assert.ok(writes.some(entry => entry[0] === 'attribute' && entry[1].includes('open-totals') &&
+        entry[2] === 'aria-label' && entry[3] === 'article.summary.totalsWindow.title'));
+
+    state.mode = 'manual';
+    Control.$refreshArticleSelect(List);
+    assert.ok(writes.some(entry => entry[0] === 'icon' && entry[2] === 'fa fa-edit'));
+    assert.ok(writes.some(entry => entry[0] === 'attribute' && entry[1].includes('open-totals') &&
+        entry[2] === 'aria-label' && entry[3] === 'manual.editTotals'));
+});
+
+test('manual summary opens one lazy popup; a late module response after destroy does nothing', () => {
+    const {Control, requires, destroy} = fixture({mode: 'manual'});
+    Control.openSummary();
+    Control.openSummary();
+    assert.equal(requires.length, 1);
+    destroy();
+    requires[0](function Window() { assert.fail('Destroyed summary must not open a popup.'); });
+});
+
+test('switching modes while loading still opens the same shared totals window', () => {
+    const {Control, List, state, requires} = fixture({mode: 'manual'});
+    let opened = 0;
+    Control.openSummary();
+    state.mode = 'automatic';
+    requires[0](class Window {
+        constructor(options) { assert.equal(options.ArticleList, List); }
+        open() { opened++; }
+    });
+    assert.equal(opened, 1);
+    assert.equal(Control.$summaryWindowLoading, false);
+});
+
+test('clicking the inline manual editor does not open another window', () => {
+    const {Control, requires} = fixture({mode: 'manual', inline: true});
+    Control.openSummary();
+    assert.equal(requires.length, 0);
+});
+
+test('clearing the list closes the manual totals popup and hides the summary', () => {
+    const {Control, List} = fixture({mode: 'manual', count: 0});
+    let closed = 0;
+    Control.$SummaryWindow = {close() { closed++; }};
+    Control.$refreshArticleSelect(List);
+    assert.equal(closed, 1);
+    assert.equal(Control.$Elm.hidden, true);
 });
