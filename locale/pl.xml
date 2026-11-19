@@ -1263,6 +1263,62 @@
 <pl><![CDATA[Kopiuj do istniejącej sprawy]]></pl>
         </locale>
 
+        <locale name="manual.calculation" context="administration">
+<pl><![CDATA[Obliczanie]]></pl>
+        </locale>
+        <locale name="manual.automatic" context="administration">
+<pl><![CDATA[Automatycznie]]></pl>
+        </locale>
+        <locale name="manual.manual" context="administration">
+<pl><![CDATA[Ręcznie]]></pl>
+        </locale>
+        <locale name="manual.hint" context="administration">
+<pl><![CDATA[Wpisz kwoty ręcznie. Nie będą automatycznie przeliczane.]]></pl>
+        </locale>
+        <locale name="manual.taxAmount" context="administration">
+<pl><![CDATA[Kwota VAT]]></pl>
+        </locale>
+        <locale name="manual.taxRate" context="administration">
+<pl><![CDATA[Stawka VAT]]></pl>
+        </locale>
+        <locale name="manual.addTax" context="administration">
+<pl><![CDATA[Dodaj wiersz VAT]]></pl>
+        </locale>
+        <locale name="manual.removeTax" context="administration">
+<pl><![CDATA[Usuń wiersz VAT]]></pl>
+        </locale>
+        <locale name="manual.taxRateExists" context="administration">
+<pl><![CDATA[Ta stawka VAT już istnieje.]]></pl>
+        </locale>
+        <locale name="manual.otherTotals" context="administration">
+<pl><![CDATA[Pozostałe sumy]]></pl>
+        </locale>
+        <locale name="manual.netBeforeFactors" context="administration">
+<pl><![CDATA[Netto przed dopłatami i rabatami]]></pl>
+        </locale>
+        <locale name="manual.grossBeforeFactors" context="administration">
+<pl><![CDATA[Brutto przed końcowymi korektami]]></pl>
+        </locale>
+
+
+        <locale name="article.description.more" context="administration">
+<pl>Pokaż opis</pl>
+        </locale>
+        <locale name="article.description.less" context="administration">
+<pl>Zwiń opis</pl>
+        </locale>
+
+        <locale name="article.priceDisplay.net" context="administration">
+<pl>Ceny bez VAT</pl>
+        </locale>
+
+        <locale name="article.priceDisplay.gross" context="administration">
+<pl>Ceny z VAT</pl>
+        </locale>
+
+        <locale name="article.priceDisplay.mismatch" context="administration">
+<pl>Sposób wyświetlania cen różni się od trybu cenowego sklepu. Przeliczenie może powodować różnice wynikające z zaokrągleń.</pl>
+        </locale>
     </groups>
 </locales>
 </quiqqer>

@@ -335,6 +335,7 @@
         <locale name="erp.panel.navigation.collapseAll">
             <en>Collapse all</en>
         </locale>
+
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -645,6 +646,7 @@
         <locale name="process.history.transaction.created">
 <en><![CDATA[Payment of [amount] received / posted. (#[hash])]]></en>
         </locale>
+
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">
@@ -1315,6 +1317,62 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
 <en><![CDATA[Copy to existing process]]></en>
         </locale>
 
+        <locale name="manual.calculation" context="administration">
+<en><![CDATA[Calculation]]></en>
+        </locale>
+        <locale name="manual.automatic" context="administration">
+<en><![CDATA[Automatic]]></en>
+        </locale>
+        <locale name="manual.manual" context="administration">
+<en><![CDATA[Manual]]></en>
+        </locale>
+        <locale name="manual.hint" context="administration">
+<en><![CDATA[Enter amounts yourself. Values are not recalculated automatically.]]></en>
+        </locale>
+        <locale name="manual.taxAmount" context="administration">
+<en><![CDATA[VAT amount]]></en>
+        </locale>
+        <locale name="manual.taxRate" context="administration">
+<en><![CDATA[VAT rate]]></en>
+        </locale>
+        <locale name="manual.addTax" context="administration">
+<en><![CDATA[Add tax row]]></en>
+        </locale>
+        <locale name="manual.removeTax" context="administration">
+<en><![CDATA[Remove tax row]]></en>
+        </locale>
+        <locale name="manual.taxRateExists" context="administration">
+<en><![CDATA[This VAT rate already exists.]]></en>
+        </locale>
+        <locale name="manual.otherTotals" context="administration">
+<en><![CDATA[Other totals]]></en>
+        </locale>
+        <locale name="manual.netBeforeFactors" context="administration">
+<en><![CDATA[Net before surcharges and discounts]]></en>
+        </locale>
+        <locale name="manual.grossBeforeFactors" context="administration">
+<en><![CDATA[Gross before final adjustments]]></en>
+        </locale>
+
+
+        <locale name="article.description.more" context="administration">
+<en>Show description</en>
+        </locale>
+        <locale name="article.description.less" context="administration">
+<en>Collapse description</en>
+        </locale>
+
+        <locale name="article.priceDisplay.net" context="administration">
+<en>Prices excl. VAT</en>
+        </locale>
+
+        <locale name="article.priceDisplay.gross" context="administration">
+<en>Prices incl. VAT</en>
+        </locale>
+
+        <locale name="article.priceDisplay.mismatch" context="administration">
+<en>The price display differs from the shop's pricing mode. Conversion may cause rounding differences.</en>
+        </locale>
     </groups>
 </locales>
 </quiqqer>

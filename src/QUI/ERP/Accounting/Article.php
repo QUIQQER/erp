@@ -7,6 +7,7 @@
 namespace QUI\ERP\Accounting;
 
 use QUI;
+use QUI\ERP\Enums\Accounting\CalculationMode;
 use QUI\ERP\Money\Price;
 use QUI\ERP\Tax\Utils as TaxUtils;
 use QUI\Exception;
@@ -57,6 +58,8 @@ class Article implements ArticleInterface
      * @var bool
      */
     protected bool $calculated = false;
+
+    protected CalculationMode $calculationMode = CalculationMode::AUTOMATIC;
 
     /**
      * @var float|int
@@ -111,6 +114,9 @@ class Article implements ArticleInterface
      * @var array<mixed>
      */
     protected mixed $vatArray = [];
+
+    /** @var array<string, mixed> */
+    protected array $bruttoCalculated = [];
 
     /**
      * @var bool
@@ -218,6 +224,10 @@ class Article implements ArticleInterface
             $this->vatArray = $calc['vatArray'];
             $this->isEuVat = $calc['isEuVat'];
             $this->isNetto = $calc['isNetto'];
+
+            if (isset($calc['bruttoCalculated']) && is_array($calc['bruttoCalculated'])) {
+                $this->bruttoCalculated = $calc['bruttoCalculated'];
+            }
 
             $this->calculated = true;
         }
@@ -662,13 +672,32 @@ class Article implements ArticleInterface
 
     //endregion
 
+    //region Calculation mode
+
+    public function getCalculationMode(): CalculationMode
+    {
+        return $this->calculationMode;
+    }
+
+    public function setCalculationMode(CalculationMode $mode): void
+    {
+        if ($this->calculationMode === CalculationMode::MANUAL && $mode === CalculationMode::AUTOMATIC) {
+            $this->calculated = false;
+            $this->bruttoCalculated = [];
+        }
+
+        $this->calculationMode = $mode;
+    }
+
+    //endregion
+
     /**
      * @param null|Calc|QUI\ERP\User $Instance
      * @return self
      */
     public function calc(null | Calc | QUI\ERP\User $Instance = null): Article
     {
-        if ($this->calculated) {
+        if ($this->calculationMode === CalculationMode::MANUAL || $this->calculated) {
             return $this;
         }
 
@@ -742,7 +771,7 @@ class Article implements ArticleInterface
         }
 
 
-        return [
+        $data = [
             // article data
             'id' => $this->getId(),
             'uuid' => $this->getUuid(),
@@ -779,6 +808,12 @@ class Article implements ArticleInterface
                 'isNetto' => $this->isNetto
             ]
         ];
+
+        if ($this->calculationMode === CalculationMode::MANUAL && $this->bruttoCalculated !== []) {
+            $data['calculated']['bruttoCalculated'] = $this->bruttoCalculated;
+        }
+
+        return $data;
     }
 
     //region custom fields

@@ -10,6 +10,7 @@ use ArrayIterator;
 use IteratorAggregate;
 use QUI;
 use QUI\ERP\Accounting\PriceFactors\FactorList as ErpFactorList;
+use QUI\ERP\Enums\Accounting\CalculationMode;
 use QUI\Exception;
 use Traversable;
 
@@ -42,6 +43,11 @@ class ArticleListUnique implements IteratorAggregate
      * @var array<mixed>
      */
     protected mixed $calculations = [];
+
+    /**
+     * Persisted document policy, not the mutable list's calculated/cache state.
+     */
+    protected CalculationMode $calculationMode = CalculationMode::AUTOMATIC;
 
     /**
      * @var bool|mixed
@@ -90,6 +96,17 @@ class ArticleListUnique implements IteratorAggregate
     public function __construct(array $attributes = [], null | QUI\Interfaces\Users\User $User = null)
     {
         $this->Locale = QUI::getLocale();
+
+        if (array_key_exists('calculationMode', $attributes)) {
+            $mode = $attributes['calculationMode'];
+            $mode = is_string($mode) ? CalculationMode::tryFrom($mode) : null;
+
+            if ($mode === null) {
+                throw new QUI\ERP\Exception('Invalid article list calculation mode', 400);
+            }
+
+            $this->calculationMode = $mode;
+        }
 
         $needles = ['articles', 'calculations'];
 
@@ -144,6 +161,14 @@ class ArticleListUnique implements IteratorAggregate
             }
 
             $this->articles[] = new Article($article);
+        }
+
+        if ($this->calculationMode === CalculationMode::MANUAL) {
+            foreach ($this->articles as $Article) {
+                if ($Article instanceof Article) {
+                    $Article->setCalculationMode(CalculationMode::MANUAL);
+                }
+            }
         }
 
         if ($User) {
@@ -304,6 +329,18 @@ class ArticleListUnique implements IteratorAggregate
         return $this->calculations;
     }
 
+    //region Calculation mode
+
+    /**
+     * Return the persisted document policy, independently of whether its prices have been calculated.
+     */
+    public function getCalculationMode(): CalculationMode
+    {
+        return $this->calculationMode;
+    }
+
+    //endregion
+
     /**
      * Return the list articles
      *
@@ -353,6 +390,7 @@ class ArticleListUnique implements IteratorAggregate
         return [
             'articles' => $articles,
             'calculations' => $this->calculations,
+            'calculationMode' => $this->calculationMode->value,
             'priceFactors' => $this->PriceFactors->toArray()
         ];
     }

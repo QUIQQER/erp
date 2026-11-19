@@ -1,0 +1,46 @@
+.quiqqer-erp-calculationMode {
+    --_focus: var(--qui-panel-toolbar-focus, color-mix(in srgb, var(--qui-colors-primary) 65%, var(--qui-colors-success)));
+    --_hover-color: color-mix(in srgb, var(--_focus) 75%, var(--qui-colors-black));
+    --_hover-shadow: inset 0 0 0 1px var(--_focus), 0 0 7px color-mix(in srgb, var(--_focus) 45%, transparent);
+
+    height: 34px;
+    min-height: 34px;
+    box-sizing: border-box;
+}
+
+.quiqqer-erp-calculationMode.qui-button {
+    background: var(--qui-panel-toolbar-control-surface, var(--qui-colors-white));
+    border: 1px solid var(--qui-panel-toolbar-border, var(--qui-colors-gray-200));
+    border-radius: 5px;
+    box-shadow: none;
+    line-height: 32px;
+}
+
+.quiqqer-erp-calculationMode.qui-button:hover,
+.quiqqer-erp-calculationMode.qui-button-active,
+.quiqqer-erp-calculationMode.qui-button:focus-visible {
+    background: var(--qui-panel-toolbar-control-surface, var(--qui-colors-white));
+    border-color: var(--_focus);
+    box-shadow: var(--_hover-shadow);
+    color: var(--_hover-color);
+}
+
+.quiqqer-erp-calculationMode-label {
+    display: inline-grid;
+    position: relative;
+    vertical-align: middle;
+}
+
+.quiqqer-erp-calculationMode-label-size {
+    grid-area: 1 / 1;
+    visibility: hidden;
+    white-space: nowrap;
+}
+
+.quiqqer-erp-calculationMode-label-value {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

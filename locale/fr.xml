@@ -1263,6 +1263,62 @@
 <fr><![CDATA[Copier dans le dossier existant]]></fr>
         </locale>
 
+        <locale name="manual.calculation" context="administration">
+<fr><![CDATA[Calcul]]></fr>
+        </locale>
+        <locale name="manual.automatic" context="administration">
+<fr><![CDATA[Automatique]]></fr>
+        </locale>
+        <locale name="manual.manual" context="administration">
+<fr><![CDATA[Manuel]]></fr>
+        </locale>
+        <locale name="manual.hint" context="administration">
+<fr><![CDATA[Saisissez les montants manuellement. Ils ne sont pas recalculés automatiquement.]]></fr>
+        </locale>
+        <locale name="manual.taxAmount" context="administration">
+<fr><![CDATA[Montant de TVA]]></fr>
+        </locale>
+        <locale name="manual.taxRate" context="administration">
+<fr><![CDATA[Taux de TVA]]></fr>
+        </locale>
+        <locale name="manual.addTax" context="administration">
+<fr><![CDATA[Ajouter une ligne de TVA]]></fr>
+        </locale>
+        <locale name="manual.removeTax" context="administration">
+<fr><![CDATA[Supprimer la ligne de TVA]]></fr>
+        </locale>
+        <locale name="manual.taxRateExists" context="administration">
+<fr><![CDATA[Ce taux de TVA existe déjà.]]></fr>
+        </locale>
+        <locale name="manual.otherTotals" context="administration">
+<fr><![CDATA[Autres totaux]]></fr>
+        </locale>
+        <locale name="manual.netBeforeFactors" context="administration">
+<fr><![CDATA[Net avant majorations et remises]]></fr>
+        </locale>
+        <locale name="manual.grossBeforeFactors" context="administration">
+<fr><![CDATA[Brut avant ajustements finaux]]></fr>
+        </locale>
+
+
+        <locale name="article.description.more" context="administration">
+<fr>Afficher la description</fr>
+        </locale>
+        <locale name="article.description.less" context="administration">
+<fr>Replier la description</fr>
+        </locale>
+
+        <locale name="article.priceDisplay.net" context="administration">
+<fr>Prix HT</fr>
+        </locale>
+
+        <locale name="article.priceDisplay.gross" context="administration">
+<fr>Prix TTC</fr>
+        </locale>
+
+        <locale name="article.priceDisplay.mismatch" context="administration">
+<fr>L’affichage des prix diffère du mode de prix de la boutique. La conversion peut entraîner des écarts d’arrondi.</fr>
+        </locale>
     </groups>
 </locales>
 </quiqqer>

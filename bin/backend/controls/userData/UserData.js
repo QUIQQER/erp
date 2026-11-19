@@ -84,7 +84,14 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             this.parent(options);
 
             this.addEvents({
-                onInject: this.$onInject
+                onInject: this.$onInject,
+                onDestroy: () => {
+                    this.$destroyed = true;
+                    this.$userLoadVersion++;
+                    this.$valueVersion++;
+                    this.$addressLoadVersion++;
+                    clearTimeout(this.$triggerChange);
+                }
             });
 
             this.$CustomerSelect = null;
@@ -112,6 +119,11 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             this.$setValues = false;
 
             this.$Panel = null;
+            this.$destroyed = false;
+            this.$userLoadVersion = 0;
+            this.$valueVersion = 0;
+            this.$addressLoadVersion = 0;
+            this.$LoadError = null;
         },
 
         /**
@@ -278,10 +290,14 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 this.$CustomerEdit.setStyle('display', 'inline');
             }
 
+            const version = ++this.$valueVersion;
+            let userVersion = this.$userLoadVersion;
+            const isCurrent = () => !this.$destroyed && version === this.$valueVersion &&
+                userVersion === this.$userLoadVersion;
             let dataPromise = Promise.resolve();
-            let addressPromise = Promise.resolve();
+            const hasUser = 'userId' in data && data.userId;
 
-            if ('userId' in data && data.userId) {
+            if (hasUser) {
                 if (this.$CustomerSelect) {
                     this.$setValues = true;
                     this.$CustomerSelect.addItem(data.userId);
@@ -292,13 +308,23 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 }
 
                 dataPromise = this.$setDataByUserId(data.userId);
+                userVersion = this.$userLoadVersion;
             }
 
-            if ('addressId' in data && data.addressId) {
-                addressPromise = this.setAddressId(data.addressId);
-            }
+            return dataPromise.then((User) => {
+                if (isCurrent() && data.addressId && (!hasUser || User)) {
+                    return this.setAddressId(data.addressId);
+                }
+            }).catch((error) => {
+                if (isCurrent()) {
+                    this.$setLoadError(error?.message || String(error));
+                    console.error(error);
+                }
+            }).then(() => {
+                if (!isCurrent()) {
+                    return;
+                }
 
-            return dataPromise.then(addressPromise).then(() => {
                 fields.forEach((field) => {
                     if (typeof data[field] !== 'undefined') {
                         this.setAttribute(field, data[field]);
@@ -430,6 +456,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @return {Promise}
          */
         $setDataByUserId: function (userId) {
+            const version = ++this.$userLoadVersion;
+            const isCurrent = () => !this.$destroyed && version === this.$userLoadVersion;
+            this.$addressLoadVersion++;
+            this.$setLoadError('');
             this.$oldUserId = this.getAttribute('userId');
 
             //this.$clearData();
@@ -440,7 +470,7 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 this.$CustomerEdit.setStyle('display', 'inline');
             }
 
-            if (!this.$Elm) {
+            if (this.$destroyed || !this.$Elm) {
                 return Promise.resolve();
             }
 
@@ -452,14 +482,16 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
             this.$BtnContactPersonSelect.disabled = true;
             this.$BtnContactEmailSelect.disabled = true;
 
+            let loadedUser = null;
             let contactPersonAddress = null;
             let erpAddress = null;
 
             return this.$getUser().then((User) => {
-                if (!User) {
+                if (!isCurrent() || !User) {
                     return;
                 }
 
+                loadedUser = User;
                 this.setAttribute('isCommercial', 0);
 
                 if (parseInt(User.getAttribute('quiqqer.erp.isNettoUser')) === 1 || this.getAttribute('company')) {
@@ -484,11 +516,11 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                     User.getAttribute('quiqqer.erp.customer.referenceCode')
                 );
 
-                return this.getAddressList(User).then((addresses) => {
+                return this.getAddressList(User, isCurrent).then((addresses) => {
                     return [User, addresses];
                 });
             }).then((result) => {
-                if (!result) {
+                if (!isCurrent() || !result) {
                     return;
                 }
 
@@ -552,27 +584,48 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
                 // Set address data
                 this.$setDataByAddress(currentAddress);
             }).then(() => {
-                this.$ContactPerson.disabled = false;
-                this.$BtnContactPersonSelect.disabled = false;
-                this.$BtnContactEmailSelect.disabled = false;
+                if (!isCurrent() || !loadedUser) {
+                    return;
+                }
 
-                return new Promise((resolve) => {
+                return new Promise((resolve, reject) => {
                     if (!contactPersonAddress) {
                         return resolve();
                     }
 
                     QUIAjax.get('ajax_users_address_get', (address) => {
-                        this.$setContactPersonByAddress(address);
+                        if (isCurrent()) {
+                            this.$setContactPersonByAddress(address);
+                        }
+
                         resolve();
                     }, {
-                        uid: this.getAttribute('userId'),
-                        aid: contactPersonAddress
+                        uid: userId,
+                        aid: contactPersonAddress,
+                        onError: reject
                     });
                 });
             }).then(() => {
-                this.$fireChange();
-            }).catch((err) => {
-                console.error(err);
+                if (isCurrent() && loadedUser) {
+                    this.$fireChange();
+                    return loadedUser;
+                }
+
+                return null;
+            }).catch((error) => {
+                if (isCurrent()) {
+                    this.$setLoadError(error?.message || String(error));
+                    console.error(error);
+                }
+
+                return null;
+            }).finally(() => {
+                if (isCurrent()) {
+                    this.$loading = false;
+                    this.$ContactPerson.disabled = false;
+                    this.$BtnContactPersonSelect.disabled = !loadedUser;
+                    this.$BtnContactEmailSelect.disabled = !loadedUser;
+                }
             });
         },
 
@@ -625,47 +678,88 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @return {Promise}
          */
         setAddressId: function (addressId) {
-            const self = this;
+            const userId = this.getAttribute('userId');
 
-            return new Promise(function (resolve) {
-                if (self.getAttribute('userId') === '') {
-                    return Promise.resolve([]);
-                }
+            if (this.$destroyed || !userId) {
+                return Promise.resolve();
+            }
 
-                QUIAjax.get('ajax_users_address_get', function (address) {
+            const version = ++this.$addressLoadVersion;
+
+            return new Promise((resolve, reject) => {
+                QUIAjax.get('ajax_users_address_get', (address) => {
+                    if (this.$destroyed || version !== this.$addressLoadVersion ||
+                        userId !== this.getAttribute('userId')) {
+                        resolve();
+                        return;
+                    }
+
                     if (!('id' in address)) {
                         address.id = addressId;
                     }
 
-                    self.$setDataByAddress(address);
-                    self.$fireChange();
+                    this.$setDataByAddress(address);
+                    this.$fireChange();
                     resolve();
                 }, {
-                    uid: self.getAttribute('userId'),
-                    aid: addressId
+                    uid: userId,
+                    aid: addressId,
+                    onError: reject
                 });
             });
         },
 
         /**
-         * Return the loaded user object.
+         * Return the loaded user object. Legacy User.load rejects with the user
+         * model when the requested ID does not exist.
          *
          * @returns {Promise}
          */
         $getUser: function () {
             const userId = this.getAttribute('userId');
 
-            if (!userId || userId === '') {
-                return Promise.reject();
+            if (!userId) {
+                return Promise.resolve(null);
             }
 
             const User = Users.get(userId);
+            const loaded = User.isLoaded() ? Promise.resolve(User) : User.load();
 
-            if (User.isLoaded()) {
-                return Promise.resolve(User);
+            return loaded.then(() => {
+                if (!User.getId()) {
+                    throw User;
+                }
+
+                return User;
+            }).catch((reason) => {
+                if (reason === User && !User.getId()) {
+                    const error = new Error(
+                        QUILocale.get('quiqqer/core', 'exception.lib.user.not.found') + ' (' + userId + ')'
+                    );
+                    error.userId = userId;
+                    throw error;
+                }
+
+                throw reason;
+            });
+        },
+
+        $setLoadError: function (message) {
+            if (this.$destroyed || !this.$Elm) {
+                return;
             }
 
-            return User.load();
+            if (!this.$LoadError && message) {
+                this.$LoadError = document.createElement('p');
+                this.$LoadError.dataset.name = 'load-error';
+                this.$LoadError.setAttribute('role', 'alert');
+                this.$Elm.prepend(this.$LoadError);
+            }
+
+            if (this.$LoadError) {
+                this.$LoadError.textContent = message;
+                this.$LoadError.hidden = !message;
+            }
         },
 
         /**
@@ -674,13 +768,17 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * @param User
          * @return {Promise}
          */
-        getAddressList: function (User) {
+        getAddressList: function (User, isCurrent = () => !this.$destroyed) {
             return new Promise((resolve, reject) => {
                 if (!User.getId()) {
                     return resolve([]);
                 }
 
                 return User.getAddressList().then((result) => {
+                    if (!isCurrent()) {
+                        return resolve([]);
+                    }
+
                     if (result.length) {
                         return resolve(result);
                     }
@@ -816,6 +914,10 @@ define('package/quiqqer/erp/bin/backend/controls/userData/UserData', [
          * fire the change event
          */
         $fireChange: function () {
+            if (this.$destroyed) {
+                return;
+            }
+
             if (this.$triggerChange) {
                 clearTimeout(this.$triggerChange);
             }

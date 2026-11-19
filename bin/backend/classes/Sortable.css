@@ -1,44 +1,49 @@
-
-.quiqqer-erp-sortableClone {
-
-}
-
 .quiqqer-erp-sortableClone-placeholder {
-    background: #fff;
-    color: #999;
-    cursor: pointer;
-    height: 100%;
+    display: grid;
+    grid-template-columns: 72px repeat(5, minmax(0, 1fr));
+    align-content: start;
     position: absolute;
-    width: 100%;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    background: var(--qui-colors-white);
+    color: var(--qui-colors-gray-600);
+    cursor: grab;
 }
 
-.quiqqer-erp-backend-erpArticlePlaceholder-pos,
-.quiqqer-erp-backend-erpArticlePlaceholder-articleNo,
-.quiqqer-erp-backend-erpArticlePlaceholder-title,
-.quiqqer-erp-backend-erpArticlePlaceholder-quantity,
-.quiqqer-erp-backend-erpArticlePlaceholder-unitPrice,
-.quiqqer-erp-backend-erpArticlePlaceholder-price {
-    float: left;
-    padding: 10px;
+.quiqqer-erp-sortableClone-placeholder > div {
+    min-width: 0;
+    padding: 10px 8px;
+    overflow-wrap: anywhere;
+}
+
+.quiqqer-erp-sortableClone-placeholder > div::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 11px;
+    margin-bottom: 6px;
 }
 
 .quiqqer-erp-backend-erpArticlePlaceholder-pos {
-    width: 50px;
+    grid-column: 1;
 }
 
-.quiqqer-erp-backend-erpArticlePlaceholder-articleNo,
-.quiqqer-erp-backend-erpArticlePlaceholder-quantity,
-.quiqqer-erp-backend-erpArticlePlaceholder-unitPrice,
-.quiqqer-erp-backend-erpArticlePlaceholder-price {
-    width: 100px;
+.quiqqer-erp-backend-erpArticlePlaceholder-articleNo {
+    grid-column: 2 / span 2;
 }
 
 .quiqqer-erp-backend-erpArticlePlaceholder-title {
-    width: calc(100% - 800px);
+    grid-column: 4 / -1;
 }
 
-.quiqqer-erp-backend-erpArticlePlaceholder-quantity,
-.quiqqer-erp-backend-erpArticlePlaceholder-unitPrice,
+.quiqqer-erp-backend-erpArticlePlaceholder-quantity {
+    grid-column: 1 / span 2;
+}
+
+.quiqqer-erp-backend-erpArticlePlaceholder-unitPrice {
+    grid-column: 3 / span 2;
+}
+
 .quiqqer-erp-backend-erpArticlePlaceholder-price {
-    text-align: right;
+    grid-column: 5 / span 2;
 }
