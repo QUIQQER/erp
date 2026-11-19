@@ -7,6 +7,8 @@ use QUI;
 use QUI\ERP\Products\Handler\Products;
 use QUI\ERP\Products\Product\Types\AbstractType;
 use QUI\ERP\Products\Product\Types\VariantParent;
+use QUI\Events\Event;
+use QUI\Events\Manager as EventsManager;
 use ReflectionProperty;
 
 class VariantGridAjaxTest extends TestCase
@@ -19,6 +21,8 @@ class VariantGridAjaxTest extends TestCase
 
     /** @var array<int, AbstractType> */
     private array $originalProducts;
+
+    private ?EventsManager $originalEvents;
 
     public static function setUpBeforeClass(): void
     {
@@ -42,10 +46,20 @@ class VariantGridAjaxTest extends TestCase
         $this->originalCallables = (new ReflectionProperty(QUI\Ajax::class, 'callables'))->getValue();
         $this->originalPermissions = (new ReflectionProperty(QUI\Ajax::class, 'permissions'))->getValue();
         $this->originalProducts = (new ReflectionProperty(Products::class, 'list'))->getValue();
+        $this->originalEvents = QUI::$Events;
+
+        // Exercise the real event dispatcher without loading listeners from the installed application's cache.
+        QUI::$Events = new class extends EventsManager {
+            public function __construct()
+            {
+                $this->Events = new Event();
+            }
+        };
     }
 
     protected function tearDown(): void
     {
+        QUI::$Events = $this->originalEvents;
         (new ReflectionProperty(QUI\Ajax::class, 'callables'))->setValue(null, $this->originalCallables);
         (new ReflectionProperty(QUI\Ajax::class, 'permissions'))->setValue(null, $this->originalPermissions);
         (new ReflectionProperty(Products::class, 'list'))->setValue(null, $this->originalProducts);
@@ -115,6 +129,47 @@ class VariantGridAjaxTest extends TestCase
         }
 
         self::assertSame($rows, $this->invoke(21));
+    }
+
+    public function testRemovingOneExtensionPreservesOtherListenersAndTheirFields(): void
+    {
+        $Child = $this->createMock(AbstractType::class);
+        $Child->method('getAttributes')->willReturn(['id' => 31, 'title' => 'First', 'fields' => []]);
+        $Parent = $this->createMock(VariantParent::class);
+        $Parent->method('getVariants')->willReturn([$Child]);
+        (new ReflectionProperty(Products::class, 'list'))->setValue(null, [21 => $Parent]);
+
+        $Stock = static function (array &$rows): void {
+            $rows[0]['stockManagementStock'] = 0.0;
+            $rows[0]['F12'] = 0.0;
+        };
+        $PackageQuantity = static function (array &$rows): void {
+            $rows[0]['packageQuantity'] = -1.25;
+        };
+        $Events = QUI::getEvents();
+        $Events->addEvent('onQuiqqerProductsVariantGridData', $Stock);
+        $Events->addEvent('onQuiqqerProductsVariantGridData', $PackageQuantity);
+
+        try {
+            $withBothExtensions = $this->invoke(21);
+            self::assertSame(0.0, $withBothExtensions[0]['stockManagementStock']);
+            self::assertSame(0.0, $withBothExtensions[0]['F12']);
+            self::assertSame(-1.25, $withBothExtensions[0]['packageQuantity']);
+
+            $Events->removeEvent('onQuiqqerProductsVariantGridData', $PackageQuantity);
+            $withStockOnly = $this->invoke(21);
+
+            self::assertSame([[
+                'id' => 31,
+                'title' => 'First',
+                'fields' => [],
+                'stockManagementStock' => 0.0,
+                'F12' => 0.0
+            ]], $withStockOnly);
+        } finally {
+            $Events->removeEvent('onQuiqqerProductsVariantGridData', $Stock);
+            $Events->removeEvent('onQuiqqerProductsVariantGridData', $PackageQuantity);
+        }
     }
 
     public function testEmptyVariantSelectionDispatchesTheEventButOrdinaryProductsDoNot(): void

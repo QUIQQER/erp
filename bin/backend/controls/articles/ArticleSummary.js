@@ -7,6 +7,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
     'qui/QUI',
     'qui/controls/Control',
     'package/quiqqer/erp/bin/backend/controls/articles/Article',
+    'package/quiqqer/erp/bin/backend/controls/articles/TaxAmount',
     'package/quiqqer/currency/bin/Currency',
     'Mustache',
     'Locale',
@@ -15,7 +16,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
     'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.PriceFactors.html',
     'css!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.css'
 
-], function (QUI, QUIControl, Article, Currency, Mustache, QUILocale, template, templatePriceFactor) {
+], function (QUI, QUIControl, Article, TaxAmount, Currency, Mustache, QUILocale, template, templatePriceFactor) {
     "use strict";
 
     const lg = 'quiqqer/erp';
@@ -48,6 +49,26 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             this.$BruttoSum = null;
             this.$PriceFactors = null;
             this.$PFFX = null;
+            this.$destroyed = false;
+            this.$List = null;
+            this.$listObserver = null;
+            this.$visible = false;
+            this.$visibilityInitialized = false;
+            this.$visibilityAnimation = null;
+            this.$priceFactorVersion = 0;
+            this.$taxControls = new Map();
+            this.addEvent('onDestroy', () => {
+                this.$destroyed = true;
+                this.$priceFactorVersion++;
+                this.$List?.removeEvent('onCalc', this.$refreshArticleSelect);
+                this.$List?.removeEvent('onArticleSelect', this.$refreshArticleSelect);
+                this.$List = null;
+                this.$listObserver?.disconnect();
+                this.$visibilityAnimation?.cancel();
+                this.$PFFX?.stop?.();
+                this.$taxControls.forEach((Tax) => Tax.destroy());
+                this.$taxControls.clear();
+            });
 
             this.addEvents({
                 onInject: this.$onInject
@@ -62,41 +83,56 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         create: function () {
             const showPosSummary = this.getAttribute('showPosSummary');
 
-            this.$Elm = new Element('div', {
-                'data-qui': 'package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary',
-                'class': 'quiqqer-erp-backend-temporaryErp-summary',
-                html: Mustache.render(template, {
-                    showPosSummary: showPosSummary,
-                    labelPosInfo: QUILocale.get(lg, 'article.summary.tpl.labelPosInfo'),
-                    labelNet: QUILocale.get(lg, 'article.summary.tpl.labelNet'),
-                    labelGross: QUILocale.get(lg, 'article.summary.tpl.labelGross'),
-                    labelSums: QUILocale.get(lg, 'article.summary.tpl.labelSums'),
-                    labelVat: QUILocale.get(lg, 'article.summary.tpl.labelVat'),
-                }),
-                events: {
-                    mouseenter: this.showPriceFactors,
-                    mouseleave: this.hidePriceFactors
+            this.$Elm = document.createElement('div');
+            this.$Elm.dataset.qui = this.Type;
+            this.$Elm.className = 'quiqqer-erp-backend-temporaryErp-summary';
+            this.$Elm.hidden = true;
+            this.$Elm.innerHTML = Mustache.render(template, {
+                showPosSummary: showPosSummary,
+                labelPosInfo: QUILocale.get(lg, 'article.summary.tpl.labelPosInfo'),
+                labelNet: QUILocale.get(lg, 'article.summary.tpl.labelNet'),
+                labelGross: QUILocale.get(lg, 'article.summary.tpl.labelGross'),
+                labelSums: QUILocale.get(lg, 'article.summary.tpl.labelSums'),
+                labelVat: QUILocale.get(lg, 'article.summary.tpl.labelVat'),
+                labelAddTax: QUILocale.get(lg, 'manual.addTax'),
+                labelOtherTotals: QUILocale.get(lg, 'manual.otherTotals'),
+                labelNetBefore: QUILocale.get(lg, 'manual.netBeforeFactors'),
+                labelSubtotal: QUILocale.get(lg, 'article.list.articles.subtotal'),
+                labelGrossBefore: QUILocale.get(lg, 'manual.grossBeforeFactors')
+            });
+            this.$Elm.addEventListener('mouseenter', this.showPriceFactors);
+            this.$Elm.addEventListener('mouseleave', this.hidePriceFactors);
+
+            this.$Elm.addEventListener('click', (event) => {
+                if (!event.target.closest('input, select, button, details, label')) {
+                    this.openSummary();
                 }
             });
 
-            this.$Elm.addEvent('click', this.openSummary);
-            this.$PriceFactors = new Element('div', {
-                'class': 'quiqqer-erp-backend-temporaryErp-priceFactors'
-            }).inject(this.$Elm);
+            this.$Elm.querySelectorAll('[data-name="manual-total"]').forEach((Input) => {
+                Input.addEventListener('change', () => this.$setManualTotal(Input.dataset.field, Input));
+            });
+
+            this.$Elm.querySelector('[data-name="add-manual-tax"]').addEventListener('click', () => {
+                const List = this.getAttribute('List');
+                const data = List.getCalculations();
+
+                if (!Object.hasOwn(data.calculations.vatArray, '0')) {
+                    data.calculations.vatArray['0'] = {vat: 0, sum: 0, text: '0%'};
+                    List.setCalculations(data);
+                }
+
+                this.$taxControls.get('0')?.focusRate();
+            });
+            this.$PriceFactors = document.createElement('div');
+            this.$PriceFactors.className = 'quiqqer-erp-backend-temporaryErp-priceFactors';
+            this.$Elm.appendChild(this.$PriceFactors);
 
             this.$PFFX = moofx(this.$PriceFactors);
 
-            this.$NettoSum = this.$Elm.getElement(
-                '.quiqqer-erp-backend-temporaryErp-summary-total .netto-value'
-            );
-
-            this.$BruttoSum = this.$Elm.getElement(
-                '.quiqqer-erp-backend-temporaryErp-summary-total .brutto-value'
-            );
-
-            this.$VAT = this.$Elm.getElement(
-                '.quiqqer-erp-backend-temporaryErp-summary-total-vat .vat-value'
-            );
+            this.$NettoSum = this.$Elm.querySelector('[data-name="net-total"]');
+            this.$BruttoSum = this.$Elm.querySelector('[data-name="gross-total"]');
+            this.$VAT = this.$Elm.querySelector('[data-name="tax-totals"]');
 
             if (showPosSummary) {
                 this.$ArticleNettoSum = this.$Elm.getElement(
@@ -134,14 +170,18 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 }
 
                 Currency.getCurrency(currency).then((currency) => {
-                    this.$Formatter = QUILocale.getNumberFormatter({
+                    const Formatter = QUILocale.getNumberFormatter({
                         style: 'currency',
                         currency: currency.code,
                         minimumFractionDigits: currency.precision,
                         maximumFractionDigits: currency.precision
                     });
 
-                    resolve(this.$Formatter);
+                    if (!this.$destroyed) {
+                        this.$Formatter = Formatter;
+                    }
+
+                    resolve(Formatter);
                 });
             });
         },
@@ -152,14 +192,69 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         $onInject: function () {
             const List = this.getAttribute('List');
 
-            if (!List) {
+            if (this.$destroyed || !List) {
                 return;
             }
 
+            this.$List?.removeEvent('onCalc', this.$refreshArticleSelect);
+            this.$List?.removeEvent('onArticleSelect', this.$refreshArticleSelect);
+            this.$listObserver?.disconnect();
+            this.$List = List;
             List.addEvent('onCalc', this.$refreshArticleSelect);
             List.addEvent('onArticleSelect', this.$refreshArticleSelect);
-            this.$refreshArticleSelect(this.getAttribute('List'));
+
+            // Text positions and clear() do not trigger a calculation event.
+            const Items = List.getElm().querySelector('[data-name="items"]');
+
+            if (Items) {
+                this.$listObserver = new MutationObserver(() => {
+                    if (!this.$destroyed && (List.count() > 0) !== this.$visible) {
+                        this.$refreshArticleSelect(List);
+                    }
+                });
+                this.$listObserver.observe(Items, {childList: true});
+            }
+
+            this.$refreshArticleSelect(List);
         },
+
+        //region Visibility
+
+        $refreshVisibility: function (List) {
+            const visible = List.count() > 0;
+            const initialized = this.$visibilityInitialized;
+            const changed = visible !== this.$visible;
+            this.$visibilityInitialized = true;
+            this.$visible = visible;
+            this.$Elm.hidden = !visible;
+
+            if (!changed) {
+                return visible;
+            }
+
+            this.$visibilityAnimation?.cancel();
+            this.$visibilityAnimation = null;
+
+            // Existing panels animate their initial opacity/bottom themselves.
+            if (visible && initialized && this.$Elm.style.opacity !== '0' &&
+                !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                const Animation = this.$Elm.animate([
+                    {transform: 'translateY(20px)', opacity: 0},
+                    {transform: 'translateY(0)', opacity: 1}
+                ], {duration: 180, easing: 'ease-out'});
+
+                this.$visibilityAnimation = Animation;
+                Animation.addEventListener('finish', () => {
+                    if (this.$visibilityAnimation === Animation) {
+                        this.$visibilityAnimation = null;
+                    }
+                }, {once: true});
+            }
+
+            return visible;
+        },
+
+        //endregion
 
         // region summary
 
@@ -167,13 +262,17 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
          * Open the summary with price factors
          */
         openSummary: function () {
-            if (!this.getAttribute('List')) {
+            if (this.$destroyed || !this.getAttribute('List')) {
                 return;
             }
 
             require([
                 'package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors'
             ], (PriceFactorWindow) => {
+                if (this.$destroyed) {
+                    return;
+                }
+
                 new PriceFactorWindow({
                     ArticleList: this.getAttribute('List')
                 }).open();
@@ -181,10 +280,19 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         },
 
         $refreshSummaryContent: function (Win) {
+            if (this.$destroyed) {
+                return Promise.resolve();
+            }
+
             const self = this;
 
             return new Promise((resolve) => {
                 this.getCurrencyFormatter().then(function (Formatter) {
+                    if (self.$destroyed) {
+                        resolve();
+                        return;
+                    }
+
                     const Content = Win.getContent();
                     const List = self.getAttribute('List');
 
@@ -200,6 +308,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                     require([
                         'text!package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary.Window.html'
                     ], (template) => {
+                        if (self.$destroyed) {
+                            resolve();
+                            return;
+                        }
+
                         if (typeof calculations.vatArray === 'undefined') {
                             calculations.vatArray = {};
                         }
@@ -218,6 +331,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                         Content.getElements(
                             '.quiqqer-invoice-backend-temporaryInvoice-summaryWin-priceFactors button'
                         ).addEvent('click', function (event) {
+                            if (self.$destroyed) {
+                                return;
+                            }
+
                             let index = event.target.getParent('tr').get('data-index');
 
                             List.removePriceFactor(index);
@@ -239,15 +356,38 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
          * @param ArticleInstance
          */
         $refreshArticleSelect: function (List, ArticleInstance) {
-            let calculated = List.getCalculations();
-
-            if (typeof calculated.calculations === 'undefined') {
+            if (this.$destroyed || !this.$Elm) {
                 return;
             }
 
-            let calc = calculated.calculations;
+            if (!this.$refreshVisibility(List)) {
+                return;
+            }
+
+            const calculationSnapshot = List.getCalculations().calculations;
+            const calc = calculationSnapshot || {nettoSum: 0, sum: 0, vatArray: {}};
+
+            const manual = List.getCalculationMode() === 'manual';
+            this.$Elm.classList.toggle('quiqqer-erp-summary-manual', manual);
+            this.$Elm.querySelector('[data-name="manual-extra"]').hidden = !manual;
+            this.$Elm.querySelector('[data-name="add-manual-tax"]').hidden = !manual;
+
+            if (manual) {
+                this.$renderManualTotals(List, calc);
+                return;
+            }
+
+            this.$manualVatKeys = null;
+            this.$taxControls.forEach((Tax) => Tax.destroy());
+            this.$taxControls.clear();
 
             this.getCurrencyFormatter().then((Formatter) => {
+                if (this.$destroyed || !this.$Elm || !this.$visible ||
+                    List.getCalculationMode() !== 'automatic' ||
+                    List.getCalculations().calculations !== calculationSnapshot) {
+                    return;
+                }
+
                 if (this.getAttribute('showPosSummary')) {
                     if (!(ArticleInstance instanceof Article)) {
                         ArticleInstance = List.getSelectedArticle();
@@ -309,8 +449,120 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             });
         },
 
+        //region Manual amounts
+
+        $setManualTotal: function (field, Input) {
+            if (!Input.checkValidity() || !Number.isFinite(Input.valueAsNumber)) {
+                Input.reportValidity();
+                return;
+            }
+
+            const List = this.getAttribute('List');
+            const data = List.getCalculations();
+            data.calculations[field] = Input.valueAsNumber;
+            List.setCalculations(data);
+        },
+
+        $renderManualTotals: function (List, calc) {
+            const totals = [[this.$NettoSum, 'nettoSum'], [this.$BruttoSum, 'sum']];
+
+            totals.forEach(([Container, field]) => {
+                let Input = Container.querySelector('[data-name="manual-total"]');
+
+                if (!Input) {
+                    Container.replaceChildren();
+                    Input = document.createElement('input');
+                    Input.type = 'number';
+                    Input.step = 'any';
+                    Input.required = true;
+                    Input.dataset.name = 'manual-total';
+                    Input.dataset.field = field;
+                    Input.setAttribute('aria-label', QUILocale.get(lg, field === 'sum' ?
+                        'article.summary.tpl.labelGross' : 'article.summary.tpl.labelNet'));
+                    Input.addEventListener('change', () => this.$setManualTotal(field, Input));
+                    Container.appendChild(Input);
+                }
+
+                if (Input !== document.activeElement) {
+                    Input.value = calc[field];
+                }
+            });
+
+            this.$Elm.querySelectorAll('[data-name="manual-total"]').forEach((Input) => {
+                if (Input !== document.activeElement) {
+                    Input.value = calc[Input.dataset.field] ?? 0;
+                }
+            });
+
+            const keys = Object.keys(calc.vatArray || {});
+
+            if (this.$manualVatKeys !== JSON.stringify(keys) || this.$manualTaxData !== calc) {
+                this.$taxControls.forEach((Tax) => Tax.destroy());
+                this.$taxControls.clear();
+                this.$VAT.replaceChildren();
+
+                keys.forEach((rate) => {
+                    const Tax = new TaxAmount({
+                        rate: Number(rate),
+                        amount: calc.vatArray[rate].sum,
+                        validateRate: (value) => {
+                            if (String(value) !== rate && Object.hasOwn(calc.vatArray, String(value))) {
+                                return QUILocale.get(lg, 'manual.taxRateExists');
+                            }
+
+                            return '';
+                        },
+                        events: {
+                            onRateChange: (Control, value) => {
+                                const next = String(value);
+                                calc.vatArray[next] = Object.assign({}, calc.vatArray[rate], {
+                                    vat: value,
+                                    text: next + '%'
+                                });
+
+                                if (next !== rate) {
+                                    delete calc.vatArray[rate];
+                                    delete calc.vatText[rate];
+                                }
+
+                                calc.vatText[next] = next + '%';
+                                List.setCalculations(List.getCalculations());
+                            },
+                            onAmountChange: (Control, value) => {
+                                calc.vatArray[rate].sum = value;
+                                List.setCalculations(List.getCalculations());
+                            },
+                            onRemove: () => {
+                                delete calc.vatArray[rate];
+                                delete calc.vatText[rate];
+                                List.setCalculations(List.getCalculations());
+                            }
+                        }
+                    }).inject(this.$VAT);
+
+                    this.$taxControls.set(rate, Tax);
+                });
+
+                this.$manualVatKeys = JSON.stringify(keys);
+                this.$manualTaxData = calc;
+            }
+
+            this.$taxControls.forEach((Tax, rate) => Tax.setAmount(calc.vatArray[rate].sum));
+        },
+
+        //endregion
+
         showPriceFactors: function () {
+            if (this.$destroyed || !this.$Elm) {
+                return;
+            }
+
             const ArticleList = this.getAttribute('List');
+
+            if (!ArticleList || ArticleList.getCalculationMode() === 'manual') {
+                return;
+            }
+            const version = ++this.$priceFactorVersion;
             let priceFactors = ArticleList.getPriceFactors();
             let calculated = ArticleList.getCalculations();
 
@@ -324,6 +576,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             }
 
             this.getCurrencyFormatter().then(() => {
+                if (this.$destroyed || !this.$Elm || version !== this.$priceFactorVersion) {
+                    return;
+                }
+
                 const vat = Object.entries(calculated.calculations.vatArray).map((val) => {
                     return {
                         text: val[1].text,
@@ -331,18 +587,18 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                     };
                 });
 
-                this.$PriceFactors.set('html', Mustache.render(templatePriceFactor, {
+                this.$PriceFactors.innerHTML = Mustache.render(templatePriceFactor, {
                     valueSubSum: calculated.calculations.display_subSum,
                     valueSum: calculated.calculations.display_sum,
                     vat: vat,
                     textSubSum: QUILocale.get(lg, 'article.list.articles.subtotal'),
                     textSum: QUILocale.get(lg, 'article.list.articles.sumtotal'),
                     priceFactors: priceFactors
-                }));
+                });
 
-                this.$PriceFactors.setStyle('opacity', 0);
-                this.$PriceFactors.setStyle('display', 'block');
-                this.$PriceFactors.setStyle('bottom', 70);
+                this.$PriceFactors.style.opacity = '0';
+                this.$PriceFactors.style.display = 'block';
+                this.$PriceFactors.style.bottom = '70px';
 
                 this.$PFFX.animate({
                     bottom: 80,
@@ -354,13 +610,21 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
         },
 
         hidePriceFactors: function () {
+            const version = ++this.$priceFactorVersion;
+
+            if (this.$destroyed || !this.$Elm) {
+                return;
+            }
+
             this.$PFFX.animate({
                 bottom: 70,
                 opacity: 0
             }, {
                 duration: 300,
                 callback: () => {
-                    this.$PriceFactors.setStyle('display', 'none');
+                    if (!this.$destroyed && this.$Elm && version === this.$priceFactorVersion) {
+                        this.$PriceFactors.style.display = 'none';
+                    }
                 }
             });
         }

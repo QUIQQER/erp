@@ -4,16 +4,17 @@
         <input type="checkbox"/>
     </div>
     {{/showSelectCheckbox}}
-    <div class="quiqqer-erp-backend-erpArticle-pos cell"></div>
-    <div class="quiqqer-erp-backend-erpArticle-articleNo cell cell-editable"></div>
-    <div class="quiqqer-erp-backend-erpArticle-text cell"></div>
-    <div class="quiqqer-erp-backend-erpArticle-quantity cell cell-editable"></div>
-    <div class="quiqqer-erp-backend-erpArticle-quantityUnit cell cell-editable"></div>
-    <div class="quiqqer-erp-backend-erpArticle-unitPrice cell cell-editable"></div>
-    <div class="quiqqer-erp-backend-erpArticle-price cell"></div>
-    <div class="quiqqer-erp-backend-erpArticle-vat cell cell-editable"></div>
-    <div class="quiqqer-erp-backend-erpArticle-discount cell cell-editable"></div>
-    <div class="quiqqer-erp-backend-erpArticle-total cell"></div>
+    <div class="quiqqer-erp-backend-erpArticle-pos cell" data-name="position"></div>
+    <div class="quiqqer-erp-backend-erpArticle-articleNo cell cell-editable" data-label="{{labelArticleNo}}"></div>
+    <div class="quiqqer-erp-backend-erpArticle-text cell" data-label="{{labelDescription}}"></div>
+    <div class="quiqqer-erp-backend-erpArticle-quantity cell cell-editable" data-label="{{labelQuantity}}"></div>
+    <div class="quiqqer-erp-backend-erpArticle-quantityUnit cell cell-editable" data-label="{{labelQuantityUnit}}"></div>
+    <div class="quiqqer-erp-backend-erpArticle-unitPrice cell cell-editable" data-label="{{labelUnitPrice}}"></div>
+    <div class="quiqqer-erp-backend-erpArticle-price cell" data-label="{{labelPrice}}"></div>
+    <div class="quiqqer-erp-backend-erpArticle-vat cell cell-editable" data-label="{{labelVat}}"></div>
+    <div class="quiqqer-erp-backend-erpArticle-taxAmount cell" data-label="{{labelTaxAmount}}" data-name="tax-amount" hidden></div>
+    <div class="quiqqer-erp-backend-erpArticle-discount cell cell-editable" data-label="{{labelDiscount}}"></div>
+    <div class="quiqqer-erp-backend-erpArticle-total cell" data-label="{{labelTotal}}"></div>
 </div>
 <div class="quiqqer-erp-backend-erpArticle-customFields">
     {{#customFields}}
@@ -22,13 +23,13 @@
     </div>
     {{/customFields}}
 </div>
-<div class="quiqqer-erp-backend-erpArticle-articleEdit">
-    <button name="replace">
-        <span class="fa fa-retweet"></span>
+<div class="quiqqer-erp-backend-erpArticle-articleEdit" data-name="actions">
+    <button type="button" name="replace" class="btn btn-link-body">
+        <span class="fa fa-retweet" aria-hidden="true"></span>
         <span>{{buttonReplace}}</span>
     </button>
-    <button name="delete">
-        <span class="fa fa-trash"></span>
+    <button type="button" name="delete" class="btn btn-link-body">
+        <span class="fa fa-trash" aria-hidden="true"></span>
         <span>{{buttonDelete}}</span>
     </button>
 </div>

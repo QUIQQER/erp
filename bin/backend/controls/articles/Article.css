@@ -1,21 +1,20 @@
 .quiqqer-erp-backend-erpArticle {
-    align-items: stretch;
-    border-bottom: 1px solid #DEDEDE;
-    border-left: 2px solid #FFFFFF;
-    clear: both;
-    float: left;
-    min-height: 50px;
+    --_article-surface: var(--qui-colors-white);
+    --_article-border: var(--qui-colors-gray-200);
+    --_article-accent: var(--qui-colors-primary-800);
+    --_article-actions: var(--qui-colors-gray-50);
+    --_article-hover: var(--qui-colors-gray-100);
+    --_article-muted: var(--qui-colors-gray-600);
+    --_article-subtle: var(--qui-colors-gray-25);
+
+    container: erp-article / inline-size;
+    flex: 0 0 auto;
     position: relative;
     width: 100%;
 }
 
-.quiqqer-erp-backend-erpArticle-basicFields {
-    display: flex;
-    flex-direction: row;
-}
-
-.quiqqer-erp-backend-erpArticle .cell-editable:focus {
-    box-shadow: 0 0 5px #2F8FC6;
+.quiqqer-erp-backend-erpArticle .cell {
+    position: relative;
 }
 
 .quiqqer-erp-backend-erpArticle__cell_hidden {
@@ -26,8 +25,13 @@
     padding: 0 !important;
 }
 
+.quiqqer-erp-backend-erpArticle .cell-editable:focus-visible {
+    outline: 2px solid var(--qui-colors-primary-700);
+    outline-offset: -2px;
+}
+
 .quiqqer-erp-backend-erpArticle-text-btn-editor {
-    float: none !important;
+    float: none;
     line-height: initial;
     height: 20px;
     padding: 0 5px;
@@ -35,33 +39,6 @@
     right: 5px;
     top: 5px;
     width: 20px;
-}
-
-.quiqqer-erp-backend-erpArticle-select {
-    border-left: 2px solid #2F8FC6;
-}
-
-.quiqqer-erp-backend-erpArticle .cell {
-    padding: 10px;
-    position: relative;
-}
-
-.quiqqer-erp-backend-erpArticle .cell-editable:hover {
-    background: rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-}
-
-.quiqqer-erp-backend-erpArticle-pos {
-    cursor: pointer;
-    width: 50px;
-}
-
-.quiqqer-erp-backend-erpArticle-pos:hover {
-    background: #eaeaea;
-}
-
-.quiqqer-erp-backend-erpArticle-text {
-    width: calc(100% - 900px);
 }
 
 .quiqqer-erp-backend-erpArticle-text-title {
@@ -80,18 +57,27 @@
 }
 
 .quiqqer-erp-backend-erpArticle-text-description p {
-    float: none !important;
+    float: none;
+}
+
+.quiqqer-erp-backend-erpArticle-selectbox {
+    display: inline-block;
+    margin-inline-start: 8px;
+}
+
+.quiqqer-erp-backend-erpArticle .quiqqer-erp-backend-erpArticle-selectbox::before {
+    display: none;
 }
 
 .quiqqer-erp-backend-erpArticle-text-description-edit {
-    background: #EFEFEF;
-    border: 1px solid #EFEFEF;
+    background: var(--qui-colors-gray-50);
+    border: 1px solid var(--qui-colors-gray-200);
     height: 100%;
     left: 0;
     overflow: hidden;
     position: absolute;
     top: 0;
-    width: 100%
+    width: 100%;
 }
 
 .quiqqer-erp-backend-erpArticle-text-description-buttons {
@@ -99,48 +85,287 @@
     text-align: center;
 }
 
-.quiqqer-erp-backend-erpArticle-quantity {
-    text-align: right;
-    width: 100px;
-}
-
-.quiqqer-erp-backend-erpArticle-quantityUnit {
-    text-align: left;
-    width: 100px;
-}
-
-.quiqqer-erp-backend-erpArticle-articleNo,
-.quiqqer-erp-backend-erpArticle-unitPrice,
-.quiqqer-erp-backend-erpArticle-price,
-.quiqqer-erp-backend-erpArticle-vat,
-.quiqqer-erp-backend-erpArticle-discount,
-.quiqqer-erp-backend-erpArticle-total,
-.quiqqer-erp-backend-erpArticle-unitPrice-brutto,
-.quiqqer-erp-backend-erpArticle-price-brutto,
-.quiqqer-erp-backend-erpArticle-discount-brutto,
-.quiqqer-erp-backend-erpArticle-total-brutto {
-    overflow: hidden;
-    text-align: right;
-    text-overflow: ellipsis;
-    width: 100px;
-    white-space: nowrap;
-}
-
-.quiqqer-erp-backend-erpArticle-articleNo,
-.quiqqer-erp-backend-erpArticle-text,
-.quiqqer-erp-backend-erpArticle-articleNo input,
-.quiqqer-erp-backend-erpArticle-text input {
-    text-align: left !important;
-}
-
-.quiqqer-erp-backend-erpArticle-total-brutto,
-.quiqqer-erp-backend-erpArticle-total {
-    width: 150px;
-}
-
 .quiqqer-erp-dialog-edit-article-description input {
     margin-bottom: 10px;
     width: 100%;
+}
+
+.quiqqer-erp-backend-erpArticle-customFields-entry {
+    cursor: pointer;
+    padding: 10px;
+}
+
+.quiqqer-erp-backend-erpArticle-customFields-entry:hover {
+    background: var(--qui-colors-gray-100);
+}
+
+.quiqqer-erp-backend-erpArticle {
+    background: var(--_article-surface);
+    border: 1px solid var(--_article-border);
+    border-left: 3px solid var(--_article-border);
+    border-radius: 8px;
+}
+
+.quiqqer-erp-backend-erpArticle-select {
+    border-left-color: var(--_article-accent);
+}
+
+.quiqqer-erp-backend-erpArticle .quiqqer-erp-backend-erpArticle-articleEdit {
+    align-items: center;
+    background: var(--_article-actions);
+    border-top: 1px solid var(--_article-border);
+    border-radius: 0 0 6px 6px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 6px 12px;
+}
+
+.quiqqer-erp-backend-erpArticle .quiqqer-erp-backend-erpArticle-articleEdit[hidden] {
+    display: none;
+}
+
+.quiqqer-erp-backend-erpArticle-articleEdit .btn {
+    --padding-block: .4em;
+    --padding-inline: .75em;
+
+    color: inherit;
+    font-size: 12px;
+    margin: 0;
+}
+
+.quiqqer-erp-backend-erpArticle-articleEdit .btn:hover {
+    background: var(--_article-hover);
+}
+
+.quiqqer-erp-backend-erpArticle-text-description {
+    line-height: 1.5;
+    max-height: 4.5em;
+    overflow: hidden;
+}
+
+.quiqqer-erp-backend-erpArticle-description-expanded .quiqqer-erp-backend-erpArticle-text-description {
+    max-height: none;
+}
+
+.quiqqer-erp-backend-erpArticle-description-toggle {
+    --padding-block: .35em;
+    --padding-inline: 0;
+
+    display: block;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.quiqqer-erp-backend-erpArticle-description-toggle[hidden] {
+    display: none;
+}
+
+.quiqqer-erp-backend-erpArticle-basicFields {
+    display: grid;
+    grid-template-columns: 72px repeat(6, minmax(0, 1fr));
+}
+
+.quiqqer-erp-backend-erpArticle .cell {
+    min-width: 0;
+    padding: 10px 8px;
+    text-align: left;
+    width: auto;
+}
+
+.quiqqer-erp-backend-erpArticle .cell::before {
+    color: var(--_article-muted);
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.4;
+    margin-bottom: 6px;
+    white-space: normal;
+}
+
+.quiqqer-erp-backend-erpArticle-pos {
+    color: var(--_article-accent);
+    font-weight: 600;
+    grid-column: 1;
+}
+
+.quiqqer-erp-backend-erpArticle-pos::before {
+    content: '#';
+}
+
+.quiqqer-erp-backend-erpArticle-articleNo {
+    grid-column: 2 / span 2;
+}
+
+.quiqqer-erp-backend-erpArticle-articleNo::before {
+    content: attr(data-label);
+}
+
+.quiqqer-erp-backend-erpArticle-text {
+    grid-column: 4 / span 4;
+}
+
+.quiqqer-erp-backend-erpArticle-text::before {
+    content: attr(data-label);
+}
+
+.quiqqer-erp-backend-erpArticle-quantity {
+    grid-column: 1;
+}
+
+.quiqqer-erp-backend-erpArticle-basicFields > .cell:nth-child(n+4) {
+    background: var(--_article-subtle);
+    border-top: 1px solid var(--_article-border);
+}
+
+.quiqqer-erp-backend-erpArticle .cell-editable:hover {
+    background: var(--_article-hover);
+    cursor: pointer;
+}
+
+.quiqqer-erp-backend-erpArticle .cell-editable:hover:not(:focus):not(:focus-within) {
+    box-shadow: inset 0 0 0 1px var(--_article-border);
+}
+
+.quiqqer-erp-backend-erpArticle-quantity::before {
+    content: attr(data-label);
+}
+
+.quiqqer-erp-backend-erpArticle-quantityUnit {
+    grid-column: 2;
+}
+
+.quiqqer-erp-backend-erpArticle-quantityUnit::before {
+    content: attr(data-label);
+}
+
+.quiqqer-erp-backend-erpArticle-unitPrice,
+.quiqqer-erp-backend-erpArticle-unitPrice-brutto {
+    grid-column: 3;
+}
+
+.quiqqer-erp-backend-erpArticle-unitPrice::before,
+.quiqqer-erp-backend-erpArticle-unitPrice-brutto::before {
+    content: attr(data-label);
+}
+
+.quiqqer-erp-backend-erpArticle-price,
+.quiqqer-erp-backend-erpArticle-price-brutto {
+    grid-column: 4;
+}
+
+.quiqqer-erp-backend-erpArticle-price::before,
+.quiqqer-erp-backend-erpArticle-price-brutto::before {
+    content: attr(data-label);
+}
+
+.quiqqer-erp-backend-erpArticle-vat {
+    grid-column: 5;
+}
+
+.quiqqer-erp-backend-erpArticle-vat::before {
+    content: attr(data-label);
+}
+
+.quiqqer-erp-backend-erpArticle-discount,
+.quiqqer-erp-backend-erpArticle-discount-brutto {
+    grid-column: 6;
+}
+
+.quiqqer-erp-backend-erpArticle-discount::before,
+.quiqqer-erp-backend-erpArticle-discount-brutto::before {
+    content: attr(data-label);
+}
+
+.quiqqer-erp-backend-erpArticle-total,
+.quiqqer-erp-backend-erpArticle-total-brutto {
+    grid-column: 7;
+}
+
+.quiqqer-erp-backend-erpArticle-total::before,
+.quiqqer-erp-backend-erpArticle-total-brutto::before {
+    content: attr(data-label);
+}
+
+.quiqqer-erp-backend-erpArticle-manual .quiqqer-erp-backend-erpArticle-basicFields {
+    grid-template-columns: 72px repeat(7, minmax(0, 1fr));
+}
+
+.quiqqer-erp-backend-erpArticle-manual .quiqqer-erp-backend-erpArticle-text {
+    grid-column: 4 / span 5;
+}
+
+.quiqqer-erp-backend-erpArticle-taxAmount {
+    grid-column: 6;
+}
+
+.quiqqer-erp-backend-erpArticle-taxAmount::before {
+    content: attr(data-label);
+}
+
+.quiqqer-erp-backend-erpArticle-manual .quiqqer-erp-backend-erpArticle-discount,
+.quiqqer-erp-backend-erpArticle-manual .quiqqer-erp-backend-erpArticle-discount-brutto {
+    grid-column: 7;
+}
+
+.quiqqer-erp-backend-erpArticle-manual .quiqqer-erp-backend-erpArticle-total,
+.quiqqer-erp-backend-erpArticle-manual .quiqqer-erp-backend-erpArticle-total-brutto {
+    grid-column: 8;
+}
+
+@container erp-article (max-width: 600px) {
+    .quiqqer-erp-backend-erpArticle-basicFields,
+    .quiqqer-erp-backend-erpArticle-manual .quiqqer-erp-backend-erpArticle-basicFields {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .quiqqer-erp-backend-erpArticle-articleNo {
+        grid-column: 2 / -1;
+    }
+
+    .quiqqer-erp-backend-erpArticle-text,
+    .quiqqer-erp-backend-erpArticle-manual .quiqqer-erp-backend-erpArticle-text {
+        grid-column: 1 / -1;
+    }
+
+    .quiqqer-erp-backend-erpArticle-unitPrice,
+    .quiqqer-erp-backend-erpArticle-unitPrice-brutto {
+        grid-column: 3 / span 2;
+    }
+
+    .quiqqer-erp-backend-erpArticle-price,
+    .quiqqer-erp-backend-erpArticle-price-brutto {
+        grid-column: 1 / span 2;
+    }
+
+    .quiqqer-erp-backend-erpArticle-vat {
+        grid-column: 3;
+    }
+
+    .quiqqer-erp-backend-erpArticle-discount,
+    .quiqqer-erp-backend-erpArticle-discount-brutto {
+        grid-column: 4;
+    }
+
+    .quiqqer-erp-backend-erpArticle-taxAmount {
+        grid-column: 4;
+    }
+
+    .quiqqer-erp-backend-erpArticle-manual .quiqqer-erp-backend-erpArticle-discount,
+    .quiqqer-erp-backend-erpArticle-manual .quiqqer-erp-backend-erpArticle-discount-brutto {
+        grid-column: 1 / span 2;
+    }
+
+    .quiqqer-erp-backend-erpArticle-manual .quiqqer-erp-backend-erpArticle-total,
+    .quiqqer-erp-backend-erpArticle-manual .quiqqer-erp-backend-erpArticle-total-brutto {
+        grid-column: 3 / span 2;
+    }
+
+    .quiqqer-erp-backend-erpArticle-total,
+    .quiqqer-erp-backend-erpArticle-total-brutto {
+        grid-column: 1 / -1;
+    }
 }
 
 /** display views
@@ -175,38 +400,13 @@
     display: block;
 }
 
-/*
- * Custom fields
- */
-.quiqqer-erp-backend-erpArticle-customFields-entry {
-    cursor: pointer;
-    padding: 10px 0 10px 160px;
-}
-
-.quiqqer-erp-backend-erpArticle-customFields-entry:hover {
-    background-color: #dedede;
-}
-
-/*+
- * Custom fields
- */
-.quiqqer-erp-backend-erpArticle-articleEdit {
-    background: #DEDEDE;
-    display: none;
+.quiqqer-erp-article-amount {
+    all: unset;
+    display: block;
     width: 100%;
+    cursor: inherit;
 }
 
-.quiqqer-erp-backend-erpArticle-articleEdit button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    line-height: 20px;
-}
-
-.quiqqer-erp-backend-erpArticle-select .quiqqer-erp-backend-erpArticle-articleEdit {
-    display: inline-block;
-}
-
-.quiqqer-erp-backend-erpArticle-articleEdit button:hover {
-    background: #eaeaea;
+.quiqqer-erp-article-amount:focus-visible {
+    outline: auto;
 }

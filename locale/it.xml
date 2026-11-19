@@ -1263,6 +1263,62 @@
 <it><![CDATA[Copia nella pratica esistente]]></it>
         </locale>
 
+        <locale name="manual.calculation" context="administration">
+<it><![CDATA[Calcolo]]></it>
+        </locale>
+        <locale name="manual.automatic" context="administration">
+<it><![CDATA[Automatico]]></it>
+        </locale>
+        <locale name="manual.manual" context="administration">
+<it><![CDATA[Manuale]]></it>
+        </locale>
+        <locale name="manual.hint" context="administration">
+<it><![CDATA[Inserisci gli importi manualmente. Non verranno ricalcolati automaticamente.]]></it>
+        </locale>
+        <locale name="manual.taxAmount" context="administration">
+<it><![CDATA[Importo IVA]]></it>
+        </locale>
+        <locale name="manual.taxRate" context="administration">
+<it><![CDATA[Aliquota IVA]]></it>
+        </locale>
+        <locale name="manual.addTax" context="administration">
+<it><![CDATA[Aggiungi riga IVA]]></it>
+        </locale>
+        <locale name="manual.removeTax" context="administration">
+<it><![CDATA[Rimuovi riga IVA]]></it>
+        </locale>
+        <locale name="manual.taxRateExists" context="administration">
+<it><![CDATA[Questa aliquota IVA esiste già.]]></it>
+        </locale>
+        <locale name="manual.otherTotals" context="administration">
+<it><![CDATA[Altri totali]]></it>
+        </locale>
+        <locale name="manual.netBeforeFactors" context="administration">
+<it><![CDATA[Netto prima di maggiorazioni e sconti]]></it>
+        </locale>
+        <locale name="manual.grossBeforeFactors" context="administration">
+<it><![CDATA[Lordo prima degli adeguamenti finali]]></it>
+        </locale>
+
+
+        <locale name="article.description.more" context="administration">
+<it>Mostra descrizione</it>
+        </locale>
+        <locale name="article.description.less" context="administration">
+<it>Comprimi descrizione</it>
+        </locale>
+
+        <locale name="article.priceDisplay.net" context="administration">
+<it>Prezzi IVA esclusa</it>
+        </locale>
+
+        <locale name="article.priceDisplay.gross" context="administration">
+<it>Prezzi IVA inclusa</it>
+        </locale>
+
+        <locale name="article.priceDisplay.mismatch" context="administration">
+<it>La visualizzazione dei prezzi differisce dalla modalità di prezzo del negozio. La conversione può causare differenze di arrotondamento.</it>
+        </locale>
     </groups>
 </locales>
 </quiqqer>

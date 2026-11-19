@@ -1,0 +1,93 @@
+.quiqqer-erp-priceDisplay {
+    --_focus: var(--quiqqer-erp-price-display-focus, color-mix(in srgb, var(--qui-colors-primary) 65%, var(--qui-colors-success)));
+    --_hover-color: color-mix(in srgb, var(--_focus) 75%, var(--qui-colors-black));
+    --_hover-shadow: inset 0 0 0 1px var(--_focus), 0 0 7px color-mix(in srgb, var(--_focus) 45%, transparent);
+
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+    height: 34px;
+    box-sizing: border-box;
+    border: 1px solid var(--qui-colors-gray-200);
+    border-radius: 5px;
+    background: var(--qui-colors-white);
+    color: var(--qui-colors-gray-800);
+    cursor: default;
+}
+
+.quiqqer-erp-priceDisplay-buttons {
+    display: inline-flex;
+    align-items: center;
+    align-self: stretch;
+    flex: 0 0 auto;
+    gap: 2px;
+    padding: 2px;
+    border-inline-end: 1px solid var(--qui-colors-gray-100);
+}
+
+.quiqqer-erp-priceDisplay .quiqqer-erp-priceDisplay-buttons > button {
+    height: 28px;
+    margin: 0;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    color: inherit;
+    line-height: 28px;
+    box-shadow: none;
+}
+
+.quiqqer-erp-priceDisplay .quiqqer-erp-priceDisplay-buttons > button[aria-pressed="true"] {
+    background: var(--qui-colors-primary-50);
+    color: var(--qui-colors-primary-800);
+    font-weight: 600;
+}
+.quiqqer-erp-priceDisplay-description {
+    padding: 0 10px;
+
+    display: inline-flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    min-width: 0;
+    max-width: 240px;
+    height: 32px;
+    color: var(--qui-colors-gray-600);
+}
+
+.quiqqer-erp-priceDisplay-caption {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.quiqqer-erp-priceDisplay--warning .quiqqer-erp-priceDisplay-caption {
+    color: var(--qui-colors-danger-700);
+}
+
+.quiqqer-erp-priceDisplay-warning {
+    display: inline-flex;
+    align-items: center;
+    align-self: stretch;
+    flex: 0 0 auto;
+    padding-inline: 8px;
+    color: inherit;
+}
+
+.quiqqer-erp-priceDisplay-warning[hidden] {
+    display: none;
+}
+
+.quiqqer-erp-priceDisplay:hover,
+.quiqqer-erp-priceDisplay:focus-within {
+    border-color: var(--_focus);
+    box-shadow: var(--_hover-shadow);
+    color: var(--_hover-color);
+}
+
+.quiqqer-erp-priceDisplay .quiqqer-erp-priceDisplay-buttons > button:focus-visible {
+    outline: 0;
+}

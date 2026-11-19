@@ -9,11 +9,7 @@
     color: var(--qui-colors-gray-800);
 }
 
-.qui-panel-buttons .qui-toolbar-tabs > .quiqqer-erp-timefilter {
-    margin-block: 8px;
-}
-
-.quiqqer-erp-timefilter .quiqqer-erp-timefilter-navigation {
+.quiqqer-erp-timefilter button.quiqqer-erp-timefilter-navigation {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -39,7 +35,7 @@
     box-shadow: none;
 }
 
-.quiqqer-erp-timefilter .qui-select {
+.quiqqer-erp-timefilter div.qui-select {
     flex: 0 1 200px;
     min-width: 0;
     height: 32px;

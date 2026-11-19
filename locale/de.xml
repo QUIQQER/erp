@@ -335,6 +335,7 @@
         <locale name="erp.panel.navigation.collapseAll">
             <de>Alles zuklappen</de>
         </locale>
+
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -646,6 +647,7 @@
         <locale name="process.history.transaction.created">
 <de><![CDATA[Zahlung von [amount] eingegangen / gebucht. (#[hash])]]></de>
         </locale>
+
     </groups>
 
     <groups name="quiqqer/erp" datatype="js">
@@ -1328,6 +1330,62 @@ Erlaubte Zeichen: Buchstaben, Zahlen sowie _ ä ö ü ß]]></de>
 <de><![CDATA[In vorhandenen Vorgang kopieren]]></de>
         </locale>
 
+        <locale name="manual.calculation" context="administration">
+<de><![CDATA[Berechnung]]></de>
+        </locale>
+        <locale name="manual.automatic" context="administration">
+<de><![CDATA[Automatisch]]></de>
+        </locale>
+        <locale name="manual.manual" context="administration">
+<de><![CDATA[Manuell]]></de>
+        </locale>
+        <locale name="manual.hint" context="administration">
+<de><![CDATA[Beträge selbst eingeben. Es wird nichts automatisch nachgerechnet.]]></de>
+        </locale>
+        <locale name="manual.taxAmount" context="administration">
+<de><![CDATA[MwSt.-Betrag]]></de>
+        </locale>
+        <locale name="manual.taxRate" context="administration">
+<de><![CDATA[Steuersatz]]></de>
+        </locale>
+        <locale name="manual.addTax" context="administration">
+<de><![CDATA[Steuerzeile hinzufügen]]></de>
+        </locale>
+        <locale name="manual.removeTax" context="administration">
+<de><![CDATA[Steuerzeile entfernen]]></de>
+        </locale>
+        <locale name="manual.taxRateExists" context="administration">
+<de><![CDATA[Dieser Steuersatz ist bereits vorhanden.]]></de>
+        </locale>
+        <locale name="manual.otherTotals" context="administration">
+<de><![CDATA[Weitere Summen]]></de>
+        </locale>
+        <locale name="manual.netBeforeFactors" context="administration">
+<de><![CDATA[Netto vor Zu- und Abschlägen]]></de>
+        </locale>
+        <locale name="manual.grossBeforeFactors" context="administration">
+<de><![CDATA[Brutto vor Endbetragsanpassungen]]></de>
+        </locale>
+
+
+        <locale name="article.description.more" context="administration">
+<de>Beschreibung anzeigen</de>
+        </locale>
+        <locale name="article.description.less" context="administration">
+<de>Beschreibung einklappen</de>
+        </locale>
+
+        <locale name="article.priceDisplay.net" context="administration">
+<de>Preise ohne MwSt.</de>
+        </locale>
+
+        <locale name="article.priceDisplay.gross" context="administration">
+<de>Preise inkl. MwSt.</de>
+        </locale>
+
+        <locale name="article.priceDisplay.mismatch" context="administration">
+<de>Die Preisanzeige weicht vom Preismodus des Shops ab. Bei der Umrechnung können Rundungsabweichungen entstehen.</de>
+        </locale>
     </groups>
 </locales>
 </quiqqer>

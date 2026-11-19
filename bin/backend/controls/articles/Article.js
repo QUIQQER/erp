@@ -130,24 +130,25 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.parent(options);
 
             this.$user = {};
-            this.$calculate = true; // calculation is running or not
+            this.$calculationMode = 'automatic';
+            this.$calculationVersion = 0;
             this.$calculations = {};
             this.$bruttoCalc = {};
 
             if (typeof options !== 'undefined' && typeof options.calculated !== 'undefined') {
-                this.$calculations = options.calculated;
+                this.$calculations = {calculated: options.calculated};
 
-                if (typeof this.$calculations.bruttoCalculated !== 'undefined') {
-                    this.$bruttoCalc = this.$calculations.bruttoCalculated;
+                if (typeof options.calculated.bruttoCalculated !== 'undefined') {
+                    this.$bruttoCalc = options.calculated.bruttoCalculated;
                 }
             }
 
             if (typeof options !== 'undefined' && typeof options.calculate !== 'undefined') {
-                this.$calculate = options.calculate;
+                this.$calculationMode = options.calculate ? 'automatic' : 'manual';
             }
 
-            if (typeof this.$calculations.nettoPriceNotRounded !== 'undefined' && this.$calculations.nettoPriceNotRounded) {
-                this.setAttribute('unitPrice', this.$calculations.nettoPriceNotRounded);
+            if (options?.calculated?.nettoPriceNotRounded) {
+                this.setAttribute('unitPrice', options.calculated.nettoPriceNotRounded);
             }
 
             this.$SelectCheckbox = null;
@@ -215,7 +216,17 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     showSelectCheckbox: showSelectCheckbox,
                     customFields: Object.values(CustomFieldValues),
                     buttonReplace: QUILocale.get(lg, 'articleList.article.button.replace'),
-                    buttonDelete: QUILocale.get(lg, 'articleList.article.button.delete')
+                    buttonDelete: QUILocale.get(lg, 'articleList.article.button.delete'),
+                    labelArticleNo: QUILocale.get(lg, 'products.articleNo'),
+                    labelDescription: QUILocale.get(lg, 'products.description'),
+                    labelQuantity: QUILocale.get(lg, 'products.quantity'),
+                    labelQuantityUnit: QUILocale.get(lg, 'products.quantityUnit'),
+                    labelUnitPrice: QUILocale.get(lg, 'products.unitPrice'),
+                    labelPrice: QUILocale.get(lg, 'products.price'),
+                    labelVat: QUILocale.get(lg, 'products.table.vat'),
+                    labelTaxAmount: QUILocale.get(lg, 'manual.taxAmount'),
+                    labelDiscount: QUILocale.get(lg, 'products.discount'),
+                    labelTotal: QUILocale.get(lg, 'products.sum')
                 }),
                 'tabindex': -1,
                 styles: {
@@ -233,6 +244,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
             if (showSelectCheckbox) {
                 this.$SelectCheckbox = this.$Elm.getElement('.quiqqer-erp-backend-erpArticle-selectbox > input');
+                this.$Position = this.$Elm.querySelector('[data-name="position"]');
+                this.$SelectCheckbox.parentElement.classList.remove('cell');
+                this.$Position.appendChild(this.$SelectCheckbox.parentElement);
                 this.$SelectCheckbox.addEvent('change', function (event) {
                     if (event.target.checked) {
                         self.select();
@@ -361,6 +375,15 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 'class': 'quiqqer-erp-backend-erpArticle-total-brutto cell'
             }).inject(this.$Total, 'after');
 
+            [
+                [this.$UnitPriceBrutto, this.$UnitPrice],
+                [this.$PriceBrutto, this.$Price],
+                [this.$DiscountBrutto, this.$Discount],
+                [this.$TotalBrutto, this.$Total]
+            ].forEach(([Gross, Net]) => {
+                Gross.dataset.label = Net.dataset.label;
+            });
+
             this.$Loader = new Element('div', {
                 html: '<span class="fa fa-spinner fa-spin"></span>',
                 styles: {
@@ -406,6 +429,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             }
 
             this.$Elm.getElements('.cell-editable').set('tabindex', -1);
+            this.$createDescriptionToggle();
 
             this.setArticleNo(this.getAttribute('articleNo'));
             this.setVat(this.getAttribute('vat'));
@@ -435,6 +459,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             } else {
                 this.$ButtonDelete.setStyle('display', 'none');
             }
+
+            this.$Elm.querySelector('[data-name="actions"]').hidden =
+                !this.getAttribute('replaceable') && !this.getAttribute('deletable');
 
             this.$created = true;
 
@@ -506,6 +533,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 const product = result[0];
                 const Formatter = result[1];
 
+                if (this.getCalculationMode() === 'manual') {
+                    this.$bruttoCalc.display_sum = Formatter.format(this.$bruttoCalc.sum);
+                    this.$bruttoCalc.display_unitPrice = Formatter.format(this.$bruttoCalc.unitPrice);
+                    this.$bruttoCalc.display_quantity_sum = Formatter.format(this.$bruttoCalc.quantity_sum);
+                }
+
                 const vat = this.getAttribute('vat');
 
                 if ((vat === '' || vat === null || typeof vat === 'undefined') &&
@@ -550,7 +583,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                 if (typeof this.$bruttoCalc !== 'undefined' &&
                     typeof this.$bruttoCalc.display_sum !== 'undefined') {
-                    this.$TotalBrutto.set('html', this.$bruttoCalc.display_sum);
+                    setElement(this.$TotalBrutto, this.$bruttoCalc.display_sum);
                     this.$TotalBrutto.set('data-value', this.$bruttoCalc.sum);
                 }
 
@@ -563,13 +596,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
 
                 if (typeof this.$bruttoCalc !== 'undefined' &&
                     typeof this.$bruttoCalc.display_quantity_sum !== 'undefined') {
-                    this.$PriceBrutto.set('html', this.$bruttoCalc.display_quantity_sum);
+                    setElement(this.$PriceBrutto, this.$bruttoCalc.display_quantity_sum);
                     this.$PriceBrutto.set('data-value', this.$bruttoCalc.quantity_sum);
                 }
 
+                this.$refreshManualFields();
                 this.hideLoader();
 
-                if (!this.$calculate) {
+                if (this.getCalculationMode() === 'manual') {
                     this.fireEvent('calc', [this]);
                 }
 
@@ -583,26 +617,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
          * @return {Promise}
          */
         $calc: function () {
-            if (!this.$calculate) {
-                return Promise.resolve({
-                    vat: this.getAttribute('vat'),
-                    unitPrice: this.getAttribute('unitPrice'),
-
-                    id: this.getAttribute('id'),
-                    articleNo: this.getAttribute('articleNo'),
-                    description: this.getAttribute('description'),
-                    discount: this.getAttribute('discount'),
-                    position: this.getAttribute('position'),
-                    price: this.getAttribute('price'),
-                    quantity: this.getAttribute('quantity'),
-                    quantityUnit: this.getAttribute('quantityUnit'),
-                    title: this.getAttribute('title'),
-
-                    calculated: this.$calculations
-                });
+            if (this.getCalculationMode() === 'manual') {
+                return Promise.resolve(Object.assign({}, this.getAttributes(), {calculated: this.getCalculations()}));
             }
 
             let Calc;
+            const version = this.$calculationVersion;
 
             const attr = this.getAttributes(),
                 pos = parseInt(attr.position);
@@ -627,6 +647,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             }
 
             return Calc.then((result) => {
+                if (version !== this.$calculationVersion) {
+                    return this.getCalculationMode() === 'automatic' ? this.$calculations : this.$calc();
+                }
+
                 let articleList;
                 let brutto;
                 let articles = [];
@@ -650,7 +674,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                     }
                 }
 
-                this.$calculations = articleList;
+                this.setCalculations(articleList);
                 this.$bruttoCalc = brutto;
                 this.fireEvent('calc', [
                     this,
@@ -676,21 +700,214 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         },
 
         setCalculations: function (calculations) {
-            this.$calculations = calculations;
+            this.$calculations = calculations.calculated ? calculations : {calculated: calculations};
+
+            if (this.getCalculationMode() === 'manual') {
+                this.setAttribute('calculated', this.$calculations.calculated);
+            }
+        },
+
+        //region Description display
+
+        $createDescriptionToggle: function () {
+            this.$Description.id = 'erp-article-description-' + this.getId();
+            this.$DescriptionToggle = document.createElement('button');
+            this.$DescriptionToggle.type = 'button';
+            this.$DescriptionToggle.className = 'btn btn-link-body quiqqer-erp-backend-erpArticle-description-toggle';
+            this.$DescriptionToggle.dataset.name = 'toggle-description';
+            this.$DescriptionToggle.setAttribute('aria-controls', this.$Description.id);
+            this.$DescriptionToggle.hidden = true;
+            this.$Description.after(this.$DescriptionToggle);
+            this.$DescriptionToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                this.$Elm.classList.toggle('quiqqer-erp-backend-erpArticle-description-expanded');
+                this.$refreshDescriptionToggle();
+            });
+
+            this.$DescriptionObserver = new ResizeObserver(() => this.$refreshDescriptionToggle());
+            this.$DescriptionObserver.observe(this.$Description);
+            this.addEvent('setDescription', () => this.$refreshDescriptionToggle());
+            this.addEvent('onDestroy', () => this.$DescriptionObserver.disconnect());
+        },
+
+        $refreshDescriptionToggle: function () {
+            const expanded = this.$Elm.classList.contains('quiqqer-erp-backend-erpArticle-description-expanded');
+            this.$DescriptionToggle.hidden = !expanded &&
+                this.$Description.scrollHeight <= this.$Description.clientHeight + 1;
+            this.$DescriptionToggle.setAttribute('aria-expanded', String(expanded));
+            this.$DescriptionToggle.textContent = QUILocale.get(lg, expanded ?
+                'article.description.less' : 'article.description.more');
+        },
+
+        //endregion
+
+        //region Calculation mode
+
+        getCalculationMode: function () {
+            return this.$calculationMode || 'automatic';
+        },
+
+        setCalculationMode: function (mode) {
+            const calculationMode = mode === 'manual' ? 'manual' : 'automatic';
+
+            if (this.getCalculationMode() !== calculationMode) {
+                this.$calculationVersion = (this.$calculationVersion || 0) + 1;
+            }
+
+            this.$calculationMode = calculationMode;
+
+            if (calculationMode === 'automatic') {
+                this.setAttribute('calculated', undefined);
+            } else {
+                const stored = this.getCalculations() || this.getAttribute('calculated') || {};
+                const amounts = Object.assign({
+                    price: 0,
+                    basisPrice: this.getAttribute('unitPrice'),
+                    nettoPrice: this.getAttribute('unitPrice'),
+                    nettoBasisPrice: this.getAttribute('unitPrice'),
+                    nettoPriceNotRounded: this.getAttribute('unitPrice'),
+                    sum: 0,
+                    nettoSubSum: 0,
+                    nettoSum: 0,
+                    isNetto: true,
+                    isEuVat: false,
+                    vatArray: {
+                        vat: Number(this.getAttribute('vat')) || 0,
+                        sum: 0,
+                        text: ''
+                    }
+                }, stored);
+                this.$bruttoCalc = Object.assign({
+                    sum: 0,
+                    unitPrice: 0,
+                    quantity_sum: 0,
+                    calculated: {
+                        basisPrice: 0,
+                        sum: 0
+                    }
+                }, this.$bruttoCalc);
+                amounts.bruttoCalculated = this.$bruttoCalc;
+                this.setCalculations(amounts);
+            }
+
+            if (this.$created) {
+                this.$refreshManualFields();
+            }
         },
 
         disableCalculations: function () {
-            this.$calculate = false;
-            this.$calculations.calculate = 0;
+            this.setCalculationMode('manual');
         },
 
         enableCalculations: function () {
-            this.$calculate = true;
-
-            if (typeof this.$calculations.calculate !== 'undefined') {
-                delete this.$calculations.calculate;
-            }
+            this.setCalculationMode('automatic');
         },
+
+        setManualAmount: function (field, value) {
+            if (this.getCalculationMode() === 'automatic' || !Number.isFinite(value)) {
+                return Promise.resolve();
+            }
+
+            const amounts = this.getCalculations();
+
+            if (field === 'vatSum') {
+                amounts.vatArray.sum = value;
+            } else if (field === 'grossSum' || field === 'grossSubSum' || field === 'grossUnitPrice') {
+                const key = {grossSum: 'sum', grossSubSum: 'quantity_sum', grossUnitPrice: 'unitPrice'}[field];
+                this.$bruttoCalc[key] = value;
+                if (field === 'grossUnitPrice') {
+                    this.$bruttoCalc.calculated.basisPrice = value;
+                } else if (field === 'grossSum') {
+                    this.$bruttoCalc.calculated.sum = value;
+
+                    if (!amounts.isNetto) {
+                        amounts.sum = value;
+                    }
+                }
+            } else {
+                amounts[field] = value;
+
+                if (field === 'nettoSum' && amounts.isNetto) {
+                    amounts.sum = value;
+                }
+            }
+
+            amounts.bruttoCalculated = this.$bruttoCalc;
+            this.setAttribute('calculated', amounts);
+            return this.calc();
+        },
+
+        $refreshManualFields: function () {
+            const TaxAmount = this.$Elm?.querySelector('[data-name="tax-amount"]');
+
+            if (!TaxAmount || !this.$Formatter) {
+                return;
+            }
+
+            const manual = this.getCalculationMode() === 'manual';
+            this.$Elm.classList.toggle('quiqqer-erp-backend-erpArticle-manual', manual);
+            TaxAmount.hidden = !manual;
+
+            const fields = [
+                [this.$Price, 'nettoSubSum', 'products.price'],
+                [this.$Total, 'nettoSum', 'products.sum'],
+                [this.$PriceBrutto, 'grossSubSum', 'products.price'],
+                [this.$TotalBrutto, 'grossSum', 'products.sum'],
+                [TaxAmount, 'vatSum', 'manual.taxAmount']
+            ];
+            const amounts = this.getCalculations() || {};
+            this.$manualAmountValues = Object.assign({}, amounts, {
+                vatSum: amounts.vatArray?.sum,
+                grossSum: this.$bruttoCalc.sum,
+                grossSubSum: this.$bruttoCalc.quantity_sum
+            });
+
+            this.$manualAmountCells = this.$manualAmountCells || new Set();
+
+            fields.forEach(([Container, field, translation]) => {
+                Container.classList.toggle('cell-editable', manual);
+
+                if (!this.$manualAmountCells.has(Container)) {
+                    this.$manualAmountCells.add(Container);
+                    Container.addEventListener('click', () => {
+                        if (this.getCalculationMode() !== 'manual' ||
+                            Container.querySelector('[data-name="manual-edit"]')) {
+                            return;
+                        }
+
+                        this.$createEditField(Container, this.$manualAmountValues[field] ?? 0, 'number', {
+                            'data-name': 'manual-edit',
+                            'aria-label': QUILocale.get(lg, translation)
+                        }).then((value) => this.setManualAmount(field, value)).catch(console.error);
+                    });
+                }
+
+                if (Container.querySelector('[data-name="manual-edit"]')) {
+                    return;
+                }
+
+                if (!manual) {
+                    const Button = Container.querySelector('[data-name="manual-amount"]');
+
+                    if (Button) {
+                        Container.textContent = Button.textContent;
+                    }
+
+                    return;
+                }
+
+                const Button = document.createElement('button');
+                Button.type = 'button';
+                Button.className = 'quiqqer-erp-article-amount';
+                Button.dataset.name = 'manual-amount';
+                Button.dataset.field = field;
+                Button.textContent = this.$Formatter.format(this.$manualAmountValues[field] ?? 0);
+                Button.setAttribute('aria-label', QUILocale.get(lg, translation) + ': ' + Button.textContent);
+                Container.replaceChildren(Button);
+            });
+        },
+
+        //endregion
 
         /**
          * @returns {*}
@@ -873,6 +1090,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
         setUnitPrice: function (price) {
             this.setAttribute('unitPrice', parseFloat(price));
 
+            if (this.getCalculationMode() === 'manual') {
+                this.getCalculations().nettoPriceNotRounded = parseFloat(price);
+            }
+
             if (this.$UnitPrice) {
                 this.$UnitPrice.set('html', this.getAttribute('unitPrice'));
             }
@@ -903,6 +1124,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             }
 
             this.setAttribute('vat', vat);
+
+            if (this.getCalculationMode() === 'manual') {
+                this.getCalculations().vatArray.vat = vat;
+                this.getCalculations().vatArray.text = vat + '%';
+            }
 
             if (this.$VAT) {
                 vat = this.getAttribute('vat');
@@ -1290,8 +1516,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 this.$UnitPriceBrutto.get('data-value'),
                 'number'
             ).then(function (value) {
+                if (self.getCalculationMode() === 'manual') {
+                    return self.setManualAmount('grossUnitPrice', value);
+                }
+
                 return self.getNettoPrice(value, false);
             }).then(function (value) {
+                if (self.getCalculationMode() === 'manual') {
+                    return;
+                }
+
                 return self.setUnitPrice(value);
             }).catch(console.error);
         },
@@ -1376,6 +1610,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             }
 
             return this.$createEditField(this.$DiscountBrutto, discount).then(function (value) {
+                if (self.getCalculationMode() === 'manual') {
+                    return MoneyUtils.validateDiscount(value).then((amount) => {
+                        self.$bruttoCalc.discount = amount;
+                        self.$bruttoCalc.display_discount = amount === null ? '-' : String(amount);
+                        return self.setDiscount(amount);
+                    });
+                }
+
                 if (value.match('%')) {
                     return MoneyUtils.validateDiscount(value).then(discount => self.setDiscount(discount));
                 }
@@ -1423,6 +1665,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                         width: 'calc(100% - 10px)'
                     }
                 }).inject(Container);
+
+                if (Container.dataset?.label) {
+                    Edit.style.top = '24px';
+                    Edit.setAttribute('aria-label', Container.dataset.label);
+                }
 
                 if (typeOf(self) === 'package/quiqqer/erp/bin/backend/controls/articles/Text') {
                     Edit.setStyle('textAlign', 'left');

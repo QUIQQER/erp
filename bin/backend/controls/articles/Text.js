@@ -46,11 +46,13 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Text', [
             this.$Elm = new Element('div');
 
             this.$Elm.addClass('quiqqer-erp-backend-erpArticleText');
+            this.$Elm.classList.add('quiqqer-erp-backend-erpArticle');
 
             this.$Elm.set({
                 html: Mustache.render(template, {
                     buttonReplace: QUILocale.get(lg, 'articleList.article.button.replace'),
-                    buttonDelete: QUILocale.get(lg, 'articleList.article.button.delete')
+                    buttonDelete: QUILocale.get(lg, 'articleList.article.button.delete'),
+                    labelDescription: QUILocale.get(lg, 'products.description')
                 }),
                 events: {
                     click: this.select

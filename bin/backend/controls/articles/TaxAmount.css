@@ -1,0 +1,28 @@
+.quiqqer-erp-taxAmount {
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+    min-width: 0;
+}
+
+.quiqqer-erp-taxAmount-fields {
+    display: grid;
+    grid-template-columns: minmax(32px, 56px) auto minmax(80px, 160px) 28px;
+    min-width: 0;
+}
+
+.quiqqer-erp-taxAmount-fields > .field-container-item {
+    width: auto;
+}
+
+.quiqqer-erp-taxAmount input {
+    width: 100%;
+    min-width: 0;
+    text-align: right;
+    box-sizing: border-box;
+}
+
+.quiqqer-erp-taxAmount-fields > button {
+    padding-inline: 0;
+    box-shadow: none;
+}
