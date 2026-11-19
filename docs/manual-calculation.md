@@ -1,10 +1,10 @@
 # Manual calculation: document model
 
-This covers steps 1, 2 and the shared editor controls in step 3 of the manual amount entry work described in
+This covers steps 1–4 of the manual amount entry work described in
 [pcsg/buero#551](https://dev.quiqqer.com/pcsg/buero/-/issues/551#note_352699).
 The persisted mode now also controls calculation. In manual mode, `calc()` and
-`recalculate()` keep the existing values. The editor supports manual entry; connecting the purchasing save and post
-endpoints remains a subsequent step.
+`recalculate()` keep the existing values. The shared editor and purchasing save/post paths preserve the complete
+manual snapshot. Connecting the remaining ERP document types is a subsequent step.
 
 ## Calculation mode
 
@@ -40,8 +40,8 @@ $Unique = $Reloaded->toUniqueList();
 The mode survives array/JSON serialization, loading, conversion to
 `ArticleListUnique` and construction of an editable list from a stored snapshot.
 No database column or migration is needed: ERP documents already persist the
-complete article list as JSON in their `articles` field. Save endpoints that
-currently accept only positions must be extended in later steps.
+complete article list as JSON in their `articles` field. Purchasing accepts the complete snapshot; the other
+document types still need their save endpoints connected.
 
 ## Amount fields to reuse
 
@@ -56,6 +56,7 @@ storage names; their contents may eventually be entered manually.
 | Position `calculated` | `nettoSubSum`, `nettoSum` | Net amounts before and after discounts |
 | Position `calculated` | `price`, `basisPrice`, `sum` | Existing amounts in the stored pricing context (`isNetto`) |
 | Position `calculated.vatArray` | `vat`, `sum`, `text` | Tax rate, original tax amount and label for that position |
+| Position `calculated.bruttoCalculated` | `unitPrice`, `quantity_sum`, `sum`, `calculated` | Independently entered gross prices and totals from the shared editor |
 | List `calculations` | `nettoSubSum`, `nettoSum` | Document net amounts before and after price factors |
 | List `calculations` | `subSum`, `grandSubSum`, `sum` | Subtotal in the pricing context, gross amount before grand-total factors, final gross amount |
 | List `calculations.vatArray[rate]` | `vat`, `sum`, `text` | Document tax amounts grouped by rate |
@@ -68,7 +69,7 @@ only and must never become the source for persisted amounts.
 The precision regression fixture retains net 8.3950, VAT 1.5951 and final gross
 9.99 independently. No tax rate calculation or two-decimal normalization is
 required to store those values. Do not enforce exact unrounded equality in the
-model: validation and the handling of supplier rounding belong to later steps.
+model. Purchasing retains its existing rounded gross control-sum comparison, without correcting the snapshot.
 
 ## Calculation behavior
 
@@ -85,7 +86,7 @@ not convert manual amounts. Switching back to automatic invalidates the cache,
 allowing the next calculation to run normally.
 
 There are no additional validation rules or exception paths. Inconsistent
-amounts remain unchanged; a possible UI hint is deferred to the UI work. The purchasing save/post endpoints still need to accept the editor state.
+amounts remain unchanged; a possible UI hint is deferred to the UI work.
 
 
 ## Shared editor controls
@@ -147,3 +148,37 @@ for an empty list and slides in when the first position is added, including text
 positions. Reduced motion is respected. No footer shadow is added. Destroying a
 summary releases its list subscriptions and prevents late formatter or popup
 callbacks from accessing the destroyed DOM.
+
+## Purchasing persistence and posting
+
+QuickEntry and ProcessDraft send the complete `ArticleList.serialize()` result in `data.articles`:
+`articles`, `calculationMode`, `calculations` and `priceFactors`. Draft loading, category changes and saving retain
+that snapshot, including empty manual lists. Opening the article category waits for its asynchronous restoration.
+
+`PurchasingProcessDraft::importArticles()` accepts that existing list representation and replaces the full list.
+Legacy arrays of positions remain automatic and keep their append behavior. For automatic snapshots, browser
+calculation caches are discarded so the server derives fresh amounts. Manual snapshots retain their independently
+entered net, gross and tax amounts, including `calculated.bruttoCalculated` on positions. Switching back to automatic
+discards that manual gross cache.
+
+Draft updates store the full list JSON and copy its net, net subtotal, subtotal, gross and grouped tax amounts into
+the existing process columns. Manual subtotals and totals are not rounded on persistence. Posting still calls
+`update()` and copies the saved draft into the journal; manual mode prevents recalculation in both updates.
+QuickEntry keeps the gross control-sum check on the server, so a different confirmed cent amount still prevents
+posting. The check does not derive gross from net plus VAT or modify any of the stored values.
+
+Electronic invoice mapping supplies a manual snapshot for both upload preview and server-side import.
+The original invoice total remains separate from payable, prepaid, rounding, charge and allowance amounts.
+Multiple source tax categories at the same rate are grouped by adding their supplied tax amounts, without
+recalculating tax from a rate and base. The complete source invoice remains in `invoice_import`.
+
+Journal, statistics, document views and payment receivers use the saved process columns. The PDF output path uses
+the same stored article list; template formatting works on a copy. CSV/DATEV purchase exports also read stored
+amounts rather than recalculating positions. Their existing tax-rate selection uses the first tax row and does not
+split a document into separate bookings per rate. Credit-note/reversal and cross-document transitions still require
+their own manual-mode handling in the subsequent transition work; they are not covered by the save/reload/post path.
+
+Regression coverage uses SQLite in memory for real draft updates, reloads and posting, with runtime services
+isolated from the installed database. The fixtures cover the Drillisch amounts, multiple tax rates, extra decimal
+places and separately entered gross values. Ajax tests preserve the original control-sum checks; JavaScript tests
+cover full snapshots, restoration and submission. No installed purchase data is created or posted by these tests.
