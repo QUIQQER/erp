@@ -30,6 +30,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             List: null,
             styles: false,
             currency: 'EUR',
+            manualTotalsInline: false,
+            openOnClick: true,
 
             showPosSummary: true // show summary for selected article
         },
@@ -57,8 +59,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             this.$visibilityAnimation = null;
             this.$priceFactorVersion = 0;
             this.$taxControls = new Map();
+            this.$SummaryWindow = null;
+            this.$summaryWindowLoading = false;
             this.addEvent('onDestroy', () => {
                 this.$destroyed = true;
+                this.$SummaryWindow?.close();
                 this.$priceFactorVersion++;
                 this.$List?.removeEvent('onCalc', this.$refreshArticleSelect);
                 this.$List?.removeEvent('onArticleSelect', this.$refreshArticleSelect);
@@ -86,6 +91,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             this.$Elm = document.createElement('div');
             this.$Elm.dataset.qui = this.Type;
             this.$Elm.className = 'quiqqer-erp-backend-temporaryErp-summary';
+            this.$Elm.classList.toggle('quiqqer-erp-summary-display', !this.getAttribute('manualTotalsInline'));
             this.$Elm.hidden = true;
             this.$Elm.innerHTML = Mustache.render(template, {
                 showPosSummary: showPosSummary,
@@ -101,7 +107,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 labelOtherTotals: QUILocale.get(lg, 'manual.otherTotals'),
                 labelNetBefore: QUILocale.get(lg, 'manual.netBeforeFactors'),
                 labelSubtotal: QUILocale.get(lg, 'article.list.articles.subtotal'),
-                labelGrossBefore: QUILocale.get(lg, 'manual.grossBeforeFactors')
+                labelGrossBefore: QUILocale.get(lg, 'manual.grossBeforeFactors'),
+                labelOpenTotals: QUILocale.get(lg, 'article.summary.totalsWindow.title')
             });
             this.$Elm.addEventListener('mouseenter', this.showPriceFactors);
             this.$Elm.addEventListener('mouseleave', this.hidePriceFactors);
@@ -115,6 +122,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             this.$Elm.querySelectorAll('[data-name="manual-total"]').forEach((Input) => {
                 Input.addEventListener('change', () => this.$setManualTotal(Input.dataset.field, Input));
             });
+
+            this.$Elm.querySelector('[data-name="open-totals"]').addEventListener('click', this.openSummary);
 
             this.$Elm.querySelector('[data-name="add-manual-tax"]').addEventListener('click', () => {
                 const List = this.getAttribute('List');
@@ -141,13 +150,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             this.$VAT = this.$Elm.querySelector('[data-name="tax-totals"]');
 
             if (showPosSummary) {
-                this.$ArticleNettoSum = this.$Elm.getElement(
-                    '.quiqqer-erp-backend-temporaryErp-summary-pos .netto-value'
-                );
-
-                this.$ArticleBruttoSum = this.$Elm.getElement(
-                    '.quiqqer-erp-backend-temporaryErp-summary-pos .brutto-value'
-                );
+                this.$ArticleNettoSum = this.$Elm.querySelector('[data-name="position-net-total"]');
+                this.$ArticleBruttoSum = this.$Elm.querySelector('[data-name="position-gross-total"]');
             }
 
             if (this.getAttribute('styles')) {
@@ -268,20 +272,45 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
          * Open the summary with price factors
          */
         openSummary: function () {
-            if (this.$destroyed || !this.getAttribute('List')) {
+            const List = this.getAttribute('List');
+
+            if (this.$destroyed || !List || this.getAttribute('openOnClick') === false ||
+                this.$SummaryWindow || this.$summaryWindowLoading) {
                 return;
             }
 
+            if (List.getCalculationMode() === 'manual' && this.getAttribute('manualTotalsInline')) {
+                return;
+            }
+
+            this.$summaryWindowLoading = true;
+            const ReturnFocus = document.activeElement;
+
             require([
                 'package/quiqqer/erp/bin/backend/controls/articles/windows/PriceFactors'
-            ], (PriceFactorWindow) => {
-                if (this.$destroyed) {
+            ], (TotalsWindow) => {
+                this.$summaryWindowLoading = false;
+
+                if (this.$destroyed || List !== this.getAttribute('List') || List.count() === 0) {
                     return;
                 }
 
-                new PriceFactorWindow({
-                    ArticleList: this.getAttribute('List')
-                }).open();
+                this.$SummaryWindow = new TotalsWindow({
+                    ArticleList: List,
+                    events: {
+                        onCloseBegin: (Win) => {
+                            if (this.$SummaryWindow === Win) {
+                                this.$SummaryWindow = null;
+                            }
+                        },
+                        onClose: () => {
+                            if (!this.$destroyed && !this.$SummaryWindow && ReturnFocus?.isConnected) {
+                                ReturnFocus.focus();
+                            }
+                        }
+                    }
+                });
+                this.$SummaryWindow.open();
             });
         },
 
@@ -366,6 +395,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 return;
             }
 
+            const manual = List.getCalculationMode() === 'manual';
+
+            if (this.$SummaryWindow && List.count() === 0) {
+                this.$SummaryWindow.close();
+            }
+
             if (!this.$refreshVisibility(List)) {
                 return;
             }
@@ -373,12 +408,19 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             const calculationSnapshot = List.getCalculations().calculations;
             const calc = calculationSnapshot || {nettoSum: 0, sum: 0, vatArray: {}};
 
-            const manual = List.getCalculationMode() === 'manual';
-            this.$Elm.classList.toggle('quiqqer-erp-summary-manual', manual);
-            this.$Elm.querySelector('[data-name="manual-extra"]').hidden = !manual;
-            this.$Elm.querySelector('[data-name="manual-actions"]').hidden = !manual;
+            const inline = manual && this.getAttribute('manualTotalsInline');
+            this.$Elm.classList.toggle('quiqqer-erp-summary-manual', inline);
+            this.$Elm.classList.toggle('quiqqer-erp-summary-editable', manual && !inline);
+            this.$Elm.querySelector('[data-name="manual-extra"]').hidden = !inline;
+            this.$Elm.querySelector('[data-name="manual-actions"]').hidden = !inline;
+            const OpenTotals = this.$Elm.querySelector('[data-name="open-totals"]');
+            const label = QUILocale.get(lg, manual ? 'manual.editTotals' : 'article.summary.totalsWindow.title');
+            OpenTotals.hidden = this.getAttribute('manualTotalsInline') || this.getAttribute('openOnClick') === false;
+            OpenTotals.title = label;
+            OpenTotals.setAttribute('aria-label', label);
+            this.$Elm.querySelector('[data-name="totals-icon"]').className = manual ? 'fa fa-edit' : 'fa fa-calculator';
 
-            if (manual) {
+            if (inline) {
                 this.$renderManualTotals(List, calc);
                 return;
             }
@@ -389,7 +431,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
             this.getCurrencyFormatter().then((Formatter) => {
                 if (this.$destroyed || !this.$Elm || !this.$visible ||
-                    List.getCalculationMode() !== 'automatic' ||
+                    (List.getCalculationMode() === 'manual') !== manual ||
+                    (manual && this.getAttribute('manualTotalsInline')) ||
                     List.getCalculations().calculations !== calculationSnapshot) {
                     return;
                 }
@@ -398,6 +441,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                     if (!(ArticleInstance instanceof Article)) {
                         ArticleInstance = List.getSelectedArticle();
                     }
+
+                    this.$Elm.querySelector('[data-name="position-summary"]').hidden = !(ArticleInstance instanceof Article);
 
                     if (ArticleInstance instanceof Article) {
                         let articleCalc = ArticleInstance.getCalculations();
@@ -419,6 +464,22 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
                 this.$NettoSum.set('html', Formatter.format(calc.nettoSum));
                 this.$BruttoSum.set('html', Formatter.format(calc.sum));
+
+                if (manual) {
+                    this.$VAT.replaceChildren();
+                    const taxes = Object.values(calc.vatArray || {});
+
+                    if (taxes.length === 0) {
+                        this.$VAT.textContent = '---';
+                    }
+
+                    taxes.forEach((tax) => {
+                        const Row = document.createElement('div');
+                        Row.textContent = (tax.text || '') + ' (' + Formatter.format(tax.sum ?? 0) + ')';
+                        this.$VAT.appendChild(Row);
+                    });
+                    return;
+                }
 
                 // vat display
                 if (typeOf(calc.vatArray) === 'array' && !calc.vatArray.length) {
@@ -610,6 +671,14 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                                 delete calc.vatArray[rate];
                                 delete calc.vatText[rate];
                                 List.setCalculations(List.getCalculations());
+
+                                const Tax = this.$taxControls.values().next().value;
+
+                                if (Tax) {
+                                    Tax.focusRate();
+                                } else {
+                                    this.$Elm.querySelector('[data-name="add-manual-tax"]').focus();
+                                }
                             }
                         }
                     }).inject(this.$VAT);
@@ -633,7 +702,8 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
 
             const ArticleList = this.getAttribute('List');
 
-            if (!ArticleList || ArticleList.getCalculationMode() === 'manual') {
+            if (!ArticleList || ArticleList.getCalculationMode() === 'manual' ||
+                this.getAttribute('openOnClick') === false) {
                 return;
             }
             const version = ++this.$priceFactorVersion;

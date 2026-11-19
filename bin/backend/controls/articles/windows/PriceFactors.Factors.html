@@ -1,0 +1,22 @@
+<div class="qui-panel-buttons quiqqer-erp-priceFactors-button">
+    <button type="button" name="add-pricefactor" data-name="add-pricefactor" class="qui-button">
+        <span class="fa fa-plus" aria-hidden="true"></span> {{textAddButton}}
+    </button>
+</div>
+<div class="quiqqer-erp-totals-window-factor-list">
+    {{#priceFactors}}
+    <div class="quiqqer-erp-totals-window-factor">
+        <span class="quiqqer-erp-totals-window-factor-title">{{title}}</span>
+        <span class="quiqqer-erp-totals-window-factor-value">{{valueText}}</span>
+        <button type="button" class="qui-button" data-name="edit-pricefactor" data-index="{{index}}" aria-label="{{labelEdit}}: {{title}}" title="{{labelEdit}}">
+            <span class="fa fa-edit" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="qui-button" data-name="remove-pricefactor" data-index="{{index}}" aria-label="{{labelRemove}}: {{title}}" title="{{labelRemove}}">
+            <span class="fa fa-trash-o" aria-hidden="true"></span>
+        </button>
+    </div>
+    {{/priceFactors}}
+    {{^priceFactors}}
+    <p class="quiqqer-erp-totals-window-empty">{{textNoFactors}}</p>
+    {{/priceFactors}}
+</div>
