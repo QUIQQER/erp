@@ -77,6 +77,40 @@ class ArticleListCalculationModeTest extends TestCase
         self::assertSame(CalculationMode::MANUAL, $List->getArticles()[0]->getCalculationMode());
     }
 
+    public function testIndependentManualGrossAmountsSurviveSerializationAndReloading(): void
+    {
+        $snapshot = $this->snapshot();
+        $snapshot['calculationMode'] = 'manual';
+        $gross = [
+            'sum' => 9.99,
+            'quantity_sum' => 9.9901,
+            'unitPrice' => 9.990123,
+            'calculated' => ['sum' => 9.99, 'basisPrice' => 9.990123]
+        ];
+        $snapshot['articles'][0]['calculated']['bruttoCalculated'] = $gross;
+        $List = new ArticleList($snapshot);
+        $Reloaded = new ArticleList(json_decode($List->serialize(), true, 512, JSON_THROW_ON_ERROR));
+
+        foreach ([$List, $Reloaded, $Reloaded->toUniqueList()] as $Copy) {
+            $position = $Copy->toArray()['articles'][0]['calculated'];
+            self::assertSame($gross, $position['bruttoCalculated']);
+            self::assertSame(8.395, $position['nettoSum']);
+            self::assertSame(1.5951, $position['vatArray']['sum']);
+        }
+    }
+
+    public function testReturningToAutomaticDropsTheOldManualGrossAmounts(): void
+    {
+        $snapshot = $this->snapshot();
+        $snapshot['calculationMode'] = 'manual';
+        $snapshot['articles'][0]['calculated']['bruttoCalculated'] = ['sum' => 123.4567];
+        $List = new ArticleList($snapshot);
+        $List->setCalculationMode(CalculationMode::AUTOMATIC);
+        $List->setCalculationMode(CalculationMode::MANUAL);
+
+        self::assertArrayNotHasKey('bruttoCalculated', $List->toArray()['articles'][0]['calculated']);
+    }
+
     public function testManualAmountsSurviveCustomerChangesGettersAndRecalculation(): void
     {
         $snapshot = $this->snapshot();

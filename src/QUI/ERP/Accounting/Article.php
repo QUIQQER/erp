@@ -115,6 +115,9 @@ class Article implements ArticleInterface
      */
     protected mixed $vatArray = [];
 
+    /** @var array<string, mixed> */
+    protected array $bruttoCalculated = [];
+
     /**
      * @var bool
      */
@@ -221,6 +224,10 @@ class Article implements ArticleInterface
             $this->vatArray = $calc['vatArray'];
             $this->isEuVat = $calc['isEuVat'];
             $this->isNetto = $calc['isNetto'];
+
+            if (isset($calc['bruttoCalculated']) && is_array($calc['bruttoCalculated'])) {
+                $this->bruttoCalculated = $calc['bruttoCalculated'];
+            }
 
             $this->calculated = true;
         }
@@ -676,6 +683,7 @@ class Article implements ArticleInterface
     {
         if ($this->calculationMode === CalculationMode::MANUAL && $mode === CalculationMode::AUTOMATIC) {
             $this->calculated = false;
+            $this->bruttoCalculated = [];
         }
 
         $this->calculationMode = $mode;
@@ -763,7 +771,7 @@ class Article implements ArticleInterface
         }
 
 
-        return [
+        $data = [
             // article data
             'id' => $this->getId(),
             'uuid' => $this->getUuid(),
@@ -800,6 +808,12 @@ class Article implements ArticleInterface
                 'isNetto' => $this->isNetto
             ]
         ];
+
+        if ($this->calculationMode === CalculationMode::MANUAL && $this->bruttoCalculated !== []) {
+            $data['calculated']['bruttoCalculated'] = $this->bruttoCalculated;
+        }
+
+        return $data;
     }
 
     //region custom fields
