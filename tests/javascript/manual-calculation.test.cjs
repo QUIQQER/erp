@@ -187,6 +187,37 @@ test('manual edits preserve precision and change only the selected amount', asyn
     assert.equal(requests.length, 0);
 });
 
+test('manual serialization includes runtime amounts omitted by framework getAttributes', async () => {
+    const {list, item, requests} = fixture();
+    const getAttributes = item.getAttributes;
+    // QUI DOM.getAttributes returns only options; runtime attributes live in QUI storage.
+    item.getAttributes = () => {
+        const options = getAttributes();
+        delete options.calculated;
+        return options;
+    };
+    list.setCalculationMode('manual');
+    await item.setManualAmount('nettoSum', 8.395);
+    await item.setManualAmount('vatSum', 1.5951);
+    await item.setManualAmount('grossSum', 9.99);
+
+    const data = JSON.parse(JSON.stringify(list.serialize()));
+    assert.equal(data.calculationMode, 'manual');
+    assert.equal(data.articles[0].calculated.sum, 8.395);
+    assert.equal(data.articles[0].calculated.nettoSum, 8.395);
+    assert.equal(data.articles[0].calculated.vatArray.sum, 1.5951);
+    assert.equal(data.articles[0].calculated.bruttoCalculated.sum, 9.99);
+    assert.equal(data.calculations.sum, 9.99);
+    assert.equal(requests.length, 0);
+});
+
+test('automatic serialization keeps the existing attributes payload', () => {
+    const {list, item} = fixture();
+    const before = JSON.parse(JSON.stringify(list.save()));
+    item.getCalculations = () => { throw new Error('Automatic save must keep the existing attributes path.'); };
+    assert.deepEqual(JSON.parse(JSON.stringify(list.save())), before);
+});
+
 test('gross unit entry in manual mode does not convert or replace the net unit price', async () => {
     const {list, item} = fixture();
     list.setCalculationMode('manual');
