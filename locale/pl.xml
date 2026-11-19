@@ -334,6 +334,15 @@
         <locale name="erp.panel.navigation.collapseAll">
             <pl>Zwiń wszystko</pl>
         </locale>
+        <locale name="manual.totalsActions" context="administration">
+<pl><![CDATA[Działania na sumach]]></pl>
+        </locale>
+        <locale name="manual.totalsFromArticles" context="administration">
+<pl><![CDATA[Użyj kwot z pozycji]]></pl>
+        </locale>
+        <locale name="manual.totalsFromArticlesHint" context="administration">
+<pl><![CDATA[Sumuje istniejące kwoty netto, VAT i brutto pozycji oraz zastępuje sumy dokumentu. Pozycje pozostają bez zmian.]]></pl>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -1282,7 +1291,7 @@
 <pl><![CDATA[Stawka VAT]]></pl>
         </locale>
         <locale name="manual.addTax" context="administration">
-<pl><![CDATA[Dodaj wiersz VAT]]></pl>
+<pl><![CDATA[Dodaj VAT]]></pl>
         </locale>
         <locale name="manual.removeTax" context="administration">
 <pl><![CDATA[Usuń wiersz VAT]]></pl>

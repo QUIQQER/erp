@@ -336,6 +336,15 @@
             <en>Collapse all</en>
         </locale>
 
+        <locale name="manual.totalsActions" context="administration">
+<en><![CDATA[Total actions]]></en>
+        </locale>
+        <locale name="manual.totalsFromArticles" context="administration">
+<en><![CDATA[Use position amounts]]></en>
+        </locale>
+        <locale name="manual.totalsFromArticlesHint" context="administration">
+<en><![CDATA[Adds the existing net, VAT and gross amounts of the positions and replaces the document totals. The positions remain unchanged.]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -1336,7 +1345,7 @@ Allowed characters: Letters, numbers and _ ä ö ü ß]]></en>
 <en><![CDATA[VAT rate]]></en>
         </locale>
         <locale name="manual.addTax" context="administration">
-<en><![CDATA[Add tax row]]></en>
+<en><![CDATA[Add VAT]]></en>
         </locale>
         <locale name="manual.removeTax" context="administration">
 <en><![CDATA[Remove tax row]]></en>

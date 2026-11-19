@@ -187,6 +187,100 @@ test('manual edits preserve precision and change only the selected amount', asyn
     assert.equal(requests.length, 0);
 });
 
+test('manual serialization includes runtime amounts omitted by framework getAttributes', async () => {
+    const {list, item, requests} = fixture();
+    const getAttributes = item.getAttributes;
+    // QUI DOM.getAttributes returns only options; runtime attributes live in QUI storage.
+    item.getAttributes = () => {
+        const options = getAttributes();
+        delete options.calculated;
+        return options;
+    };
+    list.setCalculationMode('manual');
+    await item.setManualAmount('nettoSum', 8.395);
+    await item.setManualAmount('vatSum', 1.5951);
+    await item.setManualAmount('grossSum', 9.99);
+
+    const data = JSON.parse(JSON.stringify(list.serialize()));
+    assert.equal(data.calculationMode, 'manual');
+    assert.equal(data.articles[0].calculated.sum, 8.395);
+    assert.equal(data.articles[0].calculated.nettoSum, 8.395);
+    assert.equal(data.articles[0].calculated.vatArray.sum, 1.5951);
+    assert.equal(data.articles[0].calculated.bruttoCalculated.sum, 9.99);
+    assert.equal(data.calculations.sum, 9.99);
+    assert.equal(requests.length, 0);
+});
+
+test('automatic serialization keeps the existing attributes payload', () => {
+    const {list, item} = fixture();
+    const before = JSON.parse(JSON.stringify(list.save()));
+    item.getCalculations = () => { throw new Error('Automatic save must keep the existing attributes path.'); };
+    assert.deepEqual(JSON.parse(JSON.stringify(list.save())), before);
+});
+
+test('manual net unit entry fills the normal calculated unit price fields without recalculating amounts', async () => {
+    const {list, item} = fixture();
+    list.disableCalculations();
+    const before = JSON.parse(JSON.stringify(list.serialize()));
+    await item.setUnitPrice(8.39);
+    const saved = list.save()[0];
+    assert.equal(saved.unitPrice, 8.39);
+    for (const field of ['price', 'basisPrice', 'nettoPrice', 'nettoBasisPrice', 'nettoPriceNotRounded']) {
+        assert.equal(saved.calculated[field], 8.39, field);
+    }
+    assert.equal(saved.calculated.nettoSum, before.articles[0].calculated.nettoSum);
+    assert.equal(saved.calculated.nettoSubSum, before.articles[0].calculated.nettoSubSum);
+    assert.equal(saved.calculated.sum, before.articles[0].calculated.sum);
+    assert.deepEqual(saved.calculated.vatArray, before.articles[0].calculated.vatArray);
+    assert.deepEqual(JSON.parse(JSON.stringify(list.getCalculations().calculations)), before.calculations);
+});
+
+test('manual gross unit entry fills the same calculated price fields in gross context', async () => {
+    const {list, item} = fixture();
+    list.disableCalculations();
+    item.getCalculations().isNetto = false;
+    const before = JSON.parse(JSON.stringify(list.serialize()));
+    await item.setManualAmount('grossUnitPrice', 9.99);
+    const saved = list.save()[0];
+    assert.equal(saved.calculated.price, 9.99);
+    assert.equal(saved.calculated.basisPrice, 9.99);
+    assert.equal(saved.calculated.bruttoCalculated.unitPrice, 9.99);
+    assert.equal(saved.calculated.bruttoCalculated.calculated.price, 9.99);
+    assert.equal(saved.unitPrice, before.articles[0].unitPrice);
+    assert.equal(saved.calculated.nettoPrice, before.articles[0].calculated.nettoPrice);
+    assert.equal(saved.calculated.sum, before.articles[0].calculated.sum);
+    assert.deepEqual(JSON.parse(JSON.stringify(list.getCalculations().calculations)), before.calculations);
+});
+
+test('new manual positions use the document pricing context and fill standard unit fields', async () => {
+    const {list, article} = fixture();
+    list.disableCalculations();
+    list.getCalculations().calculations.isNetto = false;
+    const item = article({position: 2, unitPrice: 8.39, quantity: 1, vat: 19});
+    item.$bruttoCalc = {};
+    list.addArticle(item);
+    assert.equal(item.getCalculations().isNetto, false);
+    assert.equal(item.getCalculations().price, 0, 'gross is not derived from the entered net price');
+    assert.equal(item.getCalculations().nettoPrice, 8.39);
+    await item.setManualAmount('grossUnitPrice', 9.99);
+    assert.equal(item.getCalculations().price, 9.99);
+    assert.equal(item.getCalculations().basisPrice, 9.99);
+    assert.equal(item.getCalculations().sum, 0, 'unit entry does not calculate a position total');
+});
+
+test('standalone manual positions initialize the same net unit fields without a list', () => {
+    const {article} = fixture();
+    const item = article({unitPrice: 8.39, quantity: 1, vat: 19, List: false});
+    item.$bruttoCalc = {};
+    item.disableCalculations();
+    const amounts = item.getCalculations();
+    for (const field of ['price', 'basisPrice', 'nettoPrice', 'nettoBasisPrice', 'nettoPriceNotRounded']) {
+        assert.equal(amounts[field], 8.39, field);
+    }
+    assert.equal(amounts.isNetto, true);
+    assert.equal(amounts.sum, 0);
+});
+
 test('gross unit entry in manual mode does not convert or replace the net unit price', async () => {
     const {list, item} = fixture();
     list.setCalculationMode('manual');
@@ -243,6 +337,99 @@ test('summary fields accept contradictory user values without changing the remai
     assert.equal(list.getCalculations().calculations.vatArray[19].sum, 1.5951);
 });
 
+test('explicit totals transfer retains independent Drillisch amounts and changes only document totals', async () => {
+    const {list, item, Summary, requests} = fixture();
+    list.disableCalculations();
+    await item.setManualAmount('grossSum', 9.99);
+    list.getCalculations().calculations.sum = 42;
+    list.getCalculations().calculations.vatArray = {7: {vat: 7, sum: 3, text: '7%'}};
+    list.getCalculations().calculations.customData = {reference: 'keep'};
+    list.$priceFactors = [{title: 'keep', sum: 0.1234}];
+    const before = JSON.parse(JSON.stringify(list.save()));
+    assert.equal(list.getCalculations().calculations.sum, 42, 'editing a position alone does not copy totals');
+
+    Summary.prototype.$setTotalsFromArticles.call({getAttribute: () => list});
+    const totals = list.getCalculations().calculations;
+    assert.equal(totals.nettoSum, 8.395);
+    assert.equal(totals.nettoSubSum, 8.395);
+    assert.equal(totals.subSum, 8.395);
+    assert.equal(totals.sum, 9.99);
+    assert.equal(totals.grandSubSum, 9.99);
+    assert.equal(totals.vatSum, 1.5951);
+    assert.equal(totals.vatArray[19].sum, 1.5951);
+    assert.equal(totals.vatArray[7], undefined, 'old document tax rows are replaced');
+    assert.deepEqual(totals.customData, {reference: 'keep'});
+    assert.deepEqual(list.getPriceFactors(), [{title: 'keep', sum: 0.1234}]);
+    assert.deepEqual(JSON.parse(JSON.stringify(list.save())), before, 'positions are not recalculated or changed');
+    assert.equal(list.getCalculationMode(), 'manual');
+    assert.equal(requests.length, 0);
+});
+
+test('totals transfer groups existing tax amounts by rate and supports negative positions', async () => {
+    const {list, item, article, Summary} = fixture();
+    list.disableCalculations();
+    await item.setManualAmount('grossSum', 9.99);
+    const second = article();
+    list.addArticle(second);
+    await second.setManualAmount('nettoSum', -0.395);
+    await second.setManualAmount('vatSum', -0.0951);
+    await second.setManualAmount('grossSum', -0.49);
+    const reduced = article();
+    list.addArticle(reduced);
+    reduced.getCalculations().vatArray.vat = 7;
+    reduced.getCalculations().vatArray.text = '7%';
+    await reduced.setManualAmount('nettoSum', 2.123456);
+    await reduced.setManualAmount('vatSum', 0.14864192);
+    await reduced.setManualAmount('grossSum', 2.27);
+
+    Summary.prototype.$setTotalsFromArticles.call({getAttribute: () => list});
+    const totals = list.getCalculations().calculations;
+    assert.equal(totals.nettoSum, 10.123456);
+    assert.equal(totals.sum, 11.77);
+    assert.equal(totals.vatArray[19].sum, 1.5);
+    assert.equal(totals.vatArray[7].sum, 0.14864192);
+    assert.equal(totals.vatSum, 1.64864192);
+    assert.equal(totals.vatText[7], '7%');
+});
+
+test('totals transfer adds entered decimals without binary floating point tails', async () => {
+    const {list, item, article, Summary} = fixture();
+    list.disableCalculations();
+    const second = article();
+    list.addArticle(second);
+    for (const [position, net, tax, gross] of [[item, 0.1, 0.019, 0.119], [second, 0.2, 0.038, 0.238]]) {
+        await position.setManualAmount('nettoSum', net);
+        await position.setManualAmount('vatSum', tax);
+        await position.setManualAmount('grossSum', gross);
+    }
+    Summary.prototype.$setTotalsFromArticles.call({getAttribute: () => list});
+    const totals = list.getCalculations().calculations;
+    assert.equal(totals.nettoSum, 0.3);
+    assert.equal(totals.sum, 0.357);
+    assert.equal(totals.vatArray[19].sum, 0.057);
+    assert.equal(totals.vatSum, 0.057);
+});
+
+test('gross-context totals use existing gross values while keeping the precise net amounts', async () => {
+    const {list, item, Summary} = fixture();
+    list.disableCalculations();
+    list.getCalculations().calculations.isNetto = false;
+    await item.setManualAmount('grossSum', 9.99);
+    Summary.prototype.$setTotalsFromArticles.call({getAttribute: () => list});
+    const totals = list.getCalculations().calculations;
+    assert.equal(totals.subSum, 9.99);
+    assert.equal(totals.nettoSum, 8.395);
+    assert.equal(totals.isNetto, false);
+});
+
+test('totals transfer leaves automatic calculation untouched', () => {
+    const {list, Summary} = fixture();
+    const before = JSON.stringify(list.getCalculations());
+    list.getArticles = () => { throw new Error('Automatic totals must use the existing calculator.'); };
+    Summary.prototype.$setTotalsFromArticles.call({getAttribute: () => list});
+    assert.equal(JSON.stringify(list.getCalculations()), before);
+});
+
 test('serialized state keeps the mode, position amounts and independent document totals', async () => {
     const {list, item} = fixture();
     list.disableCalculations();
@@ -273,8 +460,8 @@ test('all package languages provide each manual-entry text once in administratio
     for (const language of languages) {
         const catalog = readFileSync(join(__dirname, '../../locale', language + '.xml'), 'utf8');
         const keys = [...catalog.matchAll(/<locale name="(manual\.[^"]+)"[^>]*>/g)];
-        assert.equal(keys.length, 12, language);
-        assert.equal(new Set(keys.map(match => match[1])).size, 12, language);
+        assert.equal(keys.length, 15, language);
+        assert.equal(new Set(keys.map(match => match[1])).size, 15, language);
         assert.ok(keys.every(match => match[0].includes('context="administration"')), language);
     }
 });

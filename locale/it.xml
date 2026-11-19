@@ -334,6 +334,15 @@
         <locale name="erp.panel.navigation.collapseAll">
             <it>Comprimi tutto</it>
         </locale>
+        <locale name="manual.totalsActions" context="administration">
+<it><![CDATA[Azioni sui totali]]></it>
+        </locale>
+        <locale name="manual.totalsFromArticles" context="administration">
+<it><![CDATA[Usa gli importi delle voci]]></it>
+        </locale>
+        <locale name="manual.totalsFromArticlesHint" context="administration">
+<it><![CDATA[Somma gli importi netti, IVA e lordi esistenti delle voci e sostituisce i totali del documento. Le voci rimangono invariate.]]></it>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -1282,7 +1291,7 @@
 <it><![CDATA[Aliquota IVA]]></it>
         </locale>
         <locale name="manual.addTax" context="administration">
-<it><![CDATA[Aggiungi riga IVA]]></it>
+<it><![CDATA[Aggiungi IVA]]></it>
         </locale>
         <locale name="manual.removeTax" context="administration">
 <it><![CDATA[Rimuovi riga IVA]]></it>
