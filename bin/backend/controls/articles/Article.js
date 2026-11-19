@@ -435,7 +435,11 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.setVat(this.getAttribute('vat'));
             this.setTitle(this.getAttribute('title'));
             this.setDescription(this.getAttribute('description'));
-            this.setUnitPrice(this.getAttribute('unitPrice'));
+            if (this.getCalculationMode() === 'manual') {
+                this.$UnitPrice.textContent = this.getAttribute('unitPrice');
+            } else {
+                this.setUnitPrice(this.getAttribute('unitPrice'));
+            }
 
             this.setQuantity(this.getAttribute('quantity'));
             this.setDiscount(this.getAttribute('discount'));
@@ -760,16 +764,20 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 this.setAttribute('calculated', undefined);
             } else {
                 const stored = this.getCalculations() || this.getAttribute('calculated') || {};
+                const List = this.getAttribute('List');
+                const listCalculations = List ? List.getCalculations().calculations : null;
+                const isNetto = stored.isNetto ?? listCalculations?.isNetto ?? true;
+                const unitPrice = isNetto ? this.getAttribute('unitPrice') : (this.$bruttoCalc.unitPrice ?? 0);
                 const amounts = Object.assign({
-                    price: 0,
-                    basisPrice: this.getAttribute('unitPrice'),
+                    price: unitPrice,
+                    basisPrice: unitPrice,
                     nettoPrice: this.getAttribute('unitPrice'),
                     nettoBasisPrice: this.getAttribute('unitPrice'),
                     nettoPriceNotRounded: this.getAttribute('unitPrice'),
                     sum: 0,
                     nettoSubSum: 0,
                     nettoSum: 0,
-                    isNetto: true,
+                    isNetto: isNetto,
                     isEuVat: false,
                     vatArray: {
                         vat: Number(this.getAttribute('vat')) || 0,
@@ -817,6 +825,12 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
                 this.$bruttoCalc[key] = value;
                 if (field === 'grossUnitPrice') {
                     this.$bruttoCalc.calculated.basisPrice = value;
+                    this.$bruttoCalc.calculated.price = value;
+
+                    if (!amounts.isNetto) {
+                        amounts.price = value;
+                        amounts.basisPrice = value;
+                    }
                 } else if (field === 'grossSum') {
                     this.$bruttoCalc.calculated.sum = value;
 
@@ -1091,7 +1105,16 @@ define('package/quiqqer/erp/bin/backend/controls/articles/Article', [
             this.setAttribute('unitPrice', parseFloat(price));
 
             if (this.getCalculationMode() === 'manual') {
-                this.getCalculations().nettoPriceNotRounded = parseFloat(price);
+                const amounts = this.getCalculations();
+                const unitPrice = parseFloat(price);
+                amounts.nettoPriceNotRounded = unitPrice;
+                amounts.nettoPrice = unitPrice;
+                amounts.nettoBasisPrice = unitPrice;
+
+                if (amounts.isNetto) {
+                    amounts.price = unitPrice;
+                    amounts.basisPrice = unitPrice;
+                }
             }
 
             if (this.$UnitPrice) {

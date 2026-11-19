@@ -12,34 +12,41 @@
     </div>
 </div>
 {{/showPosSummary}}
-<div class="quiqqer-erp-backend-temporaryErp-summary-total">
-    <div class="quiqqer-erp-backend-temporaryErp-summary-total-title">{{labelSums}}:</div>
+<div class="quiqqer-erp-summary-totals-box" data-name="totals-box">
+    <div class="qui-panel-buttons quiqqer-erp-summary-manual-actions" data-name="manual-actions" role="group" aria-label="{{labelTotalsActions}}" hidden>
+        <button type="button" class="qui-button" data-name="add-manual-tax" title="{{labelAddTax}}">
+            <span class="fa fa-plus" aria-hidden="true"></span> {{labelAddTax}}
+        </button>
+        <button type="button" class="qui-button" data-name="totals-from-articles" title="{{hintFromArticles}}">
+            <span class="fa fa-calculator" aria-hidden="true"></span> {{labelFromArticles}}
+        </button>
+    </div>
+    <div class="quiqqer-erp-backend-temporaryErp-summary-total">
+        <div class="quiqqer-erp-backend-temporaryErp-summary-total-title">{{labelSums}}:</div>
 
-    <div class="quiqqer-erp-backend-temporaryErp-summary-total-vat">
-        <span class="vat-title">{{labelVat}}:</span>
-        <div class="quiqqer-erp-summary-tax-editor">
-            <div class="vat-value" data-name="tax-totals"></div>
-            <button type="button" class="qui-button quiqqer-erp-summary-add-tax" data-name="add-manual-tax" title="{{labelAddTax}}" aria-label="{{labelAddTax}}" hidden>
-                <span aria-hidden="true">%<sup>+</sup></span>
-            </button>
+        <div class="quiqqer-erp-backend-temporaryErp-summary-total-vat">
+            <span class="vat-title">{{labelVat}}:</span>
+            <div class="quiqqer-erp-summary-tax-editor">
+                <div class="vat-value" data-name="tax-totals"></div>
+            </div>
+        </div>
+        <div class="quiqqer-erp-backend-temporaryErp-summary-total-netto">
+            <span class="netto-title">{{labelNet}}:</span>
+            <span class="netto-value" data-name="net-total"></span>
+        </div>
+        <div class="quiqqer-erp-backend-temporaryErp-summary-total-brutto">
+            <span class="brutto-title">{{labelGross}}:</span>
+            <span class="brutto-value" data-name="gross-total"></span>
         </div>
     </div>
-    <div class="quiqqer-erp-backend-temporaryErp-summary-total-netto">
-        <span class="netto-title">{{labelNet}}:</span>
-        <span class="netto-value" data-name="net-total"></span>
+    <div class="quiqqer-erp-summary-manual-extra" data-name="manual-extra" hidden>
+        <details>
+            <summary>{{labelOtherTotals}}</summary>
+            <div class="quiqqer-erp-summary-manual-subtotals">
+                <label><span>{{labelNetBefore}}:</span><input type="number" step="any" required data-name="manual-total" data-field="nettoSubSum"></label>
+                <label><span>{{labelSubtotal}}</span><input type="number" step="any" required data-name="manual-total" data-field="subSum"></label>
+                <label><span>{{labelGrossBefore}}:</span><input type="number" step="any" required data-name="manual-total" data-field="grandSubSum"></label>
+            </div>
+        </details>
     </div>
-    <div class="quiqqer-erp-backend-temporaryErp-summary-total-brutto">
-        <span class="brutto-title">{{labelGross}}:</span>
-        <span class="brutto-value" data-name="gross-total"></span>
-    </div>
-</div>
-<div class="quiqqer-erp-summary-manual-extra" data-name="manual-extra" hidden>
-    <details>
-        <summary>{{labelOtherTotals}}</summary>
-        <div class="quiqqer-erp-summary-manual-subtotals">
-            <label><span>{{labelNetBefore}}:</span><input type="number" step="any" required data-name="manual-total" data-field="nettoSubSum"></label>
-            <label><span>{{labelSubtotal}}</span><input type="number" step="any" required data-name="manual-total" data-field="subSum"></label>
-            <label><span>{{labelGrossBefore}}:</span><input type="number" step="any" required data-name="manual-total" data-field="grandSubSum"></label>
-        </div>
-    </details>
 </div>

@@ -334,6 +334,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 Child.setCurrency(this.getAttribute('currency'));
             }
 
+            if (this.getCalculationMode() === 'manual') {
+                Child.setAttribute('List', this);
+            }
+
             Child.setCalculationMode(this.getCalculationMode());
 
             this.$articles.push(Child);
@@ -404,10 +408,17 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
          * @return {Array}
          */
         save: function () {
+            const manual = this.getCalculationMode() === 'manual';
+
             return this.$articles.map(function (ArticleInstance) {
                 const data = Object.assign({}, ArticleInstance.getAttributes(), {
                     control: ArticleInstance.getType()
                 });
+
+                if (manual) {
+                    data.calculated = ArticleInstance.getCalculations();
+                }
+
                 delete data.List;
                 delete data.User;
                 return data;

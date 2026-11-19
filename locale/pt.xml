@@ -334,6 +334,15 @@
         <locale name="erp.panel.navigation.collapseAll">
             <pt>Recolher tudo</pt>
         </locale>
+        <locale name="manual.totalsActions" context="administration">
+<pt><![CDATA[Ações dos totais]]></pt>
+        </locale>
+        <locale name="manual.totalsFromArticles" context="administration">
+<pt><![CDATA[Usar valores das posições]]></pt>
+        </locale>
+        <locale name="manual.totalsFromArticlesHint" context="administration">
+<pt><![CDATA[Soma os valores líquidos, de IVA e brutos existentes das posições e substitui os totais do documento. As posições permanecem inalteradas.]]></pt>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -1282,7 +1291,7 @@
 <pt><![CDATA[Taxa de IVA]]></pt>
         </locale>
         <locale name="manual.addTax" context="administration">
-<pt><![CDATA[Adicionar linha de IVA]]></pt>
+<pt><![CDATA[Adicionar IVA]]></pt>
         </locale>
         <locale name="manual.removeTax" context="administration">
 <pt><![CDATA[Remover linha de IVA]]></pt>

@@ -334,6 +334,15 @@
         <locale name="erp.panel.navigation.collapseAll">
             <fr>Tout réduire</fr>
         </locale>
+        <locale name="manual.totalsActions" context="administration">
+<fr><![CDATA[Actions sur les totaux]]></fr>
+        </locale>
+        <locale name="manual.totalsFromArticles" context="administration">
+<fr><![CDATA[Reprendre les montants des lignes]]></fr>
+        </locale>
+        <locale name="manual.totalsFromArticlesHint" context="administration">
+<fr><![CDATA[Additionne les montants HT, de TVA et TTC existants des lignes et remplace les totaux du document. Les lignes restent inchangées.]]></fr>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -1282,7 +1291,7 @@
 <fr><![CDATA[Taux de TVA]]></fr>
         </locale>
         <locale name="manual.addTax" context="administration">
-<fr><![CDATA[Ajouter une ligne de TVA]]></fr>
+<fr><![CDATA[Ajouter la TVA]]></fr>
         </locale>
         <locale name="manual.removeTax" context="administration">
 <fr><![CDATA[Supprimer la ligne de TVA]]></fr>
