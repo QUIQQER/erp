@@ -334,6 +334,10 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleList', [
                 Child.setCurrency(this.getAttribute('currency'));
             }
 
+            if (this.getCalculationMode() === 'manual') {
+                Child.setAttribute('List', this);
+            }
+
             Child.setCalculationMode(this.getCalculationMode());
 
             this.$articles.push(Child);

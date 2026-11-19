@@ -73,7 +73,7 @@ for (const missing of ['', null, undefined]) {
         const instance = article(missing);
         await instance.calc();
         assert.equal(instance.$VAT.text, '19%');
-        const saved = ArticleList.save.call({$articles: [instance]});
+        const saved = ArticleList.save.call({$articles: [instance], getCalculationMode: () => 'automatic'});
         assert.equal(saved[0].vat, 19);
     });
 }
@@ -84,7 +84,7 @@ test('net and gross entry keep the displayed rate in the saved position', async 
         await instance.calc();
         const netPrice = grossInput ? await instance.getNettoPrice(119, false) : 100;
         await instance.setUnitPrice(netPrice);
-        const [saved] = ArticleList.save.call({$articles: [instance]});
+        const [saved] = ArticleList.save.call({$articles: [instance], getCalculationMode: () => 'automatic'});
         assert.equal(saved.unitPrice, 100);
         assert.equal(saved.vat, 19);
     }
@@ -95,7 +95,7 @@ for (const vat of [0, '0', 7, 5.5, 23]) {
     test(`explicit/imported VAT ${vat} is preserved`, async () => {
         const instance = article(vat);
         await instance.setVat(vat);
-        const [saved] = ArticleList.save.call({$articles: [instance]});
+        const [saved] = ArticleList.save.call({$articles: [instance], getCalculationMode: () => 'automatic'});
         assert.equal(saved.vat, Number(vat));
     });
 }

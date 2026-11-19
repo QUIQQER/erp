@@ -218,6 +218,69 @@ test('automatic serialization keeps the existing attributes payload', () => {
     assert.deepEqual(JSON.parse(JSON.stringify(list.save())), before);
 });
 
+test('manual net unit entry fills the normal calculated unit price fields without recalculating amounts', async () => {
+    const {list, item} = fixture();
+    list.disableCalculations();
+    const before = JSON.parse(JSON.stringify(list.serialize()));
+    await item.setUnitPrice(8.39);
+    const saved = list.save()[0];
+    assert.equal(saved.unitPrice, 8.39);
+    for (const field of ['price', 'basisPrice', 'nettoPrice', 'nettoBasisPrice', 'nettoPriceNotRounded']) {
+        assert.equal(saved.calculated[field], 8.39, field);
+    }
+    assert.equal(saved.calculated.nettoSum, before.articles[0].calculated.nettoSum);
+    assert.equal(saved.calculated.nettoSubSum, before.articles[0].calculated.nettoSubSum);
+    assert.equal(saved.calculated.sum, before.articles[0].calculated.sum);
+    assert.deepEqual(saved.calculated.vatArray, before.articles[0].calculated.vatArray);
+    assert.deepEqual(JSON.parse(JSON.stringify(list.getCalculations().calculations)), before.calculations);
+});
+
+test('manual gross unit entry fills the same calculated price fields in gross context', async () => {
+    const {list, item} = fixture();
+    list.disableCalculations();
+    item.getCalculations().isNetto = false;
+    const before = JSON.parse(JSON.stringify(list.serialize()));
+    await item.setManualAmount('grossUnitPrice', 9.99);
+    const saved = list.save()[0];
+    assert.equal(saved.calculated.price, 9.99);
+    assert.equal(saved.calculated.basisPrice, 9.99);
+    assert.equal(saved.calculated.bruttoCalculated.unitPrice, 9.99);
+    assert.equal(saved.calculated.bruttoCalculated.calculated.price, 9.99);
+    assert.equal(saved.unitPrice, before.articles[0].unitPrice);
+    assert.equal(saved.calculated.nettoPrice, before.articles[0].calculated.nettoPrice);
+    assert.equal(saved.calculated.sum, before.articles[0].calculated.sum);
+    assert.deepEqual(JSON.parse(JSON.stringify(list.getCalculations().calculations)), before.calculations);
+});
+
+test('new manual positions use the document pricing context and fill standard unit fields', async () => {
+    const {list, article} = fixture();
+    list.disableCalculations();
+    list.getCalculations().calculations.isNetto = false;
+    const item = article({position: 2, unitPrice: 8.39, quantity: 1, vat: 19});
+    item.$bruttoCalc = {};
+    list.addArticle(item);
+    assert.equal(item.getCalculations().isNetto, false);
+    assert.equal(item.getCalculations().price, 0, 'gross is not derived from the entered net price');
+    assert.equal(item.getCalculations().nettoPrice, 8.39);
+    await item.setManualAmount('grossUnitPrice', 9.99);
+    assert.equal(item.getCalculations().price, 9.99);
+    assert.equal(item.getCalculations().basisPrice, 9.99);
+    assert.equal(item.getCalculations().sum, 0, 'unit entry does not calculate a position total');
+});
+
+test('standalone manual positions initialize the same net unit fields without a list', () => {
+    const {article} = fixture();
+    const item = article({unitPrice: 8.39, quantity: 1, vat: 19, List: false});
+    item.$bruttoCalc = {};
+    item.disableCalculations();
+    const amounts = item.getCalculations();
+    for (const field of ['price', 'basisPrice', 'nettoPrice', 'nettoBasisPrice', 'nettoPriceNotRounded']) {
+        assert.equal(amounts[field], 8.39, field);
+    }
+    assert.equal(amounts.isNetto, true);
+    assert.equal(amounts.sum, 0);
+});
+
 test('gross unit entry in manual mode does not convert or replace the net unit price', async () => {
     const {list, item} = fixture();
     list.setCalculationMode('manual');
