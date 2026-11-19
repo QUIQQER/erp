@@ -337,6 +337,99 @@ test('summary fields accept contradictory user values without changing the remai
     assert.equal(list.getCalculations().calculations.vatArray[19].sum, 1.5951);
 });
 
+test('explicit totals transfer retains independent Drillisch amounts and changes only document totals', async () => {
+    const {list, item, Summary, requests} = fixture();
+    list.disableCalculations();
+    await item.setManualAmount('grossSum', 9.99);
+    list.getCalculations().calculations.sum = 42;
+    list.getCalculations().calculations.vatArray = {7: {vat: 7, sum: 3, text: '7%'}};
+    list.getCalculations().calculations.customData = {reference: 'keep'};
+    list.$priceFactors = [{title: 'keep', sum: 0.1234}];
+    const before = JSON.parse(JSON.stringify(list.save()));
+    assert.equal(list.getCalculations().calculations.sum, 42, 'editing a position alone does not copy totals');
+
+    Summary.prototype.$setTotalsFromArticles.call({getAttribute: () => list});
+    const totals = list.getCalculations().calculations;
+    assert.equal(totals.nettoSum, 8.395);
+    assert.equal(totals.nettoSubSum, 8.395);
+    assert.equal(totals.subSum, 8.395);
+    assert.equal(totals.sum, 9.99);
+    assert.equal(totals.grandSubSum, 9.99);
+    assert.equal(totals.vatSum, 1.5951);
+    assert.equal(totals.vatArray[19].sum, 1.5951);
+    assert.equal(totals.vatArray[7], undefined, 'old document tax rows are replaced');
+    assert.deepEqual(totals.customData, {reference: 'keep'});
+    assert.deepEqual(list.getPriceFactors(), [{title: 'keep', sum: 0.1234}]);
+    assert.deepEqual(JSON.parse(JSON.stringify(list.save())), before, 'positions are not recalculated or changed');
+    assert.equal(list.getCalculationMode(), 'manual');
+    assert.equal(requests.length, 0);
+});
+
+test('totals transfer groups existing tax amounts by rate and supports negative positions', async () => {
+    const {list, item, article, Summary} = fixture();
+    list.disableCalculations();
+    await item.setManualAmount('grossSum', 9.99);
+    const second = article();
+    list.addArticle(second);
+    await second.setManualAmount('nettoSum', -0.395);
+    await second.setManualAmount('vatSum', -0.0951);
+    await second.setManualAmount('grossSum', -0.49);
+    const reduced = article();
+    list.addArticle(reduced);
+    reduced.getCalculations().vatArray.vat = 7;
+    reduced.getCalculations().vatArray.text = '7%';
+    await reduced.setManualAmount('nettoSum', 2.123456);
+    await reduced.setManualAmount('vatSum', 0.14864192);
+    await reduced.setManualAmount('grossSum', 2.27);
+
+    Summary.prototype.$setTotalsFromArticles.call({getAttribute: () => list});
+    const totals = list.getCalculations().calculations;
+    assert.equal(totals.nettoSum, 10.123456);
+    assert.equal(totals.sum, 11.77);
+    assert.equal(totals.vatArray[19].sum, 1.5);
+    assert.equal(totals.vatArray[7].sum, 0.14864192);
+    assert.equal(totals.vatSum, 1.64864192);
+    assert.equal(totals.vatText[7], '7%');
+});
+
+test('totals transfer adds entered decimals without binary floating point tails', async () => {
+    const {list, item, article, Summary} = fixture();
+    list.disableCalculations();
+    const second = article();
+    list.addArticle(second);
+    for (const [position, net, tax, gross] of [[item, 0.1, 0.019, 0.119], [second, 0.2, 0.038, 0.238]]) {
+        await position.setManualAmount('nettoSum', net);
+        await position.setManualAmount('vatSum', tax);
+        await position.setManualAmount('grossSum', gross);
+    }
+    Summary.prototype.$setTotalsFromArticles.call({getAttribute: () => list});
+    const totals = list.getCalculations().calculations;
+    assert.equal(totals.nettoSum, 0.3);
+    assert.equal(totals.sum, 0.357);
+    assert.equal(totals.vatArray[19].sum, 0.057);
+    assert.equal(totals.vatSum, 0.057);
+});
+
+test('gross-context totals use existing gross values while keeping the precise net amounts', async () => {
+    const {list, item, Summary} = fixture();
+    list.disableCalculations();
+    list.getCalculations().calculations.isNetto = false;
+    await item.setManualAmount('grossSum', 9.99);
+    Summary.prototype.$setTotalsFromArticles.call({getAttribute: () => list});
+    const totals = list.getCalculations().calculations;
+    assert.equal(totals.subSum, 9.99);
+    assert.equal(totals.nettoSum, 8.395);
+    assert.equal(totals.isNetto, false);
+});
+
+test('totals transfer leaves automatic calculation untouched', () => {
+    const {list, Summary} = fixture();
+    const before = JSON.stringify(list.getCalculations());
+    list.getArticles = () => { throw new Error('Automatic totals must use the existing calculator.'); };
+    Summary.prototype.$setTotalsFromArticles.call({getAttribute: () => list});
+    assert.equal(JSON.stringify(list.getCalculations()), before);
+});
+
 test('serialized state keeps the mode, position amounts and independent document totals', async () => {
     const {list, item} = fixture();
     list.disableCalculations();
@@ -367,8 +460,8 @@ test('all package languages provide each manual-entry text once in administratio
     for (const language of languages) {
         const catalog = readFileSync(join(__dirname, '../../locale', language + '.xml'), 'utf8');
         const keys = [...catalog.matchAll(/<locale name="(manual\.[^"]+)"[^>]*>/g)];
-        assert.equal(keys.length, 12, language);
-        assert.equal(new Set(keys.map(match => match[1])).size, 12, language);
+        assert.equal(keys.length, 15, language);
+        assert.equal(new Set(keys.map(match => match[1])).size, 15, language);
         assert.ok(keys.every(match => match[0].includes('context="administration"')), language);
     }
 });

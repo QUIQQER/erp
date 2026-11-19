@@ -336,6 +336,15 @@
             <de>Alles zuklappen</de>
         </locale>
 
+        <locale name="manual.totalsActions" context="administration">
+<de><![CDATA[Summenaktionen]]></de>
+        </locale>
+        <locale name="manual.totalsFromArticles" context="administration">
+<de><![CDATA[Aus Positionen übernehmen]]></de>
+        </locale>
+        <locale name="manual.totalsFromArticlesHint" context="administration">
+<de><![CDATA[Summiert die vorhandenen Netto-, MwSt.- und Bruttobeträge der Positionen und ersetzt die Belegsummen. Die Positionen bleiben unverändert.]]></de>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -1349,7 +1358,7 @@ Erlaubte Zeichen: Buchstaben, Zahlen sowie _ ä ö ü ß]]></de>
 <de><![CDATA[Steuersatz]]></de>
         </locale>
         <locale name="manual.addTax" context="administration">
-<de><![CDATA[Steuerzeile hinzufügen]]></de>
+<de><![CDATA[MwSt. hinzufügen]]></de>
         </locale>
         <locale name="manual.removeTax" context="administration">
 <de><![CDATA[Steuerzeile entfernen]]></de>

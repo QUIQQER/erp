@@ -334,6 +334,15 @@
         <locale name="erp.panel.navigation.collapseAll">
             <es>Contraer todo</es>
         </locale>
+        <locale name="manual.totalsActions" context="administration">
+<es><![CDATA[Acciones de totales]]></es>
+        </locale>
+        <locale name="manual.totalsFromArticles" context="administration">
+<es><![CDATA[Usar importes de las posiciones]]></es>
+        </locale>
+        <locale name="manual.totalsFromArticlesHint" context="administration">
+<es><![CDATA[Suma los importes netos, de IVA y brutos existentes de las posiciones y sustituye los totales del documento. Las posiciones no se modifican.]]></es>
+        </locale>
     </groups>
 
     <groups name="quiqqer/erp" datatype="php">
@@ -1282,7 +1291,7 @@
 <es><![CDATA[Tipo de IVA]]></es>
         </locale>
         <locale name="manual.addTax" context="administration">
-<es><![CDATA[Añadir línea de IVA]]></es>
+<es><![CDATA[Añadir IVA]]></es>
         </locale>
         <locale name="manual.removeTax" context="administration">
 <es><![CDATA[Eliminar línea de IVA]]></es>

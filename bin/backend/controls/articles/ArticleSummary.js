@@ -95,6 +95,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 labelSums: QUILocale.get(lg, 'article.summary.tpl.labelSums'),
                 labelVat: QUILocale.get(lg, 'article.summary.tpl.labelVat'),
                 labelAddTax: QUILocale.get(lg, 'manual.addTax'),
+                labelFromArticles: QUILocale.get(lg, 'manual.totalsFromArticles'),
+                hintFromArticles: QUILocale.get(lg, 'manual.totalsFromArticlesHint'),
+                labelTotalsActions: QUILocale.get(lg, 'manual.totalsActions'),
                 labelOtherTotals: QUILocale.get(lg, 'manual.otherTotals'),
                 labelNetBefore: QUILocale.get(lg, 'manual.netBeforeFactors'),
                 labelSubtotal: QUILocale.get(lg, 'article.list.articles.subtotal'),
@@ -123,6 +126,9 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
                 }
 
                 this.$taxControls.get('0')?.focusRate();
+            });
+            this.$Elm.querySelector('[data-name="totals-from-articles"]').addEventListener('click', () => {
+                this.$setTotalsFromArticles();
             });
             this.$PriceFactors = document.createElement('div');
             this.$PriceFactors.className = 'quiqqer-erp-backend-temporaryErp-priceFactors';
@@ -370,7 +376,7 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             const manual = List.getCalculationMode() === 'manual';
             this.$Elm.classList.toggle('quiqqer-erp-summary-manual', manual);
             this.$Elm.querySelector('[data-name="manual-extra"]').hidden = !manual;
-            this.$Elm.querySelector('[data-name="add-manual-tax"]').hidden = !manual;
+            this.$Elm.querySelector('[data-name="manual-actions"]').hidden = !manual;
 
             if (manual) {
                 this.$renderManualTotals(List, calc);
@@ -460,6 +466,74 @@ define('package/quiqqer/erp/bin/backend/controls/articles/ArticleSummary', [
             const List = this.getAttribute('List');
             const data = List.getCalculations();
             data.calculations[field] = Input.valueAsNumber;
+            List.setCalculations(data);
+        },
+
+        $setTotalsFromArticles: function () {
+            const List = this.getAttribute('List');
+
+            if (List.getCalculationMode() !== 'manual') {
+                return;
+            }
+
+            // Add the entered decimal amounts without introducing floating-point tails.
+            const sumAmounts = (values) => {
+                let total = 0n;
+                let scale = 0;
+
+                values.forEach((value) => {
+                    const [coefficient, exponent = '0'] = String(value).split('e');
+                    const decimals = (coefficient.split('.')[1] || '').length - Number(exponent);
+                    const nextScale = Math.max(scale, decimals, 0);
+                    const amount = BigInt(coefficient.replace('.', ''));
+                    total = total * 10n ** BigInt(nextScale - scale) +
+                        amount * 10n ** BigInt(nextScale - decimals);
+                    scale = nextScale;
+                });
+
+                const sign = total < 0n ? '-' : '';
+                const digits = (total < 0n ? -total : total).toString().padStart(scale + 1, '0');
+
+                return scale ? Number(sign + digits.slice(0, -scale) + '.' + digits.slice(-scale)) : Number(total);
+            };
+            const netAmounts = [];
+            const grossAmounts = [];
+            const taxAmounts = new Map();
+            const vatArray = {};
+            const vatText = {};
+
+            List.getArticles().forEach((Article) => {
+                const amounts = Article.getCalculations();
+                const gross = Article.getBruttoCalc();
+                const tax = amounts.vatArray;
+                const rate = String(tax.vat);
+                netAmounts.push(amounts.nettoSum);
+                grossAmounts.push(gross.sum);
+
+                if (!taxAmounts.has(rate)) {
+                    taxAmounts.set(rate, []);
+                    vatArray[rate] = Object.assign({}, tax);
+                    vatText[rate] = tax.text || rate + '%';
+                    vatArray[rate].text = vatText[rate];
+                }
+
+                taxAmounts.get(rate).push(tax.sum);
+            });
+
+            taxAmounts.forEach((amounts, rate) => {
+                vatArray[rate].sum = sumAmounts(amounts);
+            });
+
+            const data = List.getCalculations();
+            const calc = data.calculations;
+            calc.nettoSum = sumAmounts(netAmounts);
+            calc.nettoSubSum = calc.nettoSum;
+            calc.sum = sumAmounts(grossAmounts);
+            calc.grandSubSum = calc.sum;
+            calc.subSum = calc.isNetto === false ? calc.sum : calc.nettoSum;
+            calc.vatArray = vatArray;
+            calc.vatText = vatText;
+            calc.vatSum = sumAmounts(Object.values(vatArray).map((tax) => tax.sum));
             List.setCalculations(data);
         },
 

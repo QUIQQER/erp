@@ -137,14 +137,6 @@
     gap: 4px;
 }
 
-.quiqqer-erp-summary-add-tax {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: stretch;
-    padding-block: 0;
-    padding-inline: 4px;
-    line-height: normal;
-}
 
 .quiqqer-erp-summary-manual-extra {
     clear: both;
@@ -167,7 +159,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 160px);
     align-items: center;
     gap: 12px;
-    margin-inline-end: 60px;
+    margin-inline-end: 28px;
 }
 
 .quiqqer-erp-summary-tax-editor {
@@ -179,7 +171,7 @@
 
 .quiqqer-erp-summary-manual .quiqqer-erp-summary-tax-editor {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 28px;
+    grid-template-columns: minmax(0, 1fr);
     gap: 8px 4px;
 }
 
@@ -204,5 +196,29 @@
     display: block;
     flex: 0 1 160px;
     min-width: 0;
-    margin-inline-end: 60px;
+    margin-inline-end: 28px;
+}
+
+.quiqqer-erp-summary-totals-box {
+    display: contents;
+}
+
+.quiqqer-erp-summary-manual-actions.qui-panel-buttons {
+    display: grid;
+    flex-grow: 0;
+    height: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 12px;
+}
+
+.quiqqer-erp-summary-manual-actions.qui-panel-buttons > button {
+    height: auto;
+    min-height: 34px;
+    min-width: 0;
+    white-space: normal;
+}
+
+.quiqqer-erp-summary-manual-actions[hidden] {
+    display: none;
 }
